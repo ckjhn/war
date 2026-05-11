@@ -362,7 +362,7 @@
       <div class="logo">KZ-Tools</div>
       <div class="header-divider"></div>
       <nav id="navigation">
-        <button class="nav-btn" data-app="database">
+        <button class="nav-btn active" data-app="database">
           🌍 Database
         </button>
         <button class="nav-btn" data-app="market">
@@ -374,7 +374,7 @@
         <button class="nav-btn" data-app="turn">
           🎮 Turn
         </button>
-        <button class="nav-btn active" data-app="conflicts">
+        <button class="nav-btn" data-app="conflicts">
           📋 Conflicts
         </button>
         <button class="nav-btn" data-app="construct">
@@ -437,7 +437,7 @@
       }
     };
 
-    let currentApp = 'conflicts';
+    let currentApp = 'database';
     const contentContainer = document.getElementById('contentContainer');
     const navButtons = document.querySelectorAll('.nav-btn');
     const loadedApps = new Map();
@@ -599,7 +599,7 @@
      * Initialize with the first app
      */
     function init() {
-      loadApp('conflicts');
+      loadApp('database');
     }
 
     // Start the application
