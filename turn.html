@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Caffe Latte Theme */
+            --bg-color: #fdf8f5;        /* Warm milk */
+            --card-bg: #ffffff;         /* Clean white */
+            --text-main: #4a3b32;       /* Deep espresso */
+            --text-muted: #8b7355;      /* Milk chocolate */
+            --primary: #b08d6a;         /* Latte foam */
+            --primary-hover: #967351;   /* Darker latte */
+            --secondary: #f5ebe0;       /* Soft beige */
+            --secondary-hover: #e3d5ca; /* Deeper beige */
+            --danger: #d97777;          /* Muted terracotta */
+            --danger-hover: #c46262;    
+            --success: #7b9e7b;         /* Muted matcha/sage */
+            --success-hover: #658565;
+            --border: #e8dcca;          /* Creamy border */
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-sm: 0 2px 4px rgba(74, 59, 50, 0.02);
+            --shadow-md: 0 4px 12px rgba(74, 59, 50, 0.05);
+            --shadow-lg: 0 12px 24px rgba(74, 59, 50, 0.08);
+            --font-family: 'Quicksand', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: transparent;
+            padding: 40px 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        /* Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1.2fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1200px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            border-bottom: 2px dashed var(--border);
+            padding-bottom: 12px;
+        }
+
+        /* Calendar Section */
+        .calendar-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .month-year {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .cycle-info {
+            color: var(--text-muted);
+            font-size: 0.95em;
+            margin-bottom: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-color);
+            padding: 20px 15px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* Weeks Section */
+        .weeks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .week-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--bg-color);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .week-item.active {
+            opacity: 1;
+            background: var(--secondary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(176, 141, 106, 0.15);
+            transform: scale(1.01);
+        }
+
+        .week-item label {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.1em;
+            width: 70px;
+            flex-shrink: 0;
+        }
+        
+        .week-item.active label {
+            color: var(--primary-hover);
+        }
+
+        .week-note {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-family: var(--font-family);
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .week-note:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(176, 141, 106, 0.15);
+        }
+
+        .week-note::placeholder {
+            color: #c4b5a3;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            margin-top: 24px;
+        }
+
+        .notes-section label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-main);
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-family);
+            font-size: 0.95em;
+            font-weight: 500;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(176, 141, 106, 0.15);
+        }
+
+        textarea::placeholder {
+            color: #c4b5a3;
+        }
+
+        /* Current Cycle Note Preview */
+        .history-box {
+            background: #f3f5e9;
+            border: 1px solid #cdd5b4;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .history-box-label {
+            color: #5c7042;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-box-text {
+            color: #435230;
+            line-height: 1.7;
+            font-weight: 500;
+            white-space: pre-wrap;
+        }
+
+        /* Book UI (Campaign History) */
+        .book-wrapper {
+            background: linear-gradient(to right, #fdf6ee 0%, #ffffff 6%, #ffffff 100%);
+            border: 1px solid var(--border);
+            border-radius: 4px 16px 16px 4px;
+            box-shadow: 
+                inset 10px 0 20px -8px rgba(176, 141, 106, 0.25),
+                var(--shadow-md);
+            padding: 30px 30px 30px 45px;
+            position: relative;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-spine {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 16px;
+            background: linear-gradient(to right, #967351, #b08d6a, #967351);
+            border-radius: 6px 0 0 6px;
+            border-right: 1px solid #7a5c3e;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.15);
+        }
+
+        .book-page-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px dashed var(--border);
+        }
+
+        .book-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 0.95em;
+            padding: 10px 20px;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .book-btn:hover:not(:disabled) {
+            background: var(--secondary);
+            border-color: var(--primary);
+            color: var(--primary-hover);
+        }
+
+        .book-btn:disabled {
+            color: #d1c5b8;
+            border-color: var(--bg-color);
+            background: transparent;
+            cursor: not-allowed;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            margin-top: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-advance {
+            background: var(--success);
+            color: white;
+            width: 100%;
+            margin-top: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-advance:hover {
+            background: var(--success-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--text-main);
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+        }
+
+        .btn-danger {
+            background: white;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 8px 16px;
+            font-size: 0.85em;
+            border-radius: 8px;
+        }
+
+        .btn-danger:hover {
+            background: #fdf5f5;
+        }
+
+        /* Settings */
+        .settings-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-toggle:hover {
+            transform: scale(1.1) rotate(90deg);
+            background: var(--secondary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .settings-panel {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            min-width: 340px;
+            box-shadow: var(--shadow-lg);
+            z-index: 99;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .settings-panel.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-size: 0.95em;
+            font-weight: 700;
+        }
+
+        .settings-panel input[type="number"] {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            transition: border-color 0.2s ease;
+        }
+
+        .settings-panel input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--card-bg);
+        }
+
+        /* Nations */
+        .nations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nation-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg-color);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .nation-item:hover {
+            border-color: var(--primary);
+            background: var(--secondary);
+        }
+
+        .nation-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+            border-radius: 6px;
+        }
+
+        .nation-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .nation-item input[type="checkbox"]:checked + .nation-name {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .add-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            min-width: 150px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(176, 141, 106, 0.15);
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+        }
+
+        .btn-add:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Timeline (Events) */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .timeline-item {
+            background: var(--bg-color);
+            border-left: 6px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .timeline-item:hover {
+            background: var(--secondary);
+            transform: translateX(4px);
+        }
+
+        .timeline-item-title {
+            color: var(--text-main);
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .timeline-item-text {
+            color: var(--text-muted);
+            font-size: 0.95em;
+            line-height: 1.7;
+            font-weight: 500;
+            white-space: pre-wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            background: var(--bg-color);
+            border-radius: var(--radius-md);
+            border: 2px dashed var(--border);
+        }
+
+        /* Modal/Dialog */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(74, 59, 50, 0.3);
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.6em;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        .modal-message {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: var(--font-family);
+        }
+
+        .modal-buttons .confirm {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-buttons .confirm:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .modal-buttons .cancel {
+            background: var(--secondary);
+            color: var(--text-main);
+        }
+
+        .modal-buttons .cancel:hover {
+            background: var(--secondary-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                padding: 30px 20px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .month-year {
+                font-size: 1.8em;
+            }
+            .modal {
+                padding: 30px 20px;
+            }
+            .book-wrapper {
+                padding: 20px 20px 20px 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Campaign Tracker</h1>
+            <p>Timeline & Strategy Management</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="layout">
+            <div>
+                <div class="card">
+                    <div class="calendar-display">
+                        <div class="month-year" id="monthYear">January 1</div>
+                        <div class="cycle-info" id="cycleInfo">Cycle 1 of 12</div>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label">Current Turn</div>
+                                <div class="stat-value" id="currentTurn">1</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Days Elapsed</div>
+                                <div class="stat-value" id="daysElapsed">0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Year Cycle</div>
+                                <div class="stat-value" id="yearCycle">1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-title">Weekly Progress</div>
+                    
+                    <div class="weeks-list">
+                        <div class="week-item" id="weekContainer0">
+                            <label>Week 1</label>
+                            <input type="text" class="week-note" id="weekNote0" placeholder="Observations (optional)...">
+                        </div>
+                        <div class="week-item" id="weekContainer1">
+                            <label>Week 2</label>
+                            <input type="text" class="week-note" id="weekNote1" placeholder="Observations (optional)...">
+                        </div>
+                        <div class="week-item" id="weekContainer2">
+                            <label>Week 3</label>
+                            <input type="text" class="week-note" id="weekNote2" placeholder="Observations (optional)...">
+                        </div>
+                        <div class="week-item" id="weekContainer3">
+                            <label>Week 4</label>
+                            <input type="text" class="week-note" id="weekNote3" placeholder="Observations (optional)...">
+                        </div>
+                    </div>
+
+                    <div class="notes-section">
+                        <label for="monthNotes">Month Observations</label>
+                        <textarea id="monthNotes" placeholder="E.g., Trade routes stabilizing, tensions rising..."></textarea>
+                    </div>
+
+                    <div id="currentNotePreview"></div>
+                    
+                    <div id="actionButtonContainer"></div>
+                    
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-title">Nations & Organizations</div>
+                    <div class="add-form">
+                        <input type="text" id="nationInput" placeholder="Add country...">
+                        <button class="btn-add" id="addNationBtn">Add</button>
+                    </div>
+                    <div class="nations-list" id="nationsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 60px;">
+            <div class="card">
+                <div class="card-title">Campaign Diary</div>
+                <div id="historyBookContainer"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Major Events</div>
+                <div class="add-form">
+                    <textarea id="eventInput" placeholder="Describe major events, wars, treaties..." style="flex: 1; margin: 0; min-height: 50px; padding: 16px;"></textarea>
+                </div>
+                <button class="btn-add" id="addEventBtn" style="width: 100%; margin-bottom: 24px;">Record Event</button>
+                <div class="timeline-list" id="eventsTimeline"></div>
+            </div>
+        </div>
+    </div>
+
+    <button class="settings-toggle" id="settingsToggle">⚙️</button>
+
+    <div class="settings-panel hidden" id="settingsPanel">
+        <div class="card-title" style="border-bottom: none; margin-bottom: 16px; padding-bottom: 0;">Settings</div>
+        
+        <label for="initialYear">Initial Year</label>
+        <input type="number" id="initialYear" min="1" value="1">
+        <p style="color: var(--text-muted); font-size: 0.85em; margin-top: 4px; margin-bottom: 24px; font-weight: 500;">
+            This sets the starting year for your campaign.
+        </p>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+            <button class="btn btn-secondary" id="exportBtn" style="flex: 1; margin: 0; padding: 12px; font-size: 0.9em;">
+                ⬇ Export JSON
+            </button>
+            <label class="btn btn-secondary" style="flex: 1; margin: 0; padding: 12px; font-size: 0.9em; text-align: center; cursor: pointer;">
+                ⬆ Import JSON
+                <input type="file" id="importInput" accept=".json" style="display: none;">
+            </label>
+        </div>
+
+        <button class="btn btn-danger" id="factoryResetBtn" style="width: 100%; padding: 12px; font-size: 1em;">
+            ⚠ Factory Reset
+        </button>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">Confirm Action</div>
+            <div class="modal-message" id="modalMessage">Are you sure?</div>
+            <div class="modal-buttons">
+                <button class="confirm" id="confirmBtn">Confirm</button>
+                <button class="cancel" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-title" id="editModalTitle">Edit Entry</div>
+            <textarea id="editModalInput" style="min-height: 200px; margin-bottom: 24px; font-size: 1.05em;"></textarea>
+            <div class="modal-buttons">
+                <button class="confirm" id="editConfirmBtn">Save Changes</button>
+                <button class="cancel" id="editCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure (Clean Logic V2)
+        let gameState = {
+            initialYear: 1,
+            elapsedYears: 0,
+            currentCycle: 0, // 0 to 11 (Months)
+            currentTurn: 1,  // 1 to 4 (Weeks)
+            weekNotes: ['', '', '', ''],
+            countries: [],
+            countryRounds: {},
+            monthHistory: {},
+            yearHistory: [],
+        };
+
+        let currentBookPage = -1; // -1 means go to the newest page
+
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // Load from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('campaignTrackerState_v2');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                gameState = { ...gameState, ...parsed };
+            }
+        }
+
+        // Save to localStorage
+        function saveState() {
+            localStorage.setItem('campaignTrackerState_v2', JSON.stringify(gameState));
+        }
+
+        // Update UI
+        function updateUI() {
+            const currentMonth = monthNames[gameState.currentCycle];
+            const displayYear = gameState.initialYear + gameState.elapsedYears;
+            
+            // Total Turns: (Years * 48) + (CurrentCycle * 4) + (CurrentTurn - 1)
+            const totalTurns = (gameState.elapsedYears * 12 * 4) + (gameState.currentCycle * 4) + (gameState.currentTurn - 1);
+
+            document.getElementById('monthYear').textContent = `${currentMonth} ${displayYear}`;
+            document.getElementById('cycleInfo').textContent = `Cycle ${gameState.currentCycle + 1} of 12`;
+            document.getElementById('currentTurn').textContent = gameState.currentTurn;
+            document.getElementById('daysElapsed').textContent = totalTurns * 7;
+            document.getElementById('yearCycle').textContent = displayYear;
+
+            // Update weeks UI and Highlight active week
+            for (let i = 0; i < 4; i++) {
+                const wContainer = document.getElementById(`weekContainer${i}`);
+                if (gameState.currentTurn === i + 1) {
+                    wContainer.classList.add('active');
+                } else {
+                    wContainer.classList.remove('active');
+                }
+                document.getElementById(`weekNote${i}`).value = gameState.weekNotes[i] || '';
+            }
+
+            // Dynamic Action Buttons
+            const btnContainer = document.getElementById('actionButtonContainer');
+            if (gameState.currentTurn < 4) {
+                btnContainer.innerHTML = `<button class="btn btn-primary" id="nextTurnBtn">Next Turn</button>`;
+                document.getElementById('nextTurnBtn').addEventListener('click', () => {
+                    showConfirmModal('Advance Turn?', 'Reset all nation checkmarks and move to the next week?', nextTurn);
+                });
+            } else {
+                btnContainer.innerHTML = `<button class="btn btn-advance" id="advanceCycleBtn">Next Cycle (Advance Month)</button>`;
+                document.getElementById('advanceCycleBtn').addEventListener('click', advanceCycle);
+            }
+
+            // Update nations list
+            updateNationsList();
+
+            // Preview note of the current uncompleted month
+            updateCurrentMonthPreview(displayYear);
+
+            // Update Book and Events
+            updateBookDisplay();
+            updateEventsTimeline();
+
+            // Update settings
+            document.getElementById('initialYear').value = gameState.initialYear;
+        }
+
+        function updateNationsList() {
+            const container = document.getElementById('nationsList');
+            if (gameState.countries.length === 0) {
+                container.innerHTML = '<div class="empty-state">No nations added yet</div>';
+                return;
+            }
+
+            container.innerHTML = gameState.countries.map(country => `
+                <div class="nation-item">
+                    <input type="checkbox" data-nation="${country}" ${gameState.countryRounds[country] ? 'checked' : ''}>
+                    <span class="nation-name">${country}</span>
+                    <button class="btn btn-danger" onclick="removeNation('${country}')">Remove</button>
+                </div>
+            `).join('');
+
+            // Add event listeners to checkboxes
+            container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const nation = e.target.dataset.nation;
+                    gameState.countryRounds[nation] = e.target.checked;
+                    saveState();
+                });
+            });
+        }
+
+        function updateCurrentMonthPreview(displayYear) {
+            const key = `${displayYear}-${gameState.currentCycle}`;
+            const container = document.getElementById('currentNotePreview');
+            const note = gameState.monthHistory[key];
+
+            if (note) {
+                // If by any chance they are revisiting a saved cycle via edit or logic
+                container.innerHTML = `
+                    <div class="history-box">
+                        <div class="history-box-label">📝 Current Month Notes</div>
+                        <div class="history-box-text">${note}</div>
+                    </div>
+                `;
+                document.getElementById('monthNotes').style.display = 'none';
+                document.querySelector('.notes-section label').style.display = 'none';
+            } else {
+                document.getElementById('monthNotes').style.display = 'block';
+                document.querySelector('.notes-section label').style.display = 'block';
+                container.innerHTML = '';
+            }
+        }
+
+        // =======================
+        // BOOK DIARY DISPLAY
+        // =======================
+        function updateBookDisplay() {
+            const container = document.getElementById('historyBookContainer');
+            
+            // Sort chronologically (Oldest first for a book)
+            const sortedHistory = Object.entries(gameState.monthHistory).sort((a, b) => {
+                const [yA, cA] = a[0].split('-').map(Number);
+                const [yB, cB] = b[0].split('-').map(Number);
+                if (yA !== yB) return yA - yB;
+                return cA - cB;
+            });
+
+            if (sortedHistory.length === 0) {
+                container.innerHTML = '<div class="empty-state">No diary pages written yet. Complete a cycle to write the first page.</div>';
+                return;
+            }
+
+            // Boundary check for current page
+            if (currentBookPage === -1 || currentBookPage >= sortedHistory.length) {
+                currentBookPage = sortedHistory.length - 1; // Go to last page
+            }
+            if (currentBookPage < 0) currentBookPage = 0;
+
+            const [key, note] = sortedHistory[currentBookPage];
+            const [year, cycle] = key.split('-').map(Number);
+            const month = monthNames[cycle];
+
+            container.innerHTML = `
+                <div class="book-wrapper">
+                    <div class="book-spine"></div>
+                    <div class="book-page-content">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                            <h3 style="color: var(--text-main); font-size: 1.4em; font-weight: 800; border-bottom: 2px solid var(--border); padding-bottom: 8px; flex: 1;">${month}, Year ${year}</h3>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; width: auto; margin: 0 0 0 16px; font-size: 0.8em;" onclick="openEditHistory('${key}')">✏️ Edit Page</button>
+                        </div>
+                        <div style="color: var(--text-main); font-weight: 500; white-space: pre-wrap; line-height: 1.8; font-size: 1.05em; flex: 1;">${note}</div>
+                    </div>
+                    <div class="book-controls">
+                        <button class="book-btn" onclick="turnBookPage(-1)" ${currentBookPage === 0 ? 'disabled' : ''}>← Prev</button>
+                        <span style="color: var(--text-muted); font-size: 0.95em; font-weight: 700; letter-spacing: 1px;">PAGE ${currentBookPage + 1} OF ${sortedHistory.length}</span>
+                        <button class="book-btn" onclick="turnBookPage(1)" ${currentBookPage === sortedHistory.length - 1 ? 'disabled' : ''}>Next →</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function turnBookPage(dir) {
+            currentBookPage += dir;
+            updateBookDisplay();
+        }
+
+        // =======================
+        // EVENTS TIMELINE
+        // =======================
+        function updateEventsTimeline() {
+            const eventsContainer = document.getElementById('eventsTimeline');
+            const sortedEvents = [...gameState.yearHistory].sort((a, b) => b.year - a.year); // Descending
+
+            if (sortedEvents.length === 0) {
+                eventsContainer.innerHTML = '<div class="empty-state">No events recorded yet</div>';
+            } else {
+                eventsContainer.innerHTML = sortedEvents.map(event => `
+                    <div class="timeline-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div class="timeline-item-title" style="margin:0;">Year ${event.year}</div>
+                            <div style="display:flex; gap: 8px;">
+                                <button class="btn btn-secondary" style="margin: 0; padding: 6px 12px; font-size: 0.8em; width: auto; border: 1px solid var(--border);" onclick="openEditEvent(${event.id})">✏️ Edit</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8em;" onclick="removeEvent(${event.id})">Remove</button>
+                            </div>
+                        </div>
+                        <div class="timeline-item-text">${event.event}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Nation management
+        function addNation() {
+            const input = document.getElementById('nationInput');
+            const nation = input.value.trim();
+
+            if (nation) {
+                if (!gameState.countries.includes(nation)) {
+                    gameState.countries.push(nation);
+                    gameState.countryRounds[nation] = false;
+                    saveState();
+                    updateUI();
+                    input.value = '';
+                }
+            }
+        }
+
+        function removeNation(nation) {
+            gameState.countries = gameState.countries.filter(c => c !== nation);
+            delete gameState.countryRounds[nation];
+            saveState();
+            updateUI();
+        }
+
+        // Event management
+        function addEvent() {
+            const input = document.getElementById('eventInput');
+            const event = input.value.trim();
+
+            if (event) {
+                const currentYear = gameState.initialYear + gameState.elapsedYears;
+                gameState.yearHistory.push({
+                    id: Date.now(),
+                    year: currentYear,
+                    event: event
+                });
+                saveState();
+                updateUI();
+                input.value = '';
+            }
+        }
+
+        function removeEvent(id) {
+            gameState.yearHistory = gameState.yearHistory.filter(e => e.id !== id);
+            saveState();
+            updateUI();
+        }
+
+        function nextTurn() {
+            // Reset all country checkmarks
+            Object.keys(gameState.countryRounds).forEach(nation => {
+                gameState.countryRounds[nation] = false;
+            });
+
+            // Advance the turn/week
+            if(gameState.currentTurn < 4) {
+                gameState.currentTurn += 1;
+            }
+            
+            saveState();
+            updateUI();
+        }
+
+        function advanceCycle() {
+            const currentMonth = monthNames[gameState.currentCycle];
+            let monthNotes = document.getElementById('monthNotes').value.trim();
+            
+            // Compile weekly notes into the main history
+            let compiledNotes = monthNotes ? `[Month Overview]\n${monthNotes}\n\n` : '';
+            let hasWeeklyNotes = false;
+
+            gameState.weekNotes.forEach((note, index) => {
+                if (note.trim()) {
+                    compiledNotes += `Week ${index + 1}: ${note.trim()}\n`;
+                    hasWeeklyNotes = true;
+                }
+            });
+
+            if (!monthNotes && !hasWeeklyNotes) {
+                alert('Please add some observations for the month or weeks before advancing.');
+                return;
+            }
+
+            showConfirmModal(
+                'Complete Cycle?',
+                `Advance to the next month? This will compile your notes into the Diary and clear checkboxes.`,
+                () => {
+                    const displayYear = gameState.initialYear + gameState.elapsedYears;
+                    const key = `${displayYear}-${gameState.currentCycle}`;
+                    
+                    gameState.monthHistory[key] = compiledNotes.trim();
+
+                    // Reset nation rounds
+                    Object.keys(gameState.countryRounds).forEach(nation => {
+                        gameState.countryRounds[nation] = false;
+                    });
+
+                    // Advance cycle (Months)
+                    gameState.currentCycle += 1;
+                    if (gameState.currentCycle >= 12) {
+                        gameState.currentCycle = 0;
+                        gameState.elapsedYears += 1; // +1 Year
+                    }
+
+                    // Reset Turns and Notes
+                    gameState.currentTurn = 1;
+                    gameState.weekNotes = ['', '', '', ''];
+                    document.getElementById('monthNotes').value = '';
+                    
+                    // Tell the book to automatically flip to the newly created page
+                    currentBookPage = -1; 
+                    
+                    saveState();
+                    updateUI();
+                }
+            );
+        }
+
+        // =======================
+        // JSON IMPORT / EXPORT
+        // =======================
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const dataStr = JSON.stringify(gameState, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `turns.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('importInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    if (importedData && typeof importedData === 'object') {
+                        gameState = { ...gameState, ...importedData };
+                        saveState();
+                        currentBookPage = -1; // Reset book to newest page
+                        updateUI();
+                        alert('Campaign data successfully imported!');
+                        document.getElementById('settingsPanel').classList.add('hidden');
+                    } else {
+                        alert('Invalid save file format.');
+                    }
+                } catch (error) {
+                    alert('Error reading the JSON file. Ensure it is a valid Campaign Tracker save.');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = ''; // Reset file input so you can import the same file again if needed
+        });
+
+
+        // =======================
+        // MODALS (Confirm & Edit)
+        // =======================
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('confirmModal').classList.add('active');
+
+            const handler = () => {
+                document.getElementById('confirmModal').classList.remove('active');
+                document.getElementById('confirmBtn').removeEventListener('click', handler);
+                onConfirm();
+            };
+
+            document.getElementById('confirmBtn').addEventListener('click', handler);
+
+            document.getElementById('cancelBtn').onclick = () => {
+                document.getElementById('confirmModal').classList.remove('active');
+                document.getElementById('confirmBtn').removeEventListener('click', handler);
+            };
+        }
+
+        function openEditHistory(key) {
+            const [year, cycle] = key.split('-').map(Number);
+            const month = monthNames[cycle];
+
+            document.getElementById('editModalTitle').textContent = `Edit Page (${month}, Year ${year})`;
+            document.getElementById('editModalInput').value = gameState.monthHistory[key];
+            document.getElementById('editModal').classList.add('active');
+
+            const saveHandler = () => {
+                gameState.monthHistory[key] = document.getElementById('editModalInput').value.trim();
+                saveState();
+                updateUI();
+                closeEditModal(saveHandler);
+            };
+            setupEditModal(saveHandler);
+        }
+
+        function openEditEvent(id) {
+            const eventObj = gameState.yearHistory.find(e => e.id === id);
+            if (!eventObj) return;
+
+            document.getElementById('editModalTitle').textContent = `Edit Event (Year ${eventObj.year})`;
+            document.getElementById('editModalInput').value = eventObj.event;
+            document.getElementById('editModal').classList.add('active');
+
+            const saveHandler = () => {
+                eventObj.event = document.getElementById('editModalInput').value.trim();
+                saveState();
+                updateUI();
+                closeEditModal(saveHandler);
+            };
+            setupEditModal(saveHandler);
+        }
+
+        function setupEditModal(saveHandler) {
+            const confirmBtn = document.getElementById('editConfirmBtn');
+            const cancelBtn = document.getElementById('editCancelBtn');
+            
+            // Clean up old listeners
+            const newConfirm = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+            
+            const newCancel = cancelBtn.cloneNode(true);
+            cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+            newConfirm.addEventListener('click', saveHandler);
+            newCancel.addEventListener('click', () => {
+                document.getElementById('editModal').classList.remove('active');
+            });
+        }
+
+        function closeEditModal(handler) {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        // Settings Actions
+        document.getElementById('settingsToggle').addEventListener('click', () => {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('hidden');
+        });
+
+        document.getElementById('initialYear').addEventListener('change', (e) => {
+            gameState.initialYear = parseInt(e.target.value) || 1;
+            saveState();
+            updateUI();
+        });
+
+        document.getElementById('factoryResetBtn').addEventListener('click', () => {
+            document.getElementById('settingsPanel').classList.add('hidden');
+            showConfirmModal(
+                'Factory Reset',
+                'Are you absolutely sure? This will delete all your campaign data and cannot be undone.',
+                () => {
+                    localStorage.removeItem('campaignTrackerState_v2');
+                    localStorage.removeItem('warGameState'); // Clean old legacy data too
+                    location.reload();
+                }
+            );
+        });
+
+        // Setup Event Listeners
+        document.getElementById('addNationBtn').addEventListener('click', addNation);
+        document.getElementById('nationInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addNation();
+        });
+
+        document.getElementById('addEventBtn').addEventListener('click', addEvent);
+        document.getElementById('eventInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) addEvent();
+        });
+
+        // Week note inputs save state dynamically
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`weekNote${i}`).addEventListener('input', (e) => {
+                gameState.weekNotes[i] = e.target.value;
+                saveState();
+            });
+        }
+
+        // Initialize
+        loadState();
+        updateUI();
+    </script>
+</body>
+</html>

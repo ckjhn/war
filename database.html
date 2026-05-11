@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Country Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1620;--surface2:#111d2a;--border:#1a3045;
+  --accent:#00d4ff;--accent2:#ff6b35;--accent3:#39ff14;
+  --gold:#ffd700;--purple:#c084fc;--red:#ff3a3a;
+  --text:#c8dde8;--text-dim:#4a6a7a;
+  --glow:0 0 16px rgba(0,212,255,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);}
+.logo{font-family:'Orbitron',monospace;font-size:clamp(13px,2vw,18px);font-weight:900;letter-spacing:4px;color:var(--accent);text-shadow:0 0 20px rgba(0,212,255,.5);}
+.logo span{color:var(--accent2);}
+.header-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
+.header-actions{display:flex;gap:8px;}
+
+/* ── LAYOUT ── */
+.app{flex:1;display:grid;grid-template-columns:280px 1fr;overflow:hidden;transition:grid-template-columns .3s cubic-bezier(0.4,0,0.2,1);}
+.app.sidebar-collapsed{grid-template-columns:50px 1fr;}
+
+/* ── SIDEBAR ── */
+.sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);overflow:hidden;transition:all .3s cubic-bezier(0.4,0,0.2,1);}
+.sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sidebar-header-content{flex:1;min-width:0;}
+.sidebar-toggle{background:transparent;border:1px solid var(--border);color:var(--accent);font-size:16px;padding:6px 8px;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;width:28px;height:28px;}
+.sidebar-toggle:hover{border-color:var(--accent);box-shadow:var(--glow);}
+.sidebar-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;}
+.search-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 12px;outline:none;}
+.search-input:focus{border-color:var(--accent);}
+.search-input::placeholder{color:var(--text-dim);}
+.country-list{flex:1;overflow-y:auto;padding:8px;}
+.country-list::-webkit-scrollbar{width:4px;}
+.country-list::-webkit-scrollbar-thumb{background:var(--border);}
+.country-card{background:var(--surface2);border:1px solid var(--border);padding:12px 14px;margin-bottom:6px;cursor:pointer;transition:all .2s;position:relative;}
+.country-card:hover{border-color:var(--accent);}
+.country-card.active{border-color:var(--accent);background:rgba(0,212,255,.06);}
+.country-card-flag{font-size:20px;margin-bottom:4px;}
+.country-card-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:6px;}
+.country-card-type{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--accent2);margin-bottom:3px;text-transform:uppercase;}
+.country-card-stats{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
+.country-card-stats span{color:var(--accent3);}
+.country-delete{position:absolute;top:8px;right:8px;background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:12px;cursor:pointer;padding:2px 6px;transition:all .2s;}
+.country-delete:hover,.country-delete.confirm{border-color:var(--red);color:var(--red);}
+.sidebar-footer{flex-shrink:0;padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+
+/* Collapsed state */
+.app.sidebar-collapsed .sidebar-header-content,
+.app.sidebar-collapsed .country-list,
+.app.sidebar-collapsed .sidebar-footer{opacity:0;pointer-events:none;transition:opacity .2s;}
+.app.sidebar-collapsed .sidebar-header-content{display:none;}
+.app.sidebar-collapsed .country-list{display:none;}
+.app.sidebar-collapsed .sidebar-footer{display:none;}
+
+/* ── MAIN EDITOR ── */
+.editor{flex:1;overflow-y:auto;background:var(--bg);}
+.editor::-webkit-scrollbar{width:6px;}
+.editor::-webkit-scrollbar-thumb{background:var(--border);}
+.no-selection{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;}
+.no-selection-icon{font-size:60px;opacity:.3;}
+.no-selection-text{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;}
+
+/* ── COUNTRY EDITOR ── */
+.country-editor{padding:24px;}
+.ce-top{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.flag-input{font-size:32px;background:transparent;border:none;outline:none;width:50px;cursor:text;}
+.name-input{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--text);background:transparent;border:none;border-bottom:1px solid var(--border);outline:none;flex:1;min-width:200px;padding:4px 0;text-transform:uppercase;}
+.name-input:focus{border-bottom-color:var(--accent);}
+.ce-save-badge{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);letter-spacing:2px;display:none;}
+.ce-save-badge.show{display:block;}
+.type-display{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);text-transform:uppercase;padding:6px 12px;border:1px solid var(--accent2);border-radius:2px;}
+
+/* ── SECTIONS ── */
+.section{background:var(--surface);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.section.hidden{display:none;}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;transition:background .2s;}
+.section-header:hover{background:rgba(0,212,255,.04);}
+.section-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;}
+.section-toggle{font-size:12px;color:var(--text-dim);transition:transform .2s;}
+.section.collapsed .section-toggle{transform:rotate(-90deg);}
+.section-body{padding:0 18px 16px;}
+.section.collapsed .section-body{display:none;}
+
+/* ── FIELD ROWS ── */
+.field-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(26,48,69,.5);}
+.field-row:last-child{border-bottom:none;}
+.field-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);flex:1;min-width:0;padding-right:12px;}
+.field-controls{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.adjust-group{display:flex;align-items:center;gap:4px;margin-left:6px;padding-left:6px;border-left:1px solid rgba(26,48,69,.6);}
+.adjust-select,.adjust-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;outline:none;height:28px;}
+.adjust-select{width:54px;padding:0 6px;text-align:center;cursor:pointer;}
+.adjust-input{width:78px;padding:4px 8px;text-align:center;color:var(--accent);}
+.adjust-select:focus,.adjust-input:focus{border-color:var(--accent);}
+.adjust-apply{height:28px;padding:4px 8px;}
+.delta-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 7px;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.delta-btn:hover{border-color:var(--accent);color:var(--accent);}
+.delta-btn.neg:hover{border-color:var(--accent2);color:var(--accent2);}
+.field-input{font-family:'Share Tech Mono',monospace;font-size:13px;width:90px;background:var(--bg);border:1px solid var(--border);color:var(--gold);padding:4px 8px;text-align:center;outline:none;-moz-appearance:textfield;}
+.field-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.field-input:focus{border-color:var(--accent);}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:9px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn:hover{background:var(--accent);color:var(--bg);}
+.btn-orange{border-color:var(--accent2);color:var(--accent2);}
+.btn-orange:hover{background:var(--accent2);color:var(--bg);}
+.btn-green{border-color:var(--accent3);color:var(--accent3);}
+.btn-green:hover{background:var(--accent3);color:var(--bg);}
+.btn-red{border-color:var(--red);color:var(--red);}
+.btn-red:hover{background:var(--red);color:var(--bg);}
+.btn-full{width:100%;}
+.btn-sm{padding:6px 12px;font-size:8px;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--accent);padding:28px;min-width:340px;max-width:500px;width:90%;}
+.modal-title{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.modal-field{margin-bottom:16px;}
+.modal-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.modal-input,.modal-select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px 14px;outline:none;}
+.modal-input:focus,.modal-select:focus{border-color:var(--accent);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">TOTAL <span>CONQUEST</span></div>
+    <div class="header-sub">// Country Database //</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-sm" id="cycle-btn" onclick="openCycleModal()" style="display:none;">⏳ NEW CYCLE</button>
+    <button class="btn btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
+    <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
+  </div>
+</header>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-content">
+        <div class="sidebar-title">Countries</div>
+        <input class="search-input" id="search" type="text" placeholder="Search country…" oninput="renderList()">
+      </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">→</button>
+    </div>
+    <div class="country-list" id="country-list"></div>
+    <div class="sidebar-footer">
+      <button class="btn btn-green btn-full" onclick="openAddModal()">+ ADD COUNTRY</button>
+    </div>
+  </div>
+
+  <div class="editor" id="editor">
+    <div class="no-selection">
+      <div class="no-selection-icon">🗺️</div>
+      <div class="no-selection-text">Select or create a country</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">➕ New Country</div>
+    <div class="modal-field">
+      <div class="modal-label">Flag (Emoji)</div>
+      <input class="modal-input" id="new-flag" type="text" placeholder="🏴" maxlength="4" value="🏴">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Country Name</div>
+      <input class="modal-input" id="new-name" type="text" placeholder="e.g. Republic of Nova" maxlength="40" onkeydown="if(event.key==='Enter')confirmAdd()">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Type</div>
+      <select class="modal-select" id="new-type">
+        <option value="country">Country</option>
+        <option value="organization">Organization</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="confirmAdd()">✓ CREATE</button>
+      <button class="btn btn-orange" onclick="closeModal('add-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="cycle-modal">
+  <div class="modal">
+    <div class="modal-title">⏳ Confirm New Cycle</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:20px;line-height:1.6;">
+      <p style="margin-bottom:10px;">This will apply the following changes to all countries and organizations:</p>
+      <p style="color:var(--accent3);margin-bottom:8px;">📍 <strong>Countries:</strong></p>
+      <ul style="margin-left:20px;margin-bottom:12px;font-size:11px;">
+        <li>+10 Civilians</li>
+        <li>+3 Civilians per Hospital</li>
+        <li>+$10 per Civilian (Money)</li>
+        <li>+$15,000 per Business (Money)</li>
+        <li>+Brute Resources based on Mines</li>
+      </ul>
+      <p style="color:var(--accent3);">🏢 <strong>Organizations:</strong></p>
+      <ul style="margin-left:20px;font-size:11px;">
+        <li>+10 Members</li>
+        <li>+$50 per Member (Money)</li>
+      </ul>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="executeCycle()">✓ CONFIRM CYCLE</button>
+      <button class="btn btn-orange" onclick="closeModal('cycle-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// MINE RESOURCES MAPPING (Official Total Conquest values per mine per cycle)
+// =====================================================
+const MINE_RESOURCES = {
+  'mine_plains': {iron: 380, coal: 190, gold: 60, diamond: 8, gravel: 140, latex: 100, silicon: 48, oil: 100, gas: 160},
+  'mine_forest': {iron: 500, coal: 270, gold: 72, diamond: 16, gravel: 120, latex: 140, silicon: 52, oil: 112, gas: 180},
+  'mine_taiga': {iron: 540, coal: 330, gold: 68, diamond: 14, gravel: 128, latex: 48, silicon: 48, oil: 104, gas: 168},
+  'mine_jungle': {iron: 390, coal: 205, gold: 72, diamond: 14, gravel: 100, latex: 200, silicon: 52, oil: 140, gas: 220},
+  'mine_swamp': {iron: 305, coal: 165, gold: 48, diamond: 8, gravel: 112, latex: 180, silicon: 40, oil: 200, gas: 280},
+  'mine_desert': {iron: 575, coal: 265, gold: 104, diamond: 16, gravel: 160, latex: 0, silicon: 140, oil: 180, gas: 260, uranium: 4},
+  'mine_badlands': {iron: 695, coal: 350, gold: 128, diamond: 18, gravel: 180, latex: 0, silicon: 120, oil: 168, gas: 240, uranium: 7},
+  'mine_mountains': {iron: 900, coal: 490, gold: 140, diamond: 40, gravel: 200, latex: 0, silicon: 88, oil: 72, gas: 100, uranium: 5},
+  'mine_ocean': {iron: 0, coal: 0, gold: 32, diamond: 0, gravel: 60, latex: 0, silicon: 80, oil: 280, gas: 400},
+  'mine_caves': {iron: 820, coal: 450, gold: 112, diamond: 56, gravel: 220, latex: 0, silicon: 72, oil: 48, gas: 72, uranium: 12},
+  'mine_rare': {iron: 400, coal: 200, gold: 120, diamond: 48, gravel: 100, latex: 40, silicon: 72, oil: 88, gas: 128, uranium: 18},
+  'mine_frozen': {iron: 530, coal: 285, gold: 72, diamond: 12, gravel: 140, latex: 0, silicon: 64, oil: 120, gas: 180, uranium: 3},
+};
+
+// =====================================================
+// SCHEMA
+// =====================================================
+const SCHEMA = [
+  {key:'population', label:'👥 Population', steps:[-100,-10,-1,1,10,100], fields:[
+    {k:'civilians',   l:'Civilians',          d:1010},
+    {k:'workers',     l:'Workers',            d:0},
+    {k:'military',    l:'Military',           d:0},
+    {k:'members',     l:'Members',            d:0},
+  ], organizationHide: false},
+  {key:'economy', label:'💰 Economy', steps:[-10000,-1000,-100,100,1000,10000], fields:[
+    {k:'money', l:'Money ($)', d:0},
+  ], organizationHide: false},
+  {key:'military', label:'🎖️ Military', steps:[-100,-10,-1,1,10,100], fields:[
+    {k:'army',           l:'Army',             d:0},
+    {k:'special_forces', l:'Special Forces',   d:0},
+    {k:'generals',       l:'Generals',         d:0},
+    {k:'commanders',     l:'Commanders',       d:0},
+    {k:'majors',         l:'Majors',           d:0},
+  ], organizationHide: true},
+  {key:'brute', label:'🪨 Brute Resources', steps:[-1000,-100,-10,10,100,1000], fields:[
+    {k:'iron',    l:'Iron',       d:0},
+    {k:'coal',    l:'Coal',       d:0},
+    {k:'gold',    l:'Gold',       d:0},
+    {k:'diamond', l:'Diamond',    d:0},
+    {k:'gravel',  l:'Gravel',     d:0},
+    {k:'latex',   l:'Latex',      d:0},
+    {k:'silicon', l:'Silicon',    d:0},
+    {k:'oil',     l:'Oil (L)',    d:0},
+    {k:'gas',     l:'Gas (L)',    d:0},
+    {k:'uranium', l:'Uranium',    d:0},
+  ], organizationHide: true},
+  {key:'refined', label:'⚗️ Refined Resources', steps:[-1000,-100,-10,10,100,1000], fields:[
+    {k:'refined_iron',   l:'Refined Iron',     d:0},
+    {k:'electronics',    l:'Electronics',      d:0},
+    {k:'chips',          l:'Chips',            d:0},
+    {k:'gunpowder',      l:'Gunpowder',        d:0},
+    {k:'tires',          l:'Tires',            d:0},
+    {k:'fuel',           l:'Fuel (L)',         d:0},
+    {k:'refined_uranium',l:'Refined Uranium',  d:0},
+  ], organizationHide: true},
+  {key:'buildings', label:'🏗️ Buildings', steps:[-10,-1,1,10], fields:[
+    {k:'factories',    l:'Factories / Industries',    d:0},
+    {k:'businesses',   l:'Businesses',                d:0},
+    {k:'mines',        l:'Mines',                     d:0},
+    {k:'hospitals',    l:'Hospitals',                 d:0},
+  ], organizationHide: true},
+  {key:'weapons', label:'🔫 Weapons', steps:[-100,-10,-1,1,10,100], fields:[
+    {k:'knives',       l:'Knives',                        d:0},
+    {k:'pistols',      l:'Pistols',                       d:0},
+    {k:'smgs',         l:'SMGs',                          d:0},
+    {k:'rifles',       l:'Rifles',                        d:10},
+    {k:'snipers',      l:'Sniper Rifles',                 d:0},
+    {k:'heavy_weapons',l:'Heavy Weapons',                 d:0},
+    {k:'atm',          l:'Hand Anti-Tank Missiles',       d:0},
+    {k:'light_vests',  l:'Light Military Vests',          d:0},
+    {k:'heavy_vests',  l:'Heavy Military Vests',          d:0},
+    {k:'old_mortar',   l:'Old Mortar (Ground-Mounted)',    d:0},
+  ]},
+  {key:'otherstuff', label:'📦 Other Stuff', steps:[-100,-10,-1,1,10,100], fields:[
+    {k:'other_small',  l:'Other Stuff (Small)',            d:0},
+    {k:'other_medium', l:'Other Stuff (Medium)',           d:0},
+    {k:'other_big',    l:'Other Stuff (Big)',              d:0},
+    {k:'other_huge',   l:'Other Stuff (Huge)',             d:0},
+  ]},
+  {key:'ammo', label:'🔴 Ammunition', steps:[-1000,-100,-10,10,100,1000], fields:[
+    {k:'ammo_50',    l:'.50 Ammo (bullets)',             d:0},
+    {k:'ammo_22mm',  l:'22mm Autocannon Ammo (bullets)', d:0},
+    {k:'ammo_pistol',l:'Pistol Ammo (bullets)',          d:0},
+    {k:'ammo_smg',   l:'SMG Ammo (bullets)',             d:0},
+    {k:'ammo_rifle', l:'Rifle Ammo (bullets)',           d:500},
+    {k:'ammo_sniper',l:'Sniper Ammo (bullets)',          d:0},
+    {k:'ammo_heavy', l:'Heavy Ammo (bullets)',           d:0},
+    {k:'ammo_atm',   l:'Anti-Tank Missile Ammo (missiles)',d:0},
+    {k:'ammo_mortar',l:'Mortar Ammo (rounds)',             d:0},
+  ]},
+  {key:'air', label:'✈️ Air Vehicles', steps:[-10,-1,1,10], fields:[
+    {k:'light_jet',  l:'Light Fighter Jets',            d:0},
+    {k:'med_jet',    l:'Medium Fighter Jets',           d:0},
+    {k:'heavy_jet',  l:'Heavy Fighter Jets',            d:0},
+    {k:'bomber',     l:'Bomber Jets',                   d:0},
+    {k:'helicopter', l:'Helicopters',                   d:0},
+    {k:'airplane',   l:'Airplanes (transport/military)',d:0},
+  ]},
+  {key:'land', label:'🪖 Land Vehicles', steps:[-10,-1,1,10], fields:[
+    {k:'light_tank', l:'Light Tanks',                   d:0},
+    {k:'med_tank',   l:'Medium Tanks',                  d:0},
+    {k:'heavy_tank', l:'Heavy Tanks',                   d:0},
+    {k:'motorbike',  l:'Motorbikes',                    d:0},
+    {k:'car',        l:'Cars',                          d:0},
+    {k:'truck',      l:'Trucks (military/transport)',   d:0},
+  ]},
+  {key:'water', label:'⚓ Water Vehicles', steps:[-10,-1,1,10], fields:[
+    {k:'submarine',   l:'Submarines',                   d:0},
+    {k:'warship',     l:'Warships',                     d:0},
+    {k:'boat',        l:'Boats',                        d:0},
+    {k:'ship',        l:'Ships (commercial/military)',  d:0},
+    {k:'carrier',     l:'Carriers',                     d:0},
+    {k:'supercarrier',l:'Supercarriers',                d:0},
+  ]},
+  {key:'missiles', label:'🚀 Missiles & Torpedoes', steps:[-10,-1,1,10], fields:[
+    {k:'torpedo',   l:'Submarine Torpedoes',            d:0},
+    {k:'icbm',      l:'Ballistic Missiles (ICBM)',      d:0},
+    {k:'cruise',    l:'Cruise Missiles',                d:0},
+    {k:'hypersonic',l:'Hypersonic Missiles',            d:0},
+    {k:'guided',    l:'Guided Missiles',                d:0},
+    {k:'nuclear',   l:'Nuclear Missiles',               d:0},
+  ]},
+  {key:'others', label:'💣 Others', steps:[-100,-10,-1,1,10,100], fields:[
+    {k:'grenade',     l:'Grenades',                     d:0},
+    {k:'spec_grenade',l:'Specialized Grenades',         d:0},
+    {k:'land_bomb',   l:'Land Bombs (Anti-Tank)',       d:0},
+    {k:'drone',       l:'Drones',                       d:0},
+    {k:'barricade',   l:'Barricades',                   d:0},
+    {k:'barrier',     l:'Barriers',                     d:0},
+  ]},
+  {key:'observations', label:'National Plan', fields:[
+    {k:'national_plan', l:'National Plan', d:''},
+  ], isTextSection: true, organizationHide: false},
+];
+
+// =====================================================
+// MINE CATEGORIES
+// =====================================================
+const MINE_CATS_DB = [
+  {k:'mine_plains',    icon:'🌾', label:'Plains / Fertile Land'},
+  {k:'mine_forest',    icon:'🌲', label:'Forests / Woodlands'},
+  {k:'mine_taiga',     icon:'🎄', label:'Taiga / Cold Forests'},
+  {k:'mine_jungle',    icon:'🌴', label:'Jungles / Tropical'},
+  {k:'mine_swamp',     icon:'🌿', label:'Swamps / Wetlands'},
+  {k:'mine_desert',    icon:'🏜️', label:'Deserts / Drylands'},
+  {k:'mine_badlands',  icon:'🌋', label:'Badlands / Wastelands'},
+  {k:'mine_mountains', icon:'⛰️', label:'Mountains / Hills / Peaks'},
+  {k:'mine_ocean',     icon:'🌊', label:'Oceans / Water'},
+  {k:'mine_caves',     icon:'🕳️', label:'Caves / Underground'},
+  {k:'mine_rare',      icon:'✨', label:'Rare / Magical / Special'},
+  {k:'mine_frozen',    icon:'❄️', label:'Frozen / Arctic'},
+];
+
+// =====================================================
+// STATE
+// =====================================================
+let countries = [];
+let selectedId = null;
+let deletePending = {};
+let collapsedSections = new Set();
+
+function uuid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+
+function makeDefault(name='New Country', flag='🏴', type='country'){
+  const c = {id:uuid(), name, flag, type, createdAt:Date.now()};
+  for(const s of SCHEMA){ c[s.key]={}; for(const f of s.fields) c[s.key][f.k]=f.d; }
+  // Mines section — one entry per biome category
+  c.mines = {};
+  for(const m of MINE_CATS_DB) c.mines[m.k] = 0;
+  return c;
+}
+
+function load(){
+  try{ countries = JSON.parse(localStorage.getItem('tc_countries')||'[]'); }
+  catch(e){ countries=[]; }
+  // Ensure all countries have a type field
+  countries.forEach(c => {
+    if(!c.type) c.type = 'country';
+    if(!c.mines){ c.mines={}; for(const m of MINE_CATS_DB) c.mines[m.k]=0; }
+    // Ensure all countries have observations section
+    if(!c.observations) { 
+      c.observations = {}; 
+      for(const f of SCHEMA.find(s => s.key === 'observations')?.fields || []) {
+        c.observations[f.k] = f.d;
+      }
+    }
+  });
+}
+function save(){
+  localStorage.setItem('tc_countries', JSON.stringify(countries));
+}
+function getCountry(id){ return countries.find(c=>c.id===id)||null; }
+
+// =====================================================
+// LIST RENDER
+// =====================================================
+function renderList(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const el = document.getElementById('country-list');
+  const filtered = countries.filter(c=>c.name.toLowerCase().includes(q));
+  if(filtered.length===0){
+    el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:30px;">No countries found</div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(c=>{
+    const isOrg = c.type === 'organization';
+    const typeLabel = isOrg ? 'ORG' : 'CTR';
+    const statValue = isOrg ? (c.population?.members||0) : (c.population?.civilians||0);
+    return `
+    <div class="country-card ${selectedId===c.id?'active':''}" onclick="selectCountry('${c.id}')">
+      <button class="country-delete ${deletePending[c.id]?'confirm':''}" onclick="deleteCountry(event,'${c.id}')" title="${deletePending[c.id]?'Click again to confirm':'Delete'}">
+        ${deletePending[c.id]?'✓':'×'}
+      </button>
+      <div class="country-card-flag">${c.flag||'🏴'}</div>
+      <div class="country-card-name">${c.name}</div>
+      <div class="country-card-type">${typeLabel}</div>
+      <div class="country-card-stats">
+        ${isOrg ? `Members: <span>${fmt(statValue)}</span>` : `Civ: <span>${fmt(statValue)}</span>`} &nbsp;
+        $<span>${fmt(c.economy?.money||0)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================
+// EDITOR RENDER
+// =====================================================
+function selectCountry(id){
+  selectedId = id;
+  const cycleBtn = document.getElementById('cycle-btn');
+  if(selectedId){
+    cycleBtn.style.display = 'block';
+  } else {
+    cycleBtn.style.display = 'none';
+  }
+  renderList();
+  renderEditor();
+}
+
+function renderEditor(){
+  const editor = document.getElementById('editor');
+  const c = getCountry(selectedId);
+  if(!c){
+    editor.innerHTML=`<div class="no-selection"><div class="no-selection-icon">🗺️</div><div class="no-selection-text">Select or create a country</div></div>`;
+    document.getElementById('cycle-btn').style.display = 'none';
+    return;
+  }
+
+  const isOrg = c.type === 'organization';
+  const typeLabel = isOrg ? 'Organization' : 'Country';
+  
+  let html = `<div class="country-editor">
+    <div class="ce-top">
+      <input class="flag-input" id="ce-flag" type="text" value="${c.flag||'🏴'}" maxlength="4" onchange="updateMeta('flag',this.value)" title="Flag emoji">
+      <input class="name-input" id="ce-name" type="text" value="${c.name}" placeholder="Country Name" onchange="updateMeta('name',this.value)">
+      <div class="type-display">${typeLabel}</div>
+      <span class="ce-save-badge" id="save-badge">✓ SAVED</span>
+    </div>`;
+
+  for(const s of SCHEMA){
+    // Hide sections for organizations that shouldn't see them
+    if(isOrg && s.organizationHide) continue;
+    
+    // Use renderTextSection for text-based sections, otherwise use renderSection
+    if(s.isTextSection){
+      html += renderTextSection(c, s, isOrg);
+    } else {
+      html += renderSection(c, s, isOrg);
+    }
+    
+    // Show mines section only for countries
+    if(s.key === 'buildings' && !isOrg) html += renderMinesSection(c);
+  }
+
+  html += `</div>`;
+  editor.innerHTML = html;
+  // Restore collapsed state that was active before re-render
+  collapsedSections.forEach(key => {
+    const sec = document.getElementById('sec-'+key);
+    if(sec) sec.classList.add('collapsed');
+  });
+}
+
+function renderSection(c, s, isOrg=false){
+  const vals = c[s.key]||{};
+  const negSteps = s.steps.filter(x=>x<0);
+  const posSteps = s.steps.filter(x=>x>0);
+
+  // Filter fields for organizations vs countries
+  let fields = s.fields;
+  if(s.key === 'population'){
+    if(isOrg){
+      fields = [{k:'members', l:'Members', d:0}];
+    } else {
+      // For countries, exclude members
+      fields = fields.filter(f => f.k !== 'members');
+    }
+  }
+
+  const rows = fields.map(f=>{
+    const val = vals[f.k]??f.d;
+    const negBtns = negSteps.map(n=>`<button class="delta-btn neg" onclick="delta('${c.id}','${s.key}','${f.k}',${n})">${n}</button>`).join('');
+    const posBtns = posSteps.map(n=>`<button class="delta-btn" onclick="delta('${c.id}','${s.key}','${f.k}',${n})">+${n}</button>`).join('');
+    return `<div class="field-row">
+      <span class="field-label">${f.l}</span>
+      <div class="field-controls">
+        ${negBtns}
+        <input class="field-input" type="number" value="${val}" min="0"
+          onchange="updateField('${c.id}','${s.key}','${f.k}',this.value)"
+          oninput="updateField('${c.id}','${s.key}','${f.k}',this.value)">
+        ${posBtns}
+        <div class="adjust-group">
+          <select class="adjust-select" id="adj-op-${c.id}-${s.key}-${f.k}" title="Operation">
+            <option value="add">+ Add</option>
+            <option value="remove">- Remove</option>
+          </select>
+          <input class="adjust-input" id="adj-val-${c.id}-${s.key}-${f.k}" type="number" min="0" step="any" placeholder="Amount"
+            onkeydown="if(event.key==='Enter')applyAdjustment('${c.id}','${s.key}','${f.k}')">
+          <button class="btn btn-sm adjust-apply" onclick="applyAdjustment('${c.id}','${s.key}','${f.k}')">APPLY</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Add counter for military section
+  let headerExtra = '';
+  if(s.key === 'military'){
+    const militaryTotal = Object.values(vals).reduce((sum, v) => sum + (parseInt(v)||0), 0);
+    headerExtra = `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);margin-right:10px;">
+      Total: ${militaryTotal} unit${militaryTotal!==1?'s':''}
+    </span>`;
+  }
+
+  return `<div class="section" id="sec-${s.key}">
+    <div class="section-header" onclick="toggleSection('${s.key}')">
+      <span class="section-title">${s.label}</span>
+      ${headerExtra}
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">${rows}</div>
+  </div>`;
+}
+
+function renderTextSection(c, s, isOrg=false){
+  const vals = c[s.key]||{};
+  const rows = s.fields.map(f=>{
+    const val = vals[f.k]??f.d;
+    return `<div style="padding:12px 18px;border-bottom:1px solid rgba(26,48,69,.5);">
+      <span class="field-label" style="display:block;margin-bottom:8px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);">${f.l}</span>
+      <textarea class="field-textarea" style="
+        width:100%;min-height:100px;background:var(--bg);border:1px solid var(--border);
+        color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;
+        padding:10px;outline:none;resize:vertical;border-radius:2px;"
+        placeholder="Enter ${f.l.toLowerCase()}..."
+        onchange="updateTextField('${c.id}','${s.key}','${f.k}',this.value)"
+      >${val}</textarea>
+    </div>`;
+  }).join('');
+
+  return `<div style="background:var(--surface);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;">${rows}</div>`;
+}
+
+function renderMinesSection(c){
+  if(!c.mines) c.mines = {};
+  const vals = c.mines;
+  const total = MINE_CATS_DB.reduce((sum, m) => sum + (parseInt(vals[m.k])||0), 0);
+
+  const rows = MINE_CATS_DB.map(m => {
+    const count = parseInt(vals[m.k]||0);
+    return `<div class="field-row">
+      <span class="field-label" style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">${m.icon}</span>
+        <span>${m.label}</span>
+      </span>
+      <div class="field-controls">
+        <button class="delta-btn neg" onclick="deltaMine('${c.id}','${m.k}',-1)">−1</button>
+        <button class="delta-btn neg" onclick="deltaMine('${c.id}','${m.k}',-5)">−5</button>
+        <input class="field-input" type="number" value="${count}" min="0"
+          onchange="updateMineField('${c.id}','${m.k}',this.value)"
+          oninput="updateMineField('${c.id}','${m.k}',this.value)"
+          style="color:${count>0?'var(--accent3)':'var(--text-dim)'};">
+        <button class="delta-btn" onclick="deltaMine('${c.id}','${m.k}',1)">+1</button>
+        <button class="delta-btn" onclick="deltaMine('${c.id}','${m.k}',5)">+5</button>
+        <div class="adjust-group">
+          <select class="adjust-select" id="adj-op-${c.id}-mines-${m.k}" title="Operation">
+            <option value="add">+ Add</option>
+            <option value="remove">- Remove</option>
+          </select>
+          <input class="adjust-input" id="adj-val-${c.id}-mines-${m.k}" type="number" min="0" step="1" placeholder="Amount"
+            onkeydown="if(event.key==='Enter')applyMineAdjustment('${c.id}','${m.k}')">
+          <button class="btn btn-sm adjust-apply" onclick="applyMineAdjustment('${c.id}','${m.k}')">APPLY</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const summaryPills = MINE_CATS_DB
+    .filter(m => (parseInt(vals[m.k])||0) > 0)
+    .map(m => `<span style="
+      display:inline-flex;align-items:center;gap:5px;
+      font-family:'Share Tech Mono',monospace;font-size:10px;
+      color:var(--accent3);background:rgba(57,255,20,.07);
+      border:1px solid rgba(57,255,20,.2);padding:3px 10px;margin:3px 3px 3px 0;">
+      ${m.icon} ${m.label}
+      <strong style="color:var(--gold);margin-left:4px;">×${vals[m.k]}</strong>
+    </span>`)
+    .join('');
+
+  return `<div class="section" id="sec-mines">
+    <div class="section-header" onclick="toggleSection('mines')">
+      <span class="section-title" style="color:var(--accent2);">⛏️ Mines by Category</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);margin-right:10px;">
+        Total: ${total} mine${total!==1?'s':''}
+      </span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      ${total > 0 ? `<div style="padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:4px;line-height:1.6;">${summaryPills}</div>` : ''}
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function applyAdjustment(id, section, field){
+  const c = getCountry(id); if(!c) return;
+  if(!c[section]) c[section] = {};
+  const opEl = document.getElementById(`adj-op-${id}-${section}-${field}`);
+  const valEl = document.getElementById(`adj-val-${id}-${section}-${field}`);
+  if(!opEl || !valEl) return;
+
+  const rawAmount = parseFloat(valEl.value);
+  if(!Number.isFinite(rawAmount) || rawAmount < 0) return;
+
+  const before = parseFloat(c[section][field]) || 0;
+  const after = opEl.value === 'remove'
+    ? Math.max(0, before - rawAmount)
+    : Math.max(0, before + rawAmount);
+
+  c[section][field] = after;
+  save();
+  flashSaved();
+  renderEditor();
+  renderList();
+  toast(`${labelFor(section, field)}: ${fmt(before)} → ${fmt(after)}`);
+}
+
+function applyMineAdjustment(id, key){
+  const c = getCountry(id); if(!c) return;
+  if(!c.mines) c.mines = {};
+  const opEl = document.getElementById(`adj-op-${id}-mines-${key}`);
+  const valEl = document.getElementById(`adj-val-${id}-mines-${key}`);
+  if(!opEl || !valEl) return;
+
+  const rawAmount = parseInt(valEl.value, 10);
+  if(!Number.isFinite(rawAmount) || rawAmount < 0) return;
+
+  const before = parseInt(c.mines[key]) || 0;
+  const after = opEl.value === 'remove'
+    ? Math.max(0, before - rawAmount)
+    : Math.max(0, before + rawAmount);
+
+  c.mines[key] = after;
+  save();
+  flashSaved();
+  renderEditor();
+  toast(`${mineLabelFor(key)}: ${fmt(before)} → ${fmt(after)}`);
+}
+
+function labelFor(section, field){
+  const sec = SCHEMA.find(s => s.key === section);
+  const fld = sec?.fields.find(f => f.k === field);
+  return fld?.l || field;
+}
+
+function mineLabelFor(key){
+  return MINE_CATS_DB.find(m => m.k === key)?.label || key;
+}
+
+function updateMineField(id, key, val){
+  const c = getCountry(id); if(!c) return;
+  if(!c.mines) c.mines = {};
+  c.mines[key] = Math.max(0, parseInt(val)||0);
+  save(); flashSaved();
+  renderEditor();
+}
+
+function deltaMine(id, key, amount){
+  const c = getCountry(id); if(!c) return;
+  if(!c.mines) c.mines = {};
+  c.mines[key] = Math.max(0, (parseInt(c.mines[key])||0) + amount);
+  save(); flashSaved();
+  renderEditor();
+}
+
+function toggleSection(key){
+  const sec = document.getElementById('sec-'+key);
+  if(!sec) return;
+  sec.classList.toggle('collapsed');
+  if(sec.classList.contains('collapsed')) collapsedSections.add(key);
+  else collapsedSections.delete(key);
+}
+
+// =====================================================
+// DATA UPDATES
+// =====================================================
+function updateMeta(key, val){
+  const c = getCountry(selectedId); if(!c) return;
+  c[key] = val;
+  save();
+  renderList();
+  flashSaved();
+}
+
+function updateField(id, section, field, val){
+  const c = getCountry(id); if(!c) return;
+  if(!c[section]) c[section]={};
+  const n = parseFloat(val)||0;
+  c[section][field] = Math.max(0, n);
+  save();
+  flashSaved();
+  if(section==='population'||section==='economy') renderList();
+}
+
+function updateTextField(id, section, field, val){
+  const c = getCountry(id); if(!c) return;
+  if(!c[section]) c[section]={};
+  c[section][field] = val;
+  save();
+  flashSaved();
+}
+
+function delta(id, section, field, amount){
+  const c = getCountry(id); if(!c) return;
+  if(!c[section]) c[section]={};
+  const current = c[section][field]??0;
+  const newVal = Math.max(0, current + amount);
+  c[section][field] = newVal;
+  renderEditor();
+  save();
+  renderList();
+  flashSaved();
+}
+
+let saveTimer=null;
+function flashSaved(){
+  const badge=document.getElementById('save-badge');
+  if(!badge)return;
+  badge.classList.add('show');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>badge.classList.remove('show'),1500);
+}
+
+// =====================================================
+// NEW CYCLE
+// =====================================================
+function openCycleModal(){
+  document.getElementById('cycle-modal').classList.add('open');
+}
+
+function closeCycleModal(){
+  closeModal('cycle-modal');
+}
+
+function executeCycle(){
+  if(countries.length === 0){
+    toast('No countries or organizations to cycle.');
+    closeModal('cycle-modal');
+    return;
+  }
+
+  countries.forEach(c => {
+    if(c.type === 'organization'){
+      // Organizations: +10 members, +$50 per member
+      if(!c.population) c.population = {};
+      const currentMembers = Number(c.population.members) || 0;
+      c.population.members = currentMembers + 10;
+      
+      if(!c.economy) c.economy = {};
+      const currentMoney = Number(c.economy.money) || 0;
+      c.economy.money = currentMoney + (currentMembers + 10) * 50;
+    } else {
+      // Countries: +10 civilians, +$10 per civilian, +$15,000 per business, +brute resources from mines
+      if(!c.population) c.population = {};
+      const currentCivs = Number(c.population.civilians) || 0;
+      
+      if(!c.economy) c.economy = {};
+      const currentMoney = Number(c.economy.money) || 0;
+      
+      if(!c.buildings) c.buildings = {};
+      const currentBusinesses = Number(c.buildings.businesses) || 0;
+      const currentHospitals  = Number(c.buildings.hospitals)  || 0;
+
+      c.population.civilians = currentCivs + 10 + (currentHospitals * 3);
+
+      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 15000);
+      
+      // Add brute resources based on mines
+      if(!c.brute) c.brute = {};
+      if(c.mines){
+        for(const [mineType, count] of Object.entries(c.mines)){
+          const resources = MINE_RESOURCES[mineType];
+          const numCount = Number(count) || 0;
+          if(resources && numCount > 0){
+            for(const [resource, amount] of Object.entries(resources)){
+              // Enforce strictly numeric math to avoid string concatenation bugs
+              c.brute[resource] = Number(c.brute[resource] || 0) + (Number(amount) * numCount);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  save();
+  renderList();
+  renderEditor();
+  closeModal('cycle-modal');
+  toast('⏳ New cycle completed!');
+}
+
+// =====================================================
+// ADD COUNTRY
+// =====================================================
+function openAddModal(){
+  document.getElementById('new-name').value='';
+  document.getElementById('new-flag').value='🏴';
+  document.getElementById('new-type').value='country';
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('new-name').focus(),100);
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function confirmAdd(){
+  const name=(document.getElementById('new-name').value||'').trim();
+  const flag=(document.getElementById('new-flag').value||'🏴').trim();
+  const type=(document.getElementById('new-type').value||'country').trim();
+  if(!name){document.getElementById('new-name').style.borderColor='var(--red)';return;}
+  const c = makeDefault(name, flag||'🏴', type);
+  countries.push(c);
+  save();
+  closeModal('add-modal');
+  selectCountry(c.id);
+  renderList();
+  toast('Country created!');
+}
+
+// =====================================================
+// DELETE COUNTRY
+// =====================================================
+function deleteCountry(e, id){
+  e.stopPropagation();
+  if(deletePending[id]){
+    countries = countries.filter(c=>c.id!==id);
+    delete deletePending[id];
+    if(selectedId===id){ selectedId=null; renderEditor(); }
+    save(); renderList();
+    toast('Country deleted.');
+  } else {
+    deletePending[id]=true;
+    renderList();
+    setTimeout(()=>{ delete deletePending[id]; renderList(); }, 3000);
+  }
+}
+
+// =====================================================
+// IMPORT / EXPORT
+// =====================================================
+function exportJSON(){
+  const data = JSON.stringify(countries, null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `database.json`;
+  a.click();
+  toast('Exported successfully!');
+}
+
+function importJSON(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data))throw new Error();
+      // Hydrate mines field for any country that lacks it
+      data.forEach(c=>{ 
+        if(!c.mines){ c.mines={}; for(const m of MINE_CATS_DB) c.mines[m.k]=0; }
+        if(!c.type) c.type='country';
+        // Hydrate observations field for any country that lacks it
+        if(!c.observations) {
+          c.observations = {};
+          for(const f of SCHEMA.find(s => s.key === 'observations')?.fields || []) {
+            c.observations[f.k] = f.d;
+          }
+        }
+      });
+      countries=data;
+      save(); renderList();
+      if(selectedId&&!getCountry(selectedId)){selectedId=null;renderEditor();}
+      toast(`Imported ${data.length} countries.`);
+    }catch{toast('Invalid JSON file.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// =====================================================
+// UTILS
+// =====================================================
+function fmt(n){ return Number(n).toLocaleString('en-US'); }
+function toast(msg, dur=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+let sidebarCollapsed = false;
+function toggleSidebar(){
+  const appDiv = document.querySelector('.app');
+  const toggleBtn = document.getElementById('sidebar-toggle');
+  sidebarCollapsed = !sidebarCollapsed;
+  
+  if(sidebarCollapsed){
+    appDiv.classList.add('sidebar-collapsed');
+    toggleBtn.textContent = '←';
+    toggleBtn.setAttribute('title', 'Expand sidebar');
+  } else {
+    appDiv.classList.remove('sidebar-collapsed');
+    toggleBtn.textContent = '→';
+    toggleBtn.setAttribute('title', 'Collapse sidebar');
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('add-modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal('add-modal');
+});
+
+document.getElementById('cycle-modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal('cycle-modal');
+});
+
+// =====================================================
+// BOOT
+// =====================================================
+load();
+renderList();
+</script>
+</body>
+</html>

@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Trade Market</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1620;--surface2:#111d2a;--border:#1a3045;
+  --accent:#00d4ff;--accent2:#ff6b35;--accent3:#39ff14;
+  --gold:#ffd700;--purple:#c084fc;--red:#ff3a3a;--yellow:#facc15;
+  --text:#c8dde8;--text-dim:#4a6a7a;
+  --glow:0 0 16px rgba(0,212,255,.3);--glow2:0 0 16px rgba(255,107,53,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;}
+
+/* ── HEADER ── */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10;}
+.logo{font-family:'Orbitron',monospace;font-size:clamp(13px,2vw,18px);font-weight:900;letter-spacing:4px;color:var(--accent);text-shadow:0 0 20px rgba(0,212,255,.5);}
+.logo span{color:var(--accent2);}
+.header-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);padding:0 28px;background:var(--surface);}
+.tab-btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:12px 18px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.tab-btn:hover{color:var(--accent);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-content{display:none;padding:24px 28px;}
+.tab-content.active{display:block;}
+
+/* ── FILTERS ── */
+.filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.filter-btn{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent);}
+.filter-btn[data-f="SELL"].active{border-color:var(--accent2);color:var(--accent2);}
+.filter-btn[data-f="BUY"].active{border-color:var(--accent3);color:var(--accent3);}
+.filter-search{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 12px;outline:none;flex:1;min-width:160px;max-width:280px;}
+.filter-search:focus{border-color:var(--accent);}
+
+/* ── PACKAGE GRID ── */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;}
+
+/* ── PACKAGE CARD ── */
+.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;overflow:hidden;transition:border-color .2s;}
+.pkg-card:hover{border-color:rgba(0,212,255,.3);}
+.pkg-card.sell{border-left:3px solid var(--accent2);}
+.pkg-card.buy{border-left:3px solid var(--accent3);}
+.pkg-card.negotiating{border-left:3px solid var(--yellow);}
+.pkg-card.accepted{border-left:3px solid var(--accent);opacity:.7;}
+.pkg-card.denied,.pkg-card.cancelled{border-left:3px solid var(--red);opacity:.6;}
+.pkg-card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.pkg-type-badge{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;border-radius:1px;}
+.badge-sell{background:rgba(255,107,53,.15);border:1px solid var(--accent2);color:var(--accent2);}
+.badge-buy{background:rgba(57,255,20,.1);border:1px solid var(--accent3);color:var(--accent3);}
+.badge-neg{background:rgba(250,204,21,.1);border:1px solid var(--yellow);color:var(--yellow);}
+.badge-accepted{background:rgba(0,212,255,.1);border:1px solid var(--accent);color:var(--accent);}
+.badge-denied{background:rgba(255,58,58,.1);border:1px solid var(--red);color:var(--red);}
+.pkg-country{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--text);}
+.pkg-card-body{padding:14px 16px;}
+.pkg-items{margin-bottom:12px;}
+.pkg-item-row{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(26,48,69,.4);}
+.pkg-item-row:last-child{border-bottom:none;}
+.pkg-item-name{color:var(--text-dim);}
+.pkg-item-qty{color:var(--gold);font-weight:bold;}
+.pkg-price{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--accent3);margin-bottom:6px;}
+.pkg-price small{font-size:10px;color:var(--text-dim);font-weight:normal;letter-spacing:2px;}
+.pkg-notes{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);font-style:italic;margin-bottom:10px;}
+.pkg-neg-preview{background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.2);padding:8px 12px;margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.pkg-neg-from{color:var(--yellow);font-weight:bold;margin-bottom:3px;}
+.pkg-neg-price{color:var(--gold);}
+.pkg-card-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
+.pkg-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);padding:8px 16px;border-top:1px solid var(--border);}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:8px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn:hover{background:var(--accent);color:var(--bg);}
+.btn-orange{border-color:var(--accent2);color:var(--accent2);}
+.btn-orange:hover{background:var(--accent2);color:var(--bg);}
+.btn-green{border-color:var(--accent3);color:var(--accent3);}
+.btn-green:hover{background:var(--accent3);color:var(--bg);}
+.btn-red{border-color:var(--red);color:var(--red);}
+.btn-red:hover{background:var(--red);color:var(--bg);}
+.btn-yellow{border-color:var(--yellow);color:var(--yellow);}
+.btn-yellow:hover{background:var(--yellow);color:var(--bg);}
+.btn-sm{padding:5px 10px;font-size:8px;}
+.btn-full{width:100%;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:30px 20px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border);padding:28px;width:100%;max-width:620px;position:relative;margin:auto;}
+.modal-close{position:absolute;top:14px;right:14px;background:transparent;border:none;color:var(--text-dim);font-size:18px;cursor:pointer;}
+.modal-close:hover{color:var(--red);}
+.modal-title{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.modal-section{margin-bottom:18px;}
+.modal-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:7px;}
+.modal-input,.modal-select,.modal-textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px 14px;outline:none;}
+.modal-input:focus,.modal-select:focus,.modal-textarea:focus{border-color:var(--accent);}
+.modal-select option{background:var(--surface);}
+.modal-textarea{resize:vertical;min-height:70px;}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:16px 0;}
+
+/* ── ITEM BUILDER ── */
+.items-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.item-row-builder{display:grid;grid-template-columns:1fr 100px auto;gap:8px;align-items:center;}
+.item-row-builder button.btn{width:100%;text-align:left;padding:8px 10px;}
+.item-row-builder input[type="number"]{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;width:100%;}
+.item-row-builder input[type="number"]:focus{border-color:var(--accent);}
+.remove-item{background:transparent;border:1px solid var(--red);color:var(--red);font-size:12px;cursor:pointer;padding:5px 9px;}
+
+/* ── ITEM PICKER ── */
+.item-picker-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.item-picker-modal.open{opacity:1;pointer-events:all;}
+.item-picker-content{background:var(--surface);border:1px solid var(--border);padding:20px;width:100%;max-width:500px;max-height:70vh;border-radius:2px;display:flex;flex-direction:column;}
+.item-picker-search{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 12px;outline:none;margin-bottom:12px;width:100%;}
+.item-picker-search:focus{border-color:var(--accent);}
+.item-picker-categories{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.item-picker-cat-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;}
+.item-picker-cat-btn:hover{border-color:var(--accent);color:var(--accent);}
+.item-picker-cat-btn.active{border-color:var(--accent);background:var(--accent);color:var(--bg);}
+.item-picker-list{overflow-y:auto;flex:1;margin-bottom:12px;}
+.item-picker-item{padding:8px 12px;border:1px solid rgba(0,212,255,.1);margin-bottom:4px;cursor:pointer;transition:all .2s;background:var(--bg);}
+.item-picker-item:hover{border-color:var(--accent);background:rgba(0,212,255,.05);}
+.item-picker-item-name{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);}
+.item-picker-item-value{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.item-picker-actions{display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── PRICE COMPARISON ── */
+.price-comparison{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:2px;padding:12px;margin:12px 0;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.price-comparison-row{display:flex;justify-content:space-between;padding:4px 0;color:var(--text-dim);}
+.price-comparison-row strong{color:var(--text);}
+.price-comparison-warning{margin-top:8px;padding:8px;border-radius:2px;font-size:10px;font-style:italic;}
+.price-comparison-fair{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);color:var(--accent3);}
+.price-comparison-expensive{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);color:var(--accent2);}
+.price-comparison-cheap{background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);color:var(--yellow);}
+.items-summary{background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:12px;margin:12px 0;}
+.items-summary-item{display:flex;justify-content:space-between;padding:4px 0;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.items-summary-total{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);margin-top:8px;font-weight:bold;color:var(--text);}
+
+/* ── NEGOTIATION THREAD ── */
+.thread{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;max-height:320px;overflow-y:auto;padding-right:4px;}
+.thread::-webkit-scrollbar{width:4px;}
+.thread::-webkit-scrollbar-thumb{background:var(--border);}
+.thread-item{padding:12px 14px;border-radius:1px;}
+.thread-original{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);}
+.thread-counter{background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.2);}
+.thread-from{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.thread-price{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--gold);}
+.thread-msg{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);margin-top:5px;font-style:italic;}
+.thread-items{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);margin-top:5px;}
+.thread-status{display:inline-block;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:2px 8px;margin-top:6px;text-transform:uppercase;}
+.status-pending{color:var(--yellow);border:1px solid var(--yellow);}
+.status-accepted{color:var(--accent3);border:1px solid var(--accent3);}
+.status-denied{color:var(--red);border:1px solid var(--red);}
+
+/* ── HISTORY ── */
+.history-table{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.history-table th{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.history-table td{padding:10px 14px;border-bottom:1px solid rgba(26,48,69,.4);color:var(--text);vertical-align:top;}
+.history-table tr:hover td{background:rgba(0,212,255,.02);}
+.outcome-accepted{color:var(--accent3);font-weight:bold;}
+.outcome-denied{color:var(--red);}
+.outcome-cancelled{color:var(--text-dim);}
+
+/* ── QUALITY SYSTEM ── */
+.quality-badge{display:inline-block;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:1px;margin-left:6px;text-transform:uppercase;font-weight:bold;border:1px solid;}
+.quality-factory{background:rgba(57,255,20,.15);border-color:#39ff14;color:#39ff14;}
+.quality-minimal{background:rgba(0,212,255,.15);border-color:#00d4ff;color:#00d4ff;}
+.quality-field{background:rgba(250,204,21,.15);border-color:#facc15;color:#facc15;}
+.quality-worn{background:rgba(255,107,53,.15);border-color:#ff6b35;color:#ff6b35;}
+.quality-battle{background:rgba(255,58,58,.15);border-color:#ff3a3a;color:#ff3a3a;}
+.quality-selector{display:flex;flex-direction:column;gap:10px;margin:12px 0;padding:12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:2px;}
+.quality-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px;}
+.quality-buttons{display:flex;flex-direction:column;gap:6px;}
+.quality-btn{padding:8px 12px;font-family:'Share Tech Mono',monospace;font-size:9px;border:1px solid var(--text-dim);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;border-radius:2px;text-align:left;}
+.quality-btn:hover{border-color:var(--accent);}
+.quality-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+.quality-info{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);padding:8px;border-left:2px solid var(--accent);background:rgba(0,212,255,.05);margin-top:8px;}
+.quality-price-display{display:flex;gap:12px;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.quality-price-item{flex:1;padding:8px;background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.15);border-radius:2px;}
+.quality-price-item strong{color:var(--text);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:300;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.empty-state{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);text-align:center;padding:60px 20px;letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">TOTAL <span>CONQUEST</span></div>
+    <div class="header-sub">// Trade Market //</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-green" onclick="openCreateModal()">+ CREATE PACKAGE</button>
+    <button class="btn btn-sm" onclick="exportHistory()">⬇ Export History</button>
+    <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import History<input type="file" accept=".json" onchange="importHistory(event)" style="display:none;"></label>
+    <button class="btn btn-sm btn-red" onclick="factoryReset()">⚠ Factory Reset</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('market',this)">📋 Market Board</button>
+  <button class="tab-btn" onclick="switchTab('history',this)">📜 History Log</button>
+</div>
+
+<div class="tab-content active" id="tab-market">
+  <div class="filters">
+    <button class="filter-btn active" data-f="ALL" onclick="setFilter('ALL',this)">ALL</button>
+    <button class="filter-btn" data-f="SELL" onclick="setFilter('SELL',this)">SELLING</button>
+    <button class="filter-btn" data-f="BUY" onclick="setFilter('BUY',this)">BUYING</button>
+    <button class="filter-btn" data-f="OPEN" onclick="setFilter('OPEN',this)">OPEN</button>
+    <button class="filter-btn" data-f="NEGOTIATING" onclick="setFilter('NEGOTIATING',this)">NEGOTIATING</button>
+    <button class="filter-btn" data-f="CLOSED" onclick="setFilter('CLOSED',this)">CLOSED</button>
+    <input class="filter-search" id="pkg-search" type="text" placeholder="Search country or item…" oninput="renderBoard()">
+  </div>
+  <div class="pkg-grid" id="pkg-grid"></div>
+</div>
+
+<div class="tab-content" id="tab-history">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);">TRANSACTION HISTORY</div>
+    <button class="btn btn-sm btn-red" onclick="clearHistory()">🗑 Clear History</button>
+  </div>
+  <div id="history-view"></div>
+</div>
+
+<div class="modal-overlay" id="create-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('create-modal')">×</button>
+    <div class="modal-title">📦 Create Trade Package</div>
+
+    <div class="modal-row">
+      <div class="modal-section">
+        <div class="modal-label">Your Country Name</div>
+        <input class="modal-input" id="cp-country" type="text" placeholder="e.g. Republic of Nova">
+      </div>
+      <div class="modal-section">
+        <div class="modal-label">Package Type</div>
+        <select class="modal-select" id="cp-type">
+          <option value="SELL">🟠 SELLING — Offering items</option>
+          <option value="BUY">🟢 BUYING — Requesting items</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Items</div>
+      <div class="items-list" id="cp-items-list"></div>
+      <button class="btn btn-sm" onclick="addItemRow('cp-items-list')">+ Add Item</button>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-section">
+        <div class="modal-label">Price ($)</div>
+        <input class="modal-input" id="cp-price" type="number" min="0" placeholder="e.g. 250000" oninput="updatePriceComparison()">
+      </div>
+      <div class="modal-section">
+        <div class="modal-label">Notes (optional)</div>
+        <input class="modal-input" id="cp-notes" type="text" placeholder="Any conditions or remarks…">
+      </div>
+    </div>
+
+    <div id="cp-price-summary"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="submitPackage()">✓ POST PACKAGE</button>
+      <button class="btn btn-orange" onclick="closeModal('create-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="neg-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('neg-modal')">×</button>
+    <div class="modal-title" id="neg-modal-title">💬 Negotiate Package</div>
+
+    <div id="neg-thread"></div>
+    <div class="sep"></div>
+
+    <div class="modal-section">
+      <div class="modal-label">Your Country Name</div>
+      <input class="modal-input" id="neg-country" type="text" placeholder="Identify yourself">
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Counter-Price ($)</div>
+      <input class="modal-input" id="neg-price" type="number" min="0" placeholder="Leave same to keep current price">
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Items (leave empty to keep same)</div>
+      <div class="items-list" id="neg-items-list"></div>
+      <button class="btn btn-sm" onclick="addItemRow('neg-items-list')">+ Add Item</button>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Message (optional)</div>
+      <textarea class="modal-textarea" id="neg-message" placeholder="e.g. We offer a reduced price for faster delivery…"></textarea>
+    </div>
+
+    <div class="modal-actions" id="neg-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="item-picker-modal" id="item-picker-modal">
+  <div class="item-picker-content">
+    <input class="item-picker-search" id="item-picker-search" type="text" placeholder="Search items…" oninput="filterItemPicker()">
+    <div class="item-picker-categories" id="item-picker-categories"></div>
+    <div class="item-picker-list" id="item-picker-list"></div>
+    <div class="item-picker-actions">
+      <button class="btn btn-sm" onclick="closeItemPicker()">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="quality-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('quality-modal')">×</button>
+    <div class="modal-title">SELECT QUALITY</div>
+    <div class="modal-section">
+      <div id="quality-item-display" style="font-family:'Share Tech Mono',monospace;margin-bottom:16px;color:var(--accent);"></div>
+      <div class="quality-label">Item Condition</div>
+      <div class="quality-buttons">
+        <button class="quality-btn" onclick="selectQualityOption('factory')">🟢 FACTORY NEW (100% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('minimal')">🔵 MINIMAL WEAR (80% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('field')">🟡 FIELD TESTED (60% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('worn')">🟠 WELL-WORN (40% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('battle')">🔴 BATTLE SCARRED (20% of price)</button>
+      </div>
+      <div class="quality-info" id="quality-price-info" style="display:none;"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmQualitySelection()">✓ CONFIRM</button>
+      <button class="btn btn-red" onclick="closeModal('quality-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// TRADEABLE ITEMS
+// =====================================================
+const TRADEABLE = {
+  'Brute Resources':['Iron','Coal','Gold','Diamond','Gravel','Latex','Silicon','Oil (L)','Gas (L)','Uranium'],
+  'Refined Resources':['Refined Iron','Electronics','Chips','Gunpowder','Tires','Fuel (L)','Refined Uranium'],
+  'Weapons':['Knives','Pistols','SMGs','Rifles','Sniper Rifles','Heavy Weapons','Hand Anti-Tank Missiles','Light Military Vests','Heavy Military Vests','Old Mortar (Ground-Mounted)'],
+  'Ammunition':['.50 Ammo','22mm Autocannon Ammo','Pistol Ammo','SMG Ammo','Rifle Ammo','Sniper Ammo','Heavy Ammo','Anti-Tank Missile Ammo','Mortar Ammo'],
+  'Air Vehicles':['Light Fighter Jets','Medium Fighter Jets','Heavy Fighter Jets','Bomber Jets','Helicopters','Airplanes'],
+  'Land Vehicles':['Light Tanks','Medium Tanks','Heavy Tanks','Motorbikes','Cars','Trucks'],
+  'Water Vehicles':['Submarines','Warships','Boats','Ships','Carriers','Supercarriers'],
+  'Missiles & Torpedoes':['Submarine Torpedo (Small)','Submarine Torpedo (Medium)','Submarine Torpedo (Big)','Submarine Torpedo (Huge)','Submarine Torpedo (Gigantic)','Cruise Missile (Small)','Cruise Missile (Medium)','Cruise Missile (Big)','Cruise Missile (Huge)','Cruise Missile (Gigantic)','Guided Missile (Small)','Guided Missile (Medium)','Guided Missile (Big)','Guided Missile (Huge)','Guided Missile (Gigantic)','Anti-Missile Rocket (Small)','Anti-Missile Rocket (Medium)','Anti-Missile Rocket (Big)','Anti-Missile Rocket (Huge)','Anti-Missile Rocket (Gigantic)','Hypersonic Missile (Small)','Hypersonic Missile (Medium)','Hypersonic Missile (Big)','Hypersonic Missile (Huge)','Hypersonic Missile (Gigantic)','Ballistic Missile (ICBM) (Small)','Ballistic Missile (ICBM) (Medium)','Ballistic Missile (ICBM) (Big)','Ballistic Missile (ICBM) (Huge)','Ballistic Missile (ICBM) (Gigantic)','Nuclear Missile (Small)','Nuclear Missile (Medium)','Nuclear Missile (Big)','Nuclear Missile (Huge)','Nuclear Missile (Gigantic)'],
+  'Other Stuff':['Other Stuff (Small)','Other Stuff (Medium)','Other Stuff (Big)','Other Stuff (Huge)'],
+  'Others':['Grenades','Specialized Grenades','Land Bombs','Drones','Barricades','Barriers'],
+  'Financial (Loan)':['Money Loan ($)','Workers Loan'],
+};
+const ALL_ITEMS = Object.entries(TRADEABLE).flatMap(([cat,items])=>items.map(i=>({cat,name:i})));
+
+// =====================================================
+// QUALITY SYSTEM
+// =====================================================
+const QUALITY_ITEMS_CATS = ['Weapons','Air Vehicles','Land Vehicles','Water Vehicles','Missiles & Torpedoes','Drones'];
+const QUALITY_SYSTEM = {
+  'factory': {label:'Factory New', mult: 1.0, color: '#39ff14'},
+  'minimal': {label:'Minimal Wear', mult: 0.8, color: '#00d4ff'},
+  'field':   {label:'Field Tested', mult: 0.6, color: '#facc15'},
+  'worn':    {label:'Well-Worn', mult: 0.4, color: '#ff6b35'},
+  'battle':  {label:'Battle Scarred', mult: 0.2, color: '#ff3a3a'}
+};
+
+function hasQualitySystem(itemName) {
+  return QUALITY_ITEMS_CATS.some(cat => 
+    TRADEABLE[cat] && TRADEABLE[cat].includes(itemName)
+  );
+}
+
+function calculateQualityPrice(basePrice, quality) {
+  if (!quality || !QUALITY_SYSTEM[quality]) return basePrice;
+  return Math.round(basePrice * QUALITY_SYSTEM[quality].mult);
+}
+
+function getPriceRange(basePrice, quality) {
+  if (!quality || !QUALITY_SYSTEM[quality]) return null;
+  const actualPrice = calculateQualityPrice(basePrice, quality);
+  const minRange = Math.round(actualPrice * 0.85);
+  const maxRange = Math.round(actualPrice * 1.15);
+  return {current: actualPrice, min: minRange, max: maxRange};
+}
+
+// =====================================================
+// MARKET VALUES - From Total Conquest Market
+// =====================================================
+const MARKET_VALUES = {
+  'Iron': 2,
+  'Coal': 1,
+  'Gold': 45,
+  'Diamond': 180,
+  'Gravel': 0.50,
+  'Latex': 4,
+  'Silicon': 8,
+  'Oil (L)': 3,
+  'Gas (L)': 2,
+  'Uranium': 800,
+  'Refined Iron': 22,
+  'Electronics': 250,
+  'Chips': 700,
+  'Gunpowder': 1.80,
+  'Tires': 60,
+  'Fuel (L)': 3,
+  'Refined Uranium': 55000,
+  'Pistol Ammo': 140,
+  'SMG Ammo': 150,
+  'Rifle Ammo': 160,
+  'Sniper Ammo': 320,
+  'Heavy Ammo': 360,
+  '.50 Ammo': 350,
+  '22mm Autocannon Ammo': 650,
+  'Anti-Tank Missile Ammo': 2500,
+  'Knives': 80,
+  'Pistols': 280,
+  'SMGs': 900,
+  'Rifles': 1200,
+  'Sniper Rifles': 2000,
+  'Heavy Weapons': 3000,
+  'Hand Anti-Tank Missiles': 7500,
+  'Light Military Vests': 500,
+  'Heavy Military Vests': 1000,
+  'Light Tanks': 50000,
+  'Medium Tanks': 80000,
+  'Heavy Tanks': 125000,
+  'Motorbikes': 3500,
+  'Cars': 7000,
+  'Trucks': 18000,
+  'Light Fighter Jets': 55000,
+  'Medium Fighter Jets': 120000,
+  'Heavy Fighter Jets': 175000,
+  'Bomber Jets': 220000,
+  'Helicopters': 45000,
+  'Airplanes': 180000,
+  'Submarines': 200000,
+  'Warships': 230000,
+  'Boats': 2500,
+  'Ships': 90000,
+  'Carriers': 580000,
+  'Supercarriers': 1000000,
+  'Submarine Torpedo (Small)': 4200,
+  'Submarine Torpedo (Medium)': 7000,
+  'Submarine Torpedo (Big)': 10500,
+  'Submarine Torpedo (Huge)': 16100,
+  'Submarine Torpedo (Gigantic)': 26600,
+  'Cruise Missile (Small)': 15000,
+  'Cruise Missile (Medium)': 25000,
+  'Cruise Missile (Big)': 37500,
+  'Cruise Missile (Huge)': 57500,
+  'Cruise Missile (Gigantic)': 95000,
+  'Guided Missile (Small)': 16200,
+  'Guided Missile (Medium)': 27000,
+  'Guided Missile (Big)': 40500,
+  'Guided Missile (Huge)': 62100,
+  'Guided Missile (Gigantic)': 102600,
+  'Anti-Missile Rocket (Small)': 10800,
+  'Anti-Missile Rocket (Medium)': 18000,
+  'Anti-Missile Rocket (Big)': 27000,
+  'Anti-Missile Rocket (Huge)': 41400,
+  'Anti-Missile Rocket (Gigantic)': 68400,
+  'Hypersonic Missile (Small)': 37200,
+  'Hypersonic Missile (Medium)': 62000,
+  'Hypersonic Missile (Big)': 93000,
+  'Hypersonic Missile (Huge)': 142600,
+  'Hypersonic Missile (Gigantic)': 235600,
+  'Ballistic Missile (ICBM) (Small)': 78000,
+  'Ballistic Missile (ICBM) (Medium)': 130000,
+  'Ballistic Missile (ICBM) (Big)': 195000,
+  'Ballistic Missile (ICBM) (Huge)': 299000,
+  'Ballistic Missile (ICBM) (Gigantic)': 494000,
+  'Nuclear Missile (Small)': 228000,
+  'Nuclear Missile (Medium)': 380000,
+  'Nuclear Missile (Big)': 570000,
+  'Nuclear Missile (Huge)': 874000,
+  'Nuclear Missile (Gigantic)': 1444000,
+  'Mortar Ammo': 1500,
+  'Old Mortar (Ground-Mounted)': 28000,
+  'Other Stuff (Small)': 100,
+  'Other Stuff (Medium)': 300,
+  'Other Stuff (Big)': 550,
+  'Other Stuff (Huge)': 850,
+  'Grenades': 40,
+  'Specialized Grenades': 75,
+  'Land Bombs': 300,
+  'Drones': 7500,
+  'Barricades': 350,
+  'Barriers': 850,
+  'Money Loan ($)': 0,
+  'Workers Loan': 500,
+};
+
+// =====================================================
+// STATE
+// =====================================================
+let packages = [];
+let history  = [];
+let activeFilter = 'ALL';
+let activeNegPkgId = null;
+let itemPickerListId = null;
+let itemPickerRowId = null;
+let itemPickerActiveCategory = 'ALL';
+let pendingQualityItem = null;
+let pendingQualityListId = null;
+let pendingQualityRowId = null;
+let selectedQuality = null;
+
+function uuid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function tsNow(){ return Date.now(); }
+function fmtDate(ts){ return ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'; }
+function fmt(n){ return Number(n).toLocaleString('en-US'); }
+function getMarketValue(itemName){ return MARKET_VALUES[itemName] || null; }
+
+function calculateTotalMarketValue(items){
+  return items.reduce((sum, item) => {
+    const mv = getMarketValue(item.name);
+    if(!mv) return sum;
+    const adjustedMv = item.quality ? calculateQualityPrice(mv, item.quality) : mv;
+    return sum + (adjustedMv * item.qty);
+  }, 0);
+}
+
+function getPriceComparison(items, proposedPrice){
+  const totalMarketValue = calculateTotalMarketValue(items);
+  if (totalMarketValue === 0) return null;
+  
+  const percentage = (proposedPrice / totalMarketValue) * 100;
+  const difference = proposedPrice - totalMarketValue;
+  
+  let status = 'fair';
+  if (percentage > 110) status = 'expensive';
+  else if (percentage < 90) status = 'cheap';
+  
+  return {
+    marketValue: totalMarketValue,
+    proposedPrice: proposedPrice,
+    percentage: percentage.toFixed(1),
+    difference: difference,
+    status: status
+  };
+}
+
+function load(){
+  try{ packages=JSON.parse(localStorage.getItem('tc_packages')||'[]'); }catch(e){packages=[];}
+  try{ history=JSON.parse(localStorage.getItem('tc_history')||'[]'); }catch(e){history=[];}
+}
+function save(){
+  localStorage.setItem('tc_packages',JSON.stringify(packages));
+  localStorage.setItem('tc_history',JSON.stringify(history));
+}
+function getPkg(id){ return packages.find(p=>p.id===id)||null; }
+
+// =====================================================
+// TABS
+// =====================================================
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='history') renderHistory();
+}
+
+// =====================================================
+// FILTERS
+// =====================================================
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBoard();
+}
+
+// =====================================================
+// ITEM SELECT BUILDER
+// =====================================================
+function addItemRow(listId){
+  const list=document.getElementById(listId);
+  const row=document.createElement('div');
+  row.className='item-row-builder';
+  const rowId='item-row-'+uuid();
+  row.id=rowId;
+  row.innerHTML=`
+    <input type="hidden" value="">
+    <button class="btn btn-sm" onclick="openItemPicker('${listId}','${rowId}')">Select Item</button>
+    <input type="number" min="1" value="1" placeholder="Qty" onchange="updatePriceComparison()">
+    <button class="remove-item" onclick="this.parentElement.remove(); updatePriceComparison();">×</button>
+  `;
+  list.appendChild(row);
+  updatePriceComparison();
+}
+
+function getItemsFromList(listId){
+  const rows=document.getElementById(listId).querySelectorAll('.item-row-builder');
+  const items=[];
+  rows.forEach(row=>{
+    const name=row.querySelector('input[type="hidden"]')?.value;
+    const quality=row.querySelector('input[type="hidden"]')?.dataset.quality || null;
+    const qty=parseInt(row.querySelector('input[type="number"]').value)||1;
+    if(name) items.push({name,qty,quality,marketValue:getMarketValue(name)});
+  });
+  return items;
+}
+
+// =====================================================
+// ITEM PICKER
+// =====================================================
+function openItemPicker(listId, rowId){
+  itemPickerListId=listId;
+  itemPickerRowId=rowId;
+  itemPickerActiveCategory='ALL';
+  renderItemPickerCategories();
+  renderItemPickerItems();
+  document.getElementById('item-picker-modal').classList.add('open');
+  document.getElementById('item-picker-search').value='';
+}
+
+function closeItemPicker(){
+  document.getElementById('item-picker-modal').classList.remove('open');
+  itemPickerListId=null;
+  itemPickerRowId=null;
+}
+
+function renderItemPickerCategories(){
+  const cats=['ALL',...Object.keys(TRADEABLE)];
+  document.getElementById('item-picker-categories').innerHTML=cats.map(cat=>`
+    <button class="item-picker-cat-btn${cat===itemPickerActiveCategory?' active':''}" onclick="setItemPickerCategory('${cat}')">
+      ${cat===('ALL')?'All':cat}
+    </button>
+  `).join('');
+}
+
+function setItemPickerCategory(cat){
+  itemPickerActiveCategory=cat;
+  renderItemPickerCategories();
+  renderItemPickerItems();
+}
+
+function filterItemPicker(){
+  renderItemPickerItems();
+}
+
+function renderItemPickerItems(){
+  const search=(document.getElementById('item-picker-search').value||'').toLowerCase();
+  let items=[];
+  if(itemPickerActiveCategory==='ALL'){
+    items=ALL_ITEMS;
+  }else{
+    items=TRADEABLE[itemPickerActiveCategory].map(name=>({cat:itemPickerActiveCategory,name}));
+  }
+  if(search){
+    items=items.filter(i=>i.name.toLowerCase().includes(search));
+  }
+  document.getElementById('item-picker-list').innerHTML=items.map(i=>`
+    <div class="item-picker-item" onclick="selectItemFromPicker('${i.name}')">
+      <div class="item-picker-item-name">${i.name}</div>
+      <div class="item-picker-item-value">${MARKET_VALUES[i.name]?`Market value: $${fmt(MARKET_VALUES[i.name])}`:''}</div>
+    </div>
+  `).join('');
+}
+
+function selectItemFromPicker(itemName){
+  if(itemPickerRowId){
+    // Check if this item needs quality selection
+    if(hasQualitySystem(itemName)){
+      pendingQualityItem = itemName;
+      pendingQualityListId = itemPickerListId;
+      pendingQualityRowId = itemPickerRowId;
+      selectedQuality = null;
+      document.getElementById('quality-item-display').textContent = `Item: ${itemName}`;
+      document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('quality-price-info').style.display = 'none';
+      closeItemPicker();
+      document.getElementById('quality-modal').classList.add('open');
+    } else {
+      // Item doesn't need quality, add it directly
+      const row=document.getElementById(itemPickerRowId);
+      if(row){
+        row.querySelector('input[type="hidden"]').value=itemName;
+        row.querySelector('button').textContent=itemName;
+      }
+      closeItemPicker();
+      updatePriceComparison();
+    }
+  }
+}
+
+function updatePriceComparison(){
+  const items = getItemsFromList('cp-items-list');
+  const proposedPrice = parseFloat(document.getElementById('cp-price').value) || 0;
+  
+  // Update items summary
+  let itemsSummaryHTML = '<div class="items-summary">';
+  let totalMarketValue = 0;
+  
+  items.forEach(item => {
+    const mv = getMarketValue(item.name);
+    const adjustedMv = item.quality ? calculateQualityPrice(mv, item.quality) : mv;
+    const itemTotal = adjustedMv ? adjustedMv * item.qty : 0;
+    totalMarketValue += itemTotal;
+    const qualityLabel = item.quality ? ` [${QUALITY_SYSTEM[item.quality].label}]` : '';
+    itemsSummaryHTML += `<div class="items-summary-item"><span>${item.name}${qualityLabel} × ${item.qty}</span><span>${adjustedMv ? '$' + fmt(itemTotal) : 'N/A'}</span></div>`;
+  });
+  
+  itemsSummaryHTML += `<div class="items-summary-total"><span>Market Value Total</span><span>$${fmt(totalMarketValue)}</span></div>`;
+  itemsSummaryHTML += '</div>';
+  
+  let priceComparisonHTML = '';
+  if (items.length > 0 && totalMarketValue > 0) {
+    const comparison = getPriceComparison(items, proposedPrice);
+    let warningClass = 'price-comparison-fair';
+    let warningText = '✓ Fair price - Matches market average';
+    
+    if (comparison.status === 'expensive') {
+      warningClass = 'price-comparison-expensive';
+      warningText = `⚠ Expensive - ${comparison.percentage}% of market value (${(comparison.percentage - 100).toFixed(1)}% above average)`;
+    } else if (comparison.status === 'cheap') {
+      warningClass = 'price-comparison-cheap';
+      warningText = `⚠ Cheap - ${comparison.percentage}% of market value (${(100 - comparison.percentage).toFixed(1)}% below average)`;
+    }
+    
+    priceComparisonHTML = `
+      <div class="price-comparison">
+        <div class="price-comparison-row"><strong>Market Value:</strong><strong>$${fmt(comparison.marketValue)}</strong></div>
+        <div class="price-comparison-row"><strong>Your Price:</strong><strong>$${fmt(comparison.proposedPrice)}</strong></div>
+        <div class="price-comparison-row"><strong>Percentage:</strong><strong>${comparison.percentage}%</strong></div>
+        <div class="price-comparison-warning ${warningClass}">${warningText}</div>
+      </div>
+    `;
+  }
+  
+  const summaryContainer = document.getElementById('cp-price-summary');
+  if (summaryContainer) {
+    summaryContainer.innerHTML = itemsSummaryHTML + priceComparisonHTML;
+  }
+}
+
+// =====================================================
+// QUALITY SELECTION
+// =====================================================
+function selectQualityOption(quality){
+  selectedQuality = quality;
+  document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const basePrice = getMarketValue(pendingQualityItem) || 1000;
+  const range = getPriceRange(basePrice, quality);
+  
+  const info = document.getElementById('quality-price-info');
+  info.innerHTML = `
+    <strong>${QUALITY_SYSTEM[quality].label}</strong> — Base price adjusted to <strong>$${fmt(range.current)}</strong><br>
+    Fair range: <strong>$${fmt(range.min)}</strong> - <strong>$${fmt(range.max)}</strong>
+  `;
+  info.style.display = 'block';
+}
+
+function confirmQualitySelection(){
+  if(!selectedQuality){toast('Select an item quality.');return;}
+  const row = document.getElementById(pendingQualityRowId);
+  if(row){
+    row.querySelector('input[type="hidden"]').value = pendingQualityItem;
+    row.querySelector('input[type="hidden"]').dataset.quality = selectedQuality;
+    row.querySelector('button').textContent = `${pendingQualityItem} [${QUALITY_SYSTEM[selectedQuality].label}]`;
+  }
+  closeModal('quality-modal');
+  updatePriceComparison();
+}
+
+// =====================================================
+// CREATE PACKAGE
+// =====================================================
+function openCreateModal(){
+  document.getElementById('cp-country').value='';
+  document.getElementById('cp-price').value='';
+  document.getElementById('cp-notes').value='';
+  document.getElementById('cp-items-list').innerHTML='';
+  addItemRow('cp-items-list');
+  document.getElementById('create-modal').classList.add('open');
+  updatePriceComparison();
+}
+
+function submitPackage(){
+  const country=(document.getElementById('cp-country').value||'').trim();
+  const type=document.getElementById('cp-type').value;
+  const price=parseFloat(document.getElementById('cp-price').value)||0;
+  const notes=document.getElementById('cp-notes').value.trim();
+  const items=getItemsFromList('cp-items-list');
+  if(!country){toast('Enter your country name.');return;}
+  if(items.length===0){toast('Add at least one item.');return;}
+  const pkg={
+    id:uuid(), createdAt:tsNow(), country, type,
+    status:'OPEN', items, price, notes,
+    thread:[{from:country, price, items:[...items], message:notes||'', timestamp:tsNow(), type:'original'}]
+  };
+  packages.unshift(pkg);
+  save(); closeModal('create-modal'); renderBoard();
+  toast('Package posted to the market!');
+}
+
+// =====================================================
+// BOARD RENDER
+// =====================================================
+function statusClass(s,type){
+  if(s==='NEGOTIATING') return 'negotiating';
+  if(s==='ACCEPTED') return 'accepted';
+  if(s==='DENIED'||s==='CANCELLED') return 'denied';
+  return type==='SELL'?'sell':'buy';
+}
+function statusBadge(s,type){
+  if(s==='OPEN')        return `<span class="pkg-type-badge ${type==='SELL'?'badge-sell':'badge-buy'}">${type}</span>`;
+  if(s==='NEGOTIATING') return `<span class="pkg-type-badge badge-neg">NEGOTIATING</span>`;
+  if(s==='ACCEPTED')    return `<span class="pkg-type-badge badge-accepted">ACCEPTED</span>`;
+  if(s==='DENIED')      return `<span class="pkg-type-badge badge-denied">DENIED</span>`;
+  if(s==='CANCELLED')   return `<span class="pkg-type-badge badge-denied">CANCELLED</span>`;
+  return '';
+}
+
+function renderBoard(){
+  const q=(document.getElementById('pkg-search').value||'').toLowerCase();
+  const grid=document.getElementById('pkg-grid');
+  let filtered=packages.filter(p=>{
+    if(activeFilter==='SELL'&&p.type!=='SELL') return false;
+    if(activeFilter==='BUY'&&p.type!=='BUY') return false;
+    if(activeFilter==='OPEN'&&p.status!=='OPEN') return false;
+    if(activeFilter==='NEGOTIATING'&&p.status!=='NEGOTIATING') return false;
+    if(activeFilter==='CLOSED'&&!['ACCEPTED','DENIED','CANCELLED'].includes(p.status)) return false;
+    if(q&&!p.country.toLowerCase().includes(q)&&!p.items.some(i=>i.name.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;">No packages found.<br>Create one to get started.</div>`;
+    return;
+  }
+
+  grid.innerHTML=filtered.map(pkg=>{
+    const latest=pkg.thread[pkg.thread.length-1];
+    const canAct=['OPEN','NEGOTIATING'].includes(pkg.status);
+    
+    // Calculate price comparison
+    const comparison = getPriceComparison(pkg.items, latest.price);
+    let priceComparisonHTML = '';
+    if (comparison && pkg.items.length > 0) {
+      let comparisonClass = 'price-comparison-fair';
+      let comparisonIcon = '✓';
+      let comparisonText = 'Fair Price';
+      
+      if (comparison.status === 'expensive') {
+        comparisonClass = 'price-comparison-expensive';
+        comparisonIcon = '⚠';
+        comparisonText = `Expensive (${(comparison.percentage - 100).toFixed(0)}% above market)`;
+      } else if (comparison.status === 'cheap') {
+        comparisonClass = 'price-comparison-cheap';
+        comparisonIcon = '⚠';
+        comparisonText = `Cheap (${(100 - comparison.percentage).toFixed(0)}% below market)`;
+      }
+      
+      priceComparisonHTML = `<div style="margin-top:8px;padding:8px;border-radius:2px;font-size:10px;font-family:'Share Tech Mono',monospace;background:rgba(0,212,255,.05);border-left:2px solid ${comparison.status === 'expensive' ? 'var(--accent2)' : comparison.status === 'cheap' ? 'var(--yellow)' : 'var(--accent3)'};">${comparisonIcon} ${comparisonText} (Market: $${fmt(comparison.marketValue)})</div>`;
+    }
+    
+    const negPreview=pkg.status==='NEGOTIATING'&&pkg.thread.length>1?`
+      <div class="pkg-neg-preview">
+        <div class="pkg-neg-from">⟳ Counter from ${latest.from}</div>
+        <div class="pkg-neg-price">Proposed: $${fmt(latest.price)}</div>
+        ${latest.message?`<div style="color:var(--text-dim);font-style:italic;margin-top:3px;">"${latest.message}"</div>`:''}
+      </div>`:'';
+
+    return `<div class="pkg-card ${statusClass(pkg.status,pkg.type)}">
+      <div class="pkg-card-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${statusBadge(pkg.status,pkg.type)}
+          <span class="pkg-country">${pkg.country}</span>
+        </div>
+        ${pkg.status!=='ACCEPTED'&&pkg.status!=='DENIED'?`<button class="btn btn-sm btn-red" onclick="cancelPackage('${pkg.id}')" title="Cancel/Delete">✕</button>`:''}
+      </div>
+      <div class="pkg-card-body">
+        <div class="pkg-items">
+          ${pkg.items.map(i=>{const mv=getMarketValue(i.name);const qualityLabel=i.quality?`<span class="quality-badge quality-${i.quality}">${QUALITY_SYSTEM[i.quality].label}</span>`:'';return `<div class="pkg-item-row"><span class="pkg-item-name">${i.name}${qualityLabel}${mv?` <span style="color:var(--text-dim);font-size:9px;">($${fmt(mv)})`:' <span style="color:var(--text-dim);font-size:9px;">(N/A)'}</span></span><span class="pkg-item-qty">× ${fmt(i.qty)}</span></div>`;}).join('')}
+        </div>
+        ${negPreview}
+        <div class="pkg-price">$${fmt(latest.price)} <small>USD</small></div>
+        ${priceComparisonHTML}
+        ${pkg.notes?`<div class="pkg-notes">"${pkg.notes}"</div>`:''}
+      </div>
+      <div class="pkg-card-footer">
+        ${canAct?`<button class="btn btn-yellow" onclick="openNegModal('${pkg.id}')">💬 NEGOTIATE</button>`:''}
+        ${canAct?`<button class="btn btn-green" onclick="quickAccept('${pkg.id}')">✓ ACCEPT</button>`:''}
+        <button class="btn btn-sm" onclick="openViewModal('${pkg.id}')">🔍 VIEW THREAD</button>
+      </div>
+      <div class="pkg-meta">Posted by ${pkg.country} · ${fmtDate(pkg.createdAt)} · ${pkg.thread.length} offer${pkg.thread.length>1?'s':''}</div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================
+// NEGOTIATE MODAL
+// =====================================================
+function openNegModal(pkgId){
+  const pkg=getPkg(pkgId); if(!pkg) return;
+  activeNegPkgId=pkgId;
+  document.getElementById('neg-modal-title').textContent=`💬 Negotiate — ${pkg.country}'s Package`;
+  document.getElementById('neg-country').value='';
+  document.getElementById('neg-price').value=pkg.thread[pkg.thread.length-1].price;
+  document.getElementById('neg-items-list').innerHTML='';
+  document.getElementById('neg-message').value='';
+  // Pre-fill items
+  pkg.items.forEach(item=>{
+    addItemRow('neg-items-list');
+    const rows=document.getElementById('neg-items-list').querySelectorAll('.item-row-builder');
+    const last=rows[rows.length-1];
+    last.querySelector('select').value=item.name;
+    last.querySelector('input').value=item.qty;
+  });
+  renderThread(pkg);
+  renderNegActions(pkg);
+  document.getElementById('neg-modal').classList.add('open');
+}
+
+function openViewModal(pkgId){
+  const pkg=getPkg(pkgId); if(!pkg) return;
+  activeNegPkgId=pkgId;
+  document.getElementById('neg-modal-title').textContent=`🔍 Thread — ${pkg.country}'s Package`;
+  document.getElementById('neg-country').value='';
+  document.getElementById('neg-price').value=pkg.thread[pkg.thread.length-1].price;
+  document.getElementById('neg-items-list').innerHTML='';
+  document.getElementById('neg-message').value='';
+  renderThread(pkg);
+  renderNegActions(pkg);
+  document.getElementById('neg-modal').classList.add('open');
+}
+
+function renderThread(pkg){
+  const thread=document.getElementById('neg-thread');
+  thread.innerHTML=`<div class="thread">${pkg.thread.map((entry,i)=>`
+    <div class="thread-item ${i===0?'thread-original':'thread-counter'}">
+      <div class="thread-from">${i===0?'📋 ORIGINAL OFFER':'↩ COUNTER'} — ${entry.from}</div>
+      <div class="thread-price">$${fmt(entry.price)}</div>
+      <div class="thread-items">${entry.items.map(it=>`${it.name} × ${fmt(it.qty)}`).join(' · ')}</div>
+      ${entry.message?`<div class="thread-msg">"${entry.message}"</div>`:''}
+      <div><span class="thread-status ${i===pkg.thread.length-1&&['OPEN','NEGOTIATING'].includes(pkg.status)?'status-pending':pkg.status==='ACCEPTED'&&i===pkg.thread.length-1?'status-accepted':''}">${i===pkg.thread.length-1?pkg.status:i===0&&pkg.thread.length>1?'COUNTERED':'—'}</span></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px;">${fmtDate(entry.timestamp)}</div>
+    </div>`).join('')}</div>`;
+}
+
+function renderNegActions(pkg){
+  const canAct=['OPEN','NEGOTIATING'].includes(pkg.status);
+  const actions=document.getElementById('neg-actions');
+  if(!canAct){
+    actions.innerHTML=`<span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);">This package is ${pkg.status}. No further actions available.</span>`;
+    return;
+  }
+  actions.innerHTML=`
+    <button class="btn btn-yellow" onclick="submitCounter()">⟳ COUNTER OFFER</button>
+    <button class="btn btn-green" onclick="acceptFromModal()">✓ ACCEPT CURRENT OFFER</button>
+    <button class="btn btn-red" onclick="denyFromModal()">✕ DENY / REJECT</button>
+    <button class="btn btn-orange" onclick="closeModal('neg-modal')">— CLOSE</button>`;
+}
+
+function submitCounter(){
+  const pkg=getPkg(activeNegPkgId); if(!pkg) return;
+  const from=(document.getElementById('neg-country').value||'').trim();
+  if(!from){toast('Enter your country name.');return;}
+  const price=parseFloat(document.getElementById('neg-price').value)||pkg.thread[pkg.thread.length-1].price;
+  const items=getItemsFromList('neg-items-list');
+  const msg=(document.getElementById('neg-message').value||'').trim();
+  const finalItems=items.length>0?items:[...pkg.items];
+  pkg.thread.push({from, price, items:finalItems, message:msg, timestamp:tsNow(), type:'counter'});
+  pkg.status='NEGOTIATING';
+  save(); closeModal('neg-modal'); renderBoard();
+  toast('Counter offer submitted!');
+}
+
+function acceptFromModal(){
+  const pkg=getPkg(activeNegPkgId); if(!pkg) return;
+  const from=(document.getElementById('neg-country').value||'').trim()||'Counterparty';
+  closePkg(pkg,'ACCEPTED',from);
+  closeModal('neg-modal'); renderBoard();
+  toast('Deal accepted! Moved to history.');
+}
+
+function denyFromModal(){
+  const pkg=getPkg(activeNegPkgId); if(!pkg) return;
+  const from=(document.getElementById('neg-country').value||'').trim()||'Counterparty';
+  closePkg(pkg,'DENIED',from);
+  closeModal('neg-modal'); renderBoard();
+  toast('Package denied. Moved to history.');
+}
+
+function quickAccept(pkgId){
+  const pkg=getPkg(pkgId); if(!pkg) return;
+  const who=prompt('Your country name (accepting party):');
+  if(!who)return;
+  closePkg(pkg,'ACCEPTED',who.trim());
+  renderBoard();
+  toast('Deal accepted!');
+}
+
+function cancelPackage(pkgId){
+  const pkg=getPkg(pkgId); if(!pkg) return;
+  if(!confirm(`Cancel package from ${pkg.country}?`)) return;
+  closePkg(pkg,'CANCELLED',pkg.country);
+  renderBoard();
+  toast('Package cancelled.');
+}
+
+function closePkg(pkg, outcome, counterparty){
+  pkg.status=outcome;
+  const latest=pkg.thread[pkg.thread.length-1];
+  history.unshift({
+    id:uuid(), packageId:pkg.id,
+    creatorCountry:pkg.country,
+    counterpartyCountry:counterparty,
+    type:pkg.type,
+    items:pkg.items,
+    finalPrice:latest.price,
+    outcome,
+    negotiationRounds:pkg.thread.length-1,
+    closedAt:tsNow(),
+    fullThread:[...pkg.thread],
+  });
+  save();
+}
+
+// =====================================================
+// HISTORY
+// =====================================================
+function renderHistory(){
+  const el=document.getElementById('history-view');
+  if(history.length===0){
+    el.innerHTML=`<div class="empty-state">No transactions in history yet.</div>`;return;
+  }
+  el.innerHTML=`<div style="overflow-x:auto;"><table class="history-table">
+    <thead><tr><th>Date</th><th>Creator</th><th>Type</th><th>Counterparty</th><th>Items</th><th>Final Price</th><th>Rounds</th><th>Outcome</th></tr></thead>
+    <tbody>${history.map(h=>`<tr>
+      <td>${fmtDate(h.closedAt)}</td>
+      <td style="color:var(--accent);">${h.creatorCountry}</td>
+      <td><span style="color:${h.type==='SELL'?'var(--accent2)':'var(--accent3)'};">${h.type}</span></td>
+      <td style="color:var(--text-dim);">${h.counterpartyCountry||'—'}</td>
+      <td>${h.items.map(i=>{const qLabel=i.quality?` [${QUALITY_SYSTEM[i.quality].label}]`:'';return `${i.name}${qLabel} ×${fmt(i.qty)}`;}).join('<br>')}</td>
+      <td style="color:var(--gold);font-weight:bold;">$${fmt(h.finalPrice)}</td>
+      <td style="color:var(--purple);">${h.negotiationRounds}</td>
+      <td class="outcome-${h.outcome.toLowerCase()}">${h.outcome}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function exportHistory(){
+  const data=JSON.stringify({
+    exportedAt:new Date().toISOString(),
+    totalTransactions:history.length,
+    transactions:history,
+  },null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`trade.json`;
+  a.click();
+  toast('History exported!');
+}
+
+function importHistory(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      const imported=data.transactions||data;
+      if(!Array.isArray(imported))throw new Error();
+      history=[...imported,...history];
+      save(); renderHistory();
+      toast(`Imported ${imported.length} transactions.`);
+    }catch{toast('Invalid JSON file.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function clearHistory(){
+  if(!confirm('Clear all history? This cannot be undone.'))return;
+  history=[];save();renderHistory();
+  toast('History cleared.');
+}
+
+function factoryReset(){
+  if(!confirm('FACTORY RESET: Are you absolutely sure? This will delete ALL packages and history. This cannot be undone.'))return;
+  localStorage.removeItem('tc_packages');
+  localStorage.removeItem('tc_history');
+  location.reload();
+}
+
+// =====================================================
+// MODALS
+// =====================================================
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeModal(this.id);}));
+document.getElementById('item-picker-modal').addEventListener('click',function(e){if(e.target===this)closeItemPicker();});
+
+// =====================================================
+// TOAST
+// =====================================================
+function toast(msg,dur=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// =====================================================
+// BOOT
+// =====================================================
+load();
+renderBoard();
+</script>
+</body>
+</html>

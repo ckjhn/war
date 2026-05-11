@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Conflict Registry</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10; --surface:#0d1620; --surface2:#111d2a; --border:#1a3045;
+  --cyan:#00d4ff; --orange:#ff6b35; --green:#39ff14;
+  --gold:#ffd700; --purple:#c084fc; --red:#ff3a3a; --yellow:#ffdd57;
+  --text:#c8dde8; --text-dim:#4a6a7a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;display:flex;flex-direction:column;}
+
+header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);}
+.logo{font-family:'Orbitron',monospace;font-size:clamp(13px,2vw,18px);font-weight:900;letter-spacing:4px;color:var(--cyan);text-shadow:0 0 20px rgba(0,212,255,.5);}
+.logo span{color:var(--orange);}
+.header-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
+.header-actions{display:flex;gap:8px;}
+
+.app{flex:1;display:grid;grid-template-columns:290px 1fr;overflow:hidden;transition:grid-template-columns .3s cubic-bezier(0.4,0,0.2,1);}
+.app.sidebar-collapsed{grid-template-columns:50px 1fr;}
+
+.sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);overflow:hidden;}
+.sidebar-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sidebar-header-content{flex:1;min-width:0;}
+.sidebar-toggle{background:transparent;border:1px solid var(--border);color:var(--cyan);font-size:14px;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sidebar-toggle:hover{border-color:var(--cyan);}
+.sidebar-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:10px;}
+.search-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 12px;outline:none;}
+.search-input:focus{border-color:var(--cyan);}
+.search-input::placeholder{color:var(--text-dim);}
+.conflict-list{flex:1;overflow-y:auto;padding:8px;}
+.conflict-list::-webkit-scrollbar{width:4px;}
+.conflict-list::-webkit-scrollbar-thumb{background:var(--border);}
+.sidebar-footer{flex-shrink:0;padding:12px;border-top:1px solid var(--border);}
+.app.sidebar-collapsed .sidebar-header-content,
+.app.sidebar-collapsed .conflict-list,
+.app.sidebar-collapsed .sidebar-footer{display:none;}
+
+.conflict-card{background:var(--surface2);border:1px solid var(--border);padding:12px 14px;margin-bottom:6px;cursor:pointer;transition:all .2s;position:relative;}
+.conflict-card:hover{border-color:rgba(0,212,255,.4);}
+.conflict-card.active{border-color:var(--cyan);background:rgba(0,212,255,.05);}
+.cc-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:6px;padding-right:22px;}
+.status-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;padding:2px 7px;border:1px solid;text-transform:uppercase;margin-bottom:6px;}
+.s-ongoing{border-color:var(--green);color:var(--green);}
+.s-ceasefire{border-color:var(--yellow);color:var(--yellow);}
+.s-ended{border-color:var(--text-dim);color:var(--text-dim);}
+.s-pending{border-color:var(--purple);color:var(--purple);}
+.cc-vs{font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:5px;line-height:1.5;}
+.cc-vs .la{color:var(--cyan);} .cc-vs .lb{color:var(--orange);} .cc-vs .lv{color:var(--text-dim);}
+.cc-stats{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
+.cc-stats .dval{color:var(--red);} .cc-stats .tval{color:var(--cyan);}
+.cc-dur{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--purple);margin-top:3px;}
+.conflict-delete{position:absolute;top:8px;right:8px;background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:2px 5px;transition:all .2s;}
+.conflict-delete:hover,.conflict-delete.confirm{border-color:var(--red);color:var(--red);}
+
+.editor{flex:1;overflow-y:auto;background:var(--bg);}
+.editor::-webkit-scrollbar{width:6px;}
+.editor::-webkit-scrollbar-thumb{background:var(--border);}
+.no-selection{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;}
+.no-selection-icon{font-size:60px;opacity:.25;}
+.no-selection-text{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;}
+
+.conflict-editor{padding:20px;display:flex;flex-direction:column;gap:14px;}
+
+.ce-top{background:var(--surface);border:1px solid var(--border);padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.ce-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.conflict-name-input{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:3px;color:var(--text);background:transparent;border:none;border-bottom:1px solid var(--border);outline:none;flex:1;min-width:180px;padding:4px 0;text-transform:uppercase;}
+.conflict-name-input:focus{border-bottom-color:var(--cyan);}
+.status-select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px;outline:none;cursor:pointer;}
+.status-select:focus{border-color:var(--cyan);}
+.field-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:1px;white-space:nowrap;}
+.date-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px;outline:none;}
+.date-input:focus{border-color:var(--cyan);}
+.save-badge{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;display:none;}
+.save-badge.show{display:inline-block;}
+.desc-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 12px;outline:none;resize:vertical;min-height:44px;max-height:90px;}
+.desc-input:focus{border-color:var(--cyan);}
+.desc-input::placeholder{color:var(--text-dim);}
+
+.duration-box{display:flex;align-items:center;gap:14px;padding:9px 14px;background:rgba(192,132,252,.05);border:1px solid rgba(192,132,252,.2);}
+.dur-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+.dur-val{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--purple);}
+.dur-days{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
+.dur-seg{width:1px;height:18px;background:var(--border);}
+.dur-live{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:1px;}
+
+.split-view{display:grid;grid-template-columns:1fr 56px 1fr;min-height:500px;}
+
+.vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;}
+.vs-divider::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);}
+.vs-label-text{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;letter-spacing:6px;color:var(--text-dim);writing-mode:vertical-lr;text-orientation:mixed;z-index:1;}
+
+.side{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);}
+.side-a{border-color:rgba(0,212,255,.3);}
+.side-b{border-color:rgba(255,107,53,.3);}
+.side-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.side-name-input{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;background:transparent;border:none;border-bottom:1px solid transparent;outline:none;flex:1;padding:2px 0;text-transform:uppercase;}
+.side-name-input:focus{border-bottom:1px solid currentColor;}
+.side-a .side-name-input{color:var(--cyan);}
+.side-b .side-name-input{color:var(--orange);}
+.side-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:2px 8px;border:1px solid;text-transform:uppercase;flex-shrink:0;}
+.side-a .side-badge{border-color:rgba(0,212,255,.4);color:var(--cyan);}
+.side-b .side-badge{border-color:rgba(255,107,53,.4);color:var(--orange);}
+
+.side-totals{border-bottom:1px solid var(--border);}
+.totals-row{display:grid;}
+.totals-row+.totals-row{border-top:1px solid rgba(26,48,69,.5);}
+.totals-cas{grid-template-columns:repeat(3,1fr);}
+.totals-hw{grid-template-columns:repeat(4,1fr);}
+.total-cell{padding:8px 6px;text-align:center;border-right:1px solid rgba(26,48,69,.5);}
+.total-cell:last-child{border-right:none;}
+.total-cell-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;margin-bottom:3px;}
+.total-cell-val{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;}
+.tv-troops{color:var(--cyan);} .tv-injured{color:var(--yellow);} .tv-deaths{color:var(--red);}
+.tv-tanks{color:#a78bfa;} .tv-vehicles{color:#6ee7b7;} .tv-aircrafts{color:#93c5fd;} .tv-warships{color:#67e8f9;}
+
+.countries-area{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:200px;}
+.countries-area::-webkit-scrollbar{width:3px;}
+.countries-area::-webkit-scrollbar-thumb{background:var(--border);}
+.empty-side{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:28px 0;}
+
+.ccard{background:var(--surface2);border:1px solid var(--border);overflow:hidden;}
+.ccard-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(26,48,69,.6);}
+.ccard-identity{display:flex;align-items:center;gap:8px;min-width:0;}
+.ccard-flag{font-size:18px;flex-shrink:0;}
+.ccard-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.role-badge{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid;text-transform:uppercase;flex-shrink:0;}
+.rb-main{border-color:var(--gold);color:var(--gold);}
+.rb-ally{border-color:var(--text-dim);color:var(--text-dim);}
+.ccard-actions{display:flex;gap:3px;flex-shrink:0;}
+.icon-btn{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:2px 5px;transition:all .15s;font-family:'Share Tech Mono',monospace;}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold);}
+.icon-btn.del:hover{border-color:var(--red);color:var(--red);}
+
+.ccard-section{padding:6px 10px 8px;}
+.ccard-section-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;padding:4px 0 6px;border-bottom:1px solid rgba(26,48,69,.4);margin-bottom:5px;}
+.stat-row{display:flex;align-items:center;gap:4px;padding:2px 0;}
+.stat-icon{font-size:11px;width:16px;text-align:center;flex-shrink:0;}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);width:58px;flex-shrink:0;letter-spacing:1px;}
+.stat-ctrls{display:flex;align-items:center;gap:2px;flex:1;min-width:0;}
+.dbtn{font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 4px;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .12s;white-space:nowrap;flex-shrink:0;}
+.dbtn:hover{border-color:var(--cyan);color:var(--cyan);}
+.dbtn.neg:hover{border-color:var(--orange);color:var(--orange);}
+.stat-inp{font-family:'Share Tech Mono',monospace;font-size:12px;width:70px;background:var(--bg);border:1px solid var(--border);padding:3px 5px;text-align:center;outline:none;-moz-appearance:textfield;flex-shrink:0;}
+.stat-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.stat-inp:focus{border-color:var(--cyan);}
+.si-troops{color:var(--gold);} .si-injured{color:var(--yellow);} .si-deaths{color:var(--red);}
+.si-tanks{color:#a78bfa;} .si-vehicles{color:#6ee7b7;} .si-aircrafts{color:#93c5fd;} .si-warships{color:#67e8f9;}
+.si-hw-lost{color:var(--red);}
+
+/* ── HARDWARE GROUP (in-war + lost rows) ── */
+.hw-group{padding:4px 0 6px;border-bottom:1px solid rgba(26,48,69,.35);}
+.hw-group:last-child{border-bottom:none;}
+.hw-group-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-dim);padding:2px 0 4px;text-transform:uppercase;}
+.hw-sub-row{display:flex;align-items:center;gap:4px;padding:2px 0;}
+.hw-sub-tag{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid;text-transform:uppercase;flex-shrink:0;width:46px;text-align:center;}
+.in-war-tag{border-color:rgba(0,212,255,.3);color:var(--cyan);}
+.lost-tag{border-color:rgba(255,58,58,.3);color:var(--red);}
+.total-cell-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:2px;}
+.tv-lost{color:var(--red);}
+
+.side-foot{padding:10px;border-top:1px solid var(--border);}
+
+.btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:9px 16px;border:1px solid var(--cyan);background:transparent;color:var(--cyan);cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn:hover{background:var(--cyan);color:var(--bg);}
+.btn-orange{border-color:var(--orange);color:var(--orange);}
+.btn-orange:hover{background:var(--orange);color:var(--bg);}
+.btn-green{border-color:var(--green);color:var(--green);}
+.btn-green:hover{background:var(--green);color:var(--bg);}
+.btn-full{width:100%;}
+.btn-sm{padding:6px 12px;font-size:8px;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--cyan);padding:28px;min-width:340px;max-width:480px;width:90%;}
+.modal-title{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.modal-field{margin-bottom:14px;}
+.modal-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px 14px;outline:none;}
+.modal-input:focus{border-color:var(--cyan);}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.toggle-row{display:flex;}
+.toggle-opt{font-family:'Share Tech Mono',monospace;font-size:10px;padding:7px 16px;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .2s;}
+.tom{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,.06);}
+.toly{border-color:var(--text-dim);color:var(--text-dim);}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--green);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── ANALYSIS MODAL STYLES ── */
+.analysis-modal{background:var(--surface);border:1px solid var(--purple);padding:24px;min-width:360px;max-width:780px;width:90%;max-height:80vh;overflow-y:auto;}
+.analysis-modal::-webkit-scrollbar{width:4px;}
+.analysis-modal::-webkit-scrollbar-thumb{background:var(--border);}
+.analysis-title{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.analysis-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:768px){.analysis-grid{grid-template-columns:repeat(2,1fr);}}
+.analysis-card{background:var(--surface2);border:1px solid var(--border);padding:14px;border-radius:4px;}
+.ac-name{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:8px;}
+.ac-status{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);margin-bottom:10px;}
+.ac-probability{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:10px;padding:10px;background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.15);}
+.ac-prob-item{text-align:center;}
+.ac-prob-pct{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.ac-prob-side-a{color:var(--cyan);}
+.ac-prob-side-b{color:var(--orange);}
+.ac-prob-divider{width:1px;background:var(--border);height:48px;}
+.ac-prob-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+.ac-advantage{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);padding:8px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);margin-bottom:8px;text-align:center;}
+.ac-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:9px;}
+.ac-stat-item{padding:6px;background:rgba(26,48,69,.4);text-align:center;}
+.ac-stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);margin-bottom:2px;}
+.ac-stat-value{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--text);}
+.no-conflicts{text-align:center;padding:20px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">TOTAL <span>CONQUEST</span></div>
+    <div class="header-sub">// Conflict Registry //</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-sm" onclick="openAnalysisModal()">📊 Analysis</button>
+    <button class="btn btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
+    <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
+  </div>
+</header>
+
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-header-content">
+        <div class="sidebar-title">Conflicts</div>
+        <input class="search-input" id="search" type="text" placeholder="Search conflict…" oninput="renderList()">
+      </div>
+      <button class="sidebar-toggle" id="stoggle" onclick="toggleSidebar()">→</button>
+    </div>
+    <div class="conflict-list" id="conflict-list"></div>
+    <div class="sidebar-footer">
+      <button class="btn btn-green btn-full" onclick="openAddModal()">+ ADD CONFLICT</button>
+    </div>
+  </div>
+  <div class="editor" id="editor">
+    <div class="no-selection">
+      <div class="no-selection-icon">⚔️</div>
+      <div class="no-selection-text">Select or create a conflict</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CONFLICT MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">⚔️ New Conflict</div>
+    <div class="modal-field">
+      <div class="modal-label">Conflict Name</div>
+      <input class="modal-input" id="new-name" type="text" placeholder="e.g. Operation Iron Fist" maxlength="60"
+        onkeydown="if(event.key==='Enter')confirmAdd()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="confirmAdd()">✓ CREATE</button>
+      <button class="btn btn-orange" onclick="closeModal('add-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD COUNTRY MODAL -->
+<div class="modal-overlay" id="country-modal">
+  <div class="modal" id="country-modal-box">
+    <div class="modal-title" id="cm-title">➕ Add Country</div>
+    <div class="modal-field">
+      <div class="modal-label">Flag (Emoji)</div>
+      <input class="modal-input" id="cm-flag" type="text" placeholder="🏴" maxlength="4" value="🏴">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Country Name</div>
+      <input class="modal-input" id="cm-name" type="text" placeholder="e.g. United States" maxlength="40"
+        onkeydown="if(event.key==='Enter')confirmAddCountry()">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Role</div>
+      <div class="toggle-row">
+        <button class="toggle-opt tom" id="role-main-btn" onclick="setRole('main')">★ Main Country</button>
+        <button class="toggle-opt" id="role-ally-btn" onclick="setRole('ally')">◇ Ally</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="cm-confirm-btn" onclick="confirmAddCountry()">✓ ADD</button>
+      <button class="btn btn-orange" onclick="closeModal('country-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="analysis-modal">
+  <div class="analysis-modal">
+    <div class="analysis-title">⚡ Win Probability Analysis</div>
+    <div id="analysis-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================
+// STATE
+// =====================================================
+const STORAGE_KEY = 'tc_conflicts';
+let conflicts = [], selectedId = null, deletePending = {}, sidebarCollapsed = false;
+let _cmConflictId = null, _cmSideKey = null, _cmRole = 'main';
+
+// =====================================================
+// UTILS
+// =====================================================
+function uuid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function fmt(n){ return Number(n||0).toLocaleString('en-US'); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function calcDuration(startDate, endDate, status){
+  if(!startDate) return null;
+  const start = new Date(startDate);
+  if(isNaN(start)) return null;
+  const useEnd = (status==='ended'&&endDate) ? new Date(endDate) : new Date();
+  if(isNaN(useEnd)||useEnd<start) return null;
+  const totalDays = Math.floor((useEnd-start)/86400000);
+  const years  = Math.floor(totalDays/365);
+  const months = Math.floor((totalDays%365)/30);
+  const days   = totalDays%30;
+  const parts  = [];
+  if(years>0)  parts.push(`${years}y`);
+  if(months>0) parts.push(`${months}mo`);
+  parts.push(`${days}d`);
+  return { label:parts.join(' '), totalDays };
+}
+
+function parseDate(str){
+  if(!str) return '';
+  str=str.trim();
+  // Already YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  // MM/DD/YYYY or M/D/YYYY
+  const m1=str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m1) return `${m1[3]}-${m1[1].padStart(2,'0')}-${m1[2].padStart(2,'0')}`;
+  // MM-DD-YYYY or M-D-YYYY
+  const m2=str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if(m2) return `${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
+  return '';
+}
+function displayDate(yyyymmdd){
+  if(!yyyymmdd) return '';
+  const m=yyyymmdd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m) return `${m[2]}/${m[3]}/${m[1]}`;
+  return yyyymmdd;
+}
+
+// =====================================================
+// FACTORY
+// =====================================================
+function makeConflict(name){
+  return { id:uuid(), name:name||'New Conflict', status:'ongoing', description:'',
+    startDate:new Date().toISOString().slice(0,10), endDate:'', createdAt:Date.now(),
+    sideA:{name:'Side Alpha',countries:[]}, sideB:{name:'Side Bravo',countries:[]} };
+}
+function makeCountry(name,flag,isMain){
+  return { id:uuid(), name:name||'Unknown', flag:flag||'🏴', isMain:!!isMain,
+    troops:0, injured:0, deaths:0,
+    tanks:0,    tanks_lost:0,
+    vehicles:0, vehicles_lost:0,
+    aircrafts:0,aircrafts_lost:0,
+    warships:0, warships_lost:0 };
+}
+
+// =====================================================
+// STORAGE
+// =====================================================
+function load(){
+  try{ conflicts=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ conflicts=[]; }
+  // Hydrate old saves
+  conflicts.forEach(c=>{
+    if(c.endDate===undefined) c.endDate='';
+    ['sideA','sideB'].forEach(sk=>{
+      (c[sk]?.countries||[]).forEach(co=>{
+        ['tanks','vehicles','aircrafts','warships'].forEach(f=>{
+          if(co[f]===undefined) co[f]=0;
+          if(co[f+'_lost']===undefined) co[f+'_lost']=0;
+        });
+      });
+    });
+  });
+}
+function save(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(conflicts)); }
+function getConflict(id){ return conflicts.find(c=>c.id===id)||null; }
+
+// =====================================================
+// SIDEBAR
+// =====================================================
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed;
+  document.getElementById('app').classList.toggle('sidebar-collapsed',sidebarCollapsed);
+  document.getElementById('stoggle').textContent=sidebarCollapsed?'←':'→';
+}
+
+function renderList(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const el=document.getElementById('conflict-list');
+  const filtered=conflicts.filter(c=>c.name.toLowerCase().includes(q));
+  if(!filtered.length){
+    el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:30px;">No conflicts found</div>`;
+    return;
+  }
+  el.innerHTML=filtered.map(c=>{
+    const mainA=c.sideA.countries.find(x=>x.isMain);
+    const mainB=c.sideB.countries.find(x=>x.isMain);
+    const all=[...c.sideA.countries,...c.sideB.countries];
+    const totalDeaths=all.reduce((s,x)=>s+(x.deaths||0),0);
+    const totalTroops=all.reduce((s,x)=>s+(x.troops||0),0);
+    const aLabel=mainA?`<span class="la">${mainA.flag} ${esc(mainA.name)}</span>`:`<span class="lv">???</span>`;
+    const bLabel=mainB?`<span class="lb">${mainB.flag} ${esc(mainB.name)}</span>`:`<span class="lv">???</span>`;
+    const extraA=c.sideA.countries.length>1?` <span class="lv">+${c.sideA.countries.length-1}</span>`:'';
+    const extraB=c.sideB.countries.length>1?` <span class="lv">+${c.sideB.countries.length-1}</span>`:'';
+    const dur=calcDuration(c.startDate,c.endDate,c.status);
+    const durHtml=dur?`<div class="cc-dur">⏱ ${dur.label} · ${fmt(dur.totalDays)} days</div>`:'';
+    return `<div class="conflict-card ${selectedId===c.id?'active':''}" onclick="selectConflict('${c.id}')">
+      <button class="conflict-delete ${deletePending[c.id]?'confirm':''}" onclick="deleteConflict(event,'${c.id}')">${deletePending[c.id]?'✓':'×'}</button>
+      <div class="cc-name">${esc(c.name)}</div>
+      <div><span class="status-badge s-${c.status}">${c.status}</span></div>
+      <div class="cc-vs">${aLabel}${extraA} <span class="lv">vs</span> ${bLabel}${extraB}</div>
+      <div class="cc-stats">⚔️ <span class="tval">${fmt(totalTroops)}</span> &nbsp;·&nbsp; 💀 <span class="dval">${fmt(totalDeaths)}</span></div>
+      ${durHtml}
+    </div>`;
+  }).join('');
+}
+
+// =====================================================
+// EDITOR
+// =====================================================
+function selectConflict(id){ selectedId=id; renderList(); renderEditor(); }
+
+let saveTimer=null;
+function flashSaved(){
+  const b=document.getElementById('save-badge');
+  if(!b) return;
+  b.classList.add('show');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>b.classList.remove('show'),1500);
+}
+
+function renderEditor(){
+  const editor=document.getElementById('editor');
+  const c=getConflict(selectedId);
+  if(!c){
+    editor.innerHTML=`<div class="no-selection"><div class="no-selection-icon">⚔️</div><div class="no-selection-text">Select or create a conflict</div></div>`;
+    return;
+  }
+  const statOpts=['ongoing','ceasefire','ended','pending']
+    .map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('');
+  const dur=calcDuration(c.startDate,c.endDate,c.status);
+  const durHtml=dur?`<div class="duration-box">
+    <span class="dur-lbl">Duration</span>
+    <span class="dur-val">${dur.label}</span>
+    <span class="dur-seg"></span>
+    <span class="dur-days">${fmt(dur.totalDays)} days total</span>
+    ${c.status!=='ended'?`<span class="dur-seg"></span><span class="dur-live">● LIVE</span>`:''}
+  </div>`:'';
+  const endDateHtml=c.status==='ended'?`
+    <span class="field-lbl">End Date:</span>
+    <input class="date-input" type="text" placeholder="MM/DD/YYYY" value="${esc(displayDate(c.endDate||''))}"
+      onchange="updateConflict('${c.id}','endDate',parseDate(this.value))">
+  `:'';
+
+  editor.innerHTML=`<div class="conflict-editor">
+    <div class="ce-top">
+      <div class="ce-row">
+        <input class="conflict-name-input" value="${esc(c.name)}" placeholder="CONFLICT NAME"
+          onchange="updateConflict('${c.id}','name',this.value)">
+        <select class="status-select" onchange="updateConflict('${c.id}','status',this.value)">${statOpts}</select>
+        <span class="save-badge" id="save-badge">✓ SAVED</span>
+      </div>
+      <div class="ce-row">
+        <span class="field-lbl">Start Date:</span>
+        <input class="date-input" type="text" placeholder="MM/DD/YYYY" value="${esc(displayDate(c.startDate||''))}"
+          onchange="updateConflict('${c.id}','startDate',parseDate(this.value))">
+        ${endDateHtml}
+      </div>
+      ${durHtml}
+      <textarea class="desc-input" placeholder="Description / notes…"
+        onchange="updateConflict('${c.id}','description',this.value)">${esc(c.description||'')}</textarea>
+    </div>
+    <div class="split-view">
+      ${renderSide(c,'sideA')}
+      <div class="vs-divider"><span class="vs-label-text">VS</span></div>
+      ${renderSide(c,'sideB')}
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// SIDE RENDER
+// =====================================================
+function sideTotals(side){
+  return side.countries.reduce((acc,co)=>{
+    acc.troops         +=(co.troops        ||0);
+    acc.injured        +=(co.injured       ||0);
+    acc.deaths         +=(co.deaths        ||0);
+    acc.tanks          +=(co.tanks         ||0);
+    acc.tanks_lost     +=(co.tanks_lost    ||0);
+    acc.vehicles       +=(co.vehicles      ||0);
+    acc.vehicles_lost  +=(co.vehicles_lost ||0);
+    acc.aircrafts      +=(co.aircrafts     ||0);
+    acc.aircrafts_lost +=(co.aircrafts_lost||0);
+    acc.warships       +=(co.warships      ||0);
+    acc.warships_lost  +=(co.warships_lost ||0);
+    return acc;
+  },{troops:0,injured:0,deaths:0,
+     tanks:0,tanks_lost:0,vehicles:0,vehicles_lost:0,
+     aircrafts:0,aircrafts_lost:0,warships:0,warships_lost:0});
+}
+
+function renderTotalsHTML(t){
+  const hwCell=(icon,lbl,inWarCls,inWar,lost)=>`<div class="total-cell">
+    <div class="total-cell-lbl">${icon} ${lbl}</div>
+    <div class="total-cell-val ${inWarCls}">${fmt(inWar)}</div>
+    <div class="total-cell-sub">▼ <span class="tv-lost">${fmt(lost)}</span> lost</div>
+  </div>`;
+  return `<div class="totals-row totals-cas">
+    <div class="total-cell"><div class="total-cell-lbl">⚔️ Troops</div><div class="total-cell-val tv-troops">${fmt(t.troops)}</div></div>
+    <div class="total-cell"><div class="total-cell-lbl">🩹 Injured</div><div class="total-cell-val tv-injured">${fmt(t.injured)}</div></div>
+    <div class="total-cell"><div class="total-cell-lbl">💀 Deaths</div><div class="total-cell-val tv-deaths">${fmt(t.deaths)}</div></div>
+  </div>
+  <div class="totals-row totals-hw">
+    ${hwCell('🛡️','Tanks',    'tv-tanks',    t.tanks,    t.tanks_lost)}
+    ${hwCell('🚗','Vehicles', 'tv-vehicles', t.vehicles, t.vehicles_lost)}
+    ${hwCell('✈️','Aircrafts','tv-aircrafts',t.aircrafts,t.aircrafts_lost)}
+    ${hwCell('⚓','Warships', 'tv-warships', t.warships, t.warships_lost)}
+  </div>`;
+}
+
+function renderSide(c,sideKey){
+  const side=c[sideKey];
+  const isA=sideKey==='sideA';
+  const t=sideTotals(side);
+  const empty=!side.countries.length?`<div class="empty-side">No countries yet.<br>Click below to add one.</div>`:'';
+  return `<div class="side ${isA?'side-a':'side-b'}">
+    <div class="side-header">
+      <input class="side-name-input" value="${esc(side.name)}" placeholder="${isA?'Side Alpha':'Side Bravo'}"
+        onchange="updateSideName('${c.id}','${sideKey}',this.value)">
+      <span class="side-badge">${isA?'SIDE A':'SIDE B'}</span>
+    </div>
+    <div class="side-totals" id="totals-${sideKey}-${c.id}">${renderTotalsHTML(t)}</div>
+    <div class="countries-area">
+      ${empty}
+      ${side.countries.map(co=>renderCountryCard(c.id,sideKey,co)).join('')}
+    </div>
+    <div class="side-foot">
+      <button class="btn btn-sm btn-full ${isA?'':'btn-orange'}" onclick="openAddCountryModal('${c.id}','${sideKey}')">+ ADD COUNTRY</button>
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// COUNTRY CARD
+// =====================================================
+function renderCountryCard(cid,sideKey,co){
+  const tS=[-10000,-1000,-100,-1,1,100,1000,10000];
+  const iS=[-1000,-100,-10,-1,1,10,100,1000];
+  const hS=[-100,-10,-1,1,10,100];
+  const wS=[-50,-10,-1,1,10,50];
+  const hwBlock=(field,icon,label,steps,cls)=>`
+    <div class="hw-group">
+      <div class="hw-group-label">${icon} ${label}</div>
+      <div class="hw-sub-row">
+        <span class="hw-sub-tag in-war-tag">In War</span>
+        ${statCtrls(cid,sideKey,co,field,steps,cls)}
+      </div>
+      <div class="hw-sub-row">
+        <span class="hw-sub-tag lost-tag">Lost</span>
+        ${statCtrls(cid,sideKey,co,field+'_lost',steps,'si-hw-lost')}
+      </div>
+    </div>`;
+  return `<div class="ccard" data-co="${co.id}">
+    <div class="ccard-head">
+      <div class="ccard-identity">
+        <span class="ccard-flag">${co.flag}</span>
+        <span class="ccard-name">${esc(co.name)}</span>
+        <span class="role-badge ${co.isMain?'rb-main':'rb-ally'}">${co.isMain?'★ MAIN':'◇ ALLY'}</span>
+      </div>
+      <div class="ccard-actions">
+        <button class="icon-btn" title="Toggle Main/Ally" onclick="toggleRole('${cid}','${sideKey}','${co.id}')">⇄</button>
+        <button class="icon-btn del" title="Remove" onclick="removeCountry('${cid}','${sideKey}','${co.id}')">✕</button>
+      </div>
+    </div>
+    <div class="ccard-section">
+      <div class="ccard-section-lbl">── Casualties ──</div>
+      ${statRow(cid,sideKey,co,'troops',  '⚔️','Troops',  tS,'si-troops')}
+      ${statRow(cid,sideKey,co,'injured', '🩹','Injured', iS,'si-injured')}
+      ${statRow(cid,sideKey,co,'deaths',  '💀','Deaths',  iS,'si-deaths')}
+    </div>
+    <div class="ccard-section" style="border-top:1px solid rgba(26,48,69,.6)">
+      <div class="ccard-section-lbl">── Hardware ──</div>
+      ${hwBlock('tanks',    '🛡️','Tanks',    hS,'si-tanks')}
+      ${hwBlock('vehicles', '🚗','Vehicles', hS,'si-vehicles')}
+      ${hwBlock('aircrafts','✈️','Aircrafts',hS,'si-aircrafts')}
+      ${hwBlock('warships', '⚓','Warships', wS,'si-warships')}
+    </div>
+  </div>`;
+}
+
+// statCtrls: renders just the controls portion (used in hw-sub-rows)
+function statCtrls(cid,sideKey,co,stat,steps,cls){
+  const val=co[stat]||0;
+  const negs=steps.filter(x=>x<0);
+  const poss=steps.filter(x=>x>0);
+  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">${n}</button>`).join('');
+  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
+  return `<div class="stat-ctrls">
+    ${negBtns}
+    <input class="stat-inp ${cls}" type="number" value="${val}" min="0"
+      data-cid="${cid}" data-side="${sideKey}" data-co="${co.id}" data-stat="${stat}"
+      oninput="setStat(this)" onchange="setStat(this)">
+    ${posBtns}
+  </div>`;
+}
+
+function statRow(cid,sideKey,co,stat,icon,label,steps,cls){
+  const val=co[stat]||0;
+  const negs=steps.filter(x=>x<0);
+  const poss=steps.filter(x=>x>0);
+  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">${n}</button>`).join('');
+  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
+  // oninput: update data + refresh totals WITHOUT re-rendering the whole editor
+  // onchange: same — this catches paste/programmatic changes
+  return `<div class="stat-row">
+    <span class="stat-icon">${icon}</span>
+    <span class="stat-lbl">${label}</span>
+    <div class="stat-ctrls">
+      ${negBtns}
+      <input class="stat-inp ${cls}" type="number" value="${val}" min="0"
+        data-cid="${cid}" data-side="${sideKey}" data-co="${co.id}" data-stat="${stat}"
+        oninput="setStat(this)"
+        onchange="setStat(this)">
+      ${posBtns}
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// DATA MUTATIONS
+// =====================================================
+function updateConflict(id,key,val){
+  const c=getConflict(id); if(!c) return;
+  c[key]=val; save(); flashSaved(); renderList();
+  if(key==='status'||key==='startDate'||key==='endDate') renderEditor();
+}
+
+function updateSideName(id,sideKey,val){
+  const c=getConflict(id); if(!c) return;
+  c[sideKey].name=val; save(); flashSaved(); renderList();
+}
+
+// KEY FIX: setStat uses data attributes from the input element
+// — no full re-render, no focus loss, works for any value you type
+function setStat(inputEl){
+  const cid=inputEl.dataset.cid, sideKey=inputEl.dataset.side,
+        coId=inputEl.dataset.co, stat=inputEl.dataset.stat;
+  const c=getConflict(cid); if(!c) return;
+  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  const parsed=parseFloat(inputEl.value);
+  co[stat]=isNaN(parsed)?0:Math.max(0,parsed);
+  save(); flashSaved();
+  // Surgically refresh only the totals bar of this side
+  refreshTotals(cid,sideKey);
+  renderList();
+}
+
+// deltaStat: applies +/- increment, then updates the specific input in the DOM
+// plus refreshes totals — no full re-render
+function deltaStat(cid,sideKey,coId,stat,amount){
+  const c=getConflict(cid); if(!c) return;
+  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  co[stat]=Math.max(0,(co[stat]||0)+amount);
+  save(); flashSaved();
+  // Update just the specific input's displayed value
+  const inp=document.querySelector(`.stat-inp[data-cid="${cid}"][data-side="${sideKey}"][data-co="${coId}"][data-stat="${stat}"]`);
+  if(inp) inp.value=co[stat];
+  refreshTotals(cid,sideKey);
+  renderList();
+}
+
+// Surgically update only the totals bar for one side
+function refreshTotals(cid,sideKey){
+  const c=getConflict(cid); if(!c) return;
+  const el=document.getElementById(`totals-${sideKey}-${cid}`);
+  if(!el) return;
+  el.innerHTML=renderTotalsHTML(sideTotals(c[sideKey]));
+}
+
+function toggleRole(cid,sideKey,coId){
+  const c=getConflict(cid); if(!c) return;
+  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  co.isMain=!co.isMain; save(); flashSaved();
+  // Update just the role badge in DOM
+  const card=document.querySelector(`.ccard[data-co="${coId}"]`);
+  if(card){
+    const badge=card.querySelector('.role-badge');
+    if(badge){ badge.className='role-badge '+(co.isMain?'rb-main':'rb-ally'); badge.textContent=co.isMain?'★ MAIN':'◇ ALLY'; }
+  }
+  renderList();
+}
+
+function removeCountry(cid,sideKey,coId){
+  const c=getConflict(cid); if(!c) return;
+  c[sideKey].countries=c[sideKey].countries.filter(x=>x.id!==coId);
+  save(); flashSaved(); renderEditor(); renderList();
+  toast('Country removed.');
+}
+
+// =====================================================
+// MODALS
+// =====================================================
+function openAddModal(){
+  document.getElementById('new-name').value='';
+  document.getElementById('add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('new-name').focus(),100);
+}
+function confirmAdd(){
+  const name=(document.getElementById('new-name').value||'').trim();
+  if(!name){ document.getElementById('new-name').style.borderColor='var(--red)'; return; }
+  const c=makeConflict(name);
+  conflicts.push(c); save(); closeModal('add-modal'); selectConflict(c.id); renderList();
+  toast('Conflict created!');
+}
+
+function openAddCountryModal(cid,sideKey){
+  _cmConflictId=cid; _cmSideKey=sideKey; _cmRole='main';
+  const c=getConflict(cid);
+  const isA=sideKey==='sideA';
+  document.getElementById('cm-title').textContent=`➕ Add Country to ${c?c[sideKey].name:(isA?'Side Alpha':'Side Bravo')}`;
+  document.getElementById('cm-flag').value='🏴';
+  document.getElementById('cm-name').value='';
+  document.getElementById('cm-confirm-btn').className=isA?'btn':'btn btn-orange';
+  document.getElementById('country-modal-box').style.borderColor=isA?'var(--cyan)':'var(--orange)';
+  setRole('main');
+  document.getElementById('country-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('cm-name').focus(),100);
+}
+function setRole(role){
+  _cmRole=role;
+  document.getElementById('role-main-btn').className='toggle-opt '+(role==='main'?'tom':'');
+  document.getElementById('role-ally-btn').className='toggle-opt '+(role==='ally'?'toly':'');
+}
+function confirmAddCountry(){
+  const name=(document.getElementById('cm-name').value||'').trim();
+  const flag=(document.getElementById('cm-flag').value||'🏴').trim();
+  if(!name){ document.getElementById('cm-name').style.borderColor='var(--red)'; return; }
+  const c=getConflict(_cmConflictId); if(!c) return;
+  c[_cmSideKey].countries.push(makeCountry(name,flag||'🏴',_cmRole==='main'));
+  save(); closeModal('country-modal'); renderEditor(); renderList();
+  toast(`${flag} ${name} added!`);
+}
+
+function deleteConflict(e,id){
+  e.stopPropagation();
+  if(deletePending[id]){
+    conflicts=conflicts.filter(c=>c.id!==id);
+    delete deletePending[id];
+    if(selectedId===id){ selectedId=null; renderEditor(); }
+    save(); renderList(); toast('Conflict deleted.');
+  } else {
+    deletePending[id]=true; renderList();
+    setTimeout(()=>{ delete deletePending[id]; renderList(); },3000);
+  }
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.getElementById('add-modal').addEventListener('click',function(e){ if(e.target===this)closeModal('add-modal'); });
+document.getElementById('country-modal').addEventListener('click',function(e){ if(e.target===this)closeModal('country-modal'); });
+document.getElementById('analysis-modal').addEventListener('click',function(e){ if(e.target===this)closeModal('analysis-modal'); });
+
+// =====================================================
+// IMPORT / EXPORT
+// =====================================================
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(conflicts,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`conflicts.json`; a.click();
+  toast('Exported!');
+}
+function importJSON(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data)) throw new Error();
+      data.forEach(c=>{
+        if(c.endDate===undefined) c.endDate='';
+        ['sideA','sideB'].forEach(sk=>{
+          (c[sk]?.countries||[]).forEach(co=>{
+            ['tanks','vehicles','aircrafts','warships'].forEach(f=>{
+            if(co[f]===undefined) co[f]=0;
+            if(co[f+'_lost']===undefined) co[f+'_lost']=0;
+          });
+          });
+        });
+      });
+      conflicts=data; save(); renderList();
+      if(selectedId&&!getConflict(selectedId)){ selectedId=null; renderEditor(); }
+      toast(`Imported ${data.length} conflict(s).`);
+    }catch{ toast('Invalid JSON.'); }
+  };
+  reader.readAsText(file); e.target.value='';
+}
+
+// =====================================================
+// TOAST
+// =====================================================
+function toast(msg,dur=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// =====================================================
+// WIN PROBABILITY ANALYSIS
+// =====================================================
+function calculateWinProbability(conflict) {
+  const sideA = conflict.sideA || {};
+  const sideB = conflict.sideB || {};
+  const aCountries = sideA.countries || [];
+  const bCountries = sideB.countries || [];
+  
+  // Calcular força de tropas
+  const aTroops = Math.max(0, aCountries.reduce((sum, c) => sum + (c.troops || 0), 0));
+  const bTroops = Math.max(0, bCountries.reduce((sum, c) => sum + (c.troops || 0), 0));
+  const totalTroops = aTroops + bTroops;
+  
+  // Calcular perdas
+  const aDeaths = aCountries.reduce((sum, c) => sum + (c.deaths || 0), 0);
+  const bDeaths = bCountries.reduce((sum, c) => sum + (c.deaths || 0), 0);
+  
+  // Calcular equipamento
+  const aEquip = aCountries.reduce((sum, c) => (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
+  const bEquip = bCountries.reduce((sum, c) => (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
+  const totalEquip = aEquip + bEquip;
+  
+  // Calcular perdas de equipamento
+  const aEquipLost = aCountries.reduce((sum, c) => (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
+  const bEquipLost = bCountries.reduce((sum, c) => (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
+  
+  // Calcular taxa de sobrevivência de equipamento
+  const aEquipSurvival = aEquip > 0 ? aEquip / (aEquip + aEquipLost) : 0.5;
+  const bEquipSurvival = bEquip > 0 ? bEquip / (bEquip + bEquipLost) : 0.5;
+  
+  // Contar aliados vs principais
+  const aMainCount = aCountries.filter(c => c.isMain).length;
+  const bMainCount = bCountries.filter(c => c.isMain).length;
+  const aAllyCount = aCountries.filter(c => !c.isMain).length;
+  const bAllyCount = bCountries.filter(c => !c.isMain).length;
+  
+  // Calcular índice de composição
+  const aCompositionIndex = aMainCount > 0 ? (aMainCount * 1.2) / (aMainCount + aAllyCount * 0.7) : 0.5;
+  const bCompositionIndex = bMainCount > 0 ? (bMainCount * 1.2) / (bMainCount + bAllyCount * 0.7) : 0.5;
+  
+  // Calcular base de probabilidades com pesos
+  let aScore = 0, bScore = 0;
+  
+  // 1. Força de tropas (35%)
+  if (totalTroops > 0) {
+    aScore += (aTroops / totalTroops) * 35;
+    bScore += (bTroops / totalTroops) * 35;
+  }
+  
+  // 2. Equipamento disponível (30%)
+  if (totalEquip > 0) {
+    aScore += (aEquip / totalEquip) * 30;
+    bScore += (bEquip / totalEquip) * 30;
+  }
+  
+  // 3. Taxa de casualidade (20%)
+  const totalDeaths = aDeaths + bDeaths;
+  if (totalDeaths > 0) {
+    const aEfficiency = 1 - (aDeaths / totalDeaths);
+    const bEfficiency = 1 - (bDeaths / totalDeaths);
+    aScore += aEfficiency * 20;
+    bScore += bEfficiency * 20;
+  }
+  
+  // 4. Durabilidade de equipamento (10%)
+  const avgSurvival = (aEquipSurvival + bEquipSurvival) / 2;
+  if (avgSurvival > 0) {
+    aScore += (aEquipSurvival / (aEquipSurvival + bEquipSurvival)) * 10;
+    bScore += (bEquipSurvival / (aEquipSurvival + bEquipSurvival)) * 10;
+  }
+  
+  // 5. Estabilidade de coalisão (5%)
+  const totalComposition = aCompositionIndex + bCompositionIndex;
+  aScore += (aCompositionIndex / totalComposition) * 5;
+  bScore += (bCompositionIndex / totalComposition) * 5;
+  
+  // Normalizar para 100%
+  const total = aScore + bScore;
+  const aProbability = Math.round((aScore / total) * 100);
+  const bProbability = 100 - aProbability;
+  
+  return {
+    aProbability,
+    bProbability,
+    aTroops,
+    bTroops,
+    aEquip,
+    bEquip,
+    aDeaths,
+    bDeaths,
+    aCountries: aCountries.length,
+    bCountries: bCountries.length,
+    aMainCount,
+    bMainCount
+  };
+}
+
+function openAnalysisModal() {
+  const content = document.getElementById('analysis-content');
+  
+  if (conflicts.length === 0) {
+    content.innerHTML = '<div class="no-conflicts">No conflicts registered yet.</div>';
+    document.getElementById('analysis-modal').classList.add('open');
+    return;
+  }
+  
+  let html = '<div class="analysis-grid">';
+  
+  conflicts.forEach(conflict => {
+    const analysis = calculateWinProbability(conflict);
+    const sideA = conflict.sideA || {};
+    const sideB = conflict.sideB || {};
+    
+    const statusMap = {
+      'ongoing': '🔴 Ongoing',
+      'ceasefire': '🟡 Ceasefire',
+      'ended': '⚪ Ended',
+      'pending': '🟣 Pending'
+    };
+    
+    const statusBadge = statusMap[conflict.status] || conflict.status;
+    
+    // Determinar vantagem
+    const aAdvantage = analysis.aProbability > 50;
+    const margin = Math.abs(analysis.aProbability - 50);
+    let advantageText = '';
+    
+    if (margin < 5) {
+      advantageText = '⚖️ Tactical Balance';
+    } else if (aAdvantage && margin >= 5 && margin < 15) {
+      advantageText = '📈 Slight advantage: ' + sideA.name;
+    } else if (aAdvantage && margin >= 15) {
+      advantageText = '🔼 Significant advantage: ' + sideA.name;
+    } else if (!aAdvantage && margin >= 5 && margin < 15) {
+      advantageText = '📉 Slight advantage: ' + sideB.name;
+    } else {
+      advantageText = '🔽 Significant advantage: ' + sideB.name;
+    }
+    
+    html += `<div class="analysis-card">
+      <div class="ac-name">${esc(conflict.name)}</div>
+      <div class="ac-status">${statusBadge}</div>
+      <div class="ac-advantage">${advantageText}</div>
+      <div class="ac-probability">
+        <div class="ac-prob-item">
+          <div class="ac-prob-pct ac-prob-side-a">${analysis.aProbability}%</div>
+          <div class="ac-prob-label">${esc(sideA.name || 'Side A')}</div>
+        </div>
+        <div class="ac-prob-divider"></div>
+        <div class="ac-prob-item">
+          <div class="ac-prob-pct ac-prob-side-b">${analysis.bProbability}%</div>
+          <div class="ac-prob-label">${esc(sideB.name || 'Side B')}</div>
+        </div>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat-item">
+          <div class="ac-stat-label">👥 Troops</div>
+          <div class="ac-stat-value">${fmt(analysis.aTroops)} / ${fmt(analysis.bTroops)}</div>
+        </div>
+        <div class="ac-stat-item">
+          <div class="ac-stat-label">⚔️ Equipment</div>
+          <div class="ac-stat-value">${fmt(analysis.aEquip)} / ${fmt(analysis.bEquip)}</div>
+        </div>
+        <div class="ac-stat-item">
+          <div class="ac-stat-label">💀 Deaths</div>
+          <div class="ac-stat-value">${fmt(analysis.aDeaths)} / ${fmt(analysis.bDeaths)}</div>
+        </div>
+        <div class="ac-stat-item">
+          <div class="ac-stat-label">🏙️ Nations</div>
+          <div class="ac-stat-value">${analysis.aCountries} / ${analysis.bCountries}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  
+  html += '</div>';
+  content.innerHTML = html;
+  document.getElementById('analysis-modal').classList.add('open');
+}
+
+// =====================================================
+// BOOT
+// =====================================================
+load(); renderList();
+</script>
+</body>
+</html>

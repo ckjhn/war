@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Resource Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--surface:#0d1620;--surface2:#111d2a;--border:#1a3045;
+  --accent:#00d4ff;--accent2:#ff6b35;--accent3:#39ff14;
+  --gold:#ffd700;--purple:#c084fc;--teal:#00ffb3;
+  --text:#c8dde8;--text-dim:#4a6a7a;--danger:#ff3a3a;
+  --glow:0 0 20px rgba(0,212,255,.3);--glow2:0 0 20px rgba(255,107,53,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(0,212,255,.04) 0%,transparent 60%),
+  radial-gradient(ellipse at 80% 20%,rgba(255,107,53,.04) 0%,transparent 60%),
+  repeating-linear-gradient(0deg,transparent,transparent 50px,rgba(0,212,255,.015) 50px,rgba(0,212,255,.015) 51px),
+  repeating-linear-gradient(90deg,transparent,transparent 50px,rgba(0,212,255,.015) 50px,rgba(0,212,255,.015) 51px);}
+header{position:relative;text-align:center;padding:40px 20px 30px;border-bottom:1px solid var(--border);z-index:1;}
+header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.logo{font-family:'Orbitron',monospace;font-size:clamp(18px,4vw,38px);font-weight:900;letter-spacing:6px;color:var(--accent);text-shadow:0 0 30px rgba(0,212,255,.6),0 0 60px rgba(0,212,255,.2);animation:pulse 3s ease-in-out infinite;}
+.logo span{color:var(--accent2);text-shadow:0 0 30px rgba(255,107,53,.6);}
+.subtitle{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--text-dim);margin-top:8px;text-transform:uppercase;}
+@keyframes pulse{0%,100%{text-shadow:0 0 30px rgba(0,212,255,.6),0 0 60px rgba(0,212,255,.2);}50%{text-shadow:0 0 40px rgba(0,212,255,.9),0 0 80px rgba(0,212,255,.4);}}
+main{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:30px 20px 60px;display:grid;gap:24px;}
+
+/* TABS */
+.tabs{display:flex;gap:3px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1.5px;padding:11px 14px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;white-space:nowrap;text-transform:uppercase;}
+.tab-btn:hover{color:var(--accent);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:var(--glow);}
+.tab-content{display:none;}
+.tab-content.active{display:grid;gap:24px;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:2px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;}
+.card-header{display:flex;align-items:center;gap:12px;padding:16px 22px 12px;border-bottom:1px solid var(--border);}
+.card-icon{font-size:18px;}
+.card-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;}
+.card-body{padding:22px;}
+
+/* GRIDS */
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:11px;}
+.recipe-card{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:13px;cursor:pointer;transition:all .2s;position:relative;}
+.recipe-card:hover,.recipe-card.selected{border-color:var(--accent);box-shadow:var(--glow);}
+.recipe-card.selected::after{content:'✓';position:absolute;top:9px;right:11px;color:var(--accent3);font-size:13px;font-weight:bold;}
+.recipe-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:6px;text-transform:uppercase;}
+.recipe-formula{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.8;}
+
+.prod-category{margin-bottom:20px;}
+.prod-category-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--accent2);text-transform:uppercase;padding:7px 0;border-bottom:1px solid rgba(255,107,53,.2);margin-bottom:10px;}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.prod-card{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:12px;cursor:pointer;transition:all .2s;position:relative;}
+.prod-card:hover{border-color:var(--accent2);}
+.prod-card.selected{border-color:var(--accent2);box-shadow:var(--glow2);}
+.prod-card.selected::after{content:'✓';position:absolute;top:7px;right:9px;color:var(--accent3);font-size:11px;font-weight:bold;}
+.prod-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;color:var(--accent2);margin-bottom:5px;text-transform:uppercase;}
+.prod-desc{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;}
+.prod-mp{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--purple);margin-top:4px;}
+
+/* CONTROLS */
+.calc-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
+@media(max-width:600px){.calc-row{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:7px;}
+label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+input[type="number"],select{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:11px 14px;outline:none;transition:border-color .2s;width:100%;-moz-appearance:textfield;}
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type="number"]:focus,select:focus{border-color:var(--accent);box-shadow:var(--glow);}
+select option{background:var(--surface);}
+
+/* BUTTONS */
+.btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:12px 22px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;text-transform:uppercase;transition:all .2s;clip-path:polygon(7px 0%,100% 0%,calc(100% - 7px) 100%,0% 100%);white-space:nowrap;}
+.btn:hover{background:var(--accent);color:var(--bg);box-shadow:var(--glow);}
+.btn-orange{border-color:var(--accent2);color:var(--accent2);}
+.btn-orange:hover{background:var(--accent2);color:var(--bg);box-shadow:var(--glow2);}
+.btn-teal{border-color:var(--teal);color:var(--teal);}
+.btn-teal:hover{background:var(--teal);color:var(--bg);}
+.btn-sm{padding:7px 13px;font-size:8px;}
+.btn-danger{border-color:var(--danger);color:var(--danger);}
+.btn-danger:hover{background:var(--danger);color:var(--bg);}
+
+/* RESULTS */
+.result-panel{background:var(--bg);border:1px solid var(--border);padding:18px;min-height:72px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:2;}
+.result-line{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(26,48,69,.4);animation:fadeIn .25s ease;}
+.result-line:last-child{border-bottom:none;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.result-key{color:var(--text-dim);}
+.result-val{font-weight:bold;}
+.gold{color:var(--gold);}
+.orange{color:var(--accent2);}
+.cyan{color:var(--accent);}
+.purple{color:var(--purple);}
+.green{color:var(--accent3);}
+.teal{color:var(--teal);}
+.result-title{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);margin-bottom:10px;text-transform:uppercase;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.empty-state{color:var(--text-dim);font-size:11px;letter-spacing:2px;text-align:center;padding:28px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:11px;}
+.stat-box{background:var(--surface2);border:1px solid var(--border);padding:14px;position:relative;}
+.stat-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:5px;}
+.stat-value{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--accent);}
+.stat-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:3px;}
+
+/* TABLE */
+.build-table{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.build-table th{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.build-table td{padding:10px 14px;border-bottom:1px solid rgba(26,48,69,.4);color:var(--text);}
+.build-table tr:hover td{background:rgba(0,212,255,.03);}
+.build-table td:first-child{color:var(--gold);font-weight:bold;}
+.build-table td.mp{color:var(--purple);}
+
+/* MP */
+.mp-display{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:600px){.mp-display{grid-template-columns:1fr;}}
+.mp-box{background:var(--surface2);border:1px solid var(--border);padding:18px;text-align:center;}
+.mp-number{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--accent2);text-shadow:var(--glow2);display:block;margin-bottom:5px;}
+.mp-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+
+/* PACKAGE */
+.pkg-panel{background:var(--surface);border:1px solid var(--accent2);border-radius:2px;overflow:hidden;}
+.pkg-panel::before{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);}
+.pkg-header{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid rgba(255,107,53,.2);}
+.pkg-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);text-transform:uppercase;}
+.pkg-body{padding:18px;}
+.pkg-item{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:11px 14px;margin-bottom:9px;animation:fadeIn .3s ease;}
+.pkg-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.pkg-item-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;}
+.pkg-remove{background:transparent;border:1px solid var(--danger);color:var(--danger);font-size:9px;padding:2px 7px;cursor:pointer;transition:all .2s;font-family:'Share Tech Mono',monospace;}
+.pkg-remove:hover{background:var(--danger);color:var(--bg);}
+.pkg-mats{display:flex;flex-wrap:wrap;gap:5px;}
+.pkg-mat{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);background:var(--bg);border:1px solid var(--border);padding:2px 8px;}
+.pkg-mat strong{color:var(--gold);}
+.pkg-mat.mp-tag strong{color:var(--purple);}
+.pkg-mat.fuel-tag strong{color:var(--accent2);}
+
+/* MINE GRID */
+.mine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.mine-cat{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:14px;}
+.mine-cat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.mine-cat-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;}
+.mine-qty-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:7px 10px;width:70px;outline:none;text-align:center;-moz-appearance:textfield;}
+.mine-qty-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.mine-qty-input:focus{border-color:var(--teal);}
+.mine-biomes{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;margin-top:6px;}
+.mine-biomes span{color:var(--text-dim);display:inline-block;margin-right:6px;}
+
+/* RESOURCE SEARCH */
+.search-result-category{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:14px;margin-bottom:10px;}
+.src-rank{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;color:var(--gold);margin-right:12px;min-width:30px;display:inline-block;}
+.src-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;}
+.src-val{font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--accent3);font-weight:bold;float:right;}
+.src-biomes{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:5px;line-height:1.7;}
+
+/* FUEL VEHICLE CARDS */
+.fuel-vehicle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px;}
+.fv-card{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:13px;cursor:pointer;transition:all .2s;position:relative;}
+.fv-card:hover{border-color:var(--accent2);}
+.fv-card.selected{border-color:var(--accent2);box-shadow:var(--glow2);}
+.fv-card.selected::after{content:'✓';position:absolute;top:7px;right:9px;color:var(--accent3);font-size:11px;font-weight:bold;}
+.fv-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1.5px;color:var(--accent2);text-transform:uppercase;margin-bottom:5px;}
+.fv-rate{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--gold);}
+
+/* MISC */
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:14px 0;}
+.tip{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.5px;line-height:1.7;}
+.tip .hl{color:var(--accent);}
+.tip .ora{color:var(--accent2);}
+.btn-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+/* TOGGLE SWITCH */
+.toggle-switch-container{display:flex;align-items:center;gap:12px;padding:14px;background:rgba(0,212,255,.05);border:1px solid var(--border);border-radius:2px;margin-bottom:14px;}
+.toggle-label{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;display:flex;gap:8px;align-items:center;}
+.toggle-label-text{color:var(--accent);}
+.toggle-switch{position:relative;display:inline-block;width:50px;height:26px;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#4a6a7a;transition:.3s;border-radius:26px;border:1px solid var(--border);}
+.toggle-slider:before{position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background-color:white;transition:.3s;border-radius:50%;}
+input:checked+.toggle-slider{background-color:var(--accent);}
+input:checked+.toggle-slider:before{transform:translateX(24px);}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">TOTAL <span>CONQUEST</span></div>
+  <div class="subtitle">// Resource Engine v3.0 — Strategic Calculator //</div>
+</header>
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('refined',this)">⚗️ Refined</button>
+    <button class="tab-btn" onclick="switchTab('production',this)">🏭 Production</button>
+    <button class="tab-btn" onclick="switchTab('fueluse',this)">🔥 Fuel Use</button>
+    <button class="tab-btn" onclick="switchTab('mines',this)">⛏️ Mines</button>
+    <button class="tab-btn" onclick="switchTab('fuel',this)">⛽ Fuel Conv.</button>
+    <button class="tab-btn" onclick="switchTab('manpower',this)">👷 Manpower</button>
+    <button class="tab-btn" onclick="switchTab('buildings',this)">🏗️ Buildings</button>
+    <button class="tab-btn" onclick="switchTab('economy',this)">💰 Economy</button>
+    <button class="tab-btn" onclick="switchTab('packs',this)">📦 Pack Calc</button>
+  </div>
+
+  <!-- ===== REFINED ===== -->
+  <div class="tab-content active" id="tab-refined">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⚗️</span><div class="card-title">Refined Resource Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Select a refined resource and enter quantity. All intermediaries expand automatically into <span class="hl">brute raw materials</span>.</p>
+        <div class="sep"></div>
+        <div class="recipe-grid" id="recipe-grid"></div>
+        <div class="sep"></div>
+        <div class="toggle-switch-container">
+          <span class="toggle-label">
+            <span class="toggle-label-text">📊 View Mode:</span>
+            <span>BRUTE</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="refined-toggle" onchange="handleRefinedToggle()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>REFINED</span>
+          </span>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label>Desired Quantity</label><input type="number" id="refined-qty" placeholder="e.g. 700" min="1" value="1"></div>
+          <div style="display:flex;gap:9px;align-items:flex-end;">
+            <button class="btn" onclick="calcRefined()">▶ CALCULATE</button>
+            <button class="btn btn-orange btn-sm" onclick="saveRefinedToPackage()">📦 SAVE</button>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div class="result-panel" id="refined-result"><div class="empty-state">↑ Select a resource and enter the quantity</div></div>
+      </div>
+    </div>
+    <div id="refined-pkg"></div>
+  </div>
+
+  <!-- ===== PRODUCTION ===== -->
+  <div class="tab-content" id="tab-production">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🏭</span><div class="card-title">Production Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Select an item, enter quantity and workers. Outputs all <span class="hl">brute raw materials</span>. <span class="ora">Manpower</span> shown as build time separately.</p>
+        <div class="sep"></div>
+        <div id="prod-categories"></div>
+        <div class="sep"></div>
+        <div class="toggle-switch-container">
+          <span class="toggle-label">
+            <span class="toggle-label-text">📊 View Mode:</span>
+            <span>BRUTE</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="prod-toggle" onchange="handleProdToggle()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>REFINED</span>
+          </span>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label>Quantity to Produce</label><input type="number" id="prod-qty" value="1" min="1" oninput="calcProduction()"></div>
+          <div class="field"><label>Workers (build time)</label><input type="number" id="prod-workers" value="25" min="1"></div>
+        </div>
+        <div class="calc-row">
+          <div class="field" id="explosion-field" style="display:none;"><label>Explosion Level</label><select id="explosion-level" onchange="calcProduction()"><option value="small">Small (0.5x)</option><option value="medium" selected>Medium (1.0x)</option><option value="big">Big (1.8x)</option><option value="huge">Huge (3.0x)</option><option value="gigantic">Gigantic (4.5x)</option></select></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="calcProduction()">▶ CALCULATE</button>
+          <button class="btn btn-orange btn-sm" onclick="saveProdToPackage()">📦 SAVE</button>
+        </div>
+        <div class="sep"></div>
+        <div class="result-panel" id="prod-result"><div class="empty-state">↑ Select an item and enter the quantity</div></div>
+      </div>
+    </div>
+    <div id="prod-pkg"></div>
+  </div>
+
+  <!-- ===== FUEL USE ===== -->
+  <div class="tab-content" id="tab-fueluse">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔥</span><div class="card-title">Vehicle Fuel Consumption Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Select a vehicle and enter the number of turns it will operate. The system calculates total <span class="hl">fuel consumed</span> (L per turn × turns).</p>
+        <div class="sep"></div>
+        <div id="fueluse-categories"></div>
+        <div class="sep"></div>
+        <div class="calc-row">
+          <div class="field"><label>Number of Turns Operating</label><input type="number" id="fueluse-turns" value="5" min="1"></div>
+          <div class="field"><label>Number of Units</label><input type="number" id="fueluse-units" value="1" min="1"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="calcFuelUse()">▶ CALCULATE FUEL USE</button>
+          <button class="btn btn-orange btn-sm" onclick="saveFuelUseToPackage()">📦 SAVE TO PACKAGE</button>
+        </div>
+        <div class="sep"></div>
+        <div class="result-panel" id="fueluse-result"><div class="empty-state">↑ Select a vehicle and enter turns</div></div>
+      </div>
+    </div>
+    <div id="fueluse-pkg"></div>
+  </div>
+
+  <!-- ===== MINES ===== -->
+  <div class="tab-content" id="tab-mines">
+    <div class="two-col">
+      <!-- LEFT: Mine configurator -->
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">⛏️</span><div class="card-title">Mine Output Simulator</div></div>
+          <div class="card-body">
+            <p class="tip">Set how many mines you have in each biome category. Each mine produces resources every <span class="hl">4 turns (1 cycle)</span>.</p>
+            <div class="sep"></div>
+            <div class="field" style="margin-bottom:14px;">
+              <label>Cycles to Simulate (1 cycle = 4 turns)</label>
+              <input type="number" id="mine-cycles" value="5" min="1" style="max-width:200px;">
+            </div>
+            <div class="mine-grid" id="mine-grid"></div>
+            <div class="btn-row">
+              <button class="btn" onclick="calcMines()">▶ CALCULATE OUTPUT</button>
+              <button class="btn btn-danger btn-sm" onclick="resetMines()">↺ RESET</button>
+            </div>
+          </div>
+        </div>
+        <div class="result-panel" id="mine-result" style="margin-top:16px;display:none;"></div>
+      </div>
+      <!-- RIGHT: Resource search -->
+      <div>
+        <div class="card">
+          <div class="card-header"><span class="card-icon">🔍</span><div class="card-title">Best Biome for Resource</div></div>
+          <div class="card-body">
+            <p class="tip">Select a resource to see which biome categories produce the most of it per cycle, ranked from best to worst. Also shows all resources available in each top category.</p>
+            <div class="sep"></div>
+            <div class="field" style="margin-bottom:14px;">
+              <label>Search Resource</label>
+              <select id="mine-search-res" onchange="calcMineSearch()">
+                <option value="iron">Iron</option>
+                <option value="coal">Coal</option>
+                <option value="gold">Gold</option>
+                <option value="diamond">Diamond</option>
+                <option value="gravel">Gravel</option>
+                <option value="latex">Latex</option>
+                <option value="silicon">Silicon</option>
+                <option value="oil">Oil (L)</option>
+                <option value="gas">Gas (L)</option>
+                <option value="uranium">Uranium</option>
+              </select>
+            </div>
+            <div id="mine-search-result"></div>
+          </div>
+        </div>
+        <!-- BIOME LOOKUP -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card-header"><span class="card-icon">🌍</span><div class="card-title">Biome Lookup</div></div>
+          <div class="card-body">
+            <p class="tip">Type a biome name to find which category it belongs to and its full resource output per mine per cycle (4 turns).</p>
+            <div class="sep"></div>
+            <div class="field" style="margin-bottom:14px;">
+              <label>Search Biome</label>
+              <input type="text" id="biome-search-input" placeholder="e.g. Volcano, Taiga, Deep Dark…"
+                oninput="calcBiomeSearch()"
+                style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:11px 14px;outline:none;transition:border-color .2s;width:100%;">
+            </div>
+            <div id="biome-search-result"><div class="empty-state">↑ Start typing a biome name</div></div>
+          </div>
+        </div>
+        <!-- CATEGORY → BIOME LIST -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card-header"><span class="card-icon">📂</span><div class="card-title">Category Biome List</div></div>
+          <div class="card-body">
+            <p class="tip">Select a category to see every biome that belongs to it, and its full resource output per mine per cycle.</p>
+            <div class="sep"></div>
+            <div class="field" style="margin-bottom:14px;">
+              <label>Select Category</label>
+              <select id="cat-select" onchange="calcCatBiomes()"
+                style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:11px 14px;outline:none;width:100%;">
+                <option value="">— Choose a category —</option>
+              </select>
+            </div>
+            <div id="cat-biomes-result"><div class="empty-state">↑ Select a category above</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FUEL CONVERTER ===== -->
+  <div class="tab-content" id="tab-fuel">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">⛽</span><div class="card-title">Fuel Converter</div></div>
+      <div class="card-body">
+        <p class="tip">Enter amount of <span class="hl">raw source material</span> (oil or gas) to see how much fuel is produced.</p>
+        <div class="sep"></div>
+        <div class="calc-row">
+          <div class="field"><label>Source Type</label>
+            <select id="fuel-type">
+              <option value="oil">🛢️ Oil — 50L → 100L Fuel</option>
+              <option value="gas">💨 Gas — 100L → 100L Fuel</option>
+            </select>
+          </div>
+          <div class="field"><label>Amount of source (L)</label><input type="number" id="fuel-qty" value="5670" min="1"></div>
+        </div>
+        <div class="btn-row"><button class="btn" onclick="calcFuel()">▶ CALCULATE</button></div>
+        <div class="sep"></div>
+        <div class="result-panel" id="fuel-result"><div class="empty-state">↑ Enter data and calculate</div></div>
+        <div class="sep"></div>
+        <div class="card" style="margin-top:0;">
+          <div class="card-header"><span class="card-icon">🏭</span><div class="card-title">Factory Fuel Consumption</div></div>
+          <div class="card-body">
+            <p class="tip">Each factory/industry consumes <span class="hl">100L of fuel</span> every 4 turns (when producing).</p>
+            <div class="sep"></div>
+            <div class="calc-row">
+              <div class="field"><label>Active Factories</label><input type="number" id="factory-count" value="1" min="1"></div>
+              <div class="field"><label>Cycles (4 turns each)</label><input type="number" id="factory-cycles" value="1" min="1"></div>
+            </div>
+            <div class="btn-row"><button class="btn btn-orange" onclick="calcFactoryFuel()">▶ CALCULATE CONSUMPTION</button></div>
+            <div class="result-panel" id="factory-fuel-result" style="margin-top:14px;"><div class="empty-state">↑ Enter data and calculate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MANPOWER ===== -->
+  <div class="tab-content" id="tab-manpower">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">👷</span><div class="card-title">Manpower Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Rule: <span class="hl">1 worker = 1 MP per turn</span>. e.g. 250 MP ÷ 25 workers = 10 turns.</p>
+        <div class="sep"></div>
+        <div class="calc-row">
+          <div class="field"><label>Required Manpower</label><input type="number" id="mp-required" value="250" min="1"></div>
+          <div class="field"><label>Available Workers</label><input type="number" id="mp-workers" value="25" min="1"></div>
+        </div>
+        <div class="btn-row"><button class="btn" onclick="calcManpower()">▶ CALCULATE TURNS</button></div>
+        <div class="sep"></div>
+        <div class="mp-display" id="mp-display" style="display:none;">
+          <div class="mp-box"><span class="mp-number" id="mp-turns">—</span><span class="mp-label">Turns Required</span></div>
+          <div class="mp-box"><span class="mp-number" id="mp-workers-show" style="color:var(--accent);">—</span><span class="mp-label">Workers</span></div>
+          <div class="mp-box"><span class="mp-number" id="mp-per-turn" style="color:var(--gold);">—</span><span class="mp-label">MP / Turn</span></div>
+        </div>
+        <div class="result-panel" id="mp-result" style="margin-top:14px;display:none;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📋</span><div class="card-title">Reference — Construction Time</div></div>
+      <div class="card-body">
+        <table class="build-table">
+          <thead><tr><th>Structure</th><th>Manpower</th><th>10w</th><th>25w</th><th>50w</th><th>100w</th></tr></thead>
+          <tbody id="mp-ref-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BUILDINGS ===== -->
+  <div class="tab-content" id="tab-buildings">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🏗️</span><div class="card-title">Building Material Costs</div></div>
+      <div class="card-body">
+        <div style="margin-bottom:18px;"><div class="result-title">🪨 Mine</div>
+          <table class="build-table"><thead><tr><th>Resource</th><th>Amount</th></tr></thead><tbody>
+            <tr><td>Iron</td><td>4,000 un</td></tr><tr><td>Coal</td><td>2,000 un</td></tr><tr><td>Refined Iron</td><td>500 un</td></tr><tr><td class="mp">Manpower</td><td class="mp">250 MP</td></tr>
+          </tbody></table></div>
+        <div style="margin-bottom:18px;"><div class="result-title">⚙️ Factory / Industry</div>
+          <table class="build-table"><thead><tr><th>Resource</th><th>Amount</th></tr></thead><tbody>
+            <tr><td>Refined Iron</td><td>5,000 un</td></tr><tr><td>Diamonds</td><td>170 un</td></tr><tr><td>Gold</td><td>300 un</td></tr><tr><td>Silicon</td><td>130 un</td></tr>
+          </tbody></table></div>
+        <div style="margin-bottom:18px;"><div class="result-title">🏢 Business</div>
+          <table class="build-table"><thead><tr><th>Resource</th><th>Amount</th></tr></thead><tbody>
+            <tr><td>Refined Iron</td><td>2,000 un</td></tr><tr><td>Electronics</td><td>1,250 un</td></tr><tr><td>Chips</td><td>500 un</td></tr>
+          </tbody></table></div>
+        <div><div class="result-title">🏥 Hospital</div>
+          <table class="build-table"><thead><tr><th>Resource</th><th>Amount</th></tr></thead><tbody>
+            <tr><td>Refined Iron</td><td>2,000 un</td></tr><tr><td>Chips</td><td>500 un</td></tr><tr><td>Electronics</td><td>700 un</td></tr>
+          </tbody></table></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔁</span><div class="card-title">Convert Building Cost → Raw Materials</div></div>
+      <div class="card-body">
+        <div class="calc-row">
+          <div class="field"><label>Structure</label>
+            <select id="build-type">
+              <option value="mine">🪨 Mine</option>
+              <option value="factory">⚙️ Factory/Industry</option>
+              <option value="business">🏢 Business</option>
+              <option value="hospital">🏥 Hospital</option>
+            </select>
+          </div>
+          <div class="field"><label>Quantity to Build</label><input type="number" id="build-qty" value="1" min="1"></div>
+        </div>
+        <div class="btn-row"><button class="btn" onclick="calcBuildCost()">▶ CALCULATE RAW COST</button></div>
+        <div class="result-panel" id="build-result" style="margin-top:14px;"><div class="empty-state">↑ Select a structure and calculate</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ECONOMY ===== -->
+  <div class="tab-content" id="tab-economy">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">💰</span><div class="card-title">Economic Simulator</div></div>
+      <div class="card-body">
+        <p class="tip">Each cycle = 4 turns. Civilians grow <span class="hl">+10 per cycle</span>. Each civilian earns $10/cycle. Each business earns $5,000/cycle. Each <span class="hl">hospital</span> adds <span class="hl">+3 civilians per cycle</span>.</p>
+        <div class="sep"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:14px;">
+          <div class="field"><label>Starting Civilians</label><input type="number" id="eco-civilians" value="1000" min="0"></div>
+          <div class="field"><label>Hospitals</label><input type="number" id="eco-hospitals" value="0" min="0"></div>
+          <div class="field"><label>Businesses</label><input type="number" id="eco-businesses" value="0" min="0"></div>
+          <div class="field"><label>Cycles to Simulate</label><input type="number" id="eco-cycles" value="5" min="1" max="100"></div>
+        </div>
+        <button class="btn" onclick="calcEconomy()">▶ SIMULATE ECONOMY</button>
+        <div class="sep"></div>
+        <div id="eco-result"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🎮</span><div class="card-title">Starting State — Default Team</div></div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-label">Civilians</div><div class="stat-value">1,000</div></div>
+          <div class="stat-box"><div class="stat-label">Military</div><div class="stat-value">25</div></div>
+          <div class="stat-box"><div class="stat-label">Houses</div><div class="stat-value">3</div></div>
+          <div class="stat-box"><div class="stat-label">Town Hall</div><div class="stat-value">1</div></div>
+          <div class="stat-box"><div class="stat-label">Mine</div><div class="stat-value">1</div></div>
+          <div class="stat-box"><div class="stat-label">Rifles</div><div class="stat-value">10</div></div>
+          <div class="stat-box"><div class="stat-label">Rifle Ammo</div><div class="stat-value">500</div></div>
+          <div class="stat-box"><div class="stat-label">Base Income/Cycle</div><div class="stat-value" style="font-size:14px;">$10,000</div><div class="stat-sub">1000 civ × $10</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ===== PACK CALCULATOR ===== -->
+  <div class="tab-content" id="tab-packs">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">📦</span><div class="card-title">Pack Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Enter any item count to see how many full packs of <span class="hl">64</span> it makes, and how many loose items remain.</p>
+        <div class="sep"></div>
+        <div class="calc-row">
+          <div class="field">
+            <label>Total Item Count</label>
+            <input type="number" id="pack-input" placeholder="e.g. 500" min="0" value=""
+              oninput="calcPacks()" style="font-size:18px; padding:14px 16px;">
+          </div>
+          <div class="field">
+            <label>Pack Size (default 64)</label>
+            <input type="number" id="pack-size" placeholder="64" min="1" value="64"
+              oninput="calcPacks()" style="font-size:18px; padding:14px 16px;">
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div id="pack-result"><div class="empty-state">↑ Enter a number above</div></div>
+      </div>
+    </div>
+    <!-- BATCH: check multiple items at once -->
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🗂️</span><div class="card-title">Batch Pack Calculator</div></div>
+      <div class="card-body">
+        <p class="tip">Add multiple items at once to see the pack breakdown for each one simultaneously.</p>
+        <div class="sep"></div>
+        <div id="batch-rows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
+        <div class="btn-row">
+          <button class="btn" onclick="addBatchRow()">+ Add Item</button>
+          <button class="btn btn-orange btn-sm" onclick="clearBatch()">🗑 Clear All</button>
+        </div>
+        <div class="sep"></div>
+        <div id="batch-result"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============================================================
+// DATA — BRUTE MATERIALS
+// ============================================================
+const BRUTE = new Set(['gold','iron','coal','diamond','gravel','latex','silicon','oil','gas','glass','uranium','fuel']);
+
+// ============================================================
+// REFINED RECIPES
+// ============================================================
+const RECIPES = {
+  electronics:     {name:'Electronics',    icon:'💡',output:1,  inputs:{gold:1,silicon:2,refined_iron:5},        desc:'1x Gold + 2x Silicon + 5x Refined Iron → 1 Electronic'},
+  refined_iron:    {name:'Refined Iron',   icon:'🔩',output:5,  inputs:{iron:5,coal:3},                          desc:'5x Iron + 3x Coal → 5 Refined Iron'},
+  chips:           {name:'Chips',          icon:'🔬',output:1,  inputs:{diamond:3,glass:10},                     desc:'3x Diamond + 10x Glass → 1 Chip'},
+  gunpowder:       {name:'Gunpowder',      icon:'💥',output:10, inputs:{coal:10,gravel:5},                       desc:'10x Coal + 5x Gravel → 10 Gunpowder'},
+  tires:           {name:'Tires',          icon:'🔄',output:1,  inputs:{latex:10},                               desc:'10x Latex → 1 Tire'},
+  fuel_oil:        {name:'Fuel (Oil)',      icon:'🛢️',output:100,outputUnit:'L',inputs:{oil:50},                 desc:'50L Oil → 100L Fuel'},
+  fuel_gas:        {name:'Fuel (Gas)',      icon:'💨',output:100,outputUnit:'L',inputs:{gas:100},                desc:'100L Gas → 100L Fuel'},
+  refined_uranium: {name:'Refined Uranium',icon:'☢️',output:1,  inputs:{uranium:10,fuel:1000,coal:500,diamond:120,gold:200}, desc:'10 Uranium + 1000L Fuel + 500 Coal + 120 Diamond + 200 Gold → 1'},
+};
+const R_BY_ID = {};
+for(const[k,r]of Object.entries(RECIPES)){R_BY_ID[k]=k;R_BY_ID[r.name.toLowerCase()]=k;R_BY_ID[r.name.toLowerCase().replace(/\s+/g,'_')]=k;}
+
+// ============================================================
+// EXPLOSION LEVEL MULTIPLIERS FOR MISSILES
+// ============================================================
+const EXPLOSION_MULTIPLIERS = {
+  small:     {gunpowder: 0.5,  silicon: 0.6},
+  medium:    {gunpowder: 1.0,  silicon: 1.0},
+  big:       {gunpowder: 1.8,  silicon: 1.3},
+  huge:      {gunpowder: 3.0,  silicon: 1.7},
+  gigantic:  {gunpowder: 4.5,  silicon: 2.0},
+};
+
+// ============================================================
+// PRODUCTION CATALOGUE
+// ============================================================
+const PRODUCTION = {
+  'Man-Handed Weapons':[
+    {id:'knife',       name:'Knife',                        icon:'🔪',inputs:{refined_iron:2},                                         manpower:1},
+    {id:'pistol',      name:'Pistol',                       icon:'🔫',inputs:{refined_iron:8},                                         manpower:3},
+    {id:'smg',         name:'SMG',                          icon:'🔫',inputs:{refined_iron:18,electronics:1},                          manpower:8},
+    {id:'rifle',       name:'Rifle',                        icon:'🔫',inputs:{refined_iron:25,electronics:1},                          manpower:8},
+    {id:'sniper',      name:'Sniper Rifle',                 icon:'🎯',inputs:{refined_iron:40,electronics:2},                          manpower:12},
+    {id:'heavywpn',    name:'Heavy Weapon',                 icon:'💣',inputs:{refined_iron:60,electronics:3},                          manpower:15},
+    {id:'atm',         name:'Hand Anti-Tank Missile',       icon:'🚀',inputs:{refined_iron:80,electronics:5,chips:3},                  manpower:20},
+    {id:'mortar',      name:'Old Mortar (Ground-Mounted)',   icon:'🎯',inputs:{refined_iron:120,electronics:5,chips:2},                manpower:25},
+    {id:'lightvest',   name:'Light Military Vest',          icon:'🦺',inputs:{refined_iron:15,latex:5},                                manpower:5},
+    {id:'heavyvest',   name:'Heavy Military Vest',          icon:'🦺',inputs:{refined_iron:30,latex:10},                               manpower:10},
+    {id:'supplies',    name:'Resources (food/supplies)',    icon:'📦',inputs:{refined_iron:10},                                        manpower:20,costUsd:1.5},
+  ],
+  'Air Vehicles':[
+    {id:'lightjet',    name:'Light Fighter Jet',            icon:'✈️',inputs:{refined_iron:800,  electronics:30, chips:12},            manpower:140},
+    {id:'medjet',      name:'Medium Fighter Jet',           icon:'✈️',inputs:{refined_iron:1400, electronics:70, chips:35},            manpower:260},
+    {id:'heavyjet',    name:'Heavy Fighter Jet',            icon:'✈️',inputs:{refined_iron:1900, electronics:100,chips:55},            manpower:340},
+    {id:'bomber',      name:'Bomber Jet',                   icon:'💥',inputs:{refined_iron:2400, electronics:120,chips:70},            manpower:400},
+    {id:'heli',        name:'Helicopter',                   icon:'🚁',inputs:{refined_iron:600,  electronics:20, chips:12},            manpower:150},
+    {id:'airplane',    name:'Airplane (transport/military)',icon:'🛫',inputs:{refined_iron:2000, electronics:90, chips:60},            manpower:300},
+  ],
+  'Land Vehicles':[
+    {id:'lighttank',   name:'Light Tank',                   icon:'🪖',inputs:{refined_iron:600,  electronics:35,chips:10,tires:8},     manpower:130},
+    {id:'medtank',     name:'Medium Tank',                  icon:'🪖',inputs:{refined_iron:950,  electronics:50,chips:18,tires:10},    manpower:190},
+    {id:'heavytank',   name:'Heavy Tank',                   icon:'🪖',inputs:{refined_iron:1450, electronics:75,chips:30,tires:12},    manpower:260},
+    {id:'motorbike',   name:'Motorbike',                    icon:'🏍️',inputs:{refined_iron:35,  electronics:2, chips:1, tires:2},      manpower:10},
+    {id:'car',         name:'Car',                          icon:'🚗',inputs:{refined_iron:80,  electronics:4, chips:2, tires:4},      manpower:16},
+    {id:'truck',       name:'Truck (military/transport)',   icon:'🚛',inputs:{refined_iron:220, electronics:10,chips:4, tires:6},      manpower:40},
+  ],
+  'Water Vehicles':[
+    {id:'sub',         name:'Submarine',                    icon:'🤿',inputs:{refined_iron:2600, electronics:100,chips:55},            manpower:420},
+    {id:'warship',     name:'Warship',                      icon:'⚓',inputs:{refined_iron:3200, electronics:110,chips:60},            manpower:500},
+    {id:'boat',        name:'Boat',                         icon:'⛵',inputs:{refined_iron:70},                                        manpower:12},
+    {id:'ship',        name:'Ship (commercial/military)',   icon:'🚢',inputs:{refined_iron:1200, electronics:60, chips:20},            manpower:180},
+    {id:'carrier',     name:'Carrier',                      icon:'🛳️',inputs:{refined_iron:7000, electronics:280,chips:180},           manpower:1000},
+    {id:'supercarrier',name:'Supercarrier',                 icon:'🛳️',inputs:{refined_iron:12000,electronics:500,chips:320},           manpower:1800},
+  ],
+  'Ammunition':[
+    {id:'ammo50',      name:'.50 Ammo (100 bullets)',       icon:'🔴',inputs:{refined_iron:10,gunpowder:10},                           manpower:3},
+    {id:'ammo22mm',    name:'22mm Autocannon (25 bullets)', icon:'🔴',inputs:{refined_iron:20,gunpowder:15},                           manpower:5},
+    {id:'ammopistol',  name:'Pistol Ammo (100 bullets)',    icon:'🔵',inputs:{refined_iron:4, gunpowder:3},                            manpower:1},
+    {id:'ammosmg',     name:'SMG Ammo (100 bullets)',       icon:'🔵',inputs:{refined_iron:4, gunpowder:6},                            manpower:2},
+    {id:'ammorifle',   name:'Rifle Ammo (50 bullets)',      icon:'🟡',inputs:{refined_iron:4, gunpowder:6},                            manpower:2},
+    {id:'ammosniper',  name:'Sniper Ammo (50 bullets)',     icon:'🎯',inputs:{refined_iron:8, gunpowder:10},                           manpower:3},
+    {id:'ammoheavy',   name:'Heavy Ammo (50 bullets)',      icon:'🟠',inputs:{refined_iron:10,gunpowder:12},                           manpower:4},
+    {id:'ammoatm',     name:'Anti-Tank Missile (1 piece)',  icon:'🚀',inputs:{refined_iron:25,electronics:2,chips:1,gunpowder:12},     manpower:8},
+    {id:'ammomortar',  name:'Mortar Ammo (4 rounds)',       icon:'💣',inputs:{refined_iron:15,gunpowder:20},                          manpower:6},
+  ],
+  'Other Stuff':[
+    {id:'otherstuff_s',name:'Other Stuff (Small)',         icon:'📦',inputs:{refined_iron:2},                                        manpower:1},
+    {id:'otherstuff_m',name:'Other Stuff (Medium)',        icon:'📦',inputs:{refined_iron:5,electronics:1},                          manpower:2},
+    {id:'otherstuff_b',name:'Other Stuff (Big)',           icon:'📦',inputs:{refined_iron:10,electronics:2},                         manpower:3},
+    {id:'otherstuff_h',name:'Other Stuff (Huge)',          icon:'📦',inputs:{refined_iron:15,electronics:3,chips:1},                manpower:4},
+  ],
+  'Missiles & Torpedoes':[
+    {id:'unguided-drop',   name:'Unguided Missile (Drop)',    icon:'💣', isMissile:true, inputs:{refined_iron:150, gunpowder:100, silicon:20},                manpower:6},
+    {id:'unguided-rocket', name:'Unguided Missile (Rocket)',  icon:'🚀', isMissile:true, inputs:{refined_iron:200, fuel:50, gunpowder:150, silicon:30},      manpower:12},
+    {id:'torpedo',     name:'Submarine Torpedo',            icon:'💦', isMissile:true, inputs:{refined_iron:300, fuel:80, gunpowder:180, silicon:40}, manpower:15},
+    {id:'cruise',      name:'Cruise Missile',               icon:'🏹', isMissile:true, inputs:{refined_iron:400, fuel:150, gunpowder:200, silicon:50},              manpower:35},
+    {id:'guided',      name:'Guided Missile',               icon:'🎯', isMissile:true, inputs:{refined_iron:500, electronics:40, chips:15, fuel:150, gunpowder:250, silicon:60},              manpower:25},
+    {id:'antimissile',     name:'Anti-Missile Rocket',          icon:'⚡', isMissile:true, inputs:{refined_iron:350, electronics:20, chips:8, fuel:100, gunpowder:220, silicon:45},         manpower:30},
+    {id:'hypersonic',  name:'Hypersonic Missile',           icon:'⚡', isMissile:true, inputs:{refined_iron:600, electronics:50, chips:20, fuel:200, gunpowder:300, silicon:70},             manpower:60},
+    {id:'icbm',        name:'Ballistic Missile (ICBM)',     icon:'☄️', isMissile:true, inputs:{refined_iron:800, electronics:60, chips:25, fuel:300, gunpowder:400, silicon:90},             manpower:120},
+    {id:'nuclear',     name:'Nuclear Missile',              icon:'☢️', isMissile:true, inputs:{refined_iron:1000, fuel:400, gunpowder:500, silicon:100}, manpower:150},
+  ],
+  'Others':[
+    {id:'grenade',     name:'Grenade',                      icon:'💣',inputs:{refined_iron:1,gunpowder:2},                             manpower:1},
+    {id:'grenade2',    name:'Specialized Grenade',          icon:'💣',inputs:{refined_iron:2,gunpowder:2},                             manpower:1},
+    {id:'landbomb',    name:'Land Bomb (Anti-Tank)',        icon:'💥',inputs:{refined_iron:8,gunpowder:8},                             manpower:3},
+    {id:'drone',       name:'Drone',                        icon:'🛸',inputs:{refined_iron:20,electronics:5,chips:4,fuel:15},          manpower:12},
+    {id:'barricade',   name:'Barricade',                    icon:'🚧',inputs:{refined_iron:10},                                        manpower:5},
+    {id:'barrier',     name:'Barrier',                      icon:'🚧',inputs:{refined_iron:25},                                        manpower:10},
+  ],
+};
+
+// ============================================================
+// FUEL USE PER TURN (L)
+// ============================================================
+const FUEL_VEHICLES = {
+  'Air Vehicles':[
+    {id:'fv-lightjet',    name:'Light Fighter Jet',            icon:'✈️', fuelPerTurn:35},
+    {id:'fv-medjet',      name:'Medium Fighter Jet',           icon:'✈️', fuelPerTurn:50},
+    {id:'fv-heavyjet',    name:'Heavy Fighter Jet',            icon:'✈️', fuelPerTurn:70},
+    {id:'fv-bomber',      name:'Bomber Jet',                   icon:'💥', fuelPerTurn:90},
+    {id:'fv-heli',        name:'Helicopter',                   icon:'🚁', fuelPerTurn:25},
+    {id:'fv-airplane',    name:'Airplane (transport/military)',icon:'🛫', fuelPerTurn:60},
+  ],
+  'Land Vehicles':[
+    {id:'fv-lighttank',   name:'Light Tank',                   icon:'🪖', fuelPerTurn:20},
+    {id:'fv-medtank',     name:'Medium Tank',                  icon:'🪖', fuelPerTurn:30},
+    {id:'fv-heavytank',   name:'Heavy Tank',                   icon:'🪖', fuelPerTurn:45},
+    {id:'fv-motorbike',   name:'Motorbike',                    icon:'🏍️', fuelPerTurn:2},
+    {id:'fv-car',         name:'Car',                          icon:'🚗', fuelPerTurn:4},
+    {id:'fv-truck',       name:'Truck (military/transport)',   icon:'🚛', fuelPerTurn:10},
+  ],
+  'Water Vehicles':[
+    {id:'fv-sub',         name:'Submarine',                    icon:'🤿', fuelPerTurn:60},
+    {id:'fv-warship',     name:'Warship',                      icon:'⚓', fuelPerTurn:80},
+    {id:'fv-boat',        name:'Boat',                         icon:'⛵', fuelPerTurn:5},
+    {id:'fv-ship',        name:'Ship (commercial/military)',   icon:'🚢', fuelPerTurn:25},
+    {id:'fv-carrier',     name:'Carrier',                      icon:'🛳️', fuelPerTurn:150},
+    {id:'fv-supercarrier',name:'Supercarrier',                 icon:'🛳️', fuelPerTurn:220},
+  ],
+};
+
+// ============================================================
+// MINE CATEGORIES
+// ============================================================
+const MINE_CATS = [
+  {id:'plains',    name:'Plains / Fertile Land',       icon:'🌾',
+   biomes:['Clover Patch','Field','Grassland','Highland','Lavender Field','Meadow','Origin Valley','Pasture','Plains','Prairie','Rocky Shrubland','Shrubland','Stony Shore','Sunflower Plains'],
+   output:{iron:380,coal:190,gold:60,diamond:8,gravel:140,latex:100,silicon:48,oil:100,gas:160}},
+  {id:'forest',    name:'Forests / Woodlands',         icon:'🌲',
+   biomes:['Birch Forest','Dark Forest','Flower Forest','Forest','Grove','Lavender Forest','Mediterranean Forest','Old Growth Birch Forest','Old Growth Woodland','Orchard','Pumpkin Patch','Redwood Forest','Seasonal Forest','Seasonal Orchard','Woodland'],
+   output:{iron:500,coal:270,gold:72,diamond:16,gravel:120,latex:140,silicon:52,oil:112,gas:180}},
+  {id:'taiga',     name:'Taiga / Cold Forests',        icon:'🎄',
+   biomes:['Bog','Coniferous Forest','Dead Forest','Fir Clearing','Maple Woods','Old Growth Dead Forest','Old Growth Pine Taiga','Old Growth Spruce Taiga','Snowy Coniferous Forest','Snowy Fir Clearing','Snowy Maple Woods','Snowy Taiga','Taiga'],
+   output:{iron:540,coal:330,gold:68,diamond:14,gravel:128,latex:48,silicon:48,oil:104,gas:168}},
+  {id:'jungle',    name:'Jungles / Tropical',          icon:'🌴',
+   biomes:['Bamboo Jungle','Floodplain','Fungal Jungle','Jungle','Rainforest','Rocky Rainforest','Sparse Jungle','Tropics'],
+   output:{iron:390,coal:205,gold:72,diamond:14,gravel:100,latex:200,silicon:52,oil:140,gas:220}},
+  {id:'swamp',     name:'Swamps / Wetlands',           icon:'🌿',
+   biomes:['Bayou','Mangrove Swamp','Marsh','Moor','Swamp','Wetland'],
+   output:{iron:305,coal:165,gold:48,diamond:8,gravel:112,latex:180,silicon:40,oil:200,gas:280}},
+  {id:'desert',    name:'Deserts / Drylands',          icon:'🏜️',
+   biomes:['Cold Desert','Desert','Dryland','Lush Desert','Scrubland'],
+   output:{iron:575,coal:265,gold:104,diamond:16,gravel:160,latex:0,silicon:140,oil:180,gas:260,uranium:4}},
+  {id:'badlands',  name:'Badlands / Wastelands',       icon:'🌋',
+   biomes:['Badlands','Crag','Eroded Badlands','Snowy Plains','Volcanic Plains','Volcano','Wasteland','Wasteland Steppe','Wooded Badlands'],
+   output:{iron:695,coal:350,gold:128,diamond:18,gravel:180,latex:0,silicon:120,oil:168,gas:240,uranium:7}},
+  {id:'mountains', name:'Mountains / Hills / Peaks',   icon:'⛰️',
+   biomes:['Cherry Grove','Frozen Peaks','Jade Cliffs','Jagged Peaks','Snowy Slopes','Stony Peaks','Windswept Forest','Windswept Gravelly Hills','Windswept Hills'],
+   output:{iron:900,coal:490,gold:140,diamond:40,gravel:200,latex:0,silicon:88,oil:72,gas:100,uranium:5}},
+  {id:'ocean',     name:'Oceans / Water',              icon:'🌊',
+   biomes:['Beach','Cold Ocean','Deep Cold Ocean','Deep Frozen Ocean','Deep Lukewarm Ocean','Deep Ocean','Dune Beach','Frozen Ocean','Frozen River','Lukewarm Ocean','Ocean','River','Snowy Beach','Warm Ocean'],
+   output:{iron:0,coal:0,gold:32,diamond:0,gravel:60,latex:0,silicon:80,oil:280,gas:400}},
+  {id:'caves',     name:'Caves / Underground',         icon:'🕳️',
+   biomes:['Deep Dark','Dripstone Caves','Glowing Grotto','Lush Caves','Spider Nest'],
+   output:{iron:820,coal:450,gold:112,diamond:56,gravel:220,latex:0,silicon:72,oil:48,gas:72,uranium:12}},
+  {id:'rare',      name:'Rare / Magical / Special',    icon:'✨',
+   biomes:['Auroral Garden','Ice Spikes','Mushroom Fields','Muskeg','Mystic Grove','Ominous Woods','Snowblossom Grove'],
+   output:{iron:400,coal:200,gold:120,diamond:48,gravel:100,latex:40,silicon:72,oil:88,gas:128,uranium:18}},
+  {id:'frozen',    name:'Frozen / Arctic',             icon:'❄️',
+   biomes:['Tundra'],
+   output:{iron:530,coal:285,gold:72,diamond:12,gravel:140,latex:0,silicon:64,oil:120,gas:180,uranium:3}},
+];
+
+const BUILDING_COSTS = {
+  mine:    {name:'Mine',            materials:{iron:4000,coal:2000,refined_iron:500},           manpower:250},
+  factory: {name:'Factory/Industry',materials:{refined_iron:5000,diamond:170,gold:300,silicon:130}, manpower:200},
+  business:{name:'Business',        materials:{refined_iron:2000,electronics:1250,chips:500},   manpower:300},
+  hospital:{name:'Hospital',        materials:{refined_iron:2000,chips:500,electronics:700},    manpower:0},
+};
+const MP_STRUCTURES = [
+  {name:'House',mp:50},{name:'Mine',mp:100},{name:'Town Hall',mp:150},
+  {name:'Factory/Industry',mp:200},{name:'Business',mp:300},
+  {name:'Barracks',mp:180},{name:'Research Lab',mp:400},{name:'Fort',mp:500},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let selectedRecipe   = null;
+let selectedProdId   = null;
+let selectedFuelVeh  = null;
+let lastRefinedRaw   = null;
+let lastProdCalc     = null;
+let lastFuelUseCalc  = null;
+let packageItems     = [];  // unified resource basket
+let fuelUsePackage   = [];  // separate fuel-use basket
+let showRefinedMode  = false;  // toggle state: false=brute, true=refined
+let lastRefinedRecipe = null;  // store last recipe for toggling
+let lastProdItem     = null;   // store last production item for toggling
+
+// ============================================================
+// RAW RESOLVER
+// ============================================================
+function resolveToRaw(inputs, multiplier) {
+  const raw = {};
+  for(const[mat,amtEach]of Object.entries(inputs)){
+    const total = amtEach * multiplier;
+    if(BRUTE.has(mat)){raw[mat]=(raw[mat]||0)+total;continue;}
+    const rKey = R_BY_ID[mat]||R_BY_ID[mat.replace(/_/g,' ')];
+    if(rKey&&RECIPES[rKey]){
+      const r=RECIPES[rKey];
+      const sub=resolveToRaw(r.inputs,total/r.output);
+      for(const[rm,rv]of Object.entries(sub))raw[rm]=(raw[rm]||0)+rv;
+    }else{raw[mat]=(raw[mat]||0)+total;}
+  }
+  return raw;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  renderRecipeGrid();
+  renderProdCategories();
+  renderFuelVehicles();
+  renderMineGrid();
+  renderMpRefTable();
+  populateCatSelect();
+  renderPackage('refined-pkg');
+  renderPackage('prod-pkg');
+  renderFuelUsePackage();
+  calcMineSearch();
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ============================================================
+// REFINED TAB
+// ============================================================
+function renderRecipeGrid(){
+  document.getElementById('recipe-grid').innerHTML=Object.entries(RECIPES).map(([k,r])=>`
+    <div class="recipe-card" id="rc-${k}" onclick="selectRecipe('${k}')">
+      <div class="recipe-name">${r.icon} ${r.name}</div>
+      <div class="recipe-formula">${r.desc}</div>
+    </div>`).join('');
+}
+function selectRecipe(key){
+  selectedRecipe=key;
+  document.querySelectorAll('.recipe-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('rc-'+key).classList.add('selected');
+}
+function handleRefinedToggle(){
+  showRefinedMode=document.getElementById('refined-toggle').checked;
+  if(lastRefinedRecipe)calcRefined();
+}
+function calcRefined(){
+  if(!selectedRecipe){errResult('refined-result','Select a resource first');return;}
+  const qty=parseFloat(document.getElementById('refined-qty').value);
+  if(!qty||qty<=0){errResult('refined-result','Enter a valid quantity');return;}
+  const r=RECIPES[selectedRecipe];
+  lastRefinedRecipe=r;
+  
+  let raw;
+  if(showRefinedMode){
+    // REFINED MODE: show direct recipe ingredients without expanding
+    raw={};
+    for(const[mat,amtEach]of Object.entries(r.inputs)){
+      const total=amtEach*qty/r.output;
+      raw[mat]=(raw[mat]||0)+total;
+    }
+  }else{
+    // BRUTE MODE: resolve everything to base materials
+    raw=resolveToRaw(r.inputs,qty/r.output);
+  }
+  
+  const unit=r.outputUnit||'un';
+  lastRefinedRaw={label:`${fmt(qty)} ${unit} × ${r.name}`,raw};
+  
+  const modeLabel=showRefinedMode?'Refined materials':'Brute materials';
+  let html=`<div class="result-title">📊 ${modeLabel} for ${fmt(qty)} ${unit} of ${r.icon} ${r.name}</div>`;
+  for(const[m,a]of Object.entries(raw))html+=rl(mLabel(m),`${fmt(a,a%1?2:0)} ${mUnit(m)}`,['oil','gas','fuel'].includes(m)?'orange':'gold');
+  document.getElementById('refined-result').innerHTML=html;
+}
+function saveRefinedToPackage(){
+  if(!lastRefinedRaw){calcRefined();if(!lastRefinedRaw)return;}
+  packageItems.push({label:lastRefinedRaw.label,raw:{...lastRefinedRaw.raw},mp:null});
+  renderPackage('refined-pkg');renderPackage('prod-pkg');
+}
+
+// ============================================================
+// PRODUCTION TAB
+// ============================================================
+function renderProdCategories(){
+  document.getElementById('prod-categories').innerHTML=Object.entries(PRODUCTION).map(([cat,items])=>`
+    <div class="prod-category">
+      <div class="prod-category-title">— ${cat} —</div>
+      <div class="prod-grid">
+        ${items.map(item=>`
+          <div class="prod-card" id="pc-${item.id}" onclick="selectProdItem('${item.id}')">
+            <div class="prod-name">${item.icon} ${item.name}</div>
+            <div class="prod-desc">${Object.entries(item.inputs).map(([m,a])=>`${a}x ${mLabel(m)}`).join(' · ')}</div>
+            <div class="prod-mp">⚒ ${item.manpower} MP/unit${item.costUsd?` · $${item.costUsd}`:''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function selectProdItem(id){
+  selectedProdId=id;
+  document.querySelectorAll('.prod-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('pc-'+id).classList.add('selected');
+}
+function handleProdToggle(){
+  showRefinedMode=document.getElementById('prod-toggle').checked;
+  if(lastProdItem)calcProduction();
+}
+function calcProduction(){
+  if(!selectedProdId){errResult('prod-result','Select an item first');return;}
+  const qty=parseFloat(document.getElementById('prod-qty').value)||1;
+  const workers=parseFloat(document.getElementById('prod-workers').value)||25;
+  let item=null;
+  for(const items of Object.values(PRODUCTION)){const f=items.find(i=>i.id===selectedProdId);if(f){item=f;break;}}
+  if(!item)return;
+  lastProdItem=item;
+  
+  // Handle explosion level for missiles
+  const explosionField=document.getElementById('explosion-field');
+  if(item.isMissile){
+    explosionField.style.display='flex';
+  }else{
+    explosionField.style.display='none';
+  }
+  
+  // Apply explosion multipliers to inputs BEFORE resolution — this way
+  // gunpowder (which resolves into coal+gravel in brute mode) is correctly scaled
+  let scaledInputs={...item.inputs};
+  if(item.isMissile){
+    const expLevel=document.getElementById('explosion-level').value||'medium';
+    const mult=EXPLOSION_MULTIPLIERS[expLevel];
+    if(mult){
+      if(scaledInputs.gunpowder!=null) scaledInputs.gunpowder=scaledInputs.gunpowder*mult.gunpowder;
+      if(scaledInputs.silicon  !=null) scaledInputs.silicon  =scaledInputs.silicon  *mult.silicon;
+    }
+  }
+
+  let raw;
+  if(showRefinedMode){
+    // REFINED MODE: show direct recipe ingredients without expanding
+    raw={};
+    for(const[mat,amtEach]of Object.entries(scaledInputs)){
+      raw[mat]=(raw[mat]||0)+amtEach*qty;
+    }
+  }else{
+    // BRUTE MODE: resolve everything to base materials
+    raw=resolveToRaw(scaledInputs,qty);
+  }
+  
+  const totalMp=item.manpower*qty;
+  const turns=Math.ceil(totalMp/workers);
+  lastProdCalc={label:`${fmt(qty)}x ${item.name}`,raw:{...raw},mp:totalMp,turns,workers};
+  
+  // Extract ammunition quantity from name if applicable (e.g., "Pistol Ammo (100 bullets)")
+  let ammoMatch=item.name.match(/\((\d+)\s+(bullets|piece)/i);
+  let ammoQuantity=null;
+  let ammoLabel='';
+  if(ammoMatch){
+    const ammoPerPackage=parseInt(ammoMatch[1]);
+    ammoQuantity=ammoPerPackage*qty;
+    ammoLabel=ammoMatch[2];
+  }
+  
+  const modeLabel=showRefinedMode?'Refined materials':'Brute materials';
+  let expLabel='';
+  if(item.isMissile){
+    const expLevel=document.getElementById('explosion-level').value||'medium';
+    expLabel=` (${expLevel.charAt(0).toUpperCase()+expLevel.slice(1)})`;
+  }
+  let html=`<div class="result-title">📊 ${modeLabel} for ${fmt(qty)}x ${item.icon} ${item.name}${expLabel}</div>`;
+  for(const[m,a]of Object.entries(raw))html+=rl(mLabel(m),`${fmt(a,a%1?2:0)} ${mUnit(m)}`,['oil','gas','fuel'].includes(m)?'orange':'gold');
+  
+  // Show ammunition total if applicable
+  if(ammoQuantity!==null){
+    const ammoType=ammoLabel==='piece'?'pieces':'bullets';
+    html+=rl(`Total ${item.icon} ${ammoType}`,`${fmt(ammoQuantity)} ${ammoType}`,'teal');
+  }
+  
+  if(item.costUsd)html+=rl('USD Cost',`$${fmt(item.costUsd*qty,2)}`,'cyan');
+  html+=`<div class="sep"></div><div class="result-title" style="color:var(--purple);">⚒ MANPOWER & BUILD TIME</div>`;
+  html+=rl('Total Manpower Required',`${fmt(totalMp)} MP`,'purple');
+  html+=rl('Workers Assigned',fmt(workers),'cyan');
+  html+=rl('MP per Turn (= workers)',fmt(workers),'');
+  html+=rl('Turns to Complete',`${turns} turns`,'orange');
+  document.getElementById('prod-result').innerHTML=html;
+}
+function saveProdToPackage(){
+  if(!lastProdCalc){calcProduction();if(!lastProdCalc)return;}
+  packageItems.push({label:lastProdCalc.label,raw:{...lastProdCalc.raw},mp:lastProdCalc.mp,turns:lastProdCalc.turns,workers:lastProdCalc.workers});
+  renderPackage('refined-pkg');renderPackage('prod-pkg');
+}
+
+// ============================================================
+// PACKAGE — unified resource basket
+// ============================================================
+function renderPackage(panelId){
+  const el=document.getElementById(panelId);if(!el)return;
+  if(packageItems.length===0){
+    el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">📦 Resource Package</span></div><div class="pkg-body"><div class="empty-state">No items saved. Calculate and click "Save".</div></div></div>`;return;
+  }
+  const total={};let totalMp=0;
+  for(const item of packageItems){for(const[m,a]of Object.entries(item.raw))total[m]=(total[m]||0)+a;if(item.mp)totalMp+=item.mp;}
+  const itemsHtml=packageItems.map((item,idx)=>`
+    <div class="pkg-item">
+      <div class="pkg-item-header"><span class="pkg-item-name">${item.label}</span><button class="pkg-remove" onclick="removeFromPackage(${idx})">✕</button></div>
+      <div class="pkg-mats">
+        ${Object.entries(item.raw).map(([m,a])=>`<span class="pkg-mat">${mLabel(m)}: <strong>${fmt(a,a%1?2:0)}</strong></span>`).join('')}
+        ${item.mp?`<span class="pkg-mat mp-tag">⚒ MP: <strong>${fmt(item.mp)}</strong> (${item.turns}t/${item.workers}w)</span>`:''}
+      </div>
+    </div>`).join('');
+  let totalHtml=`<div class="result-title">🧮 GRAND TOTAL — ${packageItems.length} item${packageItems.length>1?'s':''}</div>`;
+  for(const[m,a]of Object.entries(total))totalHtml+=rl(mLabel(m),`${fmt(a,a%1?2:0)} ${mUnit(m)}`,['oil','gas','fuel'].includes(m)?'orange':'gold');
+  if(totalMp>0)totalHtml+=rl('Total Manpower',`${fmt(totalMp)} MP`,'purple');
+  el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">📦 Package (${packageItems.length})</span><button class="btn btn-sm" onclick="clearPackage()">🗑 Clear</button></div><div class="pkg-body">${itemsHtml}<div class="sep"></div><div class="result-panel">${totalHtml}</div></div></div>`;
+}
+function removeFromPackage(idx){packageItems.splice(idx,1);renderPackage('refined-pkg');renderPackage('prod-pkg');}
+function clearPackage(){packageItems=[];renderPackage('refined-pkg');renderPackage('prod-pkg');}
+
+// ============================================================
+// FUEL USE TAB
+// ============================================================
+function renderFuelVehicles(){
+  document.getElementById('fueluse-categories').innerHTML=Object.entries(FUEL_VEHICLES).map(([cat,items])=>`
+    <div class="prod-category">
+      <div class="prod-category-title">— ${cat} —</div>
+      <div class="fuel-vehicle-grid">
+        ${items.map(v=>`
+          <div class="fv-card" id="${v.id}" onclick="selectFuelVeh('${v.id}','${cat}')">
+            <div class="fv-name">${v.icon} ${v.name}</div>
+            <div class="fv-rate">${v.fuelPerTurn} L / turn</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function selectFuelVeh(id,cat){
+  selectedFuelVeh={id,cat};
+  document.querySelectorAll('.fv-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(id).classList.add('selected');
+}
+function calcFuelUse(){
+  if(!selectedFuelVeh){errResult('fueluse-result','Select a vehicle first');return;}
+  const turns=parseFloat(document.getElementById('fueluse-turns').value)||1;
+  const units=parseFloat(document.getElementById('fueluse-units').value)||1;
+  const allVeh=[...Object.values(FUEL_VEHICLES).flat()];
+  const veh=allVeh.find(v=>v.id===selectedFuelVeh.id);
+  if(!veh)return;
+  const totalFuel=veh.fuelPerTurn*turns*units;
+  lastFuelUseCalc={label:`${fmt(units)}x ${veh.name} × ${turns} turns`,totalFuel,veh,turns,units};
+  let html=`<div class="result-title">🔥 Fuel Consumption — ${veh.icon} ${veh.name}</div>`;
+  html+=rl('Units',fmt(units),'cyan');
+  html+=rl('Turns Operating',fmt(turns),'cyan');
+  html+=rl('Fuel per Turn (per unit)',`${veh.fuelPerTurn} L`,'');
+  html+=rl('Fuel per Turn (all units)',`${fmt(veh.fuelPerTurn*units)} L`,'orange');
+  html+=rl('TOTAL FUEL REQUIRED',`${fmt(totalFuel)} L`,'gold');
+  document.getElementById('fueluse-result').innerHTML=html;
+}
+function saveFuelUseToPackage(){
+  if(!lastFuelUseCalc){calcFuelUse();if(!lastFuelUseCalc)return;}
+  fuelUsePackage.push({...lastFuelUseCalc});
+  renderFuelUsePackage();
+}
+function renderFuelUsePackage(){
+  const el=document.getElementById('fueluse-pkg');if(!el)return;
+  if(fuelUsePackage.length===0){
+    el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">🔥 Fuel Use Package</span></div><div class="pkg-body"><div class="empty-state">No vehicles saved. Calculate and click "Save to Package".</div></div></div>`;return;
+  }
+  let grandTotal=0;
+  const itemsHtml=fuelUsePackage.map((item,idx)=>{
+    grandTotal+=item.totalFuel;
+    return `<div class="pkg-item">
+      <div class="pkg-item-header"><span class="pkg-item-name">${item.label}</span><button class="pkg-remove" onclick="removeFuelUse(${idx})">✕</button></div>
+      <div class="pkg-mats">
+        <span class="pkg-mat">${item.veh.fuelPerTurn} L/turn/unit</span>
+        <span class="pkg-mat fuel-tag">Total: <strong>${fmt(item.totalFuel)} L</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">🔥 Fuel Use Package (${fuelUsePackage.length})</span><button class="btn btn-sm" onclick="clearFuelUse()">🗑 Clear</button></div><div class="pkg-body">
+    ${itemsHtml}
+    <div class="sep"></div>
+    <div class="result-panel">
+      <div class="result-title">🧮 TOTAL FUEL CONSUMPTION — ${fuelUsePackage.length} group${fuelUsePackage.length>1?'s':''}</div>
+      ${rl('Grand Total Fuel Required',`${fmt(grandTotal)} L`,'gold')}
+    </div>
+  </div></div>`;
+}
+function removeFuelUse(idx){fuelUsePackage.splice(idx,1);renderFuelUsePackage();}
+function clearFuelUse(){fuelUsePackage=[];renderFuelUsePackage();}
+
+// ============================================================
+// MINES TAB
+// ============================================================
+function renderMineGrid(){
+  document.getElementById('mine-grid').innerHTML=MINE_CATS.map(cat=>`
+    <div class="mine-cat">
+      <div class="mine-cat-header">
+        <span class="mine-cat-name">${cat.icon} ${cat.name}</span>
+        <input class="mine-qty-input" type="number" id="mine-${cat.id}" value="0" min="0" placeholder="0">
+      </div>
+      <div class="mine-biomes">${cat.biomes.map(b=>`<span>· ${b}</span>`).join('')}</div>
+    </div>`).join('');
+}
+function resetMines(){
+  MINE_CATS.forEach(cat=>{const el=document.getElementById('mine-'+cat.id);if(el)el.value=0;});
+  document.getElementById('mine-result').style.display='none';
+}
+function calcMines(){
+  const cycles=parseInt(document.getElementById('mine-cycles').value)||1;
+  const total={iron:0,coal:0,gold:0,diamond:0,gravel:0,latex:0,silicon:0,oil:0,gas:0};
+  const breakdown=[];
+  for(const cat of MINE_CATS){
+    const count=parseInt(document.getElementById('mine-'+cat.id).value)||0;
+    if(count===0)continue;
+    const sub={};
+    for(const[res,perMine]of Object.entries(cat.output)){
+      const amt=perMine*count*cycles;
+      sub[res]=amt;
+      total[res]=(total[res]||0)+amt;
+    }
+    breakdown.push({name:cat.name,icon:cat.icon,count,sub});
+  }
+  const el=document.getElementById('mine-result');
+  if(breakdown.length===0){el.style.display='block';el.innerHTML='<div class="empty-state">No mines configured. Enter quantity for at least one category.</div>';return;}
+
+  let html=`<div class="result-title">⛏️ Mine Output — ${cycles} Cycle${cycles>1?'s':''} (${cycles*4} turns)</div>`;
+  // Per-category breakdown
+  for(const b of breakdown){
+    html+=`<div style="margin-bottom:10px;"><div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--teal);margin-bottom:5px;">${b.icon} ${b.name} × ${b.count} mine${b.count>1?'s':''}</div>`;
+    for(const[res,amt]of Object.entries(b.sub)){
+      if(amt===0)continue;
+      html+=rl(mLabel(res),`${fmt(amt)} ${mUnit(res)}`,['oil','gas'].includes(res)?'orange':'');
+    }
+    html+='</div>';
+  }
+  html+=`<div class="sep"></div><div class="result-title" style="color:var(--accent3);">🧮 GRAND TOTAL (all mines, ${cycles} cycles)</div>`;
+  for(const[res,amt]of Object.entries(total)){
+    if(amt===0)continue;
+    html+=rl(mLabel(res),`${fmt(amt)} ${mUnit(res)}`,['oil','gas'].includes(res)?'orange':'gold');
+  }
+  el.style.display='block';
+  el.innerHTML=html;
+}
+
+function calcMineSearch(){
+  const res=document.getElementById('mine-search-res').value;
+  const ranked=[...MINE_CATS].sort((a,b)=>(b.output[res]||0)-(a.output[res]||0));
+  let html='';
+  ranked.forEach((cat,i)=>{
+    const val=cat.output[res]||0;
+    const unit=mUnit(res);
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    html+=`<div class="search-result-category">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div><span class="src-rank">${medal||'#'+(i+1)}</span><span class="src-name">${cat.icon} ${cat.name}</span></div>
+        <span class="src-val">${fmt(val)} ${unit}/mine/cycle</span>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:4px;">Also produces per mine/cycle:</div>
+      <div class="pkg-mats">
+        ${Object.entries(cat.output).filter(([r,v])=>r!==res&&v>0).map(([r,v])=>`<span class="pkg-mat">${mLabel(r)}: <strong>${fmt(v)} ${mUnit(r)}</strong></span>`).join('')}
+      </div>
+      <div class="src-biomes">Biomes: ${cat.biomes.slice(0,6).join(', ')}${cat.biomes.length>6?` +${cat.biomes.length-6} more`:''}</div>
+    </div>`;
+  });
+  document.getElementById('mine-search-result').innerHTML=html;
+}
+
+function populateCatSelect(){
+  const sel = document.getElementById('cat-select');
+  if(!sel) return;
+  MINE_CATS.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat.id;
+    opt.textContent = cat.icon + ' ' + cat.name;
+    sel.appendChild(opt);
+  });
+}
+
+function calcCatBiomes(){
+  const id  = document.getElementById('cat-select').value;
+  const el  = document.getElementById('cat-biomes-result');
+  if(!id){ el.innerHTML='<div class="empty-state">↑ Select a category above</div>'; return; }
+
+  const cat = MINE_CATS.find(c => c.id === id);
+  if(!cat){ el.innerHTML='<div class="empty-state" style="color:var(--danger);">Category not found.</div>'; return; }
+
+  // Biome pills
+  const biomePills = cat.biomes.map(b =>
+    `<span style="display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;
+      color:var(--accent3);background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.2);
+      padding:3px 10px;margin:3px 4px 3px 0;">${b}</span>`
+  ).join('');
+
+  // Resource rows
+  const resourceRows = Object.entries(cat.output)
+    .filter(([,v]) => v > 0)
+    .map(([res,val]) => `
+      <div class="result-line">
+        <span class="result-key">${mLabel(res)}</span>
+        <span class="result-val ${['oil','gas'].includes(res)?'orange':'gold'}">${fmt(val)} ${mUnit(res)} / mine / cycle</span>
+      </div>`).join('');
+
+  el.innerHTML = `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--teal);padding:16px;animation:fadeIn .25s ease;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <span style="font-size:26px;">${cat.icon}</span>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;">${cat.name}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:3px;">${cat.biomes.length} biome${cat.biomes.length>1?'s':''} in this category</div>
+        </div>
+      </div>
+
+      <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--accent3);text-transform:uppercase;margin-bottom:8px;">
+        🌿 Accepted Biomes
+      </div>
+      <div style="margin-bottom:14px;line-height:1.4;">${biomePills}</div>
+
+      <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;padding-top:10px;border-top:1px solid var(--border);">
+        📊 Resources per mine per cycle (4 turns)
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:12px;line-height:2;">${resourceRows}</div>
+    </div>`;
+}
+
+function calcBiomeSearch(){
+  const query = document.getElementById('biome-search-input').value.trim().toLowerCase();
+  const el    = document.getElementById('biome-search-result');
+  if(query.length < 2){el.innerHTML='<div class="empty-state">↑ Keep typing…</div>';return;}
+
+  // Find all categories that have at least one biome matching the query
+  const matches = [];
+  for(const cat of MINE_CATS){
+    const found = cat.biomes.filter(b => b.toLowerCase().includes(query));
+    if(found.length > 0) matches.push({cat, found});
+  }
+
+  if(matches.length === 0){
+    el.innerHTML=`<div class="empty-state" style="color:var(--danger);">No biome found matching "<strong>${query}</strong>"</div>`;
+    return;
+  }
+
+  el.innerHTML = matches.map(({cat, found}) => {
+    const resourceRows = Object.entries(cat.output)
+      .filter(([,v]) => v > 0)
+      .map(([res,val]) => `
+        <div class="result-line">
+          <span class="result-key">${mLabel(res)}</span>
+          <span class="result-val ${['oil','gas'].includes(res)?'orange':'gold'}">${fmt(val)} ${mUnit(res)} / mine / cycle</span>
+        </div>`).join('');
+
+    return `
+      <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--teal);padding:14px;margin-bottom:12px;animation:fadeIn .25s ease;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-size:22px;">${cat.icon}</span>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;">${cat.name}</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);margin-top:3px;">
+              Matched: ${found.map(b=>`<span style="background:rgba(0,255,179,.08);border:1px solid rgba(0,255,179,.2);padding:1px 6px;">${b}</span>`).join(' ')}
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;text-transform:uppercase;padding-bottom:5px;border-bottom:1px solid var(--border);">
+          📊 Resources per mine per cycle (4 turns)
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;line-height:2;">
+          ${resourceRows}
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:8px;line-height:1.7;">
+          All biomes in this category: ${cat.biomes.join(' · ')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// FUEL CONVERTER TAB
+// ============================================================
+function calcFuel(){
+  const type=document.getElementById('fuel-type').value;
+  const qty=parseFloat(document.getElementById('fuel-qty').value);
+  if(!qty||qty<=0)return;
+  const ratio=type==='oil'?2:1;
+  const nm=type==='oil'?'Oil':'Gas';
+  document.getElementById('fuel-result').innerHTML=`
+    <div class="result-title">⛽ Fuel Conversion Result</div>
+    ${rl(nm+' consumed',fmt(qty)+' L','orange')}
+    ${rl('Fuel produced',fmt(qty*ratio)+' L','gold')}
+    ${rl('Efficiency',(ratio*100)+'%','cyan')}
+    ${rl('Ratio','1 L '+nm+' → '+ratio+' L Fuel','')}`;
+}
+function calcFactoryFuel(){
+  const count=parseInt(document.getElementById('factory-count').value)||0;
+  const cycles=parseInt(document.getElementById('factory-cycles').value)||0;
+  const total=count*cycles*100;
+  document.getElementById('factory-fuel-result').innerHTML=`
+    <div class="result-title">🏭 Total Factory Fuel Consumption</div>
+    ${rl('Active Factories',count,'cyan')}
+    ${rl('Cycles (4 turns each)',cycles,'cyan')}
+    ${rl('Per cycle / factory','100 L','')}
+    ${rl('Total Consumption',fmt(total)+' L','gold')}
+    ${rl('Equivalent in Oil',fmt(total/2)+' L','orange')}
+    ${rl('Equivalent in Gas',fmt(total)+' L','orange')}`;
+}
+
+// ============================================================
+// MANPOWER TAB
+// ============================================================
+function calcManpower(){
+  const req=parseFloat(document.getElementById('mp-required').value);
+  const wrk=parseFloat(document.getElementById('mp-workers').value);
+  if(!req||!wrk||req<=0||wrk<=0)return;
+  const turns=Math.ceil(req/wrk);const rem=req%wrk;
+  
+  // Fuel calculation: 100L per cycle (4 turns = 1 cycle)
+  const cycles=Math.floor(turns/4);
+  const remainder=turns%4;
+  const fuelPerCycle=100;
+  const remainderFuelRatio=remainder/4;
+  const totalFuel=(cycles*fuelPerCycle)+(fuelPerCycle*remainderFuelRatio);
+  const totalOil=totalFuel/2;
+  const totalGas=totalFuel;
+  
+  document.getElementById('mp-display').style.display='grid';
+  document.getElementById('mp-result').style.display='block';
+  document.getElementById('mp-turns').textContent=turns;
+  document.getElementById('mp-workers-show').textContent=fmt(wrk);
+  document.getElementById('mp-per-turn').textContent=fmt(wrk);
+  document.getElementById('mp-result').innerHTML=`
+    <div class="result-title">📋 Manpower Breakdown</div>
+    ${rl('Required Manpower',fmt(req)+' MP','orange')}
+    ${rl('Workers',fmt(wrk),'cyan')}
+    ${rl('MP per Turn',fmt(wrk),'')}
+    ${rl('Turns Required',turns+' turns','gold')}
+    ${rem>0?rl('Remaining on last turn',fmt(rem)+` MP (of ${fmt(wrk)})`,''):''}
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);"></div>
+    <div class="result-title" style="margin-top:14px;">⛽ Fuel Consumption</div>
+    ${rl('Full Cycles (4 turns each)',fmt(cycles),'gold')}
+    ${remainder>0?rl('Remainder Turns',fmt(remainder),'accent2'):''}
+    ${rl('Fuel per Cycle','100 L','teal')}
+    ${rl('Total Fuel Required',fmt(totalFuel,1)+' L','cyan')}
+    ${rl('Oil Equivalent',fmt(totalOil,1)+' L (50 oil/cycle)','gold')}
+    ${rl('Gas Equivalent',fmt(totalGas,1)+' L (100 gas/cycle)','orange')}`;
+}
+function renderMpRefTable(){
+  document.getElementById('mp-ref-table').innerHTML=MP_STRUCTURES.map(s=>`
+    <tr><td>${s.name}</td><td class="mp">${s.mp} MP</td>
+    <td>${Math.ceil(s.mp/10)}t</td><td>${Math.ceil(s.mp/25)}t</td>
+    <td>${Math.ceil(s.mp/50)}t</td><td>${Math.ceil(s.mp/100)}t</td></tr>`).join('');
+}
+
+// ============================================================
+// BUILDINGS TAB
+// ============================================================
+function calcBuildCost(){
+  const type=document.getElementById('build-type').value;
+  const qty=parseInt(document.getElementById('build-qty').value)||1;
+  const b=BUILDING_COSTS[type];
+  const raw=resolveToRaw(b.materials,qty);
+  let html=`<div class="result-title">🏗️ Raw cost for ${qty}x ${b.name}</div>`;
+  for(const[m,a]of Object.entries(raw))html+=rl(mLabel(m),fmt(a)+' un','gold');
+  html+=rl('Manpower',fmt(b.manpower*qty)+' MP','purple');
+  document.getElementById('build-result').innerHTML=html;
+}
+
+// ============================================================
+// ECONOMY TAB
+// ============================================================
+function calcEconomy(){
+  let cur=parseInt(document.getElementById('eco-civilians').value)||1000;
+  const hospitals=parseInt(document.getElementById('eco-hospitals').value)||0;
+  const biz=parseInt(document.getElementById('eco-businesses').value)||0;
+  const cycles=Math.min(parseInt(document.getElementById('eco-cycles').value)||5,100);
+  let money=0;let rows='';
+  for(let c=1;c<=cycles;c++){
+    const hospBonus=hospitals*3;
+    cur+=10+hospBonus;
+    const ci=cur*10;const bi=biz*5000;money+=ci+bi;
+    rows+=`<tr><td style="color:var(--text-dim);">${c}(T${c*4})</td><td style="color:var(--gold);">$${fmt(ci)}</td><td style="color:var(--accent2);">$${fmt(bi)}</td><td style="color:var(--accent3);">$${fmt(ci+bi)}</td><td style="color:var(--accent);">$${fmt(money)}</td><td>${fmt(cur)}</td>${hospitals>0?`<td style="color:var(--teal);">+${fmt(hospBonus)}</td>`:''}</tr>`;
+  }
+  const hospHeader=hospitals>0?'<th>Hosp. Bonus</th>':'';
+  document.getElementById('eco-result').innerHTML=`
+    <div class="result-title">📈 Economic Simulation — ${cycles} Cycles</div>
+    <div style="overflow-x:auto;"><table class="build-table">
+    <thead><tr><th>Cycle</th><th>Civ Income</th><th>Biz Income</th><th>Total/Cycle</th><th>Accumulated</th><th>Civilians</th>${hospHeader}</tr></thead>
+    <tbody>${rows}</tbody></table></div>
+    <div class="sep"></div>
+    ${hospitals>0?rl('Hospitals (civs/cycle bonus)',`+${fmt(hospitals*3)} civ/cycle`,'teal'):''}
+    ${rl('Civilians after '+cycles+' cycles',fmt(cur),'cyan')}
+    ${rl('Total accumulated income','$'+fmt(money),'gold')}`;
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+const MAT_LABELS={refined_iron:'Refined Iron',refined_uranium:'Refined Uranium',oil:'Oil',gas:'Gas',fuel:'Fuel'};
+function mLabel(m){return MAT_LABELS[m]||m.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function mUnit(m){return ['oil','gas','fuel'].includes(m)?'L':'un';}
+function fmt(n,dec=0){return dec>0?Number(n).toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec}):Number(n).toLocaleString('en-US');}
+function rl(key,val,cls=''){return `<div class="result-line"><span class="result-key">${key}</span><span class="result-val ${cls}">${val}</span></div>`;}
+function errResult(id,msg){document.getElementById(id).innerHTML=`<div class="empty-state" style="color:var(--danger);">⚠ ${msg}</div>`;}
+
+// ============================================================
+// PACK CALCULATOR
+// ============================================================
+function calcPacks(){
+  const total = parseInt(document.getElementById('pack-input').value) || 0;
+  const size  = parseInt(document.getElementById('pack-size').value)  || 64;
+  const el    = document.getElementById('pack-result');
+  if(total <= 0 || size <= 0){ el.innerHTML='<div class="empty-state">↑ Enter a number above</div>'; return; }
+
+  const packs    = Math.floor(total / size);
+  const leftover = total % size;
+  const pct      = ((packs * size / total) * 100).toFixed(1);
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="mp-box">
+        <span class="mp-number" style="color:var(--gold);">${fmt(packs)}</span>
+        <span class="mp-label">Full Packs (×${size})</span>
+      </div>
+      <div class="mp-box">
+        <span class="mp-number" style="color:var(--accent3);">${fmt(leftover)}</span>
+        <span class="mp-label">Loose Items</span>
+      </div>
+      <div class="mp-box">
+        <span class="mp-number" style="color:var(--accent);font-size:22px;">${fmt(total)}</span>
+        <span class="mp-label">Total Items</span>
+      </div>
+    </div>
+    <div class="result-panel">
+      <div class="result-title">📊 Breakdown</div>
+      ${rl('Full packs', `${fmt(packs)} × ${size} = ${fmt(packs*size)} items`, 'gold')}
+      ${rl('Loose items remaining', fmt(leftover), leftover===0?'green':'orange')}
+      ${rl('Pack fill rate', `${pct}%`, 'cyan')}
+      ${leftover>0 ? rl('Items needed to complete next pack', fmt(size - leftover), 'purple') : rl('Perfectly packed — no remainder','✓','green')}
+    </div>`;
+}
+
+let batchRows = [];
+function addBatchRow(){
+  const id = Date.now();
+  batchRows.push(id);
+  const container = document.getElementById('batch-rows');
+  const div = document.createElement('div');
+  div.id = 'brow-'+id;
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 160px auto;gap:10px;align-items:center;';
+  div.innerHTML = `
+    <input type="number" min="0" placeholder="Item count (e.g. 500)"
+      oninput="renderBatch()"
+      style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px 14px;outline:none;width:100%;-moz-appearance:textfield;">
+    <input type="text" placeholder="Label (optional)"
+      oninput="renderBatch()"
+      style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px 14px;outline:none;width:100%;">
+    <button onclick="removeBatchRow(${id})"
+      style="background:transparent;border:1px solid var(--danger);color:var(--danger);font-size:12px;cursor:pointer;padding:9px 13px;font-family:'Share Tech Mono',monospace;transition:all .2s;"
+      onmouseover="this.style.background='var(--danger)';this.style.color='var(--bg)'"
+      onmouseout="this.style.background='transparent';this.style.color='var(--danger)'">✕</button>`;
+  container.appendChild(div);
+  renderBatch();
+}
+function removeBatchRow(id){
+  batchRows = batchRows.filter(r=>r!==id);
+  const el = document.getElementById('brow-'+id);
+  if(el) el.remove();
+  renderBatch();
+}
+function clearBatch(){
+  batchRows=[];
+  document.getElementById('batch-rows').innerHTML='';
+  document.getElementById('batch-result').innerHTML='';
+}
+function renderBatch(){
+  const size = parseInt(document.getElementById('pack-size').value) || 64;
+  const rows = document.querySelectorAll('#batch-rows > div');
+  const el   = document.getElementById('batch-result');
+  if(rows.length===0){ el.innerHTML=''; return; }
+
+  let html = `<div class="result-title">📦 Batch Results (pack size: ${size})</div>`;
+  let grandTotal=0, grandPacks=0, grandLoose=0;
+
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const count  = parseInt(inputs[0].value) || 0;
+    const label  = inputs[1].value.trim() || 'Item';
+    if(count <= 0) return;
+    const packs    = Math.floor(count / size);
+    const leftover = count % size;
+    grandTotal += count; grandPacks += packs; grandLoose += leftover;
+    html += `<div class="result-line">
+      <span class="result-key">${label}</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:12px;">
+        <span style="color:var(--gold);">${fmt(packs)} pack${packs!==1?'s':''}</span>
+        <span style="color:var(--text-dim);"> + </span>
+        <span style="color:${leftover>0?'var(--accent2)':'var(--accent3)'};">${fmt(leftover)} loose</span>
+        <span style="color:var(--text-dim);"> (${fmt(count)} total)</span>
+      </span>
+    </div>`;
+  });
+
+  if(grandTotal > 0){
+    html += `<div class="sep"></div>`;
+    html += rl('Grand Total Items', fmt(grandTotal), 'cyan');
+    html += rl('Grand Total Full Packs', fmt(grandPacks), 'gold');
+    html += rl('Grand Total Loose Items', fmt(grandLoose), grandLoose===0?'green':'orange');
+  }
+
+  el.innerHTML = `<div class="result-panel">${html}</div>`;
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+init();
+</script>
+</body>
+</html>

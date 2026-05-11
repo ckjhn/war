@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Strategic Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep:    #0b0d0c;
+    --bg-base:    #111412;
+    --bg-surface: #181c19;
+    --bg-card:    #1e2420;
+    --bg-card-h:  #242b26;
+    --border:     #2a332c;
+    --border-h:   #3d4e40;
+    --amber:      #d4891a;
+    --amber-dim:  #9a6212;
+    --amber-glow: rgba(212,137,26,0.15);
+    --amber-text: #f0a830;
+    --green:      #4a9e5c;
+    --green-dim:  #2d6138;
+    --red:        #c0392b;
+    --text-1:     #e8ede9;
+    --text-2:     #8fa090;
+    --text-3:     #5a6b5c;
+    --font-head:  'Rajdhani', sans-serif;
+    --font-body:  'Barlow', sans-serif;
+    --font-cond:  'Barlow Condensed', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text-1);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(42,51,44,0.25) 39px, rgba(42,51,44,0.25) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(42,51,44,0.15) 39px, rgba(42,51,44,0.15) 40px);
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--bg-base);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.6);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    border: 2px solid var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .logo-icon-inner {
+    width: 14px; height: 14px;
+    background: var(--amber);
+    transform: rotate(0deg);
+  }
+  .logo-text { font-family: var(--font-head); }
+  .logo-text .top { font-size: 11px; color: var(--text-3); letter-spacing: 0.2em; font-weight: 600; text-transform: uppercase; }
+  .logo-text .main { font-size: 22px; color: var(--text-1); font-weight: 700; letter-spacing: 0.05em; line-height: 1; }
+  .logo-text .main span { color: var(--amber-text); }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .money-display { font-size: 14px; color: var(--amber-text); font-family: var(--font-cond); font-weight: 600; padding: 6px 12px; background: var(--amber-glow); border: 1px solid var(--amber-dim); border-radius: 4px; }
+  .settings-btn { background: transparent; border: 1px solid var(--amber-dim); color: var(--amber-text); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: var(--font-cond); font-size: 12px; transition: all 0.2s; }
+  .settings-btn:hover { background: var(--amber-glow); border-color: var(--amber); }
+  .cart-trigger {
+    background: linear-gradient(135deg, var(--amber-dim), var(--amber));
+    border: none;
+    border-radius: 4px;
+    color: #0b0d0c;
+    font-family: var(--font-cond);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .cart-trigger:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  .cart-trigger svg { width: 15px; height: 15px; }
+  .cart-badge {
+    background: #0b0d0c;
+    color: var(--amber-text);
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    max-width: 1440px;
+    margin: 0 auto;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* MAIN */
+  .main-panel { padding: 2rem; border-right: 1px solid var(--border); }
+
+  .section-label {
+    font-family: var(--font-cond);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SEARCH */
+  .search-bar {
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+  .search-bar svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: var(--text-3);
+    pointer-events: none;
+  }
+  .search-bar input {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-1);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 14px 10px 38px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar input::placeholder { color: var(--text-3); }
+  .search-bar input:focus { border-color: var(--amber-dim); background: var(--bg-card); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    font-family: var(--font-cond);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-3);
+    border-radius: 3px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text-2); border-color: var(--border-h); }
+  .tab.active {
+    background: var(--amber-glow);
+    border-color: var(--amber-dim);
+    color: var(--amber-text);
+  }
+
+  /* ITEM GRID */
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 12px;
+  }
+
+  .item-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: default;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .item-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .item-card:hover {
+    border-color: var(--border-h);
+    background: var(--bg-card-h);
+    transform: translateY(-2px);
+  }
+  .item-card:hover::before { opacity: 1; }
+
+  .item-cat {
+    font-family: var(--font-cond);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+  }
+  .item-name {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .item-note {
+    font-size: 11px;
+    color: var(--text-3);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .item-price {
+    font-family: var(--font-cond);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--amber-text);
+    letter-spacing: 0.02em;
+  }
+  .item-price .unit {
+    font-size: 12px;
+    color: var(--text-3);
+    font-weight: 400;
+    margin-left: 3px;
+  }
+  .item-price.negotiable {
+    font-size: 14px;
+    color: var(--text-3);
+    font-style: italic;
+    font-family: var(--font-body);
+    font-weight: 400;
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--bg-surface);
+  }
+  .qty-ctrl button {
+    background: none;
+    border: none;
+    color: var(--text-2);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s, color 0.12s;
+  }
+  .qty-ctrl button:hover { background: var(--border); color: var(--amber-text); }
+  .qty-ctrl .qty-val {
+    width: 48px;
+    text-align: center;
+    font-family: var(--font-cond);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-1);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-top: none;
+    border-bottom: none;
+    border-radius: 0;
+    padding: 4px 2px;
+    background: transparent;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .qty-ctrl .qty-val::-webkit-outer-spin-button,
+  .qty-ctrl .qty-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .qty-ctrl .qty-val:focus { background: var(--bg-deep); color: var(--amber-text); }
+
+  .add-btn {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-2);
+    font-family: var(--font-cond);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .add-btn:hover {
+    background: var(--amber-glow);
+    border-color: var(--amber-dim);
+    color: var(--amber-text);
+  }
+  .add-btn.in-cart {
+    background: rgba(74,158,92,0.15);
+    border-color: var(--green-dim);
+    color: var(--green);
+  }
+
+  /* CART PANEL */
+  .cart-panel {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-base);
+    overflow: hidden;
+  }
+
+  .cart-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .cart-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cart-title svg { width: 18px; height: 18px; color: var(--amber); }
+  .clear-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-3);
+    font-family: var(--font-cond);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .cart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: var(--text-3);
+    font-family: var(--font-cond);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .cart-empty svg { width: 40px; height: 40px; opacity: 0.3; }
+
+  .cart-row {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.12s;
+    animation: slideIn 0.2s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+  .cart-row:hover { border-color: var(--border-h); }
+  .cart-row-name {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-1);
+    line-height: 1.3;
+  }
+  .cart-row-name .cat { font-size: 10px; color: var(--text-3); font-family: var(--font-cond); letter-spacing: 0.08em; text-transform: uppercase; }
+  .cart-row-qty {
+    font-family: var(--font-cond);
+    font-size: 12px;
+    color: var(--text-3);
+    min-width: 36px;
+    text-align: center;
+    background: var(--bg-card);
+    border-radius: 3px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+  }
+  .cart-row-price {
+    font-family: var(--font-cond);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--amber-text);
+    min-width: 80px;
+    text-align: right;
+  }
+  .cart-del {
+    background: none;
+    border: none;
+    color: var(--text-3);
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1;
+    font-size: 18px;
+    transition: color 0.12s;
+    flex-shrink: 0;
+  }
+  .cart-del:hover { color: var(--red); }
+
+  /* CART FOOTER */
+  .cart-footer {
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+  }
+  .subtotal-rows { margin-bottom: 12px; }
+  .subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-3);
+    padding: 3px 0;
+    font-family: var(--font-cond);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 6px;
+  }
+  .total-label {
+    font-family: var(--font-cond);
+    font-size: 12px;
+    color: var(--text-2);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .total-value {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--amber-text);
+  }
+  .order-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--amber-dim), var(--amber));
+    border: none;
+    border-radius: 4px;
+    color: #0b0d0c;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .order-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15));
+    pointer-events: none;
+  }
+  .order-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(212,137,26,0.4); }
+  .order-btn:active { transform: translateY(0); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-h);
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--amber-text);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .modal-title::before {
+    content: '';
+    width: 4px; height: 22px;
+    background: var(--amber);
+    border-radius: 2px;
+    display: block;
+  }
+  .modal-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+    max-height: 240px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .modal-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 10px;
+    background: var(--bg-surface);
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .modal-line .name { color: var(--text-2); }
+  .modal-line .price { color: var(--amber-text); font-family: var(--font-cond); font-weight: 600; }
+  .modal-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--border-h);
+    padding-top: 14px;
+    margin-bottom: 20px;
+  }
+  .modal-total .label { font-family: var(--font-cond); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); }
+  .modal-total .val { font-family: var(--font-head); font-size: 28px; font-weight: 700; color: var(--amber-text); }
+  .modal-note { font-size: 11px; color: var(--text-3); margin-bottom: 18px; line-height: 1.6; border-left: 2px solid var(--amber-dim); padding-left: 10px; }
+  .modal-close {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-h);
+    border-radius: 4px;
+    color: var(--text-2);
+    font-family: var(--font-cond);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--border); color: var(--text-1); }
+
+  /* SETTINGS */
+  .settings-modal-label { font-family: var(--font-cond); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 8px; display: block; }
+  .settings-modal-input { width: 100%; background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-1); padding: 10px 12px; border-radius: 4px; font-family: var(--font-body); font-size: 14px; }
+  .settings-modal-input:focus { outline: none; border-color: var(--amber-dim); }
+  .settings-modal-actions { display: flex; gap: 10px; margin-top: 2rem; }
+  .settings-modal-actions button { flex: 1; padding: 10px; border-radius: 4px; border: none; font-family: var(--font-cond); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .save-btn { background: var(--green); color: white; }
+  .save-btn:hover { filter: brightness(1.1); }
+  .cancel-btn { background: transparent; border: 1px solid var(--border); color: var(--text-2); }
+  .cancel-btn:hover { border-color: var(--amber-dim); color: var(--amber-text); }
+  .reset-btn { background: var(--red); color: white; width: 100%; margin-top: 1rem; }
+  .reset-btn:hover { filter: brightness(1.1); }
+
+  /* EMPTY STATE */
+  .no-items {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-3);
+    font-family: var(--font-cond);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-h); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .cart-panel { position: fixed; bottom: 0; left: 0; right: 0; height: auto; max-height: 55vh; top: auto; border-top: 2px solid var(--amber-dim); box-shadow: 0 -4px 32px rgba(0,0,0,0.7); z-index: 90; }
+    .main-panel { padding-bottom: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-icon"><div class="logo-icon-inner"></div></div>
+    <div class="logo-text">
+      <div class="top">Strategic Command</div>
+      <div class="main">Total <span>Conquest</span></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="money-display" id="money-display">$0</div>
+    <button class="settings-btn" onclick="openSettings()">⚙ SETTINGS</button>
+    <button class="cart-trigger" onclick="scrollToCart()">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Cart <span class="cart-badge" id="cart-count">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="main-panel">
+    <div class="section-label">Inventory</div>
+    <div class="search-bar">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Search items — tank, uranium, rifle..." oninput="filterItems()">
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="items-grid" id="items-grid"></div>
+  </div>
+
+  <div class="cart-panel" id="cart-section">
+    <div class="cart-header">
+      <div class="cart-title">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Order Cart
+      </div>
+      <button class="clear-btn" onclick="clearCart()">Clear All</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <div>No items selected</div>
+        <div style="font-size:10px;color:var(--text-3);margin-top:-4px;">Add items from inventory</div>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <div class="subtotal-rows" id="subtotal-rows"></div>
+      <div class="total-row">
+        <div class="total-label">Total Order</div>
+        <div class="total-value" id="cart-total">$0</div>
+      </div>
+      <button class="order-btn" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="modal-title">Game Settings</div>
+    <div class="settings-modal-row">
+      <label class="settings-modal-label">Your Budget</label>
+      <input type="number" id="budget-input" class="settings-modal-input" placeholder="Enter amount" value="0" min="0">
+    </div>
+    <div class="settings-modal-actions">
+      <button class="save-btn" onclick="saveBudget()">Save</button>
+      <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
+    </div>
+    <button class="reset-btn" onclick="resetMoney()">Reset Budget & Cart</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">Order Summary</div>
+    <div class="modal-lines" id="modal-lines"></div>
+    <div class="modal-total">
+      <span class="label">Grand Total</span>
+      <span class="val" id="modal-total"></span>
+    </div>
+    <div class="modal-note">These are floor prices — actual trade is subject to negotiation. Market forces, scarcity, and political leverage may adjust prices upward.</div>
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  {id:'all',label:'All Items'},
+  {id:'brute',label:'Resources'},
+  {id:'refined',label:'Refined'},
+  {id:'weapons',label:'Weapons'},
+  {id:'ammo',label:'Ammo'},
+  {id:'air',label:'Air'},
+  {id:'land',label:'Land'},
+  {id:'water',label:'Water'},
+  {id:'missiles',label:'Missiles'},
+  {id:'other',label:'Other'},
+  {id:'loans',label:'Finance'},
+];
+
+const CAT_LABEL = {brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other',loans:'Finance'};
+
+const ITEMS = [
+  {id:1,cat:'brute',name:'Iron',price:2,unit:'un',note:'Backbone of all production'},
+  {id:2,cat:'brute',name:'Coal',price:1,unit:'un',note:'Most abundant fuel/refining resource'},
+  {id:3,cat:'brute',name:'Gravel',price:0.50,unit:'un',note:'Cheap filler / gunpowder component'},
+  {id:4,cat:'brute',name:'Latex',price:4,unit:'un',note:'Rare in many biomes — tires & vests'},
+  {id:5,cat:'brute',name:'Silicon',price:8,unit:'un',note:'Electronics precursor — moderate rarity'},
+  {id:6,cat:'brute',name:'Gold',price:45,unit:'un',note:'Rare — electronics & chips required'},
+  {id:7,cat:'brute',name:'Diamond',price:180,unit:'un',note:'Very rare — chips precursor'},
+  {id:8,cat:'brute',name:'Oil',price:3,unit:'L',note:'Fuel production — liquid resource'},
+  {id:9,cat:'brute',name:'Gas',price:2,unit:'L',note:'Less efficient than oil, more abundant'},
+  {id:10,cat:'brute',name:'Uranium',price:800,unit:'un',note:'Extremely rare — nuclear path only'},
+  {id:11,cat:'refined',name:'Refined Iron',price:22,unit:'un',note:'5 Iron + 3 Coal → 5 units'},
+  {id:12,cat:'refined',name:'Gunpowder',price:1.80,unit:'un',note:'10 Coal + 5 Gravel → 10 units'},
+  {id:13,cat:'refined',name:'Tires',price:60,unit:'un',note:'10 Latex → 1 Tire'},
+  {id:14,cat:'refined',name:'Fuel',price:3,unit:'L',note:'50L Oil → 100L Fuel'},
+  {id:15,cat:'refined',name:'Electronics',price:250,unit:'un',note:'1 Gold + 2 Silicon + 5 Refined Iron'},
+  {id:16,cat:'refined',name:'Chips',price:700,unit:'un',note:'3 Diamond + 10 Glass → 1 Chip'},
+  {id:17,cat:'refined',name:'Refined Uranium',price:55000,unit:'un',note:'10 Uranium + 1000L Fuel + 500 Coal + 120 Diamond + 200 Gold'},
+  {id:18,cat:'weapons',name:'Knife',price:80,unit:'un',note:'Basic melee'},
+  {id:19,cat:'weapons',name:'Pistol',price:280,unit:'un',note:'Standard sidearm'},
+  {id:20,cat:'weapons',name:'SMG',price:900,unit:'un',note:'Close-quarter automatic'},
+  {id:21,cat:'weapons',name:'Rifle',price:1200,unit:'un',note:'Standard infantry weapon'},
+  {id:22,cat:'weapons',name:'Sniper Rifle',price:2000,unit:'un',note:'Long-range precision'},
+  {id:23,cat:'weapons',name:'Heavy Weapon',price:3000,unit:'un',note:'Crew-served / support'},
+  {id:24,cat:'weapons',name:'Hand Anti-Tank Missile',price:7500,unit:'un',note:'Launcher unit'},
+  {id:25,cat:'weapons',name:'Light Military Vest',price:500,unit:'un',note:'Basic ballistic protection'},
+  {id:26,cat:'weapons',name:'Heavy Military Vest',price:1000,unit:'un',note:'Full ballistic protection'},
+  {id:27,cat:'weapons',name:'Old Mortar (Ground-Mounted)',price:28000,unit:'un',note:'Ground-based artillery piece'},
+  {id:28,cat:'weapons',name:'Resources / Supplies',price:1.50,unit:'pack',note:'Food, medicine, general supplies'},
+  {id:37,cat:'ammo',name:'Pistol Ammo',price:140,unit:'100 bullets',note:'',perPack:100,packLabel:'bullet'},
+  {id:29,cat:'ammo',name:'SMG Ammo',price:150,unit:'100 bullets',note:'',perPack:100,packLabel:'bullet'},
+  {id:30,cat:'ammo',name:'Rifle Ammo',price:160,unit:'50 bullets',note:'',perPack:50,packLabel:'bullet'},
+  {id:31,cat:'ammo',name:'Heavy Ammo',price:360,unit:'50 bullets',note:'',perPack:50,packLabel:'bullet'},
+  {id:32,cat:'ammo',name:'.50 Caliber Ammo',price:350,unit:'100 bullets',note:'',perPack:100,packLabel:'bullet'},
+  {id:33,cat:'ammo',name:'22mm Autocannon Ammo',price:650,unit:'25 bullets',note:'',perPack:25,packLabel:'bullet'},
+  {id:34,cat:'ammo',name:'Sniper Ammo',price:320,unit:'50 bullets',note:'',perPack:50,packLabel:'bullet'},
+  {id:35,cat:'ammo',name:'Anti-Tank Missile Ammo',price:2500,unit:'1 missile',note:'',perPack:1,packLabel:'missile'},
+  {id:38,cat:'ammo',name:'Mortar Ammo',price:1500,unit:'4 rounds',note:'Ground-based explosive rounds',perPack:4,packLabel:'round'},
+  {id:39,cat:'other',name:'Other Stuff (Small)',price:100,unit:'un',note:'Miscellaneous supplies & equipment'},
+  {id:40,cat:'other',name:'Other Stuff (Medium)',price:300,unit:'un',note:'Miscellaneous supplies & equipment'},
+  {id:41,cat:'other',name:'Other Stuff (Big)',price:550,unit:'un',note:'Miscellaneous supplies & equipment'},
+  {id:42,cat:'other',name:'Other Stuff (Huge)',price:850,unit:'un',note:'Miscellaneous supplies & equipment'},
+  {id:43,cat:'air',name:'Helicopter',price:45000,unit:'un',note:'25 L/turn fuel consumption'},
+  {id:44,cat:'air',name:'Light Fighter Jet',price:55000,unit:'un',note:'35 L/turn fuel consumption'},
+  {id:45,cat:'air',name:'Medium Fighter Jet',price:120000,unit:'un',note:'50 L/turn fuel consumption'},
+  {id:46,cat:'air',name:'Airplane (transport/military)',price:180000,unit:'un',note:'60 L/turn fuel consumption'},
+  {id:47,cat:'air',name:'Heavy Fighter Jet',price:175000,unit:'un',note:'70 L/turn fuel consumption'},
+  {id:48,cat:'air',name:'Bomber Jet',price:220000,unit:'un',note:'90 L/turn fuel consumption'},
+  {id:49,cat:'land',name:'Motorbike',price:3500,unit:'un',note:'2 L/turn fuel consumption'},
+  {id:50,cat:'land',name:'Car',price:7000,unit:'un',note:'4 L/turn fuel consumption'},
+  {id:51,cat:'land',name:'Truck (military/transport)',price:18000,unit:'un',note:'10 L/turn fuel consumption'},
+  {id:52,cat:'land',name:'Light Tank',price:50000,unit:'un',note:'20 L/turn fuel consumption'},
+  {id:53,cat:'land',name:'Medium Tank',price:80000,unit:'un',note:'30 L/turn fuel consumption'},
+  {id:54,cat:'land',name:'Heavy Tank',price:125000,unit:'un',note:'45 L/turn fuel consumption'},
+  {id:55,cat:'water',name:'Boat',price:2500,unit:'un',note:'5 L/turn fuel consumption'},
+  {id:56,cat:'water',name:'Ship (commercial/military)',price:90000,unit:'un',note:'25 L/turn fuel consumption'},
+  {id:57,cat:'water',name:'Submarine',price:200000,unit:'un',note:'60 L/turn fuel consumption'},
+  {id:58,cat:'water',name:'Warship',price:230000,unit:'un',note:'80 L/turn fuel consumption'},
+  {id:59,cat:'water',name:'Carrier',price:580000,unit:'un',note:'150 L/turn fuel consumption'},
+  {id:60,cat:'water',name:'Supercarrier',price:1000000,unit:'un',note:'220 L/turn fuel consumption'},
+  {id:61,cat:'missiles',name:'Unguided Missile (Drop)',isMissile:true,basePrice:3500,explosionPrices:{small:2100,medium:3500,big:5250,huge:8050,gigantic:13300},unit:'un',note:'Ballistic payload'},
+  {id:62,cat:'missiles',name:'Unguided Missile (Rocket)',isMissile:true,basePrice:6500,explosionPrices:{small:3900,medium:6500,big:9750,huge:14950,gigantic:24700},unit:'un',note:'Self-propelled'},
+  {id:63,cat:'missiles',name:'Submarine Torpedo',isMissile:true,basePrice:7000,explosionPrices:{small:4200,medium:7000,big:10500,huge:16100,gigantic:26600},unit:'un',note:'Underwater'},
+  {id:64,cat:'missiles',name:'Cruise Missile',isMissile:true,basePrice:25000,explosionPrices:{small:15000,medium:25000,big:37500,huge:57500,gigantic:95000},unit:'un',note:'Long-range'},
+  {id:65,cat:'missiles',name:'Guided Missile',isMissile:true,basePrice:27000,explosionPrices:{small:16200,medium:27000,big:40500,huge:62100,gigantic:102600},unit:'un',note:'Precision'},
+  {id:66,cat:'missiles',name:'Anti-Missile Rocket',isMissile:true,basePrice:18000,explosionPrices:{small:10800,medium:18000,big:27000,huge:41400,gigantic:68400},unit:'un',note:'Air defense'},
+  {id:67,cat:'missiles',name:'Hypersonic Missile',isMissile:true,basePrice:62000,explosionPrices:{small:37200,medium:62000,big:93000,huge:142600,gigantic:235600},unit:'un',note:'Ultra-fast'},
+  {id:68,cat:'missiles',name:'Ballistic Missile (ICBM)',isMissile:true,basePrice:130000,explosionPrices:{small:78000,medium:130000,big:195000,huge:299000,gigantic:494000},unit:'un',note:'Intercontinental'},
+  {id:69,cat:'missiles',name:'Nuclear Missile',isMissile:true,basePrice:380000,explosionPrices:{small:228000,medium:380000,big:570000,huge:874000,gigantic:1444000},unit:'un',note:'WMD'},
+  {id:70,cat:'other',name:'Grenade',price:40,unit:'un',note:'Standard fragmentation'},
+  {id:71,cat:'other',name:'Specialized Grenade',price:75,unit:'un',note:'Smoke / incendiary / EMP types'},
+  {id:72,cat:'other',name:'Land Bomb (Anti-Tank)',price:300,unit:'un',note:'Buried / pressure-triggered'},
+  {id:73,cat:'other',name:'Drone',price:7500,unit:'un',note:'Recon / light attack'},
+  {id:74,cat:'other',name:'Barricade',price:350,unit:'un',note:'Basic defensive position'},
+  {id:75,cat:'other',name:'Barrier',price:850,unit:'un',note:'Heavy fortified barrier'},
+  {id:76,cat:'loans',name:'Short Loan (< 5 cycles)',price:0,unit:'',note:'+15% interest — quick liquidity, low risk'},
+  {id:77,cat:'loans',name:'Medium Loan (5–15 cycles)',price:0,unit:'',note:'+25% interest — standard mid-game financing'},
+  {id:78,cat:'loans',name:'Long Loan (15+ cycles)',price:0,unit:'',note:'+40% interest — high return, high default risk'},
+  {id:79,cat:'loans',name:'Workers Loan',price:500,unit:'worker/cycle',note:'Temporary workforce transfer'}
+];
+
+let cart = {};
+let qtys = {};
+let explosionLevels = {};
+let activeTab = 'all';
+let searchQ = '';
+let userMoney = 0;
+ITEMS.forEach(i => qtys[i.id] = 1);
+ITEMS.forEach(i => explosionLevels[i.id] = 'medium');
+
+const EXPLOSION_MULTIPLIERS = {
+  small: 0.6,
+  medium: 1.0,
+  big: 1.5,
+  huge: 2.3,
+  gigantic: 3.8
+};
+
+function getItemPrice(item) {
+  if (item.isMissile) {
+    const level = explosionLevels[item.id] || 'medium';
+    return item.explosionPrices[level] || item.basePrice;
+  }
+  return item.price;
+}
+
+function fmt(n) {
+  if (n === 0) return 'Negotiable';
+  if (n < 1) return '$' + n.toFixed(2);
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits: n%1!==0?2:0, maximumFractionDigits:2});
+}
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = CATEGORIES.map(c =>
+    `<button class="tab${activeTab===c.id?' active':''}" onclick="setTab('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+
+function setTab(id) { activeTab = id; renderItems(); renderTabs(); }
+
+function filterItems() { searchQ = document.getElementById('search-input').value.toLowerCase(); renderItems(); }
+
+function getVisible() {
+  return ITEMS.filter(i => {
+    const matchCat = activeTab === 'all' || i.cat === activeTab;
+    const matchQ = !searchQ || i.name.toLowerCase().includes(searchQ) || (i.note||'').toLowerCase().includes(searchQ);
+    return matchCat && matchQ;
+  });
+}
+
+function renderItems() {
+  const visible = getVisible();
+  const el = document.getElementById('items-grid');
+  if (!visible.length) { el.innerHTML = '<div class="no-items">No items found for this search</div>'; return; }
+  el.innerHTML = visible.map(item => {
+    const cartKey = item.isMissile ? `${item.id}_${explosionLevels[item.id]||'medium'}` : String(item.id);
+    const inCart = !!cart[cartKey];
+    const q = qtys[item.id] || 1;
+    const price = getItemPrice(item);
+    const isNeg = item.price === 0;
+    
+    let explosionHTML = '';
+    if (item.isMissile) {
+      const level = explosionLevels[item.id] || 'medium';
+      explosionHTML = `
+        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:3px;padding:8px;margin-bottom:10px;font-size:11px;">
+          <label style="display:block;font-family:var(--font-cond);color:var(--text-3);margin-bottom:4px;letter-spacing:0.08em;text-transform:uppercase;">Explosion</label>
+          <select onchange="explosionLevels[${item.id}]=this.value; renderItems();" style="width:100%;background:var(--bg-deep);border:1px solid var(--border);color:var(--text-1);padding:6px 8px;border-radius:2px;font-family:var(--font-body);font-size:11px;cursor:pointer;">
+            <option value="small" ${level==='small'?'selected':''}>Small (0.6x)</option>
+            <option value="medium" ${level==='medium'?'selected':''}>Medium (1.0x)</option>
+            <option value="big" ${level==='big'?'selected':''}>Big (1.5x)</option>
+            <option value="huge" ${level==='huge'?'selected':''}>Huge (2.3x)</option>
+            <option value="gigantic" ${level==='gigantic'?'selected':''}>Gigantic (3.8x)</option>
+          </select>
+        </div>
+      `;
+    }
+    
+    return `<div class="item-card">
+      <div class="item-cat">${CAT_LABEL[item.cat]||item.cat}</div>
+      <div class="item-name">${item.name}</div>
+      ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
+      ${explosionHTML}
+      <div class="item-price${isNeg?' negotiable':''}">${fmt(price)}${!isNeg&&item.unit?`<span class="unit">/ ${item.unit}</span>`:''}</div>
+      ${!isNeg ? `<div class="item-actions">
+        <div class="qty-ctrl">
+          <button onclick="chQty(${item.id},-1)">−</button>
+          <input type="number" class="qty-val" id="qty-${item.id}" value="${q}" min="1" oninput="setQty(${item.id},this.value)" onblur="validateQty(${item.id})">
+          <button onclick="chQty(${item.id},1)">+</button>
+        </div>
+        <button class="add-btn" onclick="addCart(${item.id})">Add to Cart</button>
+      </div>` : `<div style="font-size:11px;color:var(--text-3);margin-top:4px;font-style:italic;">Value negotiated between players</div>`}
+    </div>`;
+  }).join('');
+}
+
+function chQty(id, d) {
+  qtys[id] = Math.max(1, (qtys[id]||1) + d);
+  const el = document.getElementById('qty-'+id);
+  if (el) el.value = qtys[id];
+}
+
+function setQty(id, val) {
+  const n = parseInt(val, 10);
+  qtys[id] = isNaN(n) || n < 1 ? 1 : n;
+}
+
+function validateQty(id) {
+  const el = document.getElementById('qty-'+id);
+  if (!el) return;
+  const n = parseInt(el.value, 10);
+  qtys[id] = isNaN(n) || n < 1 ? 1 : n;
+  el.value = qtys[id];
+}
+
+function addCart(id) {
+  const item = ITEMS.find(i => i.id === id);
+  const q = qtys[id] || 1;
+  const price = getItemPrice(item);
+  const explosion = explosionLevels[id] || 'medium';
+  const key = item.isMissile ? `${id}_${explosion}` : String(id);
+  if (cart[key]) cart[key].qty += q;
+  else cart[key] = {item, qty: q, price, explosion};
+  renderItems();
+  renderCart();
+}
+
+function updateCartQty(key, newQty) {
+  const n = parseInt(newQty, 10);
+  if (isNaN(n) || n < 1) return;
+  if (cart[key]) cart[key].qty = n;
+  renderCart();
+}
+
+function removeCart(key) { delete cart[key]; renderItems(); renderCart(); }
+function clearCart() { cart = {}; renderItems(); renderCart(); }
+
+function renderCart() {
+  const keys = Object.keys(cart);
+  document.getElementById('cart-count').textContent = keys.reduce((s,k) => s+cart[k].qty, 0);
+  const el = document.getElementById('cart-items');
+  if (!keys.length) {
+    el.innerHTML = `<div class="cart-empty">
+      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <div>No items selected</div><div style="font-size:10px;color:var(--text-3);margin-top:-4px;">Add items from inventory</div>
+    </div>`;
+    document.getElementById('cart-total').textContent = '$0';
+    document.getElementById('subtotal-rows').innerHTML = '';
+    return;
+  }
+  let total = 0;
+  el.innerHTML = keys.map(k => {
+    const {item,qty:q,price,explosion} = cart[k];
+    const sub = price * q;
+    total += sub;
+    const expNote = item.isMissile ? ` <span style="font-size:10px;color:var(--amber-dim);">(${explosion || 'medium'})</span>` : '';
+    const ammoLine = item.perPack
+      ? `<div style="font-size:10px;color:var(--amber-dim);font-family:var(--font-cond);letter-spacing:0.06em;margin-top:2px;">${(item.perPack*q).toLocaleString()} ${item.packLabel}s total</div>`
+      : '';
+    return `<div class="cart-row">
+      <div class="cart-row-name"><div class="cat">${CAT_LABEL[item.cat]}</div>${item.name}${expNote}${ammoLine}</div>
+      <span class="cart-row-qty"><input type="number" style="width:50px;background:var(--bg-deep);border:1px solid var(--border);color:var(--text-1);padding:4px 6px;border-radius:2px;font-family:var(--font-cond);text-align:center;outline:none;" value="${q}" min="1" onchange="updateCartQty('${k}', this.value)" onblur="this.value=${q}"></span>
+      <span class="cart-row-price">${fmt(sub)}</span>
+      <button class="cart-del" onclick="removeCart('${k}')">×</button>
+    </div>`;
+  }).join('');
+  document.getElementById('subtotal-rows').innerHTML =
+    `<div class="subtotal-row"><span>Items</span><span>${keys.length} line(s)</span></div>
+     <div class="subtotal-row"><span>Units</span><span>${keys.reduce((s,k)=>s+cart[k].qty,0)}</span></div>`;
+  document.getElementById('cart-total').textContent = '$' + total.toLocaleString('en-US',{minimumFractionDigits:total%1!==0?2:0,maximumFractionDigits:2});
+}
+
+function placeOrder() {
+  const keys = Object.keys(cart);
+  if (!keys.length) { alert('Your cart is empty!'); return; }
+  let total = 0;
+  keys.forEach(k => {
+    const sub = cart[k].price * cart[k].qty;
+    total += sub;
+  });
+  if (total > userMoney) { alert(`Insufficient funds! You need $${(total - userMoney).toLocaleString('en-US')}.`); return; }
+  document.getElementById('modal-lines').innerHTML = keys.map(k => {
+    const {item,qty:q,price,explosion} = cart[k];
+    const sub = price * q;
+    const expNote = item.isMissile ? ` <span style="color:var(--amber-dim);font-size:11px;">(${explosion || 'medium'})</span>` : '';
+    const ammoNote = item.perPack ? ` <span style="color:var(--amber-dim);font-size:11px;">(${(item.perPack*q).toLocaleString()} ${item.packLabel}s)</span>` : '';
+    return `<div class="modal-line"><span class="name">${q}× ${item.name}${expNote}${ammoNote}</span><span class="price">${fmt(sub)}</span></div>`;
+  }).join('');
+  document.getElementById('modal-total').textContent = '$' + total.toLocaleString('en-US',{minimumFractionDigits:total%1!==0?2:0,maximumFractionDigits:2});
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); }
+function scrollToCart() { document.getElementById('cart-section').scrollIntoView({behavior:'smooth'}); }
+
+function openSettings() {
+  document.getElementById('budget-input').value = userMoney;
+  document.getElementById('settings-modal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function saveBudget() {
+  const value = parseInt(document.getElementById('budget-input').value, 10);
+  if (isNaN(value) || value < 0) { alert('Enter a valid amount.'); return; }
+  userMoney = value;
+  updateMoneyDisplay();
+  closeSettings();
+}
+
+function resetMoney() {
+  if (!confirm('Reset budget to $0 and clear cart?')) return;
+  userMoney = 0;
+  cart = {};
+  updateMoneyDisplay();
+  renderCart();
+  closeSettings();
+}
+
+function updateMoneyDisplay() {
+  document.getElementById('money-display').textContent = '$' + userMoney.toLocaleString('en-US');
+}
+
+renderTabs(); renderItems(); renderCart(); updateMoneyDisplay();
+</script>
+</body>
+</html>

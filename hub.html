@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Total Conquest — Central Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* KZ-Tools Hub Colors (Lofi, calm, minimal) */
+      --hub-bg: #faf8f6;
+      --hub-surface: #f5f3f0;
+      --hub-border: #e8e4e0;
+      --hub-accent: #9b8b7e;
+      --hub-accent-dark: #6b5d52;
+      --hub-text: #3a3a3a;
+      --hub-text-light: #8b8b8b;
+      
+      /* App Colors (for when viewing hosted content) */
+      --bg: #080c10;
+      --surface: #0d1620;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: var(--hub-bg);
+      color: var(--hub-text);
+      font-family: 'Exo 2', sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─────────────────── HEADER / NAVIGATION ─────────────────── */
+    header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--hub-border);
+      background: var(--hub-surface);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex: 1;
+    }
+
+    .collapse-btn {
+      background: transparent;
+      border: 1px solid var(--hub-border);
+      color: var(--hub-accent);
+      font-size: 16px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      border-radius: 4px;
+    }
+
+    .collapse-btn:hover {
+      border-color: var(--hub-accent);
+      background: rgba(155, 139, 126, 0.08);
+    }
+
+    /* Collapsed state */
+    header.collapsed nav {
+      display: none;
+    }
+
+    header.collapsed .header-divider {
+      display: none;
+    }
+
+    header.collapsed .header-left {
+      gap: 12px;
+    }
+
+    .logo {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--hub-accent-dark);
+      transition: color 0.3s ease;
+      cursor: default;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      background: var(--hub-accent);
+      border-radius: 4px;
+      opacity: 0.8;
+    }
+
+    .logo:hover {
+      color: var(--hub-accent);
+    }
+
+    .logo:hover::before {
+      opacity: 1;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--hub-border);
+    }
+
+    /* ─────────────────── NAVIGATION MENU ─────────────────── */
+    nav {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    nav::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    nav::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    nav::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--hub-border);
+      color: var(--hub-text-light);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: none;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(155, 139, 126, 0.08);
+      transition: left 0.2s ease;
+      z-index: -1;
+    }
+
+    .nav-btn:hover {
+      color: var(--hub-accent);
+      border-color: var(--hub-accent);
+    }
+
+    .nav-btn:hover::before {
+      left: 0;
+    }
+
+    .nav-btn.active {
+      color: var(--hub-accent-dark);
+      border-color: var(--hub-accent);
+      background: rgba(155, 139, 126, 0.12);
+    }
+
+    /* ─────────────────── HEADER RIGHT SECTION ─────────────────── */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: auto;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.5px;
+      color: var(--hub-text-light);
+      text-transform: none;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--hub-accent);
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    /* ─────────────────── CONTENT AREA ─────────────────── */
+    .content-container {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .iframe-wrapper {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+      pointer-events: none;
+      will-change: opacity;
+    }
+
+    .iframe-wrapper.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 100;
+    }
+
+    .iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: var(--bg);
+      display: block;
+    }
+
+    /* ─────────────────── LOADING STATE ─────────────────── */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      flex-direction: column;
+      gap: 20px;
+      background: var(--hub-bg);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--hub-border);
+      border-top: 2px solid var(--hub-accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: var(--hub-text-light);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 1024px) {
+      header {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        gap: 12px;
+      }
+
+      .header-left {
+        gap: 12px;
+      }
+
+      nav {
+        width: 100%;
+        order: 2;
+        margin-top: 8px;
+      }
+
+      .logo {
+        font-size: 16px;
+      }
+
+      .nav-btn {
+        padding: 8px 12px;
+        font-size: 9px;
+      }
+
+      .status-indicator {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .logo {
+        font-size: 14px;
+        letter-spacing: 2px;
+      }
+
+      .header-divider {
+        display: none;
+      }
+
+      nav {
+        margin-top: 0;
+      }
+
+      .nav-btn {
+        padding: 6px 10px;
+        font-size: 8px;
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <button class="collapse-btn" id="collapseBtn" title="Toggle navigation menu">
+        ☰
+      </button>
+      <div class="logo">KZ-Tools</div>
+      <div class="header-divider"></div>
+      <nav id="navigation">
+        <button class="nav-btn" data-app="database">
+          🌍 Database
+        </button>
+        <button class="nav-btn" data-app="market">
+          🏪 Market
+        </button>
+        <button class="nav-btn" data-app="trade">
+          💱 Trade
+        </button>
+        <button class="nav-btn" data-app="turn">
+          🎮 Turn
+        </button>
+        <button class="nav-btn active" data-app="conflicts">
+          📋 Conflicts
+        </button>
+        <button class="nav-btn" data-app="construct">
+          🧮 Construct
+        </button>
+        <button class="nav-btn" data-app="sync">
+          ☁️ Sync
+        </button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>SYSTEMS ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-container" id="contentContainer">
+    <!-- Iframes will be dynamically created and inserted here -->
+  </div>
+
+  <script>
+    // Configuration mapping
+    const apps = {
+      'conflicts': {
+        name: 'Conflicts',
+        icon: '📋',
+        file: 'conflicts.html'
+      },
+      'turn': {
+        name: 'Turn',
+        icon: '🎮',
+        file: 'turn.html'
+      },
+      'trade': {
+        name: 'Trade',
+        icon: '💱',
+        file: 'trade.html'
+      },
+      'market': {
+        name: 'Market',
+        icon: '🏪',
+        file: 'market.html'
+      },
+      'database': {
+        name: 'Database',
+        icon: '🌍',
+        file: 'database.html'
+      },
+      'construct': {
+        name: 'Construct',
+        icon: '🧮',
+        file: 'construct.html'
+      },
+      'sync': {
+        name: 'Sync',
+        icon: '☁️',
+        isPanel: true
+      }
+    };
+
+    let currentApp = 'conflicts';
+    const contentContainer = document.getElementById('contentContainer');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const loadedApps = new Map();
+
+    /**
+     * Initialize and load an application
+     * @param {string} appId - The application identifier
+     */
+    function loadApp(appId) {
+      if (!apps[appId]) {
+        console.error(`Application ${appId} not found`);
+        return;
+      }
+
+      // If app is already loaded, just show it
+      if (loadedApps.has(appId)) {
+        showApp(appId);
+        return;
+      }
+
+      // Native panel — no iframe needed, render directly
+      if (apps[appId].isPanel) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'iframe-wrapper';
+        wrapper.id = `wrapper-${appId}`;
+        wrapper.innerHTML = syncPanelHTML();
+        contentContainer.appendChild(wrapper);
+        loadedApps.set(appId, wrapper);
+        populateSyncForm();
+        showApp(appId);
+        return;
+      }
+
+      // Create wrapper for the iframe
+      const wrapper = document.createElement('div');
+      wrapper.className = 'iframe-wrapper';
+      wrapper.id = `wrapper-${appId}`;
+
+      // Create iframe immediately
+      const iframe = document.createElement('iframe');
+      iframe.id = `iframe-${appId}`;
+      iframe.src = apps[appId].file;
+      iframe.style.opacity = '0';
+      iframe.style.transition = 'opacity 0.25s ease-in-out';
+      // FIXED: Added 'allow-downloads' to sandbox to enable file exports/downloads
+      iframe.sandbox.add('allow-same-origin', 'allow-scripts', 'allow-forms', 'allow-popups', 'allow-modals', 'allow-downloads');
+
+      wrapper.appendChild(iframe);
+      contentContainer.appendChild(wrapper);
+
+      // Handle iframe load event
+      iframe.onload = () => {
+        // Inject CSS to hide the internal header of the app
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          if (iframeDoc) {
+            const style = iframeDoc.createElement('style');
+            style.textContent = `
+              header { display: none !important; }
+              .app, body { margin-top: 0 !important; padding-top: 0 !important; }
+            `;
+            iframeDoc.head.appendChild(style);
+          }
+        } catch (e) {
+          // CORS or other issue - silently fail
+        }
+        
+        // Fade in the iframe
+        requestAnimationFrame(() => {
+          iframe.style.opacity = '1';
+        });
+      };
+
+      iframe.onerror = () => {
+        wrapper.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; flex-direction: column; gap: 20px; background: var(--bg);">
+            <div style="color: #ff3a3a; text-align: center;">
+              <div style="font-family: 'Orbitron', monospace; font-size: 14px; margin-bottom: 10px;">⚠ Load Error</div>
+              <div style="font-family: 'Share Tech Mono', monospace; font-size: 11px;">Could not load ${apps[appId].name}</div>
+            </div>
+          </div>
+        `;
+      };
+
+      loadedApps.set(appId, wrapper);
+      showApp(appId);
+    }
+
+    /**
+     * Show a specific application
+     * @param {string} appId - The application identifier
+     */
+    function showApp(appId) {
+      // Hide all wrappers
+      document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
+        if (wrapper.id !== `wrapper-${appId}`) {
+          wrapper.classList.remove('active');
+        }
+      });
+
+      // Show selected wrapper
+      const wrapper = document.getElementById(`wrapper-${appId}`);
+      if (wrapper) {
+        wrapper.classList.add('active');
+      }
+
+      if (appId === 'sync') populateSyncForm();
+      currentApp = appId;
+      updateNavigation();
+    }
+
+    /**
+     * Update navigation button states
+     */
+    function updateNavigation() {
+      navButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.app === currentApp) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    /**
+     * Event delegation for navigation buttons
+     */
+    document.getElementById('navigation').addEventListener('click', (e) => {
+      if (e.target.classList.contains('nav-btn')) {
+        const appId = e.target.dataset.app;
+        if (appId === currentApp) return; // Already loaded
+
+        if (loadedApps.has(appId)) {
+          showApp(appId);
+        } else {
+          loadApp(appId);
+        }
+      }
+    });
+
+    /**
+     * Collapse/Expand menu functionality
+     */
+    const collapseBtn = document.getElementById('collapseBtn');
+    const header = document.querySelector('header');
+    
+    collapseBtn.addEventListener('click', () => {
+      header.classList.toggle('collapsed');
+      collapseBtn.textContent = header.classList.contains('collapsed') ? '⊕' : '☰';
+      localStorage.setItem('kz-tools-menu-collapsed', header.classList.contains('collapsed'));
+    });
+
+    // Restore collapsed state from localStorage
+    if (localStorage.getItem('kz-tools-menu-collapsed') === 'true') {
+      header.classList.add('collapsed');
+      collapseBtn.textContent = '⊕';
+    }
+
+    /**
+     * Initialize with the first app
+     */
+    function init() {
+      loadApp('conflicts');
+    }
+
+    // Start the application
+    init();
+
+    /**
+     * Optional: Handle keyboard navigation
+     * Use Alt + number keys to switch between apps
+     */
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key >= '1' && e.key <= '7') {
+        const appIds = Object.keys(apps);
+        const index = parseInt(e.key) - 1;
+        if (index < appIds.length) {
+          const appId = appIds[index];
+          if (loadedApps.has(appId)) {
+            showApp(appId);
+          } else {
+            loadApp(appId);
+          }
+        }
+      }
+    });
+
+    // ─────────────────── GITHUB SYNC ───────────────────
+
+    const GH_CONFIG_KEY = 'kz-tools-gh-config';
+
+    const SYNC_FILES = [
+      { name:'database.json',  path:'assets/database.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('tc_countries')||'[]');}catch{return[];} },
+        write:(d)=>localStorage.setItem('tc_countries',JSON.stringify(d)) },
+      { name:'conflicts.json', path:'assets/conflicts.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('tc_conflicts')||'[]');}catch{return[];} },
+        write:(d)=>localStorage.setItem('tc_conflicts',JSON.stringify(d)) },
+      { name:'turn.json',      path:'assets/turn.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('campaignTrackerState_v2')||'{}');}catch{return{};} },
+        write:(d)=>localStorage.setItem('campaignTrackerState_v2',JSON.stringify(d)) },
+      { name:'trade.json',     path:'assets/trade.json',
+        read:()=>({ packages:JSON.parse(localStorage.getItem('tc_packages')||'[]'),
+                    history: JSON.parse(localStorage.getItem('tc_history') ||'[]') }),
+        write:(d)=>{ localStorage.setItem('tc_packages',JSON.stringify(d.packages||[]));
+                     localStorage.setItem('tc_history', JSON.stringify(d.history ||[])); } }
+    ];
+
+    function loadGhConfig(){
+      try{ return JSON.parse(localStorage.getItem(GH_CONFIG_KEY)); }catch{ return null; }
+    }
+
+    function saveGhConfig(){
+      const o=document.getElementById('gh-owner').value.trim();
+      const r=document.getElementById('gh-repo').value.trim();
+      const b=document.getElementById('gh-branch').value.trim()||'main';
+      const t=document.getElementById('gh-token').value.trim();
+      if(!o||!r||!t){ syncAddLog('❌ Fill in Owner, Repository and Token.','error'); return; }
+      localStorage.setItem(GH_CONFIG_KEY,JSON.stringify({owner:o,repo:r,branch:b,token:t}));
+      syncAddLog('✅ Configuration saved.','success');
+    }
+
+    function populateSyncForm(){
+      const cfg=loadGhConfig(); if(!cfg) return;
+      const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; };
+      set('gh-owner',cfg.owner); set('gh-repo',cfg.repo);
+      set('gh-branch',cfg.branch||'main'); set('gh-token',cfg.token);
+    }
+
+    function syncAddLog(msg,type){
+      const log=document.getElementById('sync-log'); if(!log) return;
+      const row=document.createElement('div');
+      const color=type==='success'?'#4a7c59':type==='error'?'#c0392b':'var(--hub-text-light)';
+      row.style.cssText=`padding:5px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:${color};`;
+      row.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`;
+      log.insertBefore(row,log.firstChild);
+    }
+
+    function toBase64(s){ return btoa(unescape(encodeURIComponent(s))); }
+    function fromBase64(b){ return decodeURIComponent(escape(atob(b.replace(/\s/g,'')))); }
+
+    async function ghFetch(path,method,body,cfg){
+      const base=`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+      const url=method==='GET'?`${base}?ref=${cfg.branch}`:base;
+      const res=await fetch(url,{
+        method:method||'GET',
+        headers:{'Authorization':`token ${cfg.token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+        ...(body?{body:JSON.stringify(body)}:{})
+      });
+      if(!res.ok){ let m=`${res.status}`; try{const e=await res.json();m=e.message||m;}catch{} throw new Error(m); }
+      return res.json();
+    }
+
+    async function pullAll(cfg){
+      const logs=[];
+      for(const f of SYNC_FILES){
+        try{
+          const ghFile=await ghFetch(f.path,'GET',null,cfg);
+          const data=JSON.parse(fromBase64(ghFile.content));
+          f.write(data);
+          logs.push({msg:`✅ ${f.name} pulled`,ok:true});
+        }catch(e){ logs.push({msg:`❌ ${f.name}: ${e.message}`,ok:false}); }
+      }
+      return logs;
+    }
+
+    async function pushAll(cfg){
+      const logs=[];
+      const ts=new Date().toISOString().slice(0,16).replace('T',' ');
+      for(const f of SYNC_FILES){
+        try{
+          let sha=null;
+          try{ const ex=await ghFetch(f.path,'GET',null,cfg); sha=ex.sha; }catch{}
+          await ghFetch(f.path,'PUT',{
+            message:`[KZ-Tools] Backup ${f.name} ${ts}`,
+            content:toBase64(JSON.stringify(f.read(),null,2)),
+            branch:cfg.branch,
+            ...(sha?{sha}:{})
+          },cfg);
+          logs.push({msg:`✅ ${f.name} pushed`,ok:true});
+        }catch(e){ logs.push({msg:`❌ ${f.name}: ${e.message}`,ok:false}); }
+      }
+      return logs;
+    }
+
+    async function syncPull(){
+      const cfg=loadGhConfig();
+      if(!cfg){ syncAddLog('❌ Save GitHub configuration first.','error'); return; }
+      syncAddLog('🔄 Pulling from GitHub...','info');
+      const btn=document.getElementById('btn-pull');
+      if(btn){ btn.disabled=true; btn.textContent='⏳ Pulling...'; }
+      try{
+        const logs=await pullAll(cfg);
+        logs.forEach(l=>syncAddLog(l.msg,l.ok?'success':'error'));
+        const ok=logs.filter(l=>l.ok).length;
+        syncAddLog(`Pull complete: ${ok}/${logs.length} files.`,ok===logs.length?'success':'info');
+        // Reload any already-open iframes so they read fresh localStorage data
+        loadedApps.forEach((wrapper,appId)=>{
+          if(apps[appId]&&!apps[appId].isPanel){
+            const iframe=document.getElementById(`iframe-${appId}`);
+            if(iframe) iframe.src=apps[appId].file;
+          }
+        });
+      }catch(e){ syncAddLog('❌ '+e.message,'error'); }
+      finally{ if(btn){ btn.disabled=false; btn.textContent='⬇ Pull from GitHub'; } }
+    }
+
+    async function syncPush(){
+      const cfg=loadGhConfig();
+      if(!cfg){ syncAddLog('❌ Save GitHub configuration first.','error'); return; }
+      syncAddLog('🔄 Pushing to GitHub...','info');
+      const btn=document.getElementById('btn-push');
+      if(btn){ btn.disabled=true; btn.textContent='⏳ Pushing...'; }
+      try{
+        const logs=await pushAll(cfg);
+        logs.forEach(l=>syncAddLog(l.msg,l.ok?'success':'error'));
+        const ok=logs.filter(l=>l.ok).length;
+        syncAddLog(`Push complete: ${ok}/${logs.length} files.`,ok===logs.length?'success':'info');
+      }catch(e){ syncAddLog('❌ '+e.message,'error'); }
+      finally{ if(btn){ btn.disabled=false; btn.textContent='⬆ Push to GitHub'; } }
+    }
+
+    function syncPanelHTML(){
+      const inp=`width:100%;background:var(--hub-bg);border:1px solid var(--hub-border);color:var(--hub-text);font-family:'Exo 2',sans-serif;font-size:12px;padding:8px 10px;border-radius:4px;outline:none;box-sizing:border-box;`;
+      const lbl=`display:block;font-family:'Exo 2',sans-serif;font-size:10px;color:var(--hub-text-light);margin-bottom:5px;`;
+      const card=`background:var(--hub-surface);border:1px solid var(--hub-border);border-radius:6px;padding:22px;margin-bottom:14px;`;
+      const sec=`font-family:'Exo 2',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;color:var(--hub-text-light);text-transform:uppercase;margin-bottom:16px;`;
+      const btnP=`background:transparent;border:1px solid var(--hub-accent);color:var(--hub-accent-dark);font-family:'Exo 2',sans-serif;font-size:11px;padding:9px 16px;border-radius:4px;cursor:pointer;width:100%;transition:all .2s;`;
+      const btnS=`background:transparent;border:1px solid var(--hub-border);color:var(--hub-text-light);font-family:'Exo 2',sans-serif;font-size:11px;padding:9px 16px;border-radius:4px;cursor:pointer;width:100%;transition:all .2s;`;
+      return `<div style="width:100%;height:100%;overflow-y:auto;background:var(--hub-bg);">
+        <div style="max-width:580px;margin:0 auto;padding:36px 24px;">
+          <div style="margin-bottom:28px;">
+            <div style="font-family:'Exo 2',sans-serif;font-size:17px;font-weight:600;color:var(--hub-accent-dark);margin-bottom:7px;">☁️ GitHub Sync</div>
+            <div style="font-family:'Exo 2',sans-serif;font-size:12px;color:var(--hub-text-light);line-height:1.7;">Backup and restore all game data to a GitHub repository. JSONs are saved to the <code style="font-family:'Courier New',monospace;background:rgba(155,139,126,.15);padding:1px 5px;border-radius:3px;font-size:11px;">assets/</code> folder. The hub auto-pulls on every load if configured.</div>
+          </div>
+          <div style="${card}">
+            <div style="${sec}">Configuration</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label style="${lbl}">GitHub Username / Org</label><input id="gh-owner" type="text" placeholder="username" style="${inp}"></div>
+              <div><label style="${lbl}">Repository Name</label><input id="gh-repo" type="text" placeholder="my-repo" style="${inp}"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:100px 1fr;gap:12px;margin-bottom:18px;">
+              <div><label style="${lbl}">Branch</label><input id="gh-branch" type="text" placeholder="main" value="main" style="${inp}"></div>
+              <div><label style="${lbl}">Personal Access Token (repo scope) — <a href="https://github.com/settings/tokens/new?scopes=repo&description=KZ-Tools+Sync" target="_blank" rel="noopener" style="color:var(--hub-accent);text-decoration:none;font-size:10px;">Generate token ↗</a></label><input id="gh-token" type="password" placeholder="ghp_••••••••••••" style="${inp}"></div>
+            </div>
+            <button onclick="saveGhConfig()" style="${btnP}">Save Configuration</button>
+          </div>
+          <div style="${card}">
+            <div style="${sec}">Files Managed</div>
+            ${['database.json','conflicts.json','turn.json','trade.json'].map(f=>`
+              <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
+                <span>📁</span>
+                <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>
+              </div>`).join('')}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+              <button id="btn-pull" onclick="syncPull()" style="${btnS}">⬇ Pull from GitHub</button>
+              <button id="btn-push" onclick="syncPush()" style="${btnP}">⬆ Push to GitHub</button>
+            </div>
+          </div>
+          <div style="${card}">
+            <div style="${sec}">Activity Log</div>
+            <div id="sync-log" style="max-height:220px;overflow-y:auto;"><div style="font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);opacity:.5;padding:4px 0;">No activity yet.</div></div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // Auto-pull on every hub load if GitHub is configured
+    // Runs after all script has executed (so SYNC_FILES and all functions are ready)
+    window.addEventListener('load', async () => {
+      const cfg = loadGhConfig();
+      if (cfg && cfg.token && cfg.owner && cfg.repo) {
+        try {
+          await pullAll(cfg);
+          // Results will be visible when user opens the Sync panel
+        } catch {}
+      }
+    });
+
+  </script>
+</body>
+</html>
