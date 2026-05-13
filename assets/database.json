@@ -38,7 +38,8 @@
       "houses": 0,
       "town_hall": 1,
       "factories": 1,
-      "businesses": 0
+      "businesses": 0,
+      "mines": 1
     },
     "weapons": {
       "knives": 0,
@@ -168,7 +169,8 @@
       "houses": 0,
       "town_hall": 1,
       "factories": 1,
-      "businesses": 0
+      "businesses": 0,
+      "mines": 1
     },
     "weapons": {
       "knives": 0,
@@ -388,9 +390,9 @@
     "flag": "🏴",
     "createdAt": 1776888625850,
     "population": {
-      "civilians": 1010,
+      "civilians": 1000,
       "workers": 0,
-      "military": 0
+      "military": 10
     },
     "economy": {
       "money": 0
@@ -419,8 +421,9 @@
     "buildings": {
       "houses": 0,
       "town_hall": 1,
-      "factories": 0,
-      "businesses": 0
+      "factories": 1,
+      "businesses": 0,
+      "mines": 1
     },
     "weapons": {
       "knives": 0,
@@ -500,6 +503,10 @@
     "type": "country",
     "observations": {
       "national_plan": ""
+    },
+    "military": {
+      "commanders": 3,
+      "army": 7
     }
   },
   {
