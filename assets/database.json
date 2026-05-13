@@ -119,8 +119,8 @@
     "queue": [],
     "type": "country",
     "military": {
-      "army": 21,
-      "special_forces": 12,
+      "army": 14,
+      "special_forces": 11,
       "generals": 3,
       "commanders": 1,
       "majors": 1
