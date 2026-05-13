@@ -137,7 +137,7 @@
     "population": {
       "civilians": 1030,
       "workers": 20,
-      "military": 25
+      "military": 22
     },
     "economy": {
       "money": 4310
@@ -248,10 +248,10 @@
     "queue": [],
     "type": "country",
     "military": {
-      "army": 17,
-      "special_forces": 3,
+      "army": 14,
+      "special_forces": 4,
       "generals": 3,
-      "commanders": 2
+      "commanders": 1
     },
     "observations": {
       "national_plan": ""
