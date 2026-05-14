@@ -1,0 +1,89 @@
+[
+  {
+    "id": "moh5d6w7abggab8uxke",
+    "name": "First Contact War",
+    "status": "ended",
+    "description": "",
+    "startDate": "1989-01-01",
+    "createdAt": 1777291324712,
+    "sideA": {
+      "name": "allies",
+      "countries": [
+        {
+          "id": "moh5f4cwyvv0ze9aw5g",
+          "name": "USA",
+          "flag": "🏴",
+          "isMain": true,
+          "troops": 38,
+          "injured": 2,
+          "deaths": 19,
+          "tanks": 0,
+          "vehicles": 0,
+          "aircrafts": 0,
+          "warships": 0,
+          "tanks_lost": 0,
+          "vehicles_lost": 0,
+          "aircrafts_lost": 0,
+          "warships_lost": 0
+        },
+        {
+          "id": "moh5fb07j11z15non2q",
+          "name": "Israel",
+          "flag": "🏴",
+          "isMain": false,
+          "troops": 10,
+          "injured": 0,
+          "deaths": 5,
+          "tanks": 0,
+          "vehicles": 0,
+          "aircrafts": 0,
+          "warships": 0,
+          "tanks_lost": 0,
+          "vehicles_lost": 0,
+          "aircrafts_lost": 0,
+          "warships_lost": 0
+        },
+        {
+          "id": "moh5fecf0zixa7q062h",
+          "name": "Russia",
+          "flag": "🏴",
+          "isMain": false,
+          "troops": 30,
+          "injured": 0,
+          "deaths": 5,
+          "tanks": 0,
+          "vehicles": 0,
+          "aircrafts": 1,
+          "warships": 0,
+          "tanks_lost": 0,
+          "vehicles_lost": 0,
+          "aircrafts_lost": 0,
+          "warships_lost": 0
+        }
+      ]
+    },
+    "sideB": {
+      "name": "northen social army organization",
+      "countries": [
+        {
+          "id": "moh5f7fzs1t02vdxbp",
+          "name": "Taliban",
+          "flag": "🏴",
+          "isMain": true,
+          "troops": 240,
+          "injured": 0,
+          "deaths": 216,
+          "tanks": 0,
+          "vehicles": 0,
+          "aircrafts": 0,
+          "warships": 0,
+          "tanks_lost": 0,
+          "vehicles_lost": 0,
+          "aircrafts_lost": 0,
+          "warships_lost": 0
+        }
+      ]
+    },
+    "endDate": "1989-10-31"
+  }
+]
