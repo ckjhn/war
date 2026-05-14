@@ -143,11 +143,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
     <div class="logo">TOTAL <span>CONQUEST</span></div>
     <div class="header-sub">// Country Database //</div>
   </div>
-  <div class="header-actions">
-    <button class="btn btn-sm" id="cycle-btn" onclick="openCycleModal()">⏳ PASS TURN</button>
-    <button class="btn btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
-    <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
-  </div>
+  <!-- Action buttons moved to sidebar footer so they survive the hub's header:hide injection -->
 </header>
 
 <div class="app">
@@ -157,10 +153,14 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <div class="sidebar-title">Countries</div>
         <input class="search-input" id="search" type="text" placeholder="Search country…" oninput="renderList()">
       </div>
+      <button class="btn btn-sm btn-green" title="Pass Turn" onclick="openCycleModal()" style="flex-shrink:0;padding:5px 8px;font-size:14px;letter-spacing:0;border-radius:0;">⏳</button>
       <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">→</button>
     </div>
     <div class="country-list" id="country-list"></div>
     <div class="sidebar-footer">
+      <button class="btn btn-green btn-full" style="font-size:9px;letter-spacing:2px;padding:10px 16px;" onclick="openCycleModal()">⏳ PASS TURN</button>
+      <button class="btn btn-full" style="font-size:8px;letter-spacing:1.5px;padding:8px 12px;" onclick="exportJSON()">⬇ Export JSON</button>
+      <label class="btn btn-orange btn-full" style="font-size:8px;letter-spacing:1.5px;padding:8px 12px;cursor:pointer;text-align:center;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
       <button class="btn btn-green btn-full" onclick="openAddModal()">+ ADD COUNTRY</button>
     </div>
   </div>

@@ -968,13 +968,13 @@
             // Dynamic Action Buttons
             const btnContainer = document.getElementById('actionButtonContainer');
             if (gameState.currentTurn < 4) {
-                btnContainer.innerHTML = `<button class="btn btn-primary" id="nextTurnBtn">Next Turn</button>`;
-                document.getElementById('nextTurnBtn').addEventListener('click', () => {
+                btnContainer.innerHTML = `<button class="btn btn-primary" id="nextTurnBtn">Next Turn →</button>`;
+                document.getElementById('nextTurnBtn').onclick = () => {
                     showConfirmModal('Advance Turn?', 'Reset all nation checkmarks and move to the next week?', nextTurn);
-                });
+                };
             } else {
-                btnContainer.innerHTML = `<button class="btn btn-advance" id="advanceCycleBtn">Next Cycle (Advance Month)</button>`;
-                document.getElementById('advanceCycleBtn').addEventListener('click', advanceCycle);
+                btnContainer.innerHTML = `<button class="btn btn-advance" id="advanceCycleBtn">✓ Next Cycle (Advance Month)</button>`;
+                document.getElementById('advanceCycleBtn').onclick = advanceCycle;
             }
 
             // Update nations list
@@ -1284,17 +1284,18 @@
             document.getElementById('modalMessage').textContent = message;
             document.getElementById('confirmModal').classList.add('active');
 
-            const handler = () => {
+            // Use .onclick so the handler is replaced on every call (no accumulation)
+            document.getElementById('confirmBtn').onclick = () => {
                 document.getElementById('confirmModal').classList.remove('active');
-                document.getElementById('confirmBtn').removeEventListener('click', handler);
+                document.getElementById('confirmBtn').onclick = null;
+                document.getElementById('cancelBtn').onclick = null;
                 onConfirm();
             };
 
-            document.getElementById('confirmBtn').addEventListener('click', handler);
-
             document.getElementById('cancelBtn').onclick = () => {
                 document.getElementById('confirmModal').classList.remove('active');
-                document.getElementById('confirmBtn').removeEventListener('click', handler);
+                document.getElementById('confirmBtn').onclick = null;
+                document.getElementById('cancelBtn').onclick = null;
             };
         }
 

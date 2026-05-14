@@ -498,6 +498,7 @@
             style.textContent = `
               header { display: none !important; }
               .app, body { margin-top: 0 !important; padding-top: 0 !important; }
+              html, body { height: 100% !important; overflow-y: auto !important; overflow-x: hidden !important; }
             `;
             iframeDoc.head.appendChild(style);
           }
@@ -683,10 +684,19 @@
       const url=method==='GET'?`${base}?ref=${cfg.branch}`:base;
       const res=await fetch(url,{
         method:method||'GET',
-        headers:{'Authorization':`token ${cfg.token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+        headers:{'Authorization':`Bearer ${cfg.token}`,'Accept':'application/vnd.github.v3+json',...(method!=='GET'?{'Content-Type':'application/json'}:{})},
         ...(body?{body:JSON.stringify(body)}:{})
       });
-      if(!res.ok){ let m=`${res.status}`; try{const e=await res.json();m=e.message||m;}catch{} throw new Error(m); }
+      if(!res.ok){
+        let m=`HTTP ${res.status}`;
+        try{const e=await res.json();m=e.message||m;}catch{}
+        if(res.status===401) m='Bad credentials (401) — check your token, it may be expired or missing "repo" scope';
+        else if(res.status===403) m='Forbidden (403) — token lacks permission for this repo';
+        else if(res.status===404) m='Not Found (404) — check owner/repo name and that the file path exists';
+        else if(res.status===409) m='Conflict (409) — branch mismatch or concurrent edit';
+        else if(res.status===422) m='Unprocessable (422) — bad request payload (SHA mismatch?)';
+        throw new Error(m);
+      }
       return res.json();
     }
 
@@ -698,7 +708,11 @@
           const data=JSON.parse(fromBase64(ghFile.content));
           f.write(data);
           logs.push({msg:`✅ ${f.name} pulled`,ok:true});
-        }catch(e){ logs.push({msg:`❌ ${f.name}: ${e.message}`,ok:false}); }
+        }catch(e){
+          // 404 just means the file hasn't been pushed yet — warn but don't fail
+          const isNotFound=e.message.includes('Not Found (404)');
+          logs.push({msg:`${isNotFound?'⚠️':'❌'} ${f.name}: ${isNotFound?'not in repo yet (push first)':e.message}`,ok:isNotFound});
+        }
       }
       return logs;
     }
