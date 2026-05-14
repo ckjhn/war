@@ -578,7 +578,7 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
 // ============================================================
 // DATA — BRUTE MATERIALS
 // ============================================================
-const BRUTE = new Set(['gold','iron','coal','diamond','gravel','latex','silicon','oil','gas','glass','uranium','fuel']);
+const BRUTE = new Set(['gold','iron','coal','diamond','gravel','latex','silicon','oil','gas','uranium','fuel']);
 
 // ============================================================
 // REFINED RECIPES
@@ -586,7 +586,7 @@ const BRUTE = new Set(['gold','iron','coal','diamond','gravel','latex','silicon'
 const RECIPES = {
   electronics:     {name:'Electronics',    icon:'💡',output:1,  inputs:{gold:1,silicon:2,refined_iron:5},        desc:'1x Gold + 2x Silicon + 5x Refined Iron → 1 Electronic'},
   refined_iron:    {name:'Refined Iron',   icon:'🔩',output:5,  inputs:{iron:5,coal:3},                          desc:'5x Iron + 3x Coal → 5 Refined Iron'},
-  chips:           {name:'Chips',          icon:'🔬',output:1,  inputs:{diamond:3,glass:10},                     desc:'3x Diamond + 10x Glass → 1 Chip'},
+  chips:           {name:'Chips',          icon:'🔬',output:1,  inputs:{diamond:3,silicon:10},                   desc:'3x Diamond + 10x Silicon → 1 Chip'},
   gunpowder:       {name:'Gunpowder',      icon:'💥',output:10, inputs:{coal:10,gravel:5},                       desc:'10x Coal + 5x Gravel → 10 Gunpowder'},
   tires:           {name:'Tires',          icon:'🔄',output:1,  inputs:{latex:10},                               desc:'10x Latex → 1 Tire'},
   fuel_oil:        {name:'Fuel (Oil)',      icon:'🛢️',output:100,outputUnit:'L',inputs:{oil:50},                 desc:'50L Oil → 100L Fuel'},

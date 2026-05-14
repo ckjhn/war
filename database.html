@@ -144,7 +144,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
     <div class="header-sub">// Country Database //</div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-sm" id="cycle-btn" onclick="openCycleModal()" style="display:none;">⏳ NEW CYCLE</button>
+    <button class="btn btn-sm" id="cycle-btn" onclick="openCycleModal()">⏳ PASS TURN</button>
     <button class="btn btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
     <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
   </div>
@@ -460,12 +460,6 @@ function renderList(){
 // =====================================================
 function selectCountry(id){
   selectedId = id;
-  const cycleBtn = document.getElementById('cycle-btn');
-  if(selectedId){
-    cycleBtn.style.display = 'block';
-  } else {
-    cycleBtn.style.display = 'none';
-  }
   renderList();
   renderEditor();
 }
@@ -475,7 +469,6 @@ function renderEditor(){
   const c = getCountry(selectedId);
   if(!c){
     editor.innerHTML=`<div class="no-selection"><div class="no-selection-icon">🗺️</div><div class="no-selection-text">Select or create a country</div></div>`;
-    document.getElementById('cycle-btn').style.display = 'none';
     return;
   }
 
