@@ -7,7 +7,8 @@
     "population": {
       "civilians": 1000,
       "workers": 20,
-      "military": 36
+      "military": 36,
+      "manpower": 1000
     },
     "economy": {
       "money": 1400
@@ -138,7 +139,8 @@
     "population": {
       "civilians": 1030,
       "workers": 20,
-      "military": 22
+      "military": 22,
+      "manpower": 1030
     },
     "economy": {
       "money": 4310
@@ -267,7 +269,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 10
+      "military": 10,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -392,7 +395,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 10
+      "military": 10,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -517,7 +521,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 10
+      "military": 10,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -642,7 +647,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 10
+      "military": 10,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -763,7 +769,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 10
+      "military": 10,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -888,7 +895,8 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 5
+      "military": 5,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -1014,7 +1022,8 @@
       "civilians": 1000,
       "workers": 10,
       "military": 0,
-      "members": 0
+      "members": 0,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -1142,7 +1151,8 @@
       "civilians": 1000,
       "workers": 0,
       "military": 10,
-      "members": 0
+      "members": 0,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -1258,6 +1268,10 @@
     },
     "observations": {
       "national_plan": ""
+    },
+    "military": {
+      "army": 9,
+      "generals": 1
     }
   },
   {
@@ -1270,7 +1284,8 @@
       "civilians": 1000,
       "workers": 10,
       "military": 0,
-      "members": 0
+      "members": 0,
+      "manpower": 1000
     },
     "economy": {
       "money": 0
@@ -1386,6 +1401,10 @@
     },
     "observations": {
       "national_plan": ""
+    },
+    "military": {
+      "army": 9,
+      "generals": 1
     }
   },
   {
@@ -1398,7 +1417,8 @@
       "civilians": 1010,
       "workers": 0,
       "military": 0,
-      "members": 0
+      "members": 0,
+      "manpower": 1010
     },
     "economy": {
       "money": 0
@@ -1514,6 +1534,10 @@
     },
     "observations": {
       "national_plan": ""
+    },
+    "military": {
+      "army": 0,
+      "generals": 0
     }
   },
   {
