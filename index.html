@@ -150,7 +150,7 @@
     }
 
     nav::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: var(--hub-border);
       border-radius: 2px;
     }
 
@@ -811,7 +811,15 @@
       if (cfg && cfg.token && cfg.owner && cfg.repo) {
         try {
           await pullAll(cfg);
-          // Results will be visible when user opens the Sync panel
+          // Reload any already-open iframes so they read the fresh localStorage data
+          // (mirrors the same logic in syncPull — fixes the race condition where the
+          //  iframe finishes loading before the GitHub fetch completes)
+          loadedApps.forEach((wrapper, appId) => {
+            if (apps[appId] && !apps[appId].isPanel) {
+              const iframe = document.getElementById(`iframe-${appId}`);
+              if (iframe) iframe.src = apps[appId].file;
+            }
+          });
         } catch {}
       }
     });

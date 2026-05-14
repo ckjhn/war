@@ -844,13 +844,13 @@ function calculateWinProbability(conflict) {
   const bDeaths = bCountries.reduce((sum, c) => sum + (c.deaths || 0), 0);
   
   // Calcular equipamento
-  const aEquip = aCountries.reduce((sum, c) => (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
-  const bEquip = bCountries.reduce((sum, c) => (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
+  const aEquip = aCountries.reduce((sum, c) => sum + (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
+  const bEquip = bCountries.reduce((sum, c) => sum + (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
   const totalEquip = aEquip + bEquip;
   
   // Calcular perdas de equipamento
-  const aEquipLost = aCountries.reduce((sum, c) => (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
-  const bEquipLost = bCountries.reduce((sum, c) => (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
+  const aEquipLost = aCountries.reduce((sum, c) => sum + (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
+  const bEquipLost = bCountries.reduce((sum, c) => sum + (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
   
   // Calcular taxa de sobrevivência de equipamento
   const aEquipSurvival = aEquip > 0 ? aEquip / (aEquip + aEquipLost) : 0.5;
