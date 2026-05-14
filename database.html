@@ -205,8 +205,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
       <p style="margin-bottom:10px;">This will apply the following changes to all countries and organizations:</p>
       <p style="color:var(--accent3);margin-bottom:8px;">📍 <strong>Countries:</strong></p>
       <ul style="margin-left:20px;margin-bottom:12px;font-size:11px;">
-        <li>+10 Manpower</li>
-        <li>+3 Manpower per Hospital</li>
+        <li>+10 Civilians</li>
+        <li>+3 Civilians per Hospital</li>
         <li>+$10 per Civilian (Money)</li>
         <li>+$15,000 per Business (Money)</li>
         <li>+Brute Resources based on Mines</li>
@@ -250,7 +250,7 @@ const MINE_RESOURCES = {
 // =====================================================
 const SCHEMA = [
   {key:'population', label:'👥 Population', steps:[-100,-10,-1,1,10,100], fields:[
-    {k:'manpower',   l:'Manpower',          d:1010},
+    {k:'civilians',   l:'Civilians',          d:1010},
     {k:'workers',     l:'Workers',            d:0},
     {k:'military',    l:'Military',           d:0},
     {k:'members',     l:'Members',            d:0},
@@ -438,7 +438,7 @@ function renderList(){
   el.innerHTML = filtered.map(c=>{
     const isOrg = c.type === 'organization';
     const typeLabel = isOrg ? 'ORG' : 'CTR';
-    const statValue = isOrg ? (c.population?.members||0) : (c.population?.manpower||0);
+    const statValue = isOrg ? (c.population?.members||0) : (c.population?.civilians||0);
     return `
     <div class="country-card ${selectedId===c.id?'active':''}" onclick="selectCountry('${c.id}')">
       <button class="country-delete ${deletePending[c.id]?'confirm':''}" onclick="deleteCountry(event,'${c.id}')" title="${deletePending[c.id]?'Click again to confirm':'Delete'}">
@@ -812,9 +812,9 @@ function executeCycle(){
       const currentMoney = Number(c.economy.money) || 0;
       c.economy.money = currentMoney + (currentMembers + 10) * 50;
     } else {
-      // Countries: +10 manpower, +$10 per civilian, +$15,000 per business, +brute resources from mines
+      // Countries: +10 civilians, +$10 per civilian, +$15,000 per business, +brute resources from mines
       if(!c.population) c.population = {};
-      const currentCivs = Number(c.population.manpower) || 0;
+      const currentCivs = Number(c.population.civilians) || 0;
       
       if(!c.economy) c.economy = {};
       const currentMoney = Number(c.economy.money) || 0;
@@ -823,7 +823,7 @@ function executeCycle(){
       const currentBusinesses = Number(c.buildings.businesses) || 0;
       const currentHospitals  = Number(c.buildings.hospitals)  || 0;
 
-      c.population.manpower = currentCivs + 10 + (currentHospitals * 3);
+      c.population.civilians = currentCivs + 10 + (currentHospitals * 3);
 
       c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 15000);
       
