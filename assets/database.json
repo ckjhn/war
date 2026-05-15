@@ -11,16 +11,16 @@
       "manpower": 1000
     },
     "economy": {
-      "money": 17500
+      "money": 11500
     },
     "brute": {
       "iron": 2035,
       "coal": 907,
-      "gold": 411,
-      "diamond": 56,
+      "gold": 551,
+      "diamond": 68,
       "gravel": 884,
       "latex": 700,
-      "silicon": 318,
+      "silicon": 406,
       "oil": 700,
       "gas": 920,
       "uranium": 0,
@@ -143,11 +143,11 @@
       "manpower": 1030
     },
     "economy": {
-      "money": 14710
+      "money": 16170
     },
     "brute": {
-      "iron": 4000,
-      "coal": 2060,
+      "iron": 4400,
+      "coal": 2350,
       "gold": 576,
       "diamond": 128,
       "gravel": 960,
@@ -651,16 +651,16 @@
       "manpower": 1000
     },
     "economy": {
-      "money": 4100
+      "money": 8640
     },
     "brute": {
-      "iron": 400,
-      "coal": 290,
-      "gold": 140,
-      "diamond": 40,
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 28,
       "gravel": 200,
       "latex": 0,
-      "silicon": 88,
+      "silicon": 0,
       "oil": 72,
       "gas": 100,
       "uranium": 5
