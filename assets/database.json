@@ -146,8 +146,8 @@
       "money": 16170
     },
     "brute": {
-      "iron": 4400,
-      "coal": 2350,
+      "iron": 400,
+      "coal": 350,
       "gold": 576,
       "diamond": 128,
       "gravel": 960,
@@ -159,7 +159,7 @@
       "glass": 0
     },
     "refined": {
-      "refined_iron": 500,
+      "refined_iron": 0,
       "electronics": 0,
       "chips": 0,
       "gunpowder": 0,
@@ -258,7 +258,7 @@
       "commanders": 1
     },
     "observations": {
-      "national_plan": ""
+      "national_plan": "Bulding Mountain mine \n13 turns missing\n\nUsing 20 workers"
     }
   },
   {
