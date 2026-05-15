@@ -23,6 +23,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .header-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
 .header-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
+/* ── TOOLBAR (visible in hub iframe since header is hidden) ── */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10;}
+
 /* ── TABS ── */
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);padding:0 28px;background:var(--surface);}
 .tab-btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:12px 18px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;text-transform:uppercase;}
@@ -170,9 +173,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 /* ── QUALITY SYSTEM ── */
 .quality-badge{display:inline-block;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:1px;margin-left:6px;text-transform:uppercase;font-weight:bold;border:1px solid;}
 .quality-factory{background:rgba(57,255,20,.15);border-color:#39ff14;color:#39ff14;}
-.quality-minimal{background:rgba(0,212,255,.15);border-color:#00d4ff;color:#00d4ff;}
 .quality-field{background:rgba(250,204,21,.15);border-color:#facc15;color:#facc15;}
-.quality-worn{background:rgba(255,107,53,.15);border-color:#ff6b35;color:#ff6b35;}
 .quality-battle{background:rgba(255,58,58,.15);border-color:#ff3a3a;color:#ff3a3a;}
 .quality-selector{display:flex;flex-direction:column;gap:10px;margin:12px 0;padding:12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:2px;}
 .quality-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px;}
@@ -198,13 +199,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
     <div class="logo">TOTAL <span>CONQUEST</span></div>
     <div class="header-sub">// Trade Market //</div>
   </div>
-  <div class="header-actions">
-    <button class="btn btn-green" onclick="openCreateModal()">+ CREATE PACKAGE</button>
-    <button class="btn btn-sm" onclick="exportHistory()">⬇ Export History</button>
-    <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import History<input type="file" accept=".json" onchange="importHistory(event)" style="display:none;"></label>
-    <button class="btn btn-sm btn-red" onclick="factoryReset()">⚠ Factory Reset</button>
-  </div>
 </header>
+
+<div class="toolbar">
+  <button class="btn btn-green" onclick="openCreateModal()">+ CREATE PACKAGE</button>
+  <button class="btn btn-sm" onclick="exportHistory()">⬇ Export History</button>
+  <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import History<input type="file" accept=".json" onchange="importHistory(event)" style="display:none;"></label>
+  <button class="btn btn-sm btn-red" onclick="factoryReset()">⚠ Factory Reset</button>
+</div>
 
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('market',this)">📋 Market Board</button>
@@ -331,11 +333,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
       <div id="quality-item-display" style="font-family:'Share Tech Mono',monospace;margin-bottom:16px;color:var(--accent);"></div>
       <div class="quality-label">Item Condition</div>
       <div class="quality-buttons">
-        <button class="quality-btn" onclick="selectQualityOption('factory')">🟢 FACTORY NEW (100% of price)</button>
-        <button class="quality-btn" onclick="selectQualityOption('minimal')">🔵 MINIMAL WEAR (80% of price)</button>
-        <button class="quality-btn" onclick="selectQualityOption('field')">🟡 FIELD TESTED (60% of price)</button>
-        <button class="quality-btn" onclick="selectQualityOption('worn')">🟠 WELL-WORN (40% of price)</button>
-        <button class="quality-btn" onclick="selectQualityOption('battle')">🔴 BATTLE SCARRED (20% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('factory')">🟢 FACTORY NEW — Never used (100% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('field')">🟡 FIELD-TESTED — Used in training exercises (80% of price)</button>
+        <button class="quality-btn" onclick="selectQualityOption('battle')">🔴 BATTLE SCARRED — Used in real war or conflict (35% of price)</button>
       </div>
       <div class="quality-info" id="quality-price-info" style="display:none;"></div>
     </div>
@@ -370,11 +370,9 @@ const ALL_ITEMS = Object.entries(TRADEABLE).flatMap(([cat,items])=>items.map(i=>
 // =====================================================
 const QUALITY_ITEMS_CATS = ['Weapons','Air Vehicles','Land Vehicles','Water Vehicles','Missiles & Torpedoes','Drones'];
 const QUALITY_SYSTEM = {
-  'factory': {label:'Factory New', mult: 1.0, color: '#39ff14'},
-  'minimal': {label:'Minimal Wear', mult: 0.8, color: '#00d4ff'},
-  'field':   {label:'Field Tested', mult: 0.6, color: '#facc15'},
-  'worn':    {label:'Well-Worn', mult: 0.4, color: '#ff6b35'},
-  'battle':  {label:'Battle Scarred', mult: 0.2, color: '#ff3a3a'}
+  'factory': {label:'Factory New',    mult: 1.00, color: '#39ff14'},
+  'field':   {label:'Field-Tested',   mult: 0.80, color: '#facc15'},
+  'battle':  {label:'Battle Scarred', mult: 0.35, color: '#ff3a3a'}
 };
 
 function hasQualitySystem(itemName) {

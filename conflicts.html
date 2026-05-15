@@ -52,7 +52,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .s-ended{border-color:var(--text-dim);color:var(--text-dim);}
 .s-pending{border-color:var(--purple);color:var(--purple);}
 .cc-vs{font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:5px;line-height:1.5;}
-.cc-vs .la{color:var(--cyan);} .cc-vs .lb{color:var(--orange);} .cc-vs .lv{color:var(--text-dim);}
+.cc-vs .lv{color:var(--text-dim);}
 .cc-stats{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
 .cc-stats .dval{color:var(--red);} .cc-stats .tval{color:var(--cyan);}
 .cc-dur{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--purple);margin-top:3px;}
@@ -90,23 +90,41 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .dur-seg{width:1px;height:18px;background:var(--border);}
 .dur-live{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:1px;}
 
-.split-view{display:grid;grid-template-columns:1fr 56px 1fr;min-height:500px;}
+/* ── DEATH COMPARISON ── */
+.death-comparison{background:rgba(255,58,58,.04);border:1px solid rgba(255,58,58,.2);padding:14px 16px;}
+.dc-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--red);text-transform:uppercase;margin-bottom:10px;}
+.dc-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(26,48,69,.3);}
+.dc-row:last-child{border-bottom:none;}
+.dc-side-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dc-bar-wrap{flex:1;background:var(--bg);height:6px;border:1px solid rgba(26,48,69,.5);}
+.dc-bar{height:100%;transition:width .4s;}
+.dc-deaths{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--red);width:100px;flex-shrink:0;text-align:right;}
+.dc-pct{font-size:9px;color:var(--text-dim);}
+.dc-casualty-tag{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--red);color:var(--red);flex-shrink:0;white-space:nowrap;}
 
-.vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;}
+/* ── OBJECTIVES / WINNER PANEL ── */
+.objectives-panel{background:rgba(255,215,0,.04);border:1px solid rgba(255,215,0,.2);padding:12px 16px;}
+.op-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
+.op-scores{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.op-side-score{font-family:'Share Tech Mono',monospace;font-size:11px;}
+.op-sep{color:var(--text-dim);font-size:10px;}
+.winner-badge{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);background:rgba(255,215,0,.08);white-space:nowrap;}
+.winner-badge.wbg-win{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.08);}
+
+/* ── SPLIT VIEW (now flex for N sides) ── */
+.split-view{display:flex;min-height:500px;overflow-x:auto;}
+
+.vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;flex-shrink:0;width:56px;}
 .vs-divider::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);}
 .vs-label-text{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;letter-spacing:6px;color:var(--text-dim);writing-mode:vertical-lr;text-orientation:mixed;z-index:1;}
 
-.side{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);}
-.side-a{border-color:rgba(0,212,255,.3);}
-.side-b{border-color:rgba(255,107,53,.3);}
+.side{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);flex:1;min-width:270px;}
 .side-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .side-name-input{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;background:transparent;border:none;border-bottom:1px solid transparent;outline:none;flex:1;padding:2px 0;text-transform:uppercase;}
 .side-name-input:focus{border-bottom:1px solid currentColor;}
-.side-a .side-name-input{color:var(--cyan);}
-.side-b .side-name-input{color:var(--orange);}
 .side-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:2px 8px;border:1px solid;text-transform:uppercase;flex-shrink:0;}
-.side-a .side-badge{border-color:rgba(0,212,255,.4);color:var(--cyan);}
-.side-b .side-badge{border-color:rgba(255,107,53,.4);color:var(--orange);}
+.side-remove-btn{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:2px 6px;transition:all .2s;flex-shrink:0;}
+.side-remove-btn:hover{border-color:var(--red);color:var(--red);}
 
 .side-totals{border-bottom:1px solid var(--border);}
 .totals-row{display:grid;}
@@ -124,6 +142,24 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .countries-area::-webkit-scrollbar{width:3px;}
 .countries-area::-webkit-scrollbar-thumb{background:var(--border);}
 .empty-side{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:28px 0;}
+
+/* ── OBJECTIVES AREA IN SIDE ── */
+.objectives-area{border-top:1px solid var(--border);padding:10px;}
+.obj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.obj-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+.obj-count{font-family:'Orbitron',monospace;font-size:9px;}
+.obj-list{display:flex;flex-direction:column;gap:2px;}
+.obj-item{display:flex;align-items:flex-start;gap:6px;padding:4px 2px;border-bottom:1px solid rgba(26,48,69,.3);}
+.obj-item:last-child{border-bottom:none;}
+.obj-checkbox{cursor:pointer;accent-color:var(--green);width:14px;height:14px;flex-shrink:0;margin-top:2px;}
+.obj-text{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);flex:1;min-width:0;word-break:break-word;line-height:1.4;}
+.obj-text.obj-done{text-decoration:line-through;color:var(--green);}
+.obj-remove{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:10px;cursor:pointer;padding:1px 5px;flex-shrink:0;transition:all .15s;}
+.obj-remove:hover{border-color:var(--red);color:var(--red);}
+.obj-empty{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:4px 0;font-style:italic;}
+
+/* ── ADD SIDE BAR ── */
+.add-side-bar{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface);}
 
 .ccard{background:var(--surface2);border:1px solid var(--border);overflow:hidden;}
 .ccard-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(26,48,69,.6);}
@@ -154,7 +190,6 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .si-tanks{color:#a78bfa;} .si-vehicles{color:#6ee7b7;} .si-aircrafts{color:#93c5fd;} .si-warships{color:#67e8f9;}
 .si-hw-lost{color:var(--red);}
 
-/* ── HARDWARE GROUP (in-war + lost rows) ── */
 .hw-group{padding:4px 0 6px;border-bottom:1px solid rgba(26,48,69,.35);}
 .hw-group:last-child{border-bottom:none;}
 .hw-group-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-dim);padding:2px 0 4px;text-transform:uppercase;}
@@ -173,6 +208,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .btn-orange:hover{background:var(--orange);color:var(--bg);}
 .btn-green{border-color:var(--green);color:var(--green);}
 .btn-green:hover{background:var(--green);color:var(--bg);}
+.btn-red{border-color:var(--red);color:var(--red);}
+.btn-red:hover{background:var(--red);color:var(--bg);}
 .btn-full{width:100%;}
 .btn-sm{padding:6px 12px;font-size:8px;}
 
@@ -193,7 +230,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--green);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
 
-/* ── ANALYSIS MODAL STYLES ── */
+/* ── ANALYSIS MODAL ── */
 .analysis-modal{background:var(--surface);border:1px solid var(--purple);padding:24px;min-width:360px;max-width:780px;width:90%;max-height:80vh;overflow-y:auto;}
 .analysis-modal::-webkit-scrollbar{width:4px;}
 .analysis-modal::-webkit-scrollbar-thumb{background:var(--border);}
@@ -203,18 +240,13 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .analysis-card{background:var(--surface2);border:1px solid var(--border);padding:14px;border-radius:4px;}
 .ac-name{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:8px;}
 .ac-status{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);margin-bottom:10px;}
-.ac-probability{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-bottom:10px;padding:10px;background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.15);}
-.ac-prob-item{text-align:center;}
-.ac-prob-pct{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;letter-spacing:1px;margin-bottom:4px;}
-.ac-prob-side-a{color:var(--cyan);}
-.ac-prob-side-b{color:var(--orange);}
-.ac-prob-divider{width:1px;background:var(--border);height:48px;}
-.ac-prob-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+.ac-sides-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.ac-side-row{display:flex;align-items:center;gap:8px;}
+.ac-side-name{font-family:'Share Tech Mono',monospace;font-size:10px;width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ac-side-bar-wrap{flex:1;background:var(--bg);height:8px;border:1px solid rgba(26,48,69,.5);}
+.ac-side-bar{height:100%;}
+.ac-side-pct{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;width:38px;text-align:right;flex-shrink:0;}
 .ac-advantage{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);padding:8px;background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);margin-bottom:8px;text-align:center;}
-.ac-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:9px;}
-.ac-stat-item{padding:6px;background:rgba(26,48,69,.4);text-align:center;}
-.ac-stat-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);margin-bottom:2px;}
-.ac-stat-value{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--text);}
 .no-conflicts{text-align:center;padding:20px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;}
 </style>
 </head>
@@ -299,8 +331,11 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 
 <div class="modal-overlay" id="analysis-modal">
   <div class="analysis-modal">
-    <div class="analysis-title">⚡ Win Probability Analysis</div>
+    <div class="analysis-title">⚡ Combat Power Analysis</div>
     <div id="analysis-content"></div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn btn-sm btn-orange" onclick="closeModal('analysis-modal')">✕ CLOSE</button>
+    </div>
   </div>
 </div>
 
@@ -308,11 +343,18 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 
 <script>
 // =====================================================
+// SIDE COLORS (index-based)
+// =====================================================
+const SIDE_COLORS      = ['#00d4ff','#ff6b35','#39ff14','#c084fc','#ffd700','#ffdd57','#f87171','#60a5fa'];
+const SIDE_BORDER_RGBA = ['rgba(0,212,255,.3)','rgba(255,107,53,.3)','rgba(57,255,20,.3)','rgba(192,132,252,.3)','rgba(255,215,0,.3)','rgba(255,221,87,.3)','rgba(248,113,113,.3)','rgba(96,165,250,.3)'];
+const SIDE_NAMES_DEF   = ['Side Alpha','Side Bravo','Side Charlie','Side Delta','Side Echo','Side Foxtrot','Side Golf','Side Hotel'];
+
+// =====================================================
 // STATE
 // =====================================================
 const STORAGE_KEY = 'tc_conflicts';
 let conflicts = [], selectedId = null, deletePending = {}, sidebarCollapsed = false;
-let _cmConflictId = null, _cmSideKey = null, _cmRole = 'main';
+let _cmConflictId = null, _cmSideId = null, _cmRole = 'main';
 
 // =====================================================
 // UTILS
@@ -341,12 +383,9 @@ function calcDuration(startDate, endDate, status){
 function parseDate(str){
   if(!str) return '';
   str=str.trim();
-  // Already YYYY-MM-DD
   if(/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-  // MM/DD/YYYY or M/D/YYYY
   const m1=str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if(m1) return `${m1[3]}-${m1[1].padStart(2,'0')}-${m1[2].padStart(2,'0')}`;
-  // MM-DD-YYYY or M-D-YYYY
   const m2=str.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
   if(m2) return `${m2[3]}-${m2[1].padStart(2,'0')}-${m2[2].padStart(2,'0')}`;
   return '';
@@ -361,10 +400,13 @@ function displayDate(yyyymmdd){
 // =====================================================
 // FACTORY
 // =====================================================
+function makeSide(name){
+  return { id:uuid(), name:name||'New Side', countries:[], objectives:[] };
+}
 function makeConflict(name){
   return { id:uuid(), name:name||'New Conflict', status:'ongoing', description:'',
     startDate:new Date().toISOString().slice(0,10), endDate:'', createdAt:Date.now(),
-    sideA:{name:'Side Alpha',countries:[]}, sideB:{name:'Side Bravo',countries:[]} };
+    sides:[ makeSide('Side Alpha'), makeSide('Side Bravo') ] };
 }
 function makeCountry(name,flag,isMain){
   return { id:uuid(), name:name||'Unknown', flag:flag||'🏴', isMain:!!isMain,
@@ -374,24 +416,50 @@ function makeCountry(name,flag,isMain){
     aircrafts:0,aircrafts_lost:0,
     warships:0, warships_lost:0 };
 }
+function makeObjective(text){
+  return { id:uuid(), text:text||'', checked:false };
+}
 
 // =====================================================
-// STORAGE
+// HELPERS
 // =====================================================
-function load(){
-  try{ conflicts=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ conflicts=[]; }
-  // Hydrate old saves
-  conflicts.forEach(c=>{
-    if(c.endDate===undefined) c.endDate='';
-    ['sideA','sideB'].forEach(sk=>{
-      (c[sk]?.countries||[]).forEach(co=>{
-        ['tanks','vehicles','aircrafts','warships'].forEach(f=>{
-          if(co[f]===undefined) co[f]=0;
-          if(co[f+'_lost']===undefined) co[f+'_lost']=0;
-        });
-      });
+function getSide(c, sideId){
+  return (c.sides||[]).find(s=>s.id===sideId)||null;
+}
+function getSideIdx(c, sideId){
+  return (c.sides||[]).findIndex(s=>s.id===sideId);
+}
+
+// =====================================================
+// STORAGE & HYDRATION
+// =====================================================
+function hydrateSide(side){
+  if(!side.id) side.id = uuid();
+  if(!side.objectives) side.objectives = [];
+  if(!side.countries) side.countries = [];
+  side.countries.forEach(co=>{
+    ['tanks','vehicles','aircrafts','warships'].forEach(f=>{
+      if(co[f]===undefined) co[f]=0;
+      if(co[f+'_lost']===undefined) co[f+'_lost']=0;
     });
   });
+}
+function hydrateConflict(c){
+  // Migrate old sideA/sideB format
+  if(!c.sides){
+    c.sides = [];
+    if(c.sideA){ c.sideA.id=c.sideA.id||uuid(); c.sides.push(c.sideA); delete c.sideA; }
+    else { c.sides.push(makeSide('Side Alpha')); }
+    if(c.sideB){ c.sideB.id=c.sideB.id||uuid(); c.sides.push(c.sideB); delete c.sideB; }
+    else { c.sides.push(makeSide('Side Bravo')); }
+  }
+  c.sides.forEach(hydrateSide);
+  if(c.endDate===undefined) c.endDate='';
+}
+
+function load(){
+  try{ conflicts=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch(e){ conflicts=[]; }
+  conflicts.forEach(hydrateConflict);
 }
 function save(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(conflicts)); }
 function getConflict(id){ return conflicts.find(c=>c.id===id)||null; }
@@ -414,23 +482,29 @@ function renderList(){
     return;
   }
   el.innerHTML=filtered.map(c=>{
-    const mainA=c.sideA.countries.find(x=>x.isMain);
-    const mainB=c.sideB.countries.find(x=>x.isMain);
-    const all=[...c.sideA.countries,...c.sideB.countries];
-    const totalDeaths=all.reduce((s,x)=>s+(x.deaths||0),0);
-    const totalTroops=all.reduce((s,x)=>s+(x.troops||0),0);
-    const aLabel=mainA?`<span class="la">${mainA.flag} ${esc(mainA.name)}</span>`:`<span class="lv">???</span>`;
-    const bLabel=mainB?`<span class="lb">${mainB.flag} ${esc(mainB.name)}</span>`:`<span class="lv">???</span>`;
-    const extraA=c.sideA.countries.length>1?` <span class="lv">+${c.sideA.countries.length-1}</span>`:'';
-    const extraB=c.sideB.countries.length>1?` <span class="lv">+${c.sideB.countries.length-1}</span>`:'';
+    const allCos = (c.sides||[]).flatMap(s=>s.countries);
+    const totalDeaths = allCos.reduce((s,x)=>s+(x.deaths||0),0);
+    const totalTroops = allCos.reduce((s,x)=>s+(x.troops||0),0);
+    const sidesLabel = (c.sides||[]).map((side,i)=>{
+      const main = side.countries.find(x=>x.isMain);
+      const col  = SIDE_COLORS[i]||'var(--text-dim)';
+      const extra = side.countries.length>1?` <span style="color:var(--text-dim);">+${side.countries.length-1}</span>`:'';
+      if(main) return `<span style="color:${col};">${main.flag} ${esc(main.name)}</span>${extra}`;
+      return `<span style="color:var(--text-dim);">???</span>`;
+    }).join(' <span style="color:var(--text-dim);">vs</span> ');
     const dur=calcDuration(c.startDate,c.endDate,c.status);
     const durHtml=dur?`<div class="cc-dur">⏱ ${dur.label} · ${fmt(dur.totalDays)} days</div>`:'';
+    // Objectives summary
+    const totalObj = (c.sides||[]).reduce((s,side)=>s+side.objectives.length,0);
+    const doneObj  = (c.sides||[]).reduce((s,side)=>s+side.objectives.filter(o=>o.checked).length,0);
+    const objHtml  = totalObj>0?`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);margin-top:3px;">⚑ ${doneObj}/${totalObj} objectives</div>`:'';
     return `<div class="conflict-card ${selectedId===c.id?'active':''}" onclick="selectConflict('${c.id}')">
       <button class="conflict-delete ${deletePending[c.id]?'confirm':''}" onclick="deleteConflict(event,'${c.id}')">${deletePending[c.id]?'✓':'×'}</button>
       <div class="cc-name">${esc(c.name)}</div>
       <div><span class="status-badge s-${c.status}">${c.status}</span></div>
-      <div class="cc-vs">${aLabel}${extraA} <span class="lv">vs</span> ${bLabel}${extraB}</div>
+      <div class="cc-vs">${sidesLabel}</div>
       <div class="cc-stats">⚔️ <span class="tval">${fmt(totalTroops)}</span> &nbsp;·&nbsp; 💀 <span class="dval">${fmt(totalDeaths)}</span></div>
+      ${objHtml}
       ${durHtml}
     </div>`;
   }).join('');
@@ -473,6 +547,12 @@ function renderEditor(){
       onchange="updateConflict('${c.id}','endDate',parseDate(this.value))">
   `:'';
 
+  // Build sides HTML
+  const sidesHtml = (c.sides||[]).map((side,idx)=>{
+    const vsDiv = idx>0 ? `<div class="vs-divider"><span class="vs-label-text">VS</span></div>` : '';
+    return vsDiv + renderSide(c, side, idx);
+  }).join('');
+
   editor.innerHTML=`<div class="conflict-editor">
     <div class="ce-top">
       <div class="ce-row">
@@ -491,11 +571,78 @@ function renderEditor(){
       <textarea class="desc-input" placeholder="Description / notes…"
         onchange="updateConflict('${c.id}','description',this.value)">${esc(c.description||'')}</textarea>
     </div>
+    <div id="death-comparison-${c.id}">${renderDeathComparisonHTML(c)}</div>
+    <div id="winner-panel-${c.id}">${renderWinnerPanelHTML(c)}</div>
     <div class="split-view">
-      ${renderSide(c,'sideA')}
-      <div class="vs-divider"><span class="vs-label-text">VS</span></div>
-      ${renderSide(c,'sideB')}
+      ${sidesHtml}
     </div>
+    <div class="add-side-bar">
+      <button class="btn btn-sm btn-green" onclick="addSide('${c.id}')">+ ADD SIDE</button>
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// DEATH COMPARISON
+// =====================================================
+function renderDeathComparisonHTML(c){
+  const sideDeaths = (c.sides||[]).map((side,i)=>({
+    name: side.name,
+    deaths: sideTotals(side).deaths,
+    idx: i
+  }));
+  const totalDeaths = sideDeaths.reduce((s,x)=>s+x.deaths,0);
+  if(totalDeaths===0) return '';
+  const maxDeaths = Math.max(...sideDeaths.map(s=>s.deaths));
+  return `<div class="death-comparison">
+    <div class="dc-title">💀 Casualties Comparison</div>
+    ${sideDeaths.map(s=>{
+      const pct = totalDeaths>0 ? (s.deaths/totalDeaths*100) : 0;
+      const isWorst = s.deaths===maxDeaths && s.deaths>0;
+      const col = SIDE_COLORS[s.idx]||'var(--text-dim)';
+      return `<div class="dc-row">
+        <div class="dc-side-name" style="color:${col};">${esc(s.name)}</div>
+        <div class="dc-bar-wrap"><div class="dc-bar" style="width:${pct.toFixed(1)}%;background:${isWorst?'var(--red)':col};"></div></div>
+        <div class="dc-deaths">${fmt(s.deaths)} <span class="dc-pct">${pct.toFixed(1)}%</span></div>
+        ${isWorst?'<div class="dc-casualty-tag">▲ HIGHEST</div>':''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// =====================================================
+// WINNER PANEL (Objectives)
+// =====================================================
+function renderWinnerPanelHTML(c){
+  const anyObjs = (c.sides||[]).some(s=>s.objectives.length>0);
+  if(!anyObjs) return '';
+
+  const sideScores = (c.sides||[]).map((side,i)=>({
+    name: side.name,
+    done: side.objectives.filter(o=>o.checked).length,
+    total: side.objectives.length,
+    idx: i
+  }));
+
+  const maxDone = Math.max(...sideScores.map(s=>s.done));
+  const leaders = sideScores.filter(s=>s.done===maxDone && maxDone>0);
+  let winHtml = '';
+  if(leaders.length===1){
+    const label = c.status==='ended'?'🏆 WINNER':'⚑ LEADING';
+    winHtml = `<span class="winner-badge ${c.status==='ended'?'wbg-win':''}">${label}: ${esc(leaders[0].name)}</span>`;
+  } else if(leaders.length>1 && maxDone>0){
+    winHtml = `<span class="winner-badge">⚖️ TIED: ${leaders.map(l=>esc(l.name)).join(' & ')}</span>`;
+  }
+
+  const scoresHtml = sideScores.map((s,i)=>{
+    const col = SIDE_COLORS[s.idx]||'var(--text)';
+    const doneCol = s.done>0?'var(--green)':'var(--text-dim)';
+    return `<span class="op-side-score"><span style="color:${col};">${esc(s.name)}</span><span style="color:var(--text-dim);"> — </span><span style="color:${doneCol};font-family:'Orbitron',monospace;font-size:10px;">${s.done}/${s.total}</span></span>`;
+  }).join('<span class="op-sep"> · </span>');
+
+  return `<div class="objectives-panel">
+    <div class="op-title">⚑ Objectives Progress</div>
+    <div class="op-scores">${scoresHtml}${winHtml?`<span class="op-sep">·</span>${winHtml}`:''}</div>
   </div>`;
 }
 
@@ -516,9 +663,7 @@ function sideTotals(side){
     acc.warships       +=(co.warships      ||0);
     acc.warships_lost  +=(co.warships_lost ||0);
     return acc;
-  },{troops:0,injured:0,deaths:0,
-     tanks:0,tanks_lost:0,vehicles:0,vehicles_lost:0,
-     aircrafts:0,aircrafts_lost:0,warships:0,warships_lost:0});
+  },{troops:0,injured:0,deaths:0,tanks:0,tanks_lost:0,vehicles:0,vehicles_lost:0,aircrafts:0,aircrafts_lost:0,warships:0,warships_lost:0});
 }
 
 function renderTotalsHTML(t){
@@ -540,24 +685,51 @@ function renderTotalsHTML(t){
   </div>`;
 }
 
-function renderSide(c,sideKey){
-  const side=c[sideKey];
-  const isA=sideKey==='sideA';
+function renderObjectivesHTML(cid, sideId, objectives){
+  const done = objectives.filter(o=>o.checked).length;
+  const total = objectives.length;
+  const doneCol = done>0?'var(--green)':'var(--text-dim)';
+  const listHtml = total===0
+    ? `<div class="obj-empty">No objectives set.</div>`
+    : objectives.map(obj=>`<div class="obj-item">
+        <input type="checkbox" class="obj-checkbox" ${obj.checked?'checked':''} onchange="toggleObjective('${cid}','${sideId}','${obj.id}')">
+        <span class="obj-text ${obj.checked?'obj-done':''}">${esc(obj.text)}</span>
+        <button class="obj-remove" onclick="removeObjective('${cid}','${sideId}','${obj.id}')">×</button>
+      </div>`).join('');
+  return `<div class="obj-header">
+    <span class="obj-title">⚑ Objectives</span>
+    <span style="display:flex;align-items:center;gap:6px;">
+      <span class="obj-count" style="color:${doneCol};">${done}/${total}</span>
+      <button class="btn btn-sm" style="padding:3px 8px;font-size:8px;" onclick="addObjective('${cid}','${sideId}')">+ Add</button>
+    </span>
+  </div>
+  <div class="obj-list">${listHtml}</div>`;
+}
+
+function renderSide(c, side, idx){
+  const color = SIDE_COLORS[idx]||'#c8dde8';
+  const borderCol = SIDE_BORDER_RGBA[idx]||'rgba(200,221,232,.2)';
   const t=sideTotals(side);
   const empty=!side.countries.length?`<div class="empty-side">No countries yet.<br>Click below to add one.</div>`:'';
-  return `<div class="side ${isA?'side-a':'side-b'}">
+  const canRemove = (c.sides||[]).length>2;
+  return `<div class="side" style="border-color:${borderCol};">
     <div class="side-header">
-      <input class="side-name-input" value="${esc(side.name)}" placeholder="${isA?'Side Alpha':'Side Bravo'}"
-        onchange="updateSideName('${c.id}','${sideKey}',this.value)">
-      <span class="side-badge">${isA?'SIDE A':'SIDE B'}</span>
+      <input class="side-name-input" style="color:${color};" value="${esc(side.name)}" placeholder="Side Name"
+        onchange="updateSideName('${c.id}','${side.id}',this.value)">
+      <span class="side-badge" style="border-color:${borderCol};color:${color};">SIDE ${idx+1}</span>
+      ${canRemove?`<button class="side-remove-btn" title="Remove side" onclick="removeSide('${c.id}','${side.id}')">✕</button>`:''}
     </div>
-    <div class="side-totals" id="totals-${sideKey}-${c.id}">${renderTotalsHTML(t)}</div>
+    <div class="side-totals" id="totals-${side.id}-${c.id}">${renderTotalsHTML(t)}</div>
     <div class="countries-area">
       ${empty}
-      ${side.countries.map(co=>renderCountryCard(c.id,sideKey,co)).join('')}
+      ${side.countries.map(co=>renderCountryCard(c.id,side.id,co)).join('')}
+    </div>
+    <div class="objectives-area" id="objectives-${side.id}">
+      ${renderObjectivesHTML(c.id, side.id, side.objectives)}
     </div>
     <div class="side-foot">
-      <button class="btn btn-sm btn-full ${isA?'':'btn-orange'}" onclick="openAddCountryModal('${c.id}','${sideKey}')">+ ADD COUNTRY</button>
+      <button class="btn btn-sm btn-full" style="border-color:${color};color:${color};"
+        onclick="openAddCountryModal('${c.id}','${side.id}')">+ ADD COUNTRY</button>
     </div>
   </div>`;
 }
@@ -565,7 +737,7 @@ function renderSide(c,sideKey){
 // =====================================================
 // COUNTRY CARD
 // =====================================================
-function renderCountryCard(cid,sideKey,co){
+function renderCountryCard(cid,sideId,co){
   const tS=[-10000,-1000,-100,-1,1,100,1000,10000];
   const iS=[-1000,-100,-10,-1,1,10,100,1000];
   const hS=[-100,-10,-1,1,10,100];
@@ -575,11 +747,11 @@ function renderCountryCard(cid,sideKey,co){
       <div class="hw-group-label">${icon} ${label}</div>
       <div class="hw-sub-row">
         <span class="hw-sub-tag in-war-tag">In War</span>
-        ${statCtrls(cid,sideKey,co,field,steps,cls)}
+        ${statCtrls(cid,sideId,co,field,steps,cls)}
       </div>
       <div class="hw-sub-row">
         <span class="hw-sub-tag lost-tag">Lost</span>
-        ${statCtrls(cid,sideKey,co,field+'_lost',steps,'si-hw-lost')}
+        ${statCtrls(cid,sideId,co,field+'_lost',steps,'si-hw-lost')}
       </div>
     </div>`;
   return `<div class="ccard" data-co="${co.id}">
@@ -590,15 +762,15 @@ function renderCountryCard(cid,sideKey,co){
         <span class="role-badge ${co.isMain?'rb-main':'rb-ally'}">${co.isMain?'★ MAIN':'◇ ALLY'}</span>
       </div>
       <div class="ccard-actions">
-        <button class="icon-btn" title="Toggle Main/Ally" onclick="toggleRole('${cid}','${sideKey}','${co.id}')">⇄</button>
-        <button class="icon-btn del" title="Remove" onclick="removeCountry('${cid}','${sideKey}','${co.id}')">✕</button>
+        <button class="icon-btn" title="Toggle Main/Ally" onclick="toggleRole('${cid}','${sideId}','${co.id}')">⇄</button>
+        <button class="icon-btn del" title="Remove" onclick="removeCountry('${cid}','${sideId}','${co.id}')">✕</button>
       </div>
     </div>
     <div class="ccard-section">
       <div class="ccard-section-lbl">── Casualties ──</div>
-      ${statRow(cid,sideKey,co,'troops',  '⚔️','Troops',  tS,'si-troops')}
-      ${statRow(cid,sideKey,co,'injured', '🩹','Injured', iS,'si-injured')}
-      ${statRow(cid,sideKey,co,'deaths',  '💀','Deaths',  iS,'si-deaths')}
+      ${statRow(cid,sideId,co,'troops',  '⚔️','Troops',  tS,'si-troops')}
+      ${statRow(cid,sideId,co,'injured', '🩹','Injured', iS,'si-injured')}
+      ${statRow(cid,sideId,co,'deaths',  '💀','Deaths',  iS,'si-deaths')}
     </div>
     <div class="ccard-section" style="border-top:1px solid rgba(26,48,69,.6)">
       <div class="ccard-section-lbl">── Hardware ──</div>
@@ -610,39 +782,35 @@ function renderCountryCard(cid,sideKey,co){
   </div>`;
 }
 
-// statCtrls: renders just the controls portion (used in hw-sub-rows)
-function statCtrls(cid,sideKey,co,stat,steps,cls){
+function statCtrls(cid,sideId,co,stat,steps,cls){
   const val=co[stat]||0;
   const negs=steps.filter(x=>x<0);
   const poss=steps.filter(x=>x>0);
-  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">${n}</button>`).join('');
-  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
+  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideId}','${co.id}','${stat}',${n})">${n}</button>`).join('');
+  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideId}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
   return `<div class="stat-ctrls">
     ${negBtns}
     <input class="stat-inp ${cls}" type="number" value="${val}" min="0"
-      data-cid="${cid}" data-side="${sideKey}" data-co="${co.id}" data-stat="${stat}"
+      data-cid="${cid}" data-side="${sideId}" data-co="${co.id}" data-stat="${stat}"
       oninput="setStat(this)" onchange="setStat(this)">
     ${posBtns}
   </div>`;
 }
 
-function statRow(cid,sideKey,co,stat,icon,label,steps,cls){
+function statRow(cid,sideId,co,stat,icon,label,steps,cls){
   const val=co[stat]||0;
   const negs=steps.filter(x=>x<0);
   const poss=steps.filter(x=>x>0);
-  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">${n}</button>`).join('');
-  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideKey}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
-  // oninput: update data + refresh totals WITHOUT re-rendering the whole editor
-  // onchange: same — this catches paste/programmatic changes
+  const negBtns=negs.map(n=>`<button class="dbtn neg" onclick="deltaStat('${cid}','${sideId}','${co.id}','${stat}',${n})">${n}</button>`).join('');
+  const posBtns=poss.map(n=>`<button class="dbtn" onclick="deltaStat('${cid}','${sideId}','${co.id}','${stat}',${n})">+${n}</button>`).join('');
   return `<div class="stat-row">
     <span class="stat-icon">${icon}</span>
     <span class="stat-lbl">${label}</span>
     <div class="stat-ctrls">
       ${negBtns}
       <input class="stat-inp ${cls}" type="number" value="${val}" min="0"
-        data-cid="${cid}" data-side="${sideKey}" data-co="${co.id}" data-stat="${stat}"
-        oninput="setStat(this)"
-        onchange="setStat(this)">
+        data-cid="${cid}" data-side="${sideId}" data-co="${co.id}" data-stat="${stat}"
+        oninput="setStat(this)" onchange="setStat(this)">
       ${posBtns}
     </div>
   </div>`;
@@ -657,53 +825,76 @@ function updateConflict(id,key,val){
   if(key==='status'||key==='startDate'||key==='endDate') renderEditor();
 }
 
-function updateSideName(id,sideKey,val){
+function updateSideName(id,sideId,val){
   const c=getConflict(id); if(!c) return;
-  c[sideKey].name=val; save(); flashSaved(); renderList();
+  const side=getSide(c,sideId); if(!side) return;
+  side.name=val; save(); flashSaved(); renderList();
+  refreshWinnerPanel(id);
+  refreshDeathComparison(id);
 }
 
-// KEY FIX: setStat uses data attributes from the input element
-// — no full re-render, no focus loss, works for any value you type
 function setStat(inputEl){
-  const cid=inputEl.dataset.cid, sideKey=inputEl.dataset.side,
+  const cid=inputEl.dataset.cid, sideId=inputEl.dataset.side,
         coId=inputEl.dataset.co, stat=inputEl.dataset.stat;
   const c=getConflict(cid); if(!c) return;
-  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  const side=getSide(c,sideId); if(!side) return;
+  const co=side.countries.find(x=>x.id===coId); if(!co) return;
   const parsed=parseFloat(inputEl.value);
   co[stat]=isNaN(parsed)?0:Math.max(0,parsed);
   save(); flashSaved();
-  // Surgically refresh only the totals bar of this side
-  refreshTotals(cid,sideKey);
+  refreshTotals(cid,sideId);
+  refreshDeathComparison(cid);
   renderList();
 }
 
-// deltaStat: applies +/- increment, then updates the specific input in the DOM
-// plus refreshes totals — no full re-render
-function deltaStat(cid,sideKey,coId,stat,amount){
+function deltaStat(cid,sideId,coId,stat,amount){
   const c=getConflict(cid); if(!c) return;
-  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  const side=getSide(c,sideId); if(!side) return;
+  const co=side.countries.find(x=>x.id===coId); if(!co) return;
   co[stat]=Math.max(0,(co[stat]||0)+amount);
   save(); flashSaved();
-  // Update just the specific input's displayed value
-  const inp=document.querySelector(`.stat-inp[data-cid="${cid}"][data-side="${sideKey}"][data-co="${coId}"][data-stat="${stat}"]`);
+  const inp=document.querySelector(`.stat-inp[data-cid="${cid}"][data-side="${sideId}"][data-co="${coId}"][data-stat="${stat}"]`);
   if(inp) inp.value=co[stat];
-  refreshTotals(cid,sideKey);
+  refreshTotals(cid,sideId);
+  refreshDeathComparison(cid);
   renderList();
 }
 
-// Surgically update only the totals bar for one side
-function refreshTotals(cid,sideKey){
+function refreshTotals(cid,sideId){
   const c=getConflict(cid); if(!c) return;
-  const el=document.getElementById(`totals-${sideKey}-${cid}`);
+  const side=getSide(c,sideId); if(!side) return;
+  const el=document.getElementById(`totals-${sideId}-${cid}`);
   if(!el) return;
-  el.innerHTML=renderTotalsHTML(sideTotals(c[sideKey]));
+  el.innerHTML=renderTotalsHTML(sideTotals(side));
 }
 
-function toggleRole(cid,sideKey,coId){
+function refreshDeathComparison(cid){
   const c=getConflict(cid); if(!c) return;
-  const co=c[sideKey].countries.find(x=>x.id===coId); if(!co) return;
+  const el=document.getElementById(`death-comparison-${cid}`);
+  if(!el) return;
+  el.innerHTML=renderDeathComparisonHTML(c);
+}
+
+function refreshWinnerPanel(cid){
+  const c=getConflict(cid); if(!c) return;
+  const el=document.getElementById(`winner-panel-${cid}`);
+  if(!el) return;
+  el.innerHTML=renderWinnerPanelHTML(c);
+}
+
+function refreshObjectives(cid,sideId){
+  const c=getConflict(cid); if(!c) return;
+  const side=getSide(c,sideId); if(!side) return;
+  const el=document.getElementById(`objectives-${sideId}`);
+  if(!el) return;
+  el.innerHTML=renderObjectivesHTML(cid, sideId, side.objectives);
+}
+
+function toggleRole(cid,sideId,coId){
+  const c=getConflict(cid); if(!c) return;
+  const side=getSide(c,sideId); if(!side) return;
+  const co=side.countries.find(x=>x.id===coId); if(!co) return;
   co.isMain=!co.isMain; save(); flashSaved();
-  // Update just the role badge in DOM
   const card=document.querySelector(`.ccard[data-co="${coId}"]`);
   if(card){
     const badge=card.querySelector('.role-badge');
@@ -712,11 +903,65 @@ function toggleRole(cid,sideKey,coId){
   renderList();
 }
 
-function removeCountry(cid,sideKey,coId){
+function removeCountry(cid,sideId,coId){
   const c=getConflict(cid); if(!c) return;
-  c[sideKey].countries=c[sideKey].countries.filter(x=>x.id!==coId);
+  const side=getSide(c,sideId); if(!side) return;
+  side.countries=side.countries.filter(x=>x.id!==coId);
   save(); flashSaved(); renderEditor(); renderList();
   toast('Country removed.');
+}
+
+// ── SIDE MANAGEMENT ──
+function addSide(cid){
+  const c=getConflict(cid); if(!c) return;
+  const idx=c.sides.length;
+  c.sides.push(makeSide(SIDE_NAMES_DEF[idx]||`Side ${idx+1}`));
+  save(); renderEditor(); renderList();
+  toast('New side added!');
+}
+
+function removeSide(cid,sideId){
+  const c=getConflict(cid); if(!c) return;
+  if(c.sides.length<=2){ toast('Conflicts must have at least 2 sides.'); return; }
+  c.sides=c.sides.filter(s=>s.id!==sideId);
+  save(); renderEditor(); renderList();
+  toast('Side removed.');
+}
+
+// ── OBJECTIVES ──
+function addObjective(cid,sideId){
+  const text=prompt('Enter objective:');
+  if(!text||!text.trim()) return;
+  const c=getConflict(cid); if(!c) return;
+  const side=getSide(c,sideId); if(!side) return;
+  side.objectives.push(makeObjective(text.trim()));
+  save();
+  refreshObjectives(cid,sideId);
+  refreshWinnerPanel(cid);
+  renderList();
+  toast('Objective added!');
+}
+
+function toggleObjective(cid,sideId,objId){
+  const c=getConflict(cid); if(!c) return;
+  const side=getSide(c,sideId); if(!side) return;
+  const obj=side.objectives.find(o=>o.id===objId); if(!obj) return;
+  obj.checked=!obj.checked;
+  save();
+  refreshObjectives(cid,sideId);
+  refreshWinnerPanel(cid);
+  renderList();
+}
+
+function removeObjective(cid,sideId,objId){
+  const c=getConflict(cid); if(!c) return;
+  const side=getSide(c,sideId); if(!side) return;
+  side.objectives=side.objectives.filter(o=>o.id!==objId);
+  save();
+  refreshObjectives(cid,sideId);
+  refreshWinnerPanel(cid);
+  renderList();
+  toast('Objective removed.');
 }
 
 // =====================================================
@@ -735,15 +980,18 @@ function confirmAdd(){
   toast('Conflict created!');
 }
 
-function openAddCountryModal(cid,sideKey){
-  _cmConflictId=cid; _cmSideKey=sideKey; _cmRole='main';
+function openAddCountryModal(cid,sideId){
+  _cmConflictId=cid; _cmSideId=sideId; _cmRole='main';
   const c=getConflict(cid);
-  const isA=sideKey==='sideA';
-  document.getElementById('cm-title').textContent=`➕ Add Country to ${c?c[sideKey].name:(isA?'Side Alpha':'Side Bravo')}`;
+  const side=getSide(c,sideId);
+  const idx=getSideIdx(c,sideId);
+  const color=SIDE_COLORS[idx]||'var(--cyan)';
+  document.getElementById('cm-title').textContent=`➕ Add Country to ${side?side.name:'Side'}`;
   document.getElementById('cm-flag').value='🏴';
   document.getElementById('cm-name').value='';
-  document.getElementById('cm-confirm-btn').className=isA?'btn':'btn btn-orange';
-  document.getElementById('country-modal-box').style.borderColor=isA?'var(--cyan)':'var(--orange)';
+  document.getElementById('cm-confirm-btn').style.borderColor=color;
+  document.getElementById('cm-confirm-btn').style.color=color;
+  document.getElementById('country-modal-box').style.borderColor=color;
   setRole('main');
   document.getElementById('country-modal').classList.add('open');
   setTimeout(()=>document.getElementById('cm-name').focus(),100);
@@ -758,7 +1006,8 @@ function confirmAddCountry(){
   const flag=(document.getElementById('cm-flag').value||'🏴').trim();
   if(!name){ document.getElementById('cm-name').style.borderColor='var(--red)'; return; }
   const c=getConflict(_cmConflictId); if(!c) return;
-  c[_cmSideKey].countries.push(makeCountry(name,flag||'🏴',_cmRole==='main'));
+  const side=getSide(c,_cmSideId); if(!side) return;
+  side.countries.push(makeCountry(name,flag||'🏴',_cmRole==='main'));
   save(); closeModal('country-modal'); renderEditor(); renderList();
   toast(`${flag} ${name} added!`);
 }
@@ -797,17 +1046,7 @@ function importJSON(e){
     try{
       const data=JSON.parse(ev.target.result);
       if(!Array.isArray(data)) throw new Error();
-      data.forEach(c=>{
-        if(c.endDate===undefined) c.endDate='';
-        ['sideA','sideB'].forEach(sk=>{
-          (c[sk]?.countries||[]).forEach(co=>{
-            ['tanks','vehicles','aircrafts','warships'].forEach(f=>{
-            if(co[f]===undefined) co[f]=0;
-            if(co[f+'_lost']===undefined) co[f+'_lost']=0;
-          });
-          });
-        });
-      });
+      data.forEach(hydrateConflict);
       conflicts=data; save(); renderList();
       if(selectedId&&!getConflict(selectedId)){ selectedId=null; renderEditor(); }
       toast(`Imported ${data.length} conflict(s).`);
@@ -826,183 +1065,78 @@ function toast(msg,dur=2500){
 }
 
 // =====================================================
-// WIN PROBABILITY ANALYSIS
+// ANALYSIS MODAL (N-sided combat power)
 // =====================================================
-function calculateWinProbability(conflict) {
-  const sideA = conflict.sideA || {};
-  const sideB = conflict.sideB || {};
-  const aCountries = sideA.countries || [];
-  const bCountries = sideB.countries || [];
-  
-  // Calcular força de tropas
-  const aTroops = Math.max(0, aCountries.reduce((sum, c) => sum + (c.troops || 0), 0));
-  const bTroops = Math.max(0, bCountries.reduce((sum, c) => sum + (c.troops || 0), 0));
-  const totalTroops = aTroops + bTroops;
-  
-  // Calcular perdas
-  const aDeaths = aCountries.reduce((sum, c) => sum + (c.deaths || 0), 0);
-  const bDeaths = bCountries.reduce((sum, c) => sum + (c.deaths || 0), 0);
-  
-  // Calcular equipamento
-  const aEquip = aCountries.reduce((sum, c) => sum + (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
-  const bEquip = bCountries.reduce((sum, c) => sum + (c.tanks || 0) + (c.vehicles || 0) + (c.aircrafts || 0) + (c.warships || 0), 0);
-  const totalEquip = aEquip + bEquip;
-  
-  // Calcular perdas de equipamento
-  const aEquipLost = aCountries.reduce((sum, c) => sum + (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
-  const bEquipLost = bCountries.reduce((sum, c) => sum + (c.tanks_lost || 0) + (c.vehicles_lost || 0) + (c.aircrafts_lost || 0) + (c.warships_lost || 0), 0);
-  
-  // Calcular taxa de sobrevivência de equipamento
-  const aEquipSurvival = aEquip > 0 ? aEquip / (aEquip + aEquipLost) : 0.5;
-  const bEquipSurvival = bEquip > 0 ? bEquip / (bEquip + bEquipLost) : 0.5;
-  
-  // Contar aliados vs principais
-  const aMainCount = aCountries.filter(c => c.isMain).length;
-  const bMainCount = bCountries.filter(c => c.isMain).length;
-  const aAllyCount = aCountries.filter(c => !c.isMain).length;
-  const bAllyCount = bCountries.filter(c => !c.isMain).length;
-  
-  // Calcular índice de composição
-  const aCompositionIndex = aMainCount > 0 ? (aMainCount * 1.2) / (aMainCount + aAllyCount * 0.7) : 0.5;
-  const bCompositionIndex = bMainCount > 0 ? (bMainCount * 1.2) / (bMainCount + bAllyCount * 0.7) : 0.5;
-  
-  // Calcular base de probabilidades com pesos
-  let aScore = 0, bScore = 0;
-  
-  // 1. Força de tropas (35%)
-  if (totalTroops > 0) {
-    aScore += (aTroops / totalTroops) * 35;
-    bScore += (bTroops / totalTroops) * 35;
-  }
-  
-  // 2. Equipamento disponível (30%)
-  if (totalEquip > 0) {
-    aScore += (aEquip / totalEquip) * 30;
-    bScore += (bEquip / totalEquip) * 30;
-  }
-  
-  // 3. Taxa de casualidade (20%)
-  const totalDeaths = aDeaths + bDeaths;
-  if (totalDeaths > 0) {
-    const aEfficiency = 1 - (aDeaths / totalDeaths);
-    const bEfficiency = 1 - (bDeaths / totalDeaths);
-    aScore += aEfficiency * 20;
-    bScore += bEfficiency * 20;
-  }
-  
-  // 4. Durabilidade de equipamento (10%)
-  const avgSurvival = (aEquipSurvival + bEquipSurvival) / 2;
-  if (avgSurvival > 0) {
-    aScore += (aEquipSurvival / (aEquipSurvival + bEquipSurvival)) * 10;
-    bScore += (bEquipSurvival / (aEquipSurvival + bEquipSurvival)) * 10;
-  }
-  
-  // 5. Estabilidade de coalisão (5%)
-  const totalComposition = aCompositionIndex + bCompositionIndex;
-  aScore += (aCompositionIndex / totalComposition) * 5;
-  bScore += (bCompositionIndex / totalComposition) * 5;
-  
-  // Normalizar para 100%
-  const total = aScore + bScore;
-  const aProbability = Math.round((aScore / total) * 100);
-  const bProbability = 100 - aProbability;
-  
-  return {
-    aProbability,
-    bProbability,
-    aTroops,
-    bTroops,
-    aEquip,
-    bEquip,
-    aDeaths,
-    bDeaths,
-    aCountries: aCountries.length,
-    bCountries: bCountries.length,
-    aMainCount,
-    bMainCount
-  };
+function calculateSideScores(conflict){
+  const scores = (conflict.sides||[]).map((side,idx)=>{
+    const cos = side.countries;
+    const troops     = cos.reduce((s,c)=>s+(c.troops     ||0),0);
+    const deaths     = cos.reduce((s,c)=>s+(c.deaths     ||0),0);
+    const equip      = cos.reduce((s,c)=>s+(c.tanks||0)+(c.vehicles||0)+(c.aircrafts||0)+(c.warships||0),0);
+    const equipLost  = cos.reduce((s,c)=>s+(c.tanks_lost||0)+(c.vehicles_lost||0)+(c.aircrafts_lost||0)+(c.warships_lost||0),0);
+    const objDone    = side.objectives.filter(o=>o.checked).length;
+    const objTotal   = side.objectives.length;
+    return { name:side.name, troops, deaths, equip, equipLost, objDone, objTotal, cos:cos.length, idx };
+  });
+
+  const totalTroops = scores.reduce((s,x)=>s+x.troops,0)||1;
+  const totalDeaths = scores.reduce((s,x)=>s+x.deaths,0)||1;
+  const totalEquip  = scores.reduce((s,x)=>s+x.equip, 0)||1;
+  const n = scores.length||1;
+
+  scores.forEach(s=>{
+    const troopScore   = (s.troops/totalTroops)*35;
+    const equipScore   = (s.equip/totalEquip)*30;
+    const survivalRate = s.equip>0 ? s.equip/(s.equip+s.equipLost) : 0.5;
+    const deathScore   = (1-(s.deaths/totalDeaths))*(20/Math.max(n-1,1));
+    s.rawScore = troopScore + equipScore + survivalRate*10 + deathScore + (35/n);
+  });
+
+  const totalRaw = scores.reduce((s,x)=>s+x.rawScore,0)||1;
+  scores.forEach(s=>{ s.pct=Math.round((s.rawScore/totalRaw)*100); });
+  // Normalize rounding
+  const diff = 100 - scores.reduce((s,x)=>s+x.pct,0);
+  if(scores.length>0) scores[0].pct+=diff;
+
+  return scores;
 }
 
-function openAnalysisModal() {
-  const content = document.getElementById('analysis-content');
-  
-  if (conflicts.length === 0) {
-    content.innerHTML = '<div class="no-conflicts">No conflicts registered yet.</div>';
+function openAnalysisModal(){
+  const content=document.getElementById('analysis-content');
+  if(conflicts.length===0){
+    content.innerHTML='<div class="no-conflicts">No conflicts registered yet.</div>';
     document.getElementById('analysis-modal').classList.add('open');
     return;
   }
-  
-  let html = '<div class="analysis-grid">';
-  
-  conflicts.forEach(conflict => {
-    const analysis = calculateWinProbability(conflict);
-    const sideA = conflict.sideA || {};
-    const sideB = conflict.sideB || {};
-    
-    const statusMap = {
-      'ongoing': '🔴 Ongoing',
-      'ceasefire': '🟡 Ceasefire',
-      'ended': '⚪ Ended',
-      'pending': '🟣 Pending'
-    };
-    
-    const statusBadge = statusMap[conflict.status] || conflict.status;
-    
-    // Determinar vantagem
-    const aAdvantage = analysis.aProbability > 50;
-    const margin = Math.abs(analysis.aProbability - 50);
-    let advantageText = '';
-    
-    if (margin < 5) {
-      advantageText = '⚖️ Tactical Balance';
-    } else if (aAdvantage && margin >= 5 && margin < 15) {
-      advantageText = '📈 Slight advantage: ' + sideA.name;
-    } else if (aAdvantage && margin >= 15) {
-      advantageText = '🔼 Significant advantage: ' + sideA.name;
-    } else if (!aAdvantage && margin >= 5 && margin < 15) {
-      advantageText = '📉 Slight advantage: ' + sideB.name;
-    } else {
-      advantageText = '🔽 Significant advantage: ' + sideB.name;
-    }
-    
-    html += `<div class="analysis-card">
+  const statusMap={'ongoing':'🔴 Ongoing','ceasefire':'🟡 Ceasefire','ended':'⚪ Ended','pending':'🟣 Pending'};
+  let html='<div class="analysis-grid">';
+  conflicts.forEach(conflict=>{
+    const scores = calculateSideScores(conflict);
+    const maxPct  = Math.max(...scores.map(s=>s.pct));
+    const leader  = scores.find(s=>s.pct===maxPct);
+    const margin  = maxPct - (scores.length>1 ? scores.filter(s=>s!==leader).reduce((m,s)=>Math.max(m,s.pct),0) : 0);
+    let advantage = '⚖️ Balanced';
+    if(margin>=20) advantage = `🔼 Strong lead: ${leader?.name}`;
+    else if(margin>=8) advantage = `📈 Slight lead: ${leader?.name}`;
+
+    const sidesRows = scores.map(s=>{
+      const col = SIDE_COLORS[s.idx]||'#c8dde8';
+      return `<div class="ac-side-row">
+        <span class="ac-side-name" style="color:${col};">${esc(s.name)}</span>
+        <div class="ac-side-bar-wrap"><div class="ac-side-bar" style="width:${s.pct}%;background:${col};"></div></div>
+        <span class="ac-side-pct" style="color:${col};">${s.pct}%</span>
+      </div>`;
+    }).join('');
+
+    html+=`<div class="analysis-card">
       <div class="ac-name">${esc(conflict.name)}</div>
-      <div class="ac-status">${statusBadge}</div>
-      <div class="ac-advantage">${advantageText}</div>
-      <div class="ac-probability">
-        <div class="ac-prob-item">
-          <div class="ac-prob-pct ac-prob-side-a">${analysis.aProbability}%</div>
-          <div class="ac-prob-label">${esc(sideA.name || 'Side A')}</div>
-        </div>
-        <div class="ac-prob-divider"></div>
-        <div class="ac-prob-item">
-          <div class="ac-prob-pct ac-prob-side-b">${analysis.bProbability}%</div>
-          <div class="ac-prob-label">${esc(sideB.name || 'Side B')}</div>
-        </div>
-      </div>
-      <div class="ac-stats">
-        <div class="ac-stat-item">
-          <div class="ac-stat-label">👥 Troops</div>
-          <div class="ac-stat-value">${fmt(analysis.aTroops)} / ${fmt(analysis.bTroops)}</div>
-        </div>
-        <div class="ac-stat-item">
-          <div class="ac-stat-label">⚔️ Equipment</div>
-          <div class="ac-stat-value">${fmt(analysis.aEquip)} / ${fmt(analysis.bEquip)}</div>
-        </div>
-        <div class="ac-stat-item">
-          <div class="ac-stat-label">💀 Deaths</div>
-          <div class="ac-stat-value">${fmt(analysis.aDeaths)} / ${fmt(analysis.bDeaths)}</div>
-        </div>
-        <div class="ac-stat-item">
-          <div class="ac-stat-label">🏙️ Nations</div>
-          <div class="ac-stat-value">${analysis.aCountries} / ${analysis.bCountries}</div>
-        </div>
-      </div>
+      <div class="ac-status">${statusMap[conflict.status]||conflict.status} · ${(conflict.sides||[]).length} sides</div>
+      <div class="ac-advantage">${advantage}</div>
+      <div class="ac-sides-grid">${sidesRows}</div>
     </div>`;
   });
-  
-  html += '</div>';
-  content.innerHTML = html;
+  html+='</div>';
+  content.innerHTML=html;
   document.getElementById('analysis-modal').classList.add('open');
 }
 
