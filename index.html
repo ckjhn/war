@@ -380,6 +380,9 @@
         <button class="nav-btn" data-app="construct">
           🧮 Construct
         </button>
+        <button class="nav-btn" data-app="alliances">
+          🤝 Alliances
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -429,6 +432,11 @@
         name: 'Construct',
         icon: '🧮',
         file: 'construct.html'
+      },
+      'alliances': {
+        name: 'Alliances',
+        icon: '🤝',
+        file: 'alliances.html'
       },
       'sync': {
         name: 'Sync',
@@ -643,7 +651,10 @@
         read:()=>({ packages:JSON.parse(localStorage.getItem('tc_packages')||'[]'),
                     history: JSON.parse(localStorage.getItem('tc_history') ||'[]') }),
         write:(d)=>{ localStorage.setItem('tc_packages',JSON.stringify(d.packages||[]));
-                     localStorage.setItem('tc_history', JSON.stringify(d.history ||[])); } }
+                     localStorage.setItem('tc_history', JSON.stringify(d.history ||[])); } },
+      { name:'alliances.json', path:'assets/alliances.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('tc_alliances')||'[]');}catch{return[];} },
+        write:(d)=>localStorage.setItem('tc_alliances',JSON.stringify(Array.isArray(d)?d:[])) }
     ];
 
     function loadGhConfig(){
@@ -800,7 +811,7 @@
           </div>
           <div style="${card}">
             <div style="${sec}">Files Managed</div>
-            ${['database.json','conflicts.json','turn.json','trade.json'].map(f=>`
+            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json'].map(f=>`
               <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
                 <span>📁</span>
                 <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>
