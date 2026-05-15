@@ -519,8 +519,8 @@
     "flag": "🏴",
     "createdAt": 1776894059083,
     "population": {
-      "civilians": 1010,
-      "workers": 0,
+      "civilians": 1000,
+      "workers": 10,
       "military": 10,
       "manpower": 1000
     },
@@ -528,15 +528,15 @@
       "money": 10100
     },
     "brute": {
-      "iron": 380,
-      "coal": 190,
+      "iron": 346,
+      "coal": 165,
       "gold": 60,
       "diamond": 8,
-      "gravel": 140,
+      "gravel": 138,
       "latex": 100,
       "silicon": 48,
       "oil": 100,
-      "gas": 160,
+      "gas": 60,
       "uranium": 0
     },
     "refined": {
@@ -632,7 +632,7 @@
     },
     "type": "country",
     "observations": {
-      "national_plan": ""
+      "national_plan": "10 workers producing 3 pistols in 1 turn\nqueue:\n100 bullets pistol - 10 workers - 1 turn\n3 silencers pistol - 10 workers - 1 turn"
     },
     "military": {
       "army": 9,
