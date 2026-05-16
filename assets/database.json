@@ -129,7 +129,8 @@
     },
     "observations": {
       "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un"
-    }
+    },
+    "production": []
   },
   {
     "id": "mnulxffollz0xwr86a",
@@ -259,7 +260,23 @@
     },
     "observations": {
       "national_plan": "Bulding Mountain mine \n13 turns missing\n\nUsing 20 workers\n325 l of gas\n250 mp\n"
-    }
+    },
+    "production": [
+      {
+        "id": "mp7mmtobbdnk5j",
+        "items": [
+          {
+            "id": "mp7mmtobifc94u",
+            "name": "Mountain mine",
+            "turnsTotal": 13,
+            "turnsLeft": 13,
+            "fuel": 325,
+            "workers": 20,
+            "mp": 250
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "moag4nn2r5o6utoasd",
@@ -385,7 +402,8 @@
     "military": {
       "generals": 1,
       "army": 9
-    }
+    },
+    "production": []
   },
   {
     "id": "moahlygpwufwpxx2i9",
@@ -511,7 +529,8 @@
     "military": {
       "commanders": 3,
       "army": 7
-    }
+    },
+    "production": []
   },
   {
     "id": "moakuervmfd7z3gvths",
@@ -536,7 +555,7 @@
       "latex": 100,
       "silicon": 48,
       "oil": 100,
-      "gas": 60,
+      "gas": 85,
       "uranium": 0
     },
     "refined": {
@@ -632,12 +651,46 @@
     },
     "type": "country",
     "observations": {
-      "national_plan": "10 workers producing 3 pistols in 1 turn\nqueue:\n100 bullets pistol - 10 workers - 1 turn\n3 silencers pistol - 10 workers - 1 turn"
+      "national_plan": ""
     },
     "military": {
       "army": 9,
       "generals": 1
-    }
+    },
+    "production": [
+      {
+        "id": "mp7mz8udjx0zmn",
+        "items": [
+          {
+            "id": "mp7mz8ud7qtgbi",
+            "name": "3 pistols",
+            "turnsTotal": 1,
+            "turnsLeft": 1,
+            "fuel": 25,
+            "workers": 10,
+            "mp": 9
+          },
+          {
+            "id": "mp7mzhcxjbxn00",
+            "name": "100 bullets",
+            "turnsTotal": 1,
+            "turnsLeft": 1,
+            "fuel": 25,
+            "workers": 10,
+            "mp": 3
+          },
+          {
+            "id": "mp7mzqn8oruxhw",
+            "name": "3 silencers for pistols",
+            "turnsTotal": 1,
+            "turnsLeft": 1,
+            "fuel": 25,
+            "workers": 10,
+            "mp": 3
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "moakuucd7h9zupzw8eu",
@@ -763,7 +816,8 @@
     "military": {
       "army": 9,
       "generals": 1
-    }
+    },
+    "production": []
   },
   {
     "id": "moakv16u66cps8ch8b4",
@@ -889,7 +943,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "moeuuhuo8e086wjtvwd",
@@ -1014,7 +1069,8 @@
     "military": {
       "generals": 3,
       "army": 2
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrrzlylhelxn67uo",
@@ -1147,7 +1203,8 @@
     "military": {
       "generals": 1,
       "army": 9
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrtjbp6w3n5v4vxad",
@@ -1280,7 +1337,8 @@
     "military": {
       "army": 9,
       "generals": 1
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrtqp2ctj8sckm3zr",
@@ -1413,7 +1471,8 @@
     "military": {
       "army": 9,
       "generals": 1
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrurblqfd9j4epawk",
@@ -1546,7 +1605,8 @@
     "military": {
       "army": 0,
       "generals": 0
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrv1sbfdycppugmut",
@@ -1674,7 +1734,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrvboh36b015rnx74",
@@ -1802,7 +1863,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrvio57kiiiseucd8",
@@ -1930,7 +1992,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrvm64e7ii5dnf6t",
@@ -2058,7 +2121,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrvv9nkw6lysx4xtk",
@@ -2186,7 +2250,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrvyzppmcr4ysgd2",
@@ -2314,7 +2379,8 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   },
   {
     "id": "mohrwa7b0jokjo70oek",
@@ -2442,6 +2508,7 @@
     },
     "observations": {
       "national_plan": ""
-    }
+    },
+    "production": []
   }
 ]
