@@ -376,11 +376,11 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   <div class="modal" style="max-width:440px;">
     <div class="modal-title">⚙ Alliance Tax Configuration</div>
     <div class="modal-field">
-      <div class="modal-label">Fixed Tax per Member per Turn ($)</div>
+      <div class="modal-label">Fixed Tax per Member per Cycle — every 4 turns ($)</div>
       <input class="modal-input" id="tax-fixed" type="number" min="0" value="0" placeholder="0">
     </div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.7;padding:10px;background:var(--bg);border:1px solid var(--border);">
-      This amount is automatically collected from each member nation every time <strong style="color:var(--text);">Pass Turn</strong> is pressed. It is recorded in the Donations Backlog as a "Tax Collection".
+      This amount is automatically collected from each member nation every <strong style="color:var(--text);">4 turns (1 cycle)</strong>. It is recorded in the Donations Backlog as a "Tax Collection". The first collection happens on turn 4, then turn 8, 12, and so on.
     </div>
     <div class="modal-actions">
       <button class="btn btn-yellow" onclick="confirmTaxConfig()">✓ SAVE TAX</button>
@@ -744,7 +744,7 @@ function renderAllianceAssets(a){
   </div>`).join('');
 
   const taxInfo=a.taxConfig.fixedPerMember>0
-    ? `$${fmt(a.taxConfig.fixedPerMember)}/member/turn · Total: $${fmt(a.members.length*a.taxConfig.fixedPerMember)}/turn`
+    ? `$${fmt(a.taxConfig.fixedPerMember)}/member/cycle · Total: $${fmt(a.members.length*a.taxConfig.fixedPerMember)}/cycle`
     : 'No tax set';
 
   return `<div class="section" id="sec-assets">
@@ -794,7 +794,7 @@ function renderAllianceAssets(a){
           </div>
         </div>
         <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;padding:8px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1);">
-          ⏳ Each <strong style="color:var(--text);">Pass Turn</strong> = 1 cycle. Civilians earn <strong style="color:var(--gold);">$10 each</strong>. Each business earns <strong style="color:var(--gold);">$15,000</strong>. Civilians grow by <strong style="color:var(--gold);">+10</strong> (+3 per hospital). Mines produce brute resources. Tax is auto-collected.
+          ⏳ Each <strong style="color:var(--text);">Pass Turn</strong> = 1 cycle. Civilians earn <strong style="color:var(--gold);">$10 each</strong>. Each business earns <strong style="color:var(--gold);">$15,000</strong>. Civilians grow by <strong style="color:var(--gold);">+10</strong> (+3 per hospital). Mines produce brute resources. Tax is auto-collected every 4 turns (1 cycle).
         </div>
       </div>
     </div>
@@ -901,13 +901,14 @@ function passTurn(allianceId){
   if(a.style==='communist'){ showToast('Communist alliances share member data — no turn needed.'); return; }
   const own=a.own;
 
-  // Collect tax
+  // Collect tax — only every 4 turns (1 cycle)
   const taxPer=parseInt(a.taxConfig.fixedPerMember)||0;
-  if(taxPer>0 && a.members.length>0){
+  const isTaxTurn=(a.turn+1)%4===0;
+  if(taxPer>0 && a.members.length>0 && isTaxTurn){
     const taxTotal=taxPer*a.members.length;
     own.money+=taxTotal;
     a.donations.unshift({id:uuid(),from:'Alliance — Auto Tax',fromFlag:'💰',category:'Tax Collection',
-      description:`${a.members.length} members × $${fmt(taxPer)} = $${fmt(taxTotal)}`,
+      description:`Cycle ${Math.floor((a.turn+1)/4)} — ${a.members.length} members × $${fmt(taxPer)} = $${fmt(taxTotal)}`,
       items:{money:taxTotal},timestamp:Date.now()});
   }
 
@@ -1060,7 +1061,7 @@ function confirmTaxConfig(){
   const a=getAlliance(currentDonateAllianceId); if(!a) return;
   a.taxConfig.fixedPerMember=Math.max(0,parseInt(document.getElementById('tax-fixed').value)||0);
   save(); closeModal('tax-modal'); renderEditor();
-  showToast(`Tax set to $${fmt(a.taxConfig.fixedPerMember)} per member per turn`);
+  showToast(`Tax set to $${fmt(a.taxConfig.fixedPerMember)} per member per cycle (every 4 turns)`);
 }
 
 // =====================================================
