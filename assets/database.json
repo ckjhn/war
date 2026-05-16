@@ -284,8 +284,8 @@
     "flag": "🏴",
     "createdAt": 1776886139054,
     "population": {
-      "civilians": 1010,
-      "workers": 0,
+      "civilians": 950,
+      "workers": 60,
       "military": 10,
       "manpower": 1000
     },
@@ -293,15 +293,15 @@
       "money": 10100
     },
     "brute": {
-      "iron": 900,
-      "coal": 490,
-      "gold": 140,
+      "iron": 320,
+      "coal": 142,
+      "gold": 120,
       "diamond": 40,
       "gravel": 200,
       "latex": 0,
-      "silicon": 88,
+      "silicon": 48,
       "oil": 72,
-      "gas": 100,
+      "gas": 25,
       "uranium": 5
     },
     "refined": {
@@ -403,7 +403,22 @@
       "generals": 1,
       "army": 9
     },
-    "production": []
+    "production": [
+      {
+        "id": "mp8rfx0yzmx3fh",
+        "items": [
+          {
+            "id": "mp8rfx0ypgwm4t",
+            "name": "580 refined iron + 20 electronics",
+            "turnsTotal": 3,
+            "turnsLeft": 3,
+            "fuel": 75,
+            "workers": 60,
+            "mp": 120
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "moahlygpwufwpxx2i9",
@@ -1752,7 +1767,7 @@
       "members": 10
     },
     "economy": {
-      "money": 500
+      "money": 700
     },
     "brute": {
       "iron": 0,
@@ -2268,7 +2283,7 @@
       "members": 14
     },
     "economy": {
-      "money": 500
+      "money": 4560
     },
     "brute": {
       "iron": 0,
