@@ -1,4 +1,133 @@
 {
   "packages": [],
-  "history": []
+  "history": [
+    {
+      "id": "mp7nk68ds1uwz9defhp",
+      "packageId": "dt-mp7nk68dezjjawf3sr5",
+      "type": "DIRECT_TRADE",
+      "creatorCountry": "USA",
+      "counterpartyCountry": "Mexico",
+      "items": [
+        {
+          "name": "SMG Ammo",
+          "qty": 1
+        },
+        {
+          "name": "SMGs",
+          "qty": 10
+        },
+        {
+          "name": "[Mexico] Silicon",
+          "qty": 88
+        },
+        {
+          "name": "[Mexico] Diamond",
+          "qty": 12
+        },
+        {
+          "name": "[Mexico] Gold",
+          "qty": 140
+        }
+      ],
+      "finalPrice": 9164,
+      "outcome": "ACCEPTED",
+      "negotiationRounds": 0,
+      "closedAt": 1778894004109,
+      "directTrade": true,
+      "sideA": {
+        "country": "USA",
+        "items": [
+          {
+            "name": "SMG Ammo",
+            "qty": 1
+          },
+          {
+            "name": "SMGs",
+            "qty": 10
+          }
+        ],
+        "cash": 14,
+        "total": 9164
+      },
+      "sideB": {
+        "country": "Mexico",
+        "items": [
+          {
+            "name": "Silicon",
+            "qty": 88
+          },
+          {
+            "name": "Diamond",
+            "qty": 12
+          },
+          {
+            "name": "Gold",
+            "qty": 140
+          }
+        ],
+        "cash": 0,
+        "total": 9164
+      }
+    },
+    {
+      "id": "mp7nhi0sj31vr5mqds",
+      "packageId": "dt-mp7nhi0s3ujmmacx2un",
+      "type": "DIRECT_TRADE",
+      "creatorCountry": "Russia",
+      "counterpartyCountry": "Mexico",
+      "items": [
+        {
+          "name": "SMGs",
+          "qty": 4
+        },
+        {
+          "name": "SMG Ammo",
+          "qty": 1
+        },
+        {
+          "name": "[Mexico] Iron",
+          "qty": 900
+        },
+        {
+          "name": "[Mexico] Coal",
+          "qty": 490
+        }
+      ],
+      "finalPrice": 3750,
+      "outcome": "ACCEPTED",
+      "negotiationRounds": 0,
+      "closedAt": 1778893879420,
+      "directTrade": true,
+      "sideA": {
+        "country": "Russia",
+        "items": [
+          {
+            "name": "SMGs",
+            "qty": 4
+          },
+          {
+            "name": "SMG Ammo",
+            "qty": 1
+          }
+        ],
+        "cash": 0,
+        "total": 3750
+      },
+      "sideB": {
+        "country": "Mexico",
+        "items": [
+          {
+            "name": "Iron",
+            "qty": 900
+          },
+          {
+            "name": "Coal",
+            "qty": 490
+          }
+        ],
+        "cash": 1460,
+        "total": 3750
+      }
+    }
+  ]
 }
