@@ -1,1 +1,466 @@
-[]
+[
+  {
+    "id": "mp7u7mcpuqupxa",
+    "name": "USSR",
+    "flag": "☭⚒",
+    "style": "communist",
+    "members": [],
+    "observations": "",
+    "createdAt": 1778905175785,
+    "own": {
+      "money": 0,
+      "civilians": 0,
+      "factories": 0,
+      "businesses": 0,
+      "hospitals": 0,
+      "mines": {
+        "plains": 0,
+        "forest": 0,
+        "taiga": 0,
+        "jungle": 0,
+        "swamp": 0,
+        "desert": 0,
+        "badlands": 0,
+        "mountains": 0,
+        "ocean": 0,
+        "caves": 0,
+        "rare": 0,
+        "frozen": 0
+      },
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0,
+      "weapons": {
+        "knives": 0,
+        "pistols": 0,
+        "smgs": 0,
+        "rifles": 0,
+        "snipers": 0,
+        "heavy_weapons": 0,
+        "atm": 0,
+        "light_vests": 0,
+        "heavy_vests": 0,
+        "old_mortar": 0
+      },
+      "ammo": {
+        "ammo_50": 0,
+        "ammo_22mm": 0,
+        "ammo_pistol": 0,
+        "ammo_smg": 0,
+        "ammo_rifle": 0,
+        "ammo_sniper": 0,
+        "ammo_heavy": 0,
+        "ammo_atm": 0,
+        "ammo_mortar": 0
+      },
+      "air": {
+        "light_jet": 0,
+        "med_jet": 0,
+        "heavy_jet": 0,
+        "bomber": 0,
+        "helicopter": 0,
+        "airplane": 0
+      },
+      "land": {
+        "light_tank": 0,
+        "med_tank": 0,
+        "heavy_tank": 0,
+        "motorbike": 0,
+        "car": 0,
+        "truck": 0
+      },
+      "water": {
+        "submarine": 0,
+        "warship": 0,
+        "boat": 0,
+        "ship": 0,
+        "carrier": 0,
+        "supercarrier": 0
+      },
+      "missiles": {
+        "torpedo": 0,
+        "icbm": 0,
+        "cruise": 0,
+        "hypersonic": 0,
+        "guided": 0,
+        "nuclear": 0
+      },
+      "others": {
+        "grenade": 0,
+        "spec_grenade": 0,
+        "land_bomb": 0,
+        "drone": 0,
+        "barricade": 0,
+        "barrier": 0
+      }
+    },
+    "militaryBreakdown": [],
+    "donations": [],
+    "taxConfig": {
+      "fixedPerMember": 0
+    },
+    "turn": 0
+  },
+  {
+    "id": "mp7u833vfc3o52",
+    "name": "NATO",
+    "flag": "🗽🗺",
+    "style": "capitalist",
+    "members": [],
+    "observations": "",
+    "createdAt": 1778905197499,
+    "own": {
+      "money": 0,
+      "civilians": 0,
+      "factories": 0,
+      "businesses": 0,
+      "hospitals": 0,
+      "mines": {
+        "plains": 0,
+        "forest": 0,
+        "taiga": 0,
+        "jungle": 0,
+        "swamp": 0,
+        "desert": 0,
+        "badlands": 0,
+        "mountains": 0,
+        "ocean": 0,
+        "caves": 0,
+        "rare": 0,
+        "frozen": 0
+      },
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0,
+      "weapons": {
+        "knives": 0,
+        "pistols": 0,
+        "smgs": 0,
+        "rifles": 0,
+        "snipers": 0,
+        "heavy_weapons": 0,
+        "atm": 0,
+        "light_vests": 0,
+        "heavy_vests": 0,
+        "old_mortar": 0
+      },
+      "ammo": {
+        "ammo_50": 0,
+        "ammo_22mm": 0,
+        "ammo_pistol": 0,
+        "ammo_smg": 0,
+        "ammo_rifle": 0,
+        "ammo_sniper": 0,
+        "ammo_heavy": 0,
+        "ammo_atm": 0,
+        "ammo_mortar": 0
+      },
+      "air": {
+        "light_jet": 0,
+        "med_jet": 0,
+        "heavy_jet": 0,
+        "bomber": 0,
+        "helicopter": 0,
+        "airplane": 0
+      },
+      "land": {
+        "light_tank": 0,
+        "med_tank": 0,
+        "heavy_tank": 0,
+        "motorbike": 0,
+        "car": 0,
+        "truck": 0
+      },
+      "water": {
+        "submarine": 0,
+        "warship": 0,
+        "boat": 0,
+        "ship": 0,
+        "carrier": 0,
+        "supercarrier": 0
+      },
+      "missiles": {
+        "torpedo": 0,
+        "icbm": 0,
+        "cruise": 0,
+        "hypersonic": 0,
+        "guided": 0,
+        "nuclear": 0
+      },
+      "others": {
+        "grenade": 0,
+        "spec_grenade": 0,
+        "land_bomb": 0,
+        "drone": 0,
+        "barricade": 0,
+        "barrier": 0
+      }
+    },
+    "militaryBreakdown": [],
+    "donations": [],
+    "taxConfig": {
+      "fixedPerMember": 0
+    },
+    "turn": 0
+  },
+  {
+    "id": "mp7u8izfgu7u3r",
+    "name": "Axis",
+    "flag": "ϟϟ",
+    "style": "fascist",
+    "members": [],
+    "observations": "",
+    "createdAt": 1778905218075,
+    "own": {
+      "money": 0,
+      "civilians": 0,
+      "factories": 0,
+      "businesses": 0,
+      "hospitals": 0,
+      "mines": {
+        "plains": 0,
+        "forest": 0,
+        "taiga": 0,
+        "jungle": 0,
+        "swamp": 0,
+        "desert": 0,
+        "badlands": 0,
+        "mountains": 0,
+        "ocean": 0,
+        "caves": 0,
+        "rare": 0,
+        "frozen": 0
+      },
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0,
+      "weapons": {
+        "knives": 0,
+        "pistols": 0,
+        "smgs": 0,
+        "rifles": 0,
+        "snipers": 0,
+        "heavy_weapons": 0,
+        "atm": 0,
+        "light_vests": 0,
+        "heavy_vests": 0,
+        "old_mortar": 0
+      },
+      "ammo": {
+        "ammo_50": 0,
+        "ammo_22mm": 0,
+        "ammo_pistol": 0,
+        "ammo_smg": 0,
+        "ammo_rifle": 0,
+        "ammo_sniper": 0,
+        "ammo_heavy": 0,
+        "ammo_atm": 0,
+        "ammo_mortar": 0
+      },
+      "air": {
+        "light_jet": 0,
+        "med_jet": 0,
+        "heavy_jet": 0,
+        "bomber": 0,
+        "helicopter": 0,
+        "airplane": 0
+      },
+      "land": {
+        "light_tank": 0,
+        "med_tank": 0,
+        "heavy_tank": 0,
+        "motorbike": 0,
+        "car": 0,
+        "truck": 0
+      },
+      "water": {
+        "submarine": 0,
+        "warship": 0,
+        "boat": 0,
+        "ship": 0,
+        "carrier": 0,
+        "supercarrier": 0
+      },
+      "missiles": {
+        "torpedo": 0,
+        "icbm": 0,
+        "cruise": 0,
+        "hypersonic": 0,
+        "guided": 0,
+        "nuclear": 0
+      },
+      "others": {
+        "grenade": 0,
+        "spec_grenade": 0,
+        "land_bomb": 0,
+        "drone": 0,
+        "barricade": 0,
+        "barrier": 0
+      }
+    },
+    "militaryBreakdown": [],
+    "donations": [],
+    "taxConfig": {
+      "fixedPerMember": 0
+    },
+    "turn": 0
+  },
+  {
+    "id": "mp7u96kbuqtscd",
+    "name": "Northen Alliance",
+    "flag": "☦",
+    "style": "fascist",
+    "members": [],
+    "observations": "",
+    "createdAt": 1778905248635,
+    "own": {
+      "money": 0,
+      "civilians": 0,
+      "factories": 0,
+      "businesses": 0,
+      "hospitals": 0,
+      "mines": {
+        "plains": 0,
+        "forest": 0,
+        "taiga": 0,
+        "jungle": 0,
+        "swamp": 0,
+        "desert": 0,
+        "badlands": 0,
+        "mountains": 0,
+        "ocean": 0,
+        "caves": 0,
+        "rare": 0,
+        "frozen": 0
+      },
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0,
+      "weapons": {
+        "knives": 0,
+        "pistols": 0,
+        "smgs": 0,
+        "rifles": 0,
+        "snipers": 0,
+        "heavy_weapons": 0,
+        "atm": 0,
+        "light_vests": 0,
+        "heavy_vests": 0,
+        "old_mortar": 0
+      },
+      "ammo": {
+        "ammo_50": 0,
+        "ammo_22mm": 0,
+        "ammo_pistol": 0,
+        "ammo_smg": 0,
+        "ammo_rifle": 0,
+        "ammo_sniper": 0,
+        "ammo_heavy": 0,
+        "ammo_atm": 0,
+        "ammo_mortar": 0
+      },
+      "air": {
+        "light_jet": 0,
+        "med_jet": 0,
+        "heavy_jet": 0,
+        "bomber": 0,
+        "helicopter": 0,
+        "airplane": 0
+      },
+      "land": {
+        "light_tank": 0,
+        "med_tank": 0,
+        "heavy_tank": 0,
+        "motorbike": 0,
+        "car": 0,
+        "truck": 0
+      },
+      "water": {
+        "submarine": 0,
+        "warship": 0,
+        "boat": 0,
+        "ship": 0,
+        "carrier": 0,
+        "supercarrier": 0
+      },
+      "missiles": {
+        "torpedo": 0,
+        "icbm": 0,
+        "cruise": 0,
+        "hypersonic": 0,
+        "guided": 0,
+        "nuclear": 0
+      },
+      "others": {
+        "grenade": 0,
+        "spec_grenade": 0,
+        "land_bomb": 0,
+        "drone": 0,
+        "barricade": 0,
+        "barrier": 0
+      }
+    },
+    "militaryBreakdown": [],
+    "donations": [],
+    "taxConfig": {
+      "fixedPerMember": 0
+    },
+    "turn": 0
+  }
+]
