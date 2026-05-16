@@ -46,7 +46,7 @@
     "Iraq/Affeganisthan": false,
     "Taliban/Hezbollah": false,
     "Hamas": false,
-    "Al-Qaeda": false,
+    "Al-Qaeda": true,
     "Ukraine": true,
     "Germany": true,
     "United Kingdom": true
