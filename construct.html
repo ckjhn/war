@@ -205,6 +205,7 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
     <button class="tab-btn" onclick="switchTab('buildings',this)">🏗️ Buildings</button>
     <button class="tab-btn" onclick="switchTab('economy',this)">💰 Economy</button>
     <button class="tab-btn" onclick="switchTab('packs',this)">📦 Pack Calc</button>
+    <button class="tab-btn" onclick="switchTab('refinery',this)">🔧 Refinery</button>
   </div>
 
   <!-- ===== REFINED ===== -->
@@ -592,6 +593,45 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
     </div>
   </div>
 
+
+  <!-- ===== REFINERY ===== -->
+  <div class="tab-content" id="tab-refinery">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔧</span><div class="card-title">Refined Resource Production — Full Cost</div></div>
+      <div class="card-body">
+        <p class="tip">Select a refined resource and enter the desired quantity, factories, and workers. The system derives the <span class="hl">MP cost</span> (100 units = 20 MP), then calculates <span class="hl">turns</span> and <span class="hl">cycles</span> needed — and from that the exact <span class="ora">factory fuel consumed</span> (25 L / factory / turn).</p>
+        <div class="sep"></div>
+        <div class="recipe-grid" id="refinery-recipe-grid"></div>
+        <div class="sep"></div>
+        <div class="toggle-switch-container">
+          <span class="toggle-label">
+            <span class="toggle-label-text">📊 View Mode:</span>
+            <span>BRUTE</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="refinery-toggle" onchange="handleRefineryToggle()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>REFINED</span>
+          </span>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label>Desired Quantity</label><input type="number" id="refinery-qty" placeholder="e.g. 500" min="1" value="1" oninput="calcRefinery()"></div>
+          <div class="field"><label>Active Factories</label><input type="number" id="refinery-factories" placeholder="e.g. 3" min="1" value="1" oninput="calcRefinery()"></div>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label>Workers (1 worker = 1 MP / turn)</label><input type="number" id="refinery-workers" placeholder="e.g. 25" min="1" value="25" oninput="calcRefinery()"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="calcRefinery()">▶ CALCULATE FULL COST</button>
+          <button class="btn btn-orange btn-sm" onclick="saveRefineryToPackage()">📦 SAVE</button>
+        </div>
+        <div class="sep"></div>
+        <div class="result-panel" id="refinery-result"><div class="empty-state">↑ Select a resource and enter the data above</div></div>
+      </div>
+    </div>
+    <div id="refinery-pkg"></div>
+  </div>
+
 </main>
 
 <script>
@@ -835,8 +875,10 @@ function init(){
   renderMineGrid();
   renderMpRefTable();
   populateCatSelect();
+  renderRefineryGrid();
   renderPackage('refined-pkg');
   renderPackage('prod-pkg');
+  renderPackage('refinery-pkg');
   renderFuelUsePackage();
   calcMineSearch();
 }
@@ -1022,23 +1064,35 @@ function renderPackage(panelId){
   if(packageItems.length===0){
     el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">📦 Resource Package</span></div><div class="pkg-body"><div class="empty-state">No items saved. Calculate and click "Save".</div></div></div>`;return;
   }
-  const total={};let totalMp=0;
-  for(const item of packageItems){for(const[m,a]of Object.entries(item.raw))total[m]=(total[m]||0)+a;if(item.mp)totalMp+=item.mp;}
+  const total={};let totalMp=0;let totalFactoryFuel=0;let totalTurns=0;
+  for(const item of packageItems){
+    for(const[m,a]of Object.entries(item.raw))total[m]=(total[m]||0)+a;
+    if(item.mp)totalMp+=item.mp;
+    if(item.factoryFuel)totalFactoryFuel+=item.factoryFuel;
+    if(item.turns)totalTurns+=item.turns;
+  }
   const itemsHtml=packageItems.map((item,idx)=>`
     <div class="pkg-item">
       <div class="pkg-item-header"><span class="pkg-item-name">${item.label}</span><button class="pkg-remove" onclick="removeFromPackage(${idx})">✕</button></div>
       <div class="pkg-mats">
         ${Object.entries(item.raw).map(([m,a])=>`<span class="pkg-mat">${mLabel(m)}: <strong>${fmt(a,a%1?2:0)}</strong></span>`).join('')}
-        ${item.mp?`<span class="pkg-mat mp-tag">⚒ MP: <strong>${fmt(item.mp)}</strong> (${item.turns}t/${item.workers}w)</span>`:''}
+        ${item.mp?`<span class="pkg-mat mp-tag">⚒ MP: <strong>${fmt(item.mp)}</strong> · ${item.turns}t · ${item.workers}w</span>`:''}
+        ${item.factoryFuel?`<span class="pkg-mat fuel-tag">⛽ Factory Fuel: <strong>${fmt(item.factoryFuel)} L</strong></span>`:''}
       </div>
     </div>`).join('');
   let totalHtml=`<div class="result-title">🧮 GRAND TOTAL — ${packageItems.length} item${packageItems.length>1?'s':''}</div>`;
   for(const[m,a]of Object.entries(total))totalHtml+=rl(mLabel(m),`${fmt(a,a%1?2:0)} ${mUnit(m)}`,['oil','gas','fuel'].includes(m)?'orange':'gold');
   if(totalMp>0)totalHtml+=rl('Total Manpower',`${fmt(totalMp)} MP`,'purple');
+  if(totalTurns>0)totalHtml+=rl('Total Turns (production)',`${fmt(totalTurns)} turns`,'orange');
+  if(totalFactoryFuel>0){
+    totalHtml+=rl('Total Factory Fuel',`${fmt(totalFactoryFuel)} L`,'orange');
+    totalHtml+=rl('  → Oil Equivalent',`${fmt(totalFactoryFuel/2,1)} L`,'gold');
+    totalHtml+=rl('  → Gas Equivalent',`${fmt(totalFactoryFuel,1)} L`,'gold');
+  }
   el.innerHTML=`<div class="pkg-panel"><div class="pkg-header"><span class="pkg-title">📦 Package (${packageItems.length})</span><button class="btn btn-sm" onclick="clearPackage()">🗑 Clear</button></div><div class="pkg-body">${itemsHtml}<div class="sep"></div><div class="result-panel">${totalHtml}</div></div></div>`;
 }
-function removeFromPackage(idx){packageItems.splice(idx,1);renderPackage('refined-pkg');renderPackage('prod-pkg');}
-function clearPackage(){packageItems=[];renderPackage('refined-pkg');renderPackage('prod-pkg');}
+function removeFromPackage(idx){packageItems.splice(idx,1);renderPackage('refined-pkg');renderPackage('prod-pkg');renderPackage('refinery-pkg');}
+function clearPackage(){packageItems=[];renderPackage('refined-pkg');renderPackage('prod-pkg');renderPackage('refinery-pkg');}
 
 // ============================================================
 // FUEL USE TAB
@@ -1555,6 +1609,136 @@ function renderBatch(){
   }
 
   el.innerHTML = `<div class="result-panel">${html}</div>`;
+}
+
+// ============================================================
+// REFINERY TAB — Recipe materials + factory fuel in one shot
+// ============================================================
+let selectedRefineryRecipe = null;
+let showRefineryMode       = false;
+let lastRefineryCalc       = null;
+
+function renderRefineryGrid(){
+  document.getElementById('refinery-recipe-grid').innerHTML=Object.entries(RECIPES).map(([k,r])=>`
+    <div class="recipe-card" id="ry-${k}" onclick="selectRefineryRecipe('${k}')">
+      <div class="recipe-name">${r.icon} ${r.name}</div>
+      <div class="recipe-formula">${r.desc}</div>
+    </div>`).join('');
+}
+function selectRefineryRecipe(key){
+  selectedRefineryRecipe=key;
+  document.querySelectorAll('#refinery-recipe-grid .recipe-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('ry-'+key).classList.add('selected');
+  calcRefinery();
+}
+function handleRefineryToggle(){
+  showRefineryMode=document.getElementById('refinery-toggle').checked;
+  calcRefinery();
+}
+function calcRefinery(){
+  if(!selectedRefineryRecipe){errResult('refinery-result','Select a resource first');return;}
+  const qty=parseFloat(document.getElementById('refinery-qty').value);
+  if(!qty||qty<=0){errResult('refinery-result','Enter a valid quantity');return;}
+  const factories=parseInt(document.getElementById('refinery-factories').value)||1;
+  const workers=parseInt(document.getElementById('refinery-workers').value)||25;
+
+  const r=RECIPES[selectedRefineryRecipe];
+  const unit=r.outputUnit||'un';
+  const mult=qty/r.output;
+
+  // ── Manpower derived from quantity: 100 units = 20 MP ──────────────────
+  const totalMP    = Math.ceil(qty * 20 / 100);          // 0.2 MP per refined unit
+  const turns      = Math.ceil(totalMP / workers);        // turns to complete
+  const fullCycles = Math.floor(turns / 4);
+  const remTurns   = turns % 4;
+  const cycles     = turns / 4;                           // decimal for display
+
+  // ── Recipe materials ───────────────────────────────────────────────────
+  let raw;
+  if(showRefineryMode){
+    raw={};
+    for(const[mat,amtEach]of Object.entries(r.inputs)){
+      raw[mat]=(raw[mat]||0)+amtEach*mult;
+    }
+  } else {
+    raw=resolveToRaw(r.inputs,mult);
+  }
+
+  // ── Factory fuel: 25 L per factory per turn (= 100 L / cycle) ─────────
+  const factoryFuel   = factories * turns * 25;
+  const recipeFuelRaw = (r.inputs.fuel||0)*mult;   // fuel as recipe ingredient
+  const rawFuel       = raw.fuel||0;
+
+  // Grand fuel depends on view mode (brute already has recipe fuel in raw.fuel)
+  const grandFuel = showRefineryMode
+    ? factoryFuel + recipeFuelRaw
+    : factoryFuel + rawFuel;
+
+  lastRefineryCalc={
+    label:`${fmt(qty)} ${unit} × ${r.name} (${workers}w)`,
+    raw:{...raw},          // recipe materials only — factoryFuel kept separate
+    totalMP,
+    turns,
+    workers,
+    factoryFuel,
+    grandFuel
+  };
+
+  const modeLabel=showRefineryMode?'Refined materials':'Brute materials';
+
+  // ── Build result HTML ──────────────────────────────────────────────────
+  let html=`<div class="result-title">📊 ${modeLabel} for ${fmt(qty)} ${unit} of ${r.icon} ${r.name}</div>`;
+  for(const[m,a]of Object.entries(raw)){
+    if(a===0)continue;
+    html+=rl(mLabel(m),`${fmt(a,a%1?2:0)} ${mUnit(m)}`,['oil','gas','fuel'].includes(m)?'orange':'gold');
+  }
+
+  html+=`<div class="sep"></div><div class="result-title" style="color:var(--purple);">⚒ PRODUCTION TIME</div>`;
+  html+=rl('Total Manpower Required',`${fmt(totalMP)} MP`,'purple');
+  html+=rl('Workers Assigned',fmt(workers),'cyan');
+  html+=rl('MP per Turn (= workers)',fmt(workers),'');
+  html+=rl('Turns to Complete',`${fmt(turns)} turns`,'orange');
+  html+=rl('Full Cycles (4 turns)',`${fmt(fullCycles)} cycles`,'');
+  if(remTurns>0) html+=rl('Remainder Turns (partial cycle)',`${fmt(remTurns)} turns`,'');
+
+  html+=`<div class="sep"></div><div class="result-title" style="color:var(--accent2);">⛽ FACTORY FUEL COST</div>`;
+  html+=rl('Active Factories',`${fmt(factories)}`,'cyan');
+  html+=rl('Turns Operating',`${fmt(turns)} turns`,'cyan');
+  html+=rl('Fuel per Factory per Turn','25 L (= 100 L / cycle)','');
+  html+=rl('Factory Operational Fuel',`${fmt(factoryFuel)} L`,'orange');
+
+  if(!showRefineryMode && rawFuel>0){
+    html+=rl('Fuel as Recipe Ingredient (in brute total)',`${fmt(rawFuel)} L`,'orange');
+    html+=`<div class="sep"></div>`;
+    html+=rl('GRAND TOTAL FUEL',`${fmt(factoryFuel+rawFuel)} L`,'gold');
+    html+=rl('→ Oil Equivalent',`${fmt((factoryFuel+rawFuel)/2,1)} L oil`,'orange');
+    html+=rl('→ Gas Equivalent',`${fmt(factoryFuel+rawFuel,1)} L gas`,'orange');
+  } else if(showRefineryMode && recipeFuelRaw>0){
+    html+=rl('Fuel as Recipe Ingredient',`${fmt(recipeFuelRaw)} L`,'orange');
+    html+=`<div class="sep"></div>`;
+    html+=rl('GRAND TOTAL FUEL',`${fmt(factoryFuel+recipeFuelRaw)} L`,'gold');
+    html+=rl('→ Oil Equivalent',`${fmt((factoryFuel+recipeFuelRaw)/2,1)} L oil`,'orange');
+    html+=rl('→ Gas Equivalent',`${fmt(factoryFuel+recipeFuelRaw,1)} L gas`,'orange');
+  } else {
+    html+=`<div class="sep"></div>`;
+    html+=rl('TOTAL FUEL REQUIRED',`${fmt(factoryFuel)} L`,'gold');
+    html+=rl('→ Oil Equivalent',`${fmt(factoryFuel/2,1)} L oil`,'orange');
+    html+=rl('→ Gas Equivalent',`${fmt(factoryFuel,1)} L gas`,'orange');
+  }
+
+  document.getElementById('refinery-result').innerHTML=html;
+}
+function saveRefineryToPackage(){
+  if(!lastRefineryCalc){calcRefinery();if(!lastRefineryCalc)return;}
+  packageItems.push({
+    label:       lastRefineryCalc.label,
+    raw:         {...lastRefineryCalc.raw},   // recipe materials only
+    mp:          lastRefineryCalc.totalMP,
+    turns:       lastRefineryCalc.turns,
+    workers:     lastRefineryCalc.workers,
+    factoryFuel: lastRefineryCalc.factoryFuel // tracked separately for totals
+  });
+  renderPackage('refined-pkg');renderPackage('prod-pkg');renderPackage('refinery-pkg');
 }
 
 // ============================================================
