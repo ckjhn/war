@@ -198,9 +198,9 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('refined',this)">⚗️ Refined</button>
     <button class="tab-btn" onclick="switchTab('production',this)">🏭 Production</button>
-    <button class="tab-btn" onclick="switchTab('fueluse',this)">🔥 Fuel Use</button>
+    <button class="tab-btn" onclick="switchTab('fueluse',this)">🔥 Vehicles Fuel</button>
     <button class="tab-btn" onclick="switchTab('mines',this)">⛏️ Mines</button>
-    <button class="tab-btn" onclick="switchTab('fuel',this)">⛽ Fuel Conv.</button>
+    <button class="tab-btn" onclick="switchTab('fuel',this)">⛽ Fuel Use</button>
     <button class="tab-btn" onclick="switchTab('manpower',this)">👷 Manpower</button>
     <button class="tab-btn" onclick="switchTab('buildings',this)">🏗️ Buildings</button>
     <button class="tab-btn" onclick="switchTab('economy',this)">💰 Economy</button>
@@ -388,6 +388,40 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
 
   <!-- ===== FUEL CONVERTER ===== -->
   <div class="tab-content" id="tab-fuel">
+    <!-- Factory Fuel Consumption — promoted to top, most-used -->
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🏭</span><div class="card-title">Factory Fuel Consumption</div></div>
+      <div class="card-body">
+        <p class="tip">Each factory/industry consumes <span class="hl">100L of fuel</span> every 4 turns (1 cycle) when producing. Calculate by <span class="hl">cycles</span> or <span class="ora">turns</span>.</p>
+        <div class="sep"></div>
+        <!-- Mode toggle -->
+        <div class="toggle-switch-container">
+          <span class="toggle-label">
+            <span class="toggle-label-text">By Cycles</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="factory-mode-toggle" onchange="toggleFactoryMode()">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label-text">By Turns</span>
+          </span>
+        </div>
+        <div class="calc-row">
+          <div class="field"><label>Active Factories</label><input type="number" id="factory-count" value="1" min="1"></div>
+          <div class="field" id="factory-cycles-field">
+            <label>Cycles (4 turns each)</label>
+            <input type="number" id="factory-cycles" value="1" min="1">
+          </div>
+          <div class="field" id="factory-turns-field" style="display:none;">
+            <label>Number of Turns</label>
+            <input type="number" id="factory-turns" value="4" min="1">
+          </div>
+        </div>
+        <div class="btn-row"><button class="btn btn-orange" onclick="calcFactoryFuel()">▶ CALCULATE CONSUMPTION</button></div>
+        <div class="result-panel" id="factory-fuel-result" style="margin-top:14px;"><div class="empty-state">↑ Enter data and calculate</div></div>
+      </div>
+    </div>
+
+    <!-- Fuel Converter -->
     <div class="card">
       <div class="card-header"><span class="card-icon">⛽</span><div class="card-title">Fuel Converter</div></div>
       <div class="card-body">
@@ -405,20 +439,6 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
         <div class="btn-row"><button class="btn" onclick="calcFuel()">▶ CALCULATE</button></div>
         <div class="sep"></div>
         <div class="result-panel" id="fuel-result"><div class="empty-state">↑ Enter data and calculate</div></div>
-        <div class="sep"></div>
-        <div class="card" style="margin-top:0;">
-          <div class="card-header"><span class="card-icon">🏭</span><div class="card-title">Factory Fuel Consumption</div></div>
-          <div class="card-body">
-            <p class="tip">Each factory/industry consumes <span class="hl">100L of fuel</span> every 4 turns (when producing).</p>
-            <div class="sep"></div>
-            <div class="calc-row">
-              <div class="field"><label>Active Factories</label><input type="number" id="factory-count" value="1" min="1"></div>
-              <div class="field"><label>Cycles (4 turns each)</label><input type="number" id="factory-cycles" value="1" min="1"></div>
-            </div>
-            <div class="btn-row"><button class="btn btn-orange" onclick="calcFactoryFuel()">▶ CALCULATE CONSUMPTION</button></div>
-            <div class="result-panel" id="factory-fuel-result" style="margin-top:14px;"><div class="empty-state">↑ Enter data and calculate</div></div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1291,18 +1311,45 @@ function calcFuel(){
     ${rl('Efficiency',(ratio*100)+'%','cyan')}
     ${rl('Ratio','1 L '+nm+' → '+ratio+' L Fuel','')}`;
 }
+function toggleFactoryMode(){
+  const byTurns=document.getElementById('factory-mode-toggle').checked;
+  document.getElementById('factory-cycles-field').style.display=byTurns?'none':'';
+  document.getElementById('factory-turns-field').style.display=byTurns?'':'none';
+  document.getElementById('factory-fuel-result').innerHTML='<div class="empty-state">↑ Enter data and calculate</div>';
+}
+
 function calcFactoryFuel(){
   const count=parseInt(document.getElementById('factory-count').value)||0;
-  const cycles=parseInt(document.getElementById('factory-cycles').value)||0;
-  const total=count*cycles*100;
-  document.getElementById('factory-fuel-result').innerHTML=`
-    <div class="result-title">🏭 Total Factory Fuel Consumption</div>
-    ${rl('Active Factories',count,'cyan')}
-    ${rl('Cycles (4 turns each)',cycles,'cyan')}
-    ${rl('Per cycle / factory','100 L','')}
-    ${rl('Total Consumption',fmt(total)+' L','gold')}
-    ${rl('Equivalent in Oil',fmt(total/2)+' L','orange')}
-    ${rl('Equivalent in Gas',fmt(total)+' L','orange')}`;
+  const byTurns=document.getElementById('factory-mode-toggle').checked;
+
+  if(byTurns){
+    const turns=parseInt(document.getElementById('factory-turns').value)||0;
+    // 100L per 4 turns = 25L per turn
+    const perTurnPerFactory=25;
+    const total=count*turns*perTurnPerFactory;
+    const cyclesEq=(turns/4).toFixed(2);
+    document.getElementById('factory-fuel-result').innerHTML=`
+      <div class="result-title">🏭 Total Factory Fuel Consumption (By Turns)</div>
+      ${rl('Active Factories',count,'cyan')}
+      ${rl('Turns',turns,'cyan')}
+      ${rl('Equivalent Cycles',cyclesEq+' cycles','')}
+      ${rl('Per factory / turn','25 L','')}
+      ${rl('Total Consumption',fmt(total)+' L','gold')}
+      ${rl('Equivalent in Oil',fmt(total/2)+' L','orange')}
+      ${rl('Equivalent in Gas',fmt(total)+' L','orange')}`;
+  } else {
+    const cycles=parseInt(document.getElementById('factory-cycles').value)||0;
+    const total=count*cycles*100;
+    document.getElementById('factory-fuel-result').innerHTML=`
+      <div class="result-title">🏭 Total Factory Fuel Consumption (By Cycles)</div>
+      ${rl('Active Factories',count,'cyan')}
+      ${rl('Cycles (4 turns each)',cycles,'cyan')}
+      ${rl('Equivalent Turns',(cycles*4)+' turns','')}
+      ${rl('Per cycle / factory','100 L','')}
+      ${rl('Total Consumption',fmt(total)+' L','gold')}
+      ${rl('Equivalent in Oil',fmt(total/2)+' L','orange')}
+      ${rl('Equivalent in Gas',fmt(total)+' L','orange')}`;
+  }
 }
 
 // ============================================================
