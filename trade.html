@@ -161,16 +161,47 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 .status-accepted{color:var(--accent3);border:1px solid var(--accent3);}
 .status-denied{color:var(--red);border:1px solid var(--red);}
 
-/* ── HISTORY ── */
-.history-table{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11px;}
-.history-table th{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
-.history-table td{padding:10px 14px;border-bottom:1px solid rgba(26,48,69,.4);color:var(--text);vertical-align:top;}
-.history-table tr:hover td{background:rgba(0,212,255,.02);}
-.outcome-accepted{color:var(--accent3);font-weight:bold;}
-.outcome-denied{color:var(--red);}
-.outcome-cancelled{color:var(--text-dim);}
+/* ── HISTORY CARDS ── */
+.history-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.history-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:all .2s;overflow:hidden;}
+.history-card:hover{border-color:rgba(0,212,255,.4);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,212,255,.08);}
+.history-card.hc-accepted{border-left:3px solid var(--accent3);}
+.history-card.hc-denied{border-left:3px solid var(--red);opacity:.75;}
+.history-card.hc-cancelled{border-left:3px solid var(--text-dim);opacity:.65;}
+.hc-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);}
+.hc-outcome-badge{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;padding:3px 8px;border:1px solid;text-transform:uppercase;}
+.hc-out-accepted{border-color:var(--accent3);color:var(--accent3);}
+.hc-out-denied{border-color:var(--red);color:var(--red);}
+.hc-out-cancelled{border-color:var(--text-dim);color:var(--text-dim);}
+.hc-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.hc-body{padding:12px 14px;}
+.hc-parties{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.hc-party{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.hc-party-a{color:var(--accent);}
+.hc-party-b{color:var(--accent2);}
+.hc-arrow{font-size:12px;color:var(--text-dim);}
+.hc-items-preview{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;line-height:1.6;}
+.hc-price{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--gold);}
+.hc-price small{font-size:9px;color:var(--text-dim);font-weight:normal;letter-spacing:2px;}
+.hc-footer{padding:8px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.hc-type-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;border:1px solid;}
+.hc-rounds{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
 
-/* ── QUALITY SYSTEM ── */
+/* ── HISTORY DETAIL MODAL ── */
+.hd-modal{background:var(--surface);border:1px solid var(--accent);padding:26px;width:100%;max-width:640px;position:relative;margin:auto;}
+.hd-section{margin-bottom:16px;}
+.hd-section-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.hd-item-row{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 0;border-bottom:1px solid rgba(26,48,69,.3);}
+.hd-item-row:last-child{border-bottom:none;}
+.hd-thread-entry{padding:10px 12px;margin-bottom:8px;border-radius:1px;}
+.hd-thread-orig{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);}
+.hd-thread-counter{background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.2);}
+.hd-dt-side{padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);margin-bottom:8px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:300;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.empty-state{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);text-align:center;padding:60px 20px;letter-spacing:2px;}
 .quality-badge{display:inline-block;font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:2px 6px;border-radius:1px;margin-left:6px;text-transform:uppercase;font-weight:bold;border:1px solid;}
 .quality-factory{background:rgba(57,255,20,.15);border-color:#39ff14;color:#39ff14;}
 .quality-field{background:rgba(250,204,21,.15);border-color:#facc15;color:#facc15;}
@@ -390,6 +421,17 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
       <input type="number" min="1" value="1" id="dt-item-qty"
         style="font-family:'Share Tech Mono',monospace;font-size:12px;width:80px;background:var(--bg);border:1px solid var(--border);color:var(--gold);padding:5px 8px;outline:none;-moz-appearance:textfield;">
       <button class="btn btn-sm" onclick="closeDTItemPicker()">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="history-detail-modal">
+  <div class="hd-modal">
+    <button class="modal-close" onclick="closeModal('history-detail-modal')">×</button>
+    <div class="modal-title" id="hd-modal-title">📋 Deal Details</div>
+    <div id="hd-modal-content"></div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn btn-sm btn-orange" onclick="closeModal('history-detail-modal')">✕ CLOSE</button>
     </div>
   </div>
 </div>
@@ -1135,19 +1177,102 @@ function renderHistory(){
   if(tradeHistory.length===0){
     el.innerHTML=`<div class="empty-state">No transactions in history yet.</div>`;return;
   }
-  el.innerHTML=`<div style="overflow-x:auto;"><table class="history-table">
-    <thead><tr><th>Date</th><th>Creator</th><th>Type</th><th>Counterparty</th><th>Items</th><th>Final Price</th><th>Rounds</th><th>Outcome</th></tr></thead>
-    <tbody>${tradeHistory.map(h=>`<tr>
-      <td>${fmtDate(h.closedAt)}</td>
-      <td style="color:var(--accent);">${h.creatorCountry}</td>
-      <td><span style="color:${h.type==='SELL'?'var(--accent2)':'var(--accent3)'};">${h.type}</span></td>
-      <td style="color:var(--text-dim);">${h.counterpartyCountry||'—'}</td>
-      <td>${h.items.map(i=>{const qLabel=i.quality?` [${QUALITY_SYSTEM[i.quality].label}]`:'';return `${i.name}${qLabel} ×${fmt(i.qty)}`;}).join('<br>')}</td>
-      <td style="color:var(--gold);font-weight:bold;">$${fmt(h.finalPrice)}</td>
-      <td style="color:var(--purple);">${h.negotiationRounds}</td>
-      <td class="outcome-${h.outcome.toLowerCase()}">${h.outcome}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`;
+  el.innerHTML=`<div class="history-cards">${tradeHistory.map(h=>renderHistoryCard(h)).join('')}</div>`;
+}
+
+function renderHistoryCard(h){
+  const outCls = h.outcome==='ACCEPTED'?'hc-accepted':h.outcome==='DENIED'?'hc-denied':'hc-cancelled';
+  const outBadgeCls = h.outcome==='ACCEPTED'?'hc-out-accepted':h.outcome==='DENIED'?'hc-out-denied':'hc-out-cancelled';
+  const typeColor = h.type==='SELL'?'var(--accent2)':h.type==='BUY'?'var(--accent3)':'var(--accent)';
+  const typeLbl = h.directTrade?'DIRECT':h.type||'DIRECT';
+  const items = h.directTrade
+    ? [...(h.sideA?.items||[]),...(h.sideB?.items||[])]
+    : (h.items||[]);
+  const previewItems = items.slice(0,2);
+  const moreCount = items.length-2;
+  const itemsPreview = previewItems.map(i=>{
+    const qLabel=i.quality?` [${QUALITY_SYSTEM[i.quality]?.label||i.quality}]`:'';
+    return `${i.name}${qLabel} ×${fmt(i.qty)}`;
+  }).join(' · ')+(moreCount>0?` +${moreCount} more`:'');
+  return `<div class="history-card ${outCls}" onclick="openHistoryDetail('${h.id}')">
+    <div class="hc-header">
+      <span class="hc-outcome-badge ${outBadgeCls}">${h.outcome==='ACCEPTED'?'✓':h.outcome==='DENIED'?'✕':'—'} ${h.outcome}</span>
+      <span class="hc-date">${fmtDate(h.closedAt)}</span>
+    </div>
+    <div class="hc-body">
+      <div class="hc-parties">
+        <span class="hc-party hc-party-a">${h.creatorCountry||'?'}</span>
+        <span class="hc-arrow">⇄</span>
+        <span class="hc-party hc-party-b">${h.counterpartyCountry||'?'}</span>
+      </div>
+      <div class="hc-items-preview">${itemsPreview||'No items'}</div>
+      <div class="hc-price">$${fmt(h.finalPrice)} <small>USD</small></div>
+    </div>
+    <div class="hc-footer">
+      <span class="hc-type-badge" style="border-color:${typeColor};color:${typeColor};">${typeLbl}</span>
+      <span class="hc-rounds">${h.negotiationRounds} round${h.negotiationRounds!==1?'s':''} · click for details</span>
+    </div>
+  </div>`;
+}
+
+function openHistoryDetail(id){
+  const h=tradeHistory.find(x=>x.id===id); if(!h) return;
+  document.getElementById('hd-modal-title').textContent=`📋 Deal — ${h.creatorCountry} ⇄ ${h.counterpartyCountry}`;
+  let html='';
+  const outColor=h.outcome==='ACCEPTED'?'var(--accent3)':h.outcome==='DENIED'?'var(--red)':'var(--text-dim)';
+  html+=`<div class="hd-section">
+    <div class="hd-section-lbl">Summary</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:2;">
+      <div><span style="color:var(--text-dim);">Date: </span>${fmtDate(h.closedAt)}</div>
+      <div><span style="color:var(--text-dim);">Type: </span><span style="color:${h.type==='SELL'?'var(--accent2)':'var(--accent3)'};">${h.directTrade?'DIRECT TRADE':h.type}</span></div>
+      <div><span style="color:var(--text-dim);">Outcome: </span><span style="color:${outColor};font-weight:bold;">${h.outcome}</span></div>
+      <div><span style="color:var(--text-dim);">Rounds: </span><span style="color:var(--purple);">${h.negotiationRounds}</span></div>
+    </div>
+  </div>`;
+  if(h.directTrade && h.sideA && h.sideB){
+    html+=`<div class="hd-section">
+      <div class="hd-section-lbl">Side A — ${h.sideA.country}</div>
+      <div class="hd-dt-side">
+        ${h.sideA.items.map(i=>`<div class="hd-item-row"><span>${i.name} ×${fmt(i.qty)}</span><span style="color:var(--gold);">$${fmt((MARKET_VALUES[i.name]||0)*i.qty)}</span></div>`).join('')}
+        ${h.sideA.cash>0?`<div class="hd-item-row"><span style="color:var(--text-dim);">+ Cash</span><span style="color:var(--gold);">$${fmt(h.sideA.cash)}</span></div>`:''}
+        <div style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent);margin-top:8px;">Total: $${fmt(h.sideA.total)}</div>
+      </div>
+    </div>
+    <div class="hd-section">
+      <div class="hd-section-lbl">Side B — ${h.sideB.country}</div>
+      <div class="hd-dt-side" style="background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);">
+        ${h.sideB.items.map(i=>`<div class="hd-item-row"><span>${i.name} ×${fmt(i.qty)}</span><span style="color:var(--gold);">$${fmt((MARKET_VALUES[i.name]||0)*i.qty)}</span></div>`).join('')}
+        ${h.sideB.cash>0?`<div class="hd-item-row"><span style="color:var(--text-dim);">+ Cash</span><span style="color:var(--gold);">$${fmt(h.sideB.cash)}</span></div>`:''}
+        <div style="font-family:'Orbitron',monospace;font-size:13px;color:var(--accent2);margin-top:8px;">Total: $${fmt(h.sideB.total)}</div>
+      </div>
+    </div>`;
+  } else {
+    html+=`<div class="hd-section">
+      <div class="hd-section-lbl">Items Traded</div>
+      ${(h.items||[]).map(i=>{
+        const mv=MARKET_VALUES[i.name]||0;
+        const qLabel=i.quality?` <span style="font-size:9px;color:${QUALITY_SYSTEM[i.quality]?.color||'var(--text-dim)'};">[${QUALITY_SYSTEM[i.quality]?.label||i.quality}]</span>`:'';
+        return `<div class="hd-item-row"><span>${i.name}${qLabel}</span><span>×${fmt(i.qty)}</span><span style="color:var(--gold);">$${fmt(mv*i.qty)}</span></div>`;
+      }).join('')}
+      <div style="font-family:'Orbitron',monospace;font-size:16px;color:var(--gold);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">Final: $${fmt(h.finalPrice)}</div>
+    </div>`;
+    if(h.fullThread && h.fullThread.length>0){
+      html+=`<div class="hd-section">
+        <div class="hd-section-lbl">Negotiation Thread (${h.fullThread.length} entr${h.fullThread.length!==1?'ies':'y'})</div>
+        <div style="max-height:280px;overflow-y:auto;">
+          ${h.fullThread.map((entry,i)=>`<div class="hd-thread-entry ${i===0?'hd-thread-orig':'hd-thread-counter'}">
+            <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:5px;">${i===0?'📋 ORIGINAL':'↩ COUNTER'} — ${entry.from}</div>
+            <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--gold);">$${fmt(entry.price)}</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);margin-top:4px;">${entry.items.map(it=>`${it.name} ×${fmt(it.qty)}`).join(' · ')}</div>
+            ${entry.message?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);font-style:italic;margin-top:4px;">"${entry.message}"</div>`:''}
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:4px;">${fmtDate(entry.timestamp)}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+  document.getElementById('hd-modal-content').innerHTML=html;
+  document.getElementById('history-detail-modal').classList.add('open');
 }
 
 function exportHistory(){
