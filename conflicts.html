@@ -67,6 +67,9 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .no-selection-text{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;}
 
 .conflict-editor{padding:20px;display:flex;flex-direction:column;gap:14px;}
+.split-view-wrap{overflow-x:auto;border:1px solid var(--border);}
+.split-view-wrap::-webkit-scrollbar{height:5px;}
+.split-view-wrap::-webkit-scrollbar-thumb{background:var(--border);}
 
 .ce-top{background:var(--surface);border:1px solid var(--border);padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
 .ce-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -111,14 +114,14 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .winner-badge{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);background:rgba(255,215,0,.08);white-space:nowrap;}
 .winner-badge.wbg-win{border-color:var(--green);color:var(--green);background:rgba(57,255,20,.08);}
 
-/* ── SPLIT VIEW (vertical stack) ── */
-.split-view{display:flex;flex-direction:column;overflow-x:hidden;}
+/* ── SPLIT VIEW (horizontal row) ── */
+.split-view{display:flex;flex-direction:row;align-items:flex-start;gap:0;}
 
-.vs-divider{display:flex;flex-direction:row;align-items:center;justify-content:center;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;flex-shrink:0;height:36px;width:100%;}
-.vs-divider::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(to right,transparent,var(--border) 20%,var(--border) 80%,transparent);}
-.vs-label-text{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:6px;color:var(--text-dim);writing-mode:horizontal-tb;z-index:1;}
+.vs-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface);border-left:1px solid var(--border);border-right:1px solid var(--border);position:relative;flex-shrink:0;width:36px;align-self:stretch;min-height:80px;}
+.vs-divider::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);}
+.vs-label-text{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:6px;color:var(--text-dim);writing-mode:vertical-rl;text-orientation:mixed;z-index:1;}
 
-.side{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);}
+.side{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);min-width:300px;flex:0 0 300px;}
 .side-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .side-name-input{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;background:transparent;border:none;border-bottom:1px solid transparent;outline:none;flex:1;padding:2px 0;text-transform:uppercase;}
 .side-name-input:focus{border-bottom:1px solid currentColor;}
@@ -138,9 +141,14 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .tv-troops{color:var(--cyan);} .tv-injured{color:var(--yellow);} .tv-deaths{color:var(--red);}
 .tv-tanks{color:#a78bfa;} .tv-vehicles{color:#6ee7b7;} .tv-aircrafts{color:#93c5fd;} .tv-warships{color:#67e8f9;}
 
-.countries-area{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:200px;}
+.countries-area{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:200px;max-height:520px;}
 .countries-area::-webkit-scrollbar{width:3px;}
 .countries-area::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ── COUNTRY CARD COLLAPSE ── */
+.ccard-toggle-btn{background:transparent;border:1px solid var(--border);color:var(--text-dim);font-size:9px;cursor:pointer;padding:2px 6px;transition:all .2s;flex-shrink:0;font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+.ccard-toggle-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.ccard-body{transition:none;}
 .empty-side{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:28px 0;}
 
 /* ── OBJECTIVES AREA IN SIDE ── */
@@ -401,7 +409,7 @@ function setGameDate(val){
 const STORAGE_KEY = 'tc_conflicts';
 let conflicts = [], selectedId = null, deletePending = {}, sidebarCollapsed = false;
 let _cmConflictId = null, _cmSideId = null, _cmRole = 'main';
-let collapsedSides = {};
+let collapsedSides = {}, collapsedCountries = {};
 
 // =====================================================
 // UTILS
@@ -621,8 +629,10 @@ function renderEditor(){
     </div>
     <div id="death-comparison-${c.id}">${renderDeathComparisonHTML(c)}</div>
     <div id="winner-panel-${c.id}">${renderWinnerPanelHTML(c)}</div>
-    <div class="split-view">
-      ${sidesHtml}
+    <div class="split-view-wrap">
+      <div class="split-view">
+        ${sidesHtml}
+      </div>
     </div>
     <div class="add-side-bar">
       <button class="btn btn-sm btn-green" onclick="addSide('${c.id}')">+ ADD SIDE</button>
@@ -796,6 +806,7 @@ function renderCountryCard(cid,sideId,co){
   const iS=[-1000,-100,-10,-1,1,10,100,1000];
   const hS=[-100,-10,-1,1,10,100];
   const wS=[-50,-10,-1,1,10,50];
+  const isCollapsed = !!collapsedCountries[co.id];
   const hwBlock=(field,icon,label,steps,cls)=>`
     <div class="hw-group">
       <div class="hw-group-label">${icon} ${label}</div>
@@ -816,22 +827,25 @@ function renderCountryCard(cid,sideId,co){
         <span class="role-badge ${co.isMain?'rb-main':'rb-ally'}">${co.isMain?'★ MAIN':'◇ ALLY'}</span>
       </div>
       <div class="ccard-actions">
+        <button class="ccard-toggle-btn" id="ccard-toggle-${co.id}" onclick="toggleCountryCard('${co.id}')">${isCollapsed?'▶ EXPAND':'▼ HIDE'}</button>
         <button class="icon-btn" title="Toggle Main/Ally" onclick="toggleRole('${cid}','${sideId}','${co.id}')">⇄</button>
         <button class="icon-btn del" title="Remove" onclick="removeCountry('${cid}','${sideId}','${co.id}')">✕</button>
       </div>
     </div>
-    <div class="ccard-section">
-      <div class="ccard-section-lbl">── Casualties ──</div>
-      ${statRow(cid,sideId,co,'troops',  '⚔️','Troops',  tS,'si-troops')}
-      ${statRow(cid,sideId,co,'injured', '🩹','Injured', iS,'si-injured')}
-      ${statRow(cid,sideId,co,'deaths',  '💀','Deaths',  iS,'si-deaths')}
-    </div>
-    <div class="ccard-section" style="border-top:1px solid rgba(26,48,69,.6)">
-      <div class="ccard-section-lbl">── Hardware ──</div>
-      ${hwBlock('tanks',    '🛡️','Tanks',    hS,'si-tanks')}
-      ${hwBlock('vehicles', '🚗','Vehicles', hS,'si-vehicles')}
-      ${hwBlock('aircrafts','✈️','Aircrafts',hS,'si-aircrafts')}
-      ${hwBlock('warships', '⚓','Warships', wS,'si-warships')}
+    <div class="ccard-body" id="ccard-body-${co.id}" style="${isCollapsed?'display:none;':''}">
+      <div class="ccard-section">
+        <div class="ccard-section-lbl">-- Casualties --</div>
+        ${statRow(cid,sideId,co,'troops',  '⚔️','Troops',  tS,'si-troops')}
+        ${statRow(cid,sideId,co,'injured', '🩹','Injured', iS,'si-injured')}
+        ${statRow(cid,sideId,co,'deaths',  '💀','Deaths',  iS,'si-deaths')}
+      </div>
+      <div class="ccard-section" style="border-top:1px solid rgba(26,48,69,.6)">
+        <div class="ccard-section-lbl">-- Hardware --</div>
+        ${hwBlock('tanks',    '🛡️','Tanks',    hS,'si-tanks')}
+        ${hwBlock('vehicles', '🚗','Vehicles', hS,'si-vehicles')}
+        ${hwBlock('aircrafts','✈️','Aircrafts',hS,'si-aircrafts')}
+        ${hwBlock('warships', '⚓','Warships', wS,'si-warships')}
+      </div>
     </div>
   </div>`;
 }
@@ -916,6 +930,14 @@ function toggleSideCollapse(sideId){
   if(btn){
     btn.textContent=collapsedSides[sideId]?'▶ Show Members':'▼ Hide Members';
   }
+}
+
+function toggleCountryCard(coId){
+  collapsedCountries[coId]=!collapsedCountries[coId];
+  const body=document.getElementById(`ccard-body-${coId}`);
+  if(body) body.style.display=collapsedCountries[coId]?'none':'';
+  const btn=document.getElementById(`ccard-toggle-${coId}`);
+  if(btn) btn.textContent=collapsedCountries[coId]?'▶ EXPAND':'▼ HIDE';
 }
 
 // =====================================================
