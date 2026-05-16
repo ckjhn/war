@@ -5,10 +5,11 @@
     "status": "ended",
     "description": "",
     "startDate": "1989-01-01",
-    "createdAt": 1777291324712,
     "endDate": "1989-10-31",
+    "createdAt": 1777291324712,
     "sides": [
       {
+        "id": "mp7vco10mlhdmyka22a",
         "name": "allies",
         "countries": [
           {
@@ -20,12 +21,12 @@
             "injured": 2,
             "deaths": 19,
             "tanks": 0,
-            "vehicles": 0,
-            "aircrafts": 0,
-            "warships": 0,
             "tanks_lost": 0,
+            "vehicles": 0,
             "vehicles_lost": 0,
+            "aircrafts": 0,
             "aircrafts_lost": 0,
+            "warships": 0,
             "warships_lost": 0
           },
           {
@@ -37,12 +38,12 @@
             "injured": 0,
             "deaths": 5,
             "tanks": 0,
-            "vehicles": 0,
-            "aircrafts": 0,
-            "warships": 0,
             "tanks_lost": 0,
+            "vehicles": 0,
             "vehicles_lost": 0,
+            "aircrafts": 0,
             "aircrafts_lost": 0,
+            "warships": 0,
             "warships_lost": 0
           },
           {
@@ -54,22 +55,22 @@
             "injured": 0,
             "deaths": 5,
             "tanks": 0,
-            "vehicles": 0,
-            "aircrafts": 1,
-            "warships": 0,
             "tanks_lost": 0,
+            "vehicles": 0,
             "vehicles_lost": 0,
+            "aircrafts": 1,
             "aircrafts_lost": 0,
+            "warships": 0,
             "warships_lost": 0
           }
         ],
-        "id": "mp7vco10mlhdmyka22a",
         "objectives": [],
         "kills": {
           "mp7vco105lb4bkf5hl": 216
         }
       },
       {
+        "id": "mp7vco105lb4bkf5hl",
         "name": "northen social army organization",
         "countries": [
           {
@@ -81,16 +82,15 @@
             "injured": 0,
             "deaths": 216,
             "tanks": 0,
-            "vehicles": 0,
-            "aircrafts": 0,
-            "warships": 0,
             "tanks_lost": 0,
+            "vehicles": 0,
             "vehicles_lost": 0,
+            "aircrafts": 0,
             "aircrafts_lost": 0,
+            "warships": 0,
             "warships_lost": 0
           }
         ],
-        "id": "mp7vco105lb4bkf5hl",
         "objectives": [],
         "kills": {
           "mp7vco10mlhdmyka22a": 29
