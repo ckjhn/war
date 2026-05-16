@@ -891,7 +891,7 @@ function renderDonatedInventory(a){
       if(v>0) rows.push(`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);padding:2px 8px;margin:2px;display:inline-block;"><span style="color:var(--text-dim);">${f.l}:</span> <span style="color:var(--gold);">${v.toLocaleString()}</span></span>`);
     });
   });
-  if(!rows.length) return '<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">No donated inventory yet. Use 📦 Donate.</span>';
+  if(!rows.length) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">No donated inventory yet. Use 📦 Donate.</span>`;
   return `<div style="display:flex;flex-wrap:wrap;gap:2px;">${rows.join('')}</div>`;
 }
 
@@ -989,7 +989,7 @@ function renderDonateInputs(){
       const invCat=OWN_INVENTORY_CATS.find(c=>c.key===cat);
       if(invCat) fields=invCat.fields;
     }
-    wrap.innerHTML=fields.length?`<div class="donate-resource-grid">${fields.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`:'<div style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;">No fields for this category.</div>';
+    wrap.innerHTML=fields.length?`<div class="donate-resource-grid">${fields.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`:`<div style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;">No fields for this category.</div>`;
   }
 }
 

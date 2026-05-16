@@ -447,6 +447,19 @@ const TRADEABLE = {
 };
 const ALL_ITEMS = Object.entries(TRADEABLE).flatMap(([cat,items])=>items.map(i=>({cat,name:i})));
 
+// Pack sizes for ammo (how many actual units per 1 pack purchased)
+const AMMO_PACK_SIZES = {
+  '.50 Ammo':            {size:100, unit:'bullets'},
+  '22mm Autocannon Ammo':{size:25,  unit:'shells'},
+  'Pistol Ammo':         {size:100, unit:'bullets'},
+  'SMG Ammo':            {size:100, unit:'bullets'},
+  'Rifle Ammo':          {size:50,  unit:'bullets'},
+  'Sniper Ammo':         {size:50,  unit:'bullets'},
+  'Heavy Ammo':          {size:50,  unit:'bullets'},
+  'Anti-Tank Missile Ammo':{size:1, unit:'missile'},
+  'Mortar Ammo':         {size:4,   unit:'rounds'},
+};
+
 // =====================================================
 // QUALITY SYSTEM
 // =====================================================
@@ -1228,8 +1241,10 @@ function renderDTItems(side){
   el.innerHTML=items.map((it,idx)=>{
     const mv=MARKET_VALUES[it.name]||0;
     const total=mv*it.qty;
+    const pack=AMMO_PACK_SIZES[it.name];
+    const packNote=pack?` <span style="color:var(--text-dim);font-size:9px;">(${fmt(it.qty*pack.size)} ${pack.unit})</span>`:'';
     return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(26,48,69,.4);font-family:'Share Tech Mono',monospace;font-size:10px;">
-      <span style="flex:1;color:var(--text);">${it.name}</span>
+      <span style="flex:1;color:var(--text);">${it.name}${packNote}</span>
       <span style="color:var(--gold);">×${fmt(it.qty)}</span>
       <span style="color:var(--accent3);">$${fmt(total)}</span>
       <button onclick="removeDTItem('${side}',${idx})" style="background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:0 4px;">&times;</button>
@@ -1295,12 +1310,14 @@ function renderDTPickerItems(){
   const search=(document.getElementById('dt-item-search').value||'').toLowerCase();
   let items=dtPickerCategory==='ALL'?ALL_ITEMS:TRADEABLE[dtPickerCategory].map(n=>({cat:dtPickerCategory,name:n}));
   if(search) items=items.filter(i=>i.name.toLowerCase().includes(search));
-  document.getElementById('dt-item-list').innerHTML=items.map(i=>`
-    <div class="item-picker-item" onclick="selectDTItem('${i.name.replace(/'/g,"\\'")}')">
+  document.getElementById('dt-item-list').innerHTML=items.map(i=>{
+    const pack=AMMO_PACK_SIZES[i.name];
+    const packNote=pack?` — 1 pack = ${pack.size} ${pack.unit}`:'';
+    return `<div class="item-picker-item" onclick="selectDTItem('${i.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
       <div class="item-picker-item-name">${i.name}</div>
-      <div class="item-picker-item-value">${MARKET_VALUES[i.name]?'Market: $'+fmt(MARKET_VALUES[i.name]):''}</div>
-    </div>
-  `).join('');
+      <div class="item-picker-item-value">${MARKET_VALUES[i.name]?'Market: $'+fmt(MARKET_VALUES[i.name]):''}${packNote}</div>
+    </div>`;
+  }).join('');
 }
 
 function selectDTItem(name){
