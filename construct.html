@@ -762,12 +762,14 @@ const BUILDING_COSTS = {
   mine:    {name:'Mine',            materials:{iron:4000,coal:2000,refined_iron:500},           manpower:250},
   factory: {name:'Factory/Industry',materials:{refined_iron:5000,diamond:170,gold:300,silicon:130}, manpower:200},
   business:{name:'Business',        materials:{refined_iron:2000,electronics:1250,chips:500},   manpower:300},
-  hospital:{name:'Hospital',        materials:{refined_iron:2000,chips:500,electronics:700},    manpower:0},
+  hospital:{name:'Hospital',        materials:{refined_iron:2000,chips:500,electronics:700},    manpower:350},
 };
 const MP_STRUCTURES = [
-  {name:'House',mp:50},{name:'Mine',mp:100},{name:'Town Hall',mp:150},
-  {name:'Factory/Industry',mp:200},{name:'Business',mp:300},
-  {name:'Barracks',mp:180},{name:'Research Lab',mp:400},{name:'Fort',mp:500},
+  {name:'Mine',mp:100},
+  {name:'Factory/Industry',mp:200},
+  {name:'Business',mp:300},
+  {name:'Hospital',mp:350},
+  {name:'Resources (per 100 brute)',mp:20},
 ];
 
 // ============================================================

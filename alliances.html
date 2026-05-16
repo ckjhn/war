@@ -9,7 +9,7 @@
 :root{
   --bg:#080c10;--surface:#0d1620;--surface2:#111d2a;--border:#1a3045;
   --accent:#00d4ff;--accent2:#ff6b35;--accent3:#39ff14;
-  --gold:#ffd700;--purple:#c084fc;--red:#ff3a3a;
+  --gold:#ffd700;--purple:#c084fc;--red:#ff3a3a;--yellow:#facc15;
   --text:#c8dde8;--text-dim:#4a6a7a;
   --glow:0 0 16px rgba(0,212,255,.3);
   --fascist-color:#ff3a3a;--communist-color:#ff8c42;--capitalist-color:#39ff14;
@@ -58,10 +58,6 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 
 .sidebar-footer{flex-shrink:0;padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
 
-/* Collapsed sidebar */
-.app.sidebar-collapsed .sidebar-header-content,
-.app.sidebar-collapsed .alliance-list,
-.app.sidebar-collapsed .sidebar-footer{opacity:0;pointer-events:none;}
 .app.sidebar-collapsed .sidebar-header-content,
 .app.sidebar-collapsed .alliance-list,
 .app.sidebar-collapsed .sidebar-footer{display:none;}
@@ -82,12 +78,12 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .name-input:focus{border-bottom-color:var(--accent);}
 .save-badge{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);letter-spacing:2px;display:none;}
 .save-badge.show{display:block;}
-
 .style-badge{font-family:'Share Tech Mono',monospace;font-size:9px;text-transform:uppercase;padding:6px 12px;border:1px solid;letter-spacing:2px;cursor:pointer;transition:all .2s;}
 .style-badge.fascist{border-color:var(--fascist-color);color:var(--fascist-color);}
 .style-badge.communist{border-color:var(--communist-color);color:var(--communist-color);}
 .style-badge.capitalist{border-color:var(--capitalist-color);color:var(--capitalist-color);}
 .style-badge:hover{opacity:.7;}
+.ae-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;}
 
 /* ── SECTIONS ── */
 .section{background:var(--surface);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
@@ -99,7 +95,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .section-body{padding:0 18px 16px;}
 .section.collapsed .section-body{display:none;}
 
-/* ── MEMBER COUNTRY ROW ── */
+/* ── MEMBER ROW ── */
 .member-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(26,48,69,.5);}
 .member-row:last-child{border-bottom:none;}
 .member-flag{font-size:18px;flex-shrink:0;}
@@ -111,8 +107,6 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .member-effort-input:focus{border-color:var(--accent);}
 .member-remove{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:14px;cursor:pointer;padding:2px 6px;transition:all .2s;flex-shrink:0;}
 .member-remove:hover{border-color:var(--red);color:var(--red);}
-
-/* Effort rank pill */
 .effort-rank{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid;letter-spacing:1px;}
 
 /* ── FIELD ROWS ── */
@@ -127,6 +121,58 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .db-subsection:last-child{border-bottom:none;margin-bottom:0;}
 .db-subsection-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin:12px 0 8px;}
 
+/* ── ALLIANCE ASSETS ── */
+.assets-header-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(0,212,255,.04);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.assets-stat{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.assets-stat strong{color:var(--gold);}
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:12px 0;}
+.asset-box{background:var(--surface2);border:1px solid var(--border);padding:12px 14px;}
+.asset-box-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:8px;}
+.asset-field{display:flex;justify-content:space-between;padding:3px 0;font-family:'Share Tech Mono',monospace;font-size:10px;}
+.asset-field-lbl{color:var(--text-dim);}
+.asset-field-val{color:var(--gold);}
+.asset-field-val.az{color:var(--text-dim);}
+.mine-input-row{display:flex;align-items:center;gap:6px;padding:4px 0;}
+.mine-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);flex:1;}
+.mine-inp{font-family:'Share Tech Mono',monospace;font-size:11px;width:55px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:3px 6px;text-align:center;outline:none;-moz-appearance:textfield;}
+.mine-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.mine-inp:focus{border-color:var(--accent);}
+.pass-turn-bar{display:flex;align-items:center;gap:12px;padding:12px 18px;background:rgba(57,255,20,.04);border-top:1px solid rgba(57,255,20,.2);flex-wrap:wrap;}
+.turn-counter{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--accent3);}
+.turn-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:2px;}
+
+/* ── MILITARY POOL ── */
+.mil-total-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(26,48,69,.5);}
+.mil-total-lbl{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.mil-total-val{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--accent);}
+.mil-breakdown-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin:12px 0 8px;padding-top:8px;border-top:1px solid rgba(26,48,69,.4);}
+.mil-country-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,48,69,.3);}
+.mil-country-row:last-child{border-bottom:none;}
+.mil-cname{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);flex:1;}
+.mil-bar-wrap{width:120px;height:6px;background:var(--bg);border:1px solid var(--border);flex-shrink:0;}
+.mil-bar{height:100%;background:var(--accent);}
+.mil-val{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gold);width:80px;text-align:right;flex-shrink:0;}
+
+/* ── DONATIONS BACKLOG ── */
+.donation-entry{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);padding:10px 14px;margin-bottom:8px;}
+.donation-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.donation-from{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;}
+.donation-cat{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--purple);color:var(--purple);letter-spacing:1px;}
+.donation-ts{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.donation-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.donation-item-tag{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 8px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);color:var(--gold);}
+.donation-remove{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:2px 6px;transition:all .15s;}
+.donation-remove:hover{border-color:var(--red);color:var(--red);}
+.no-donations{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:20px;}
+
+/* ── TAX CONFIG ── */
+.tax-config-bar{display:flex;align-items:center;gap:12px;padding:12px 18px;background:rgba(255,215,0,.04);border-bottom:1px solid rgba(255,215,0,.2);flex-wrap:wrap;}
+.tax-info{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.tax-info strong{color:var(--gold);}
+.tax-inp{font-family:'Share Tech Mono',monospace;font-size:12px;width:110px;background:var(--bg);border:1px solid var(--border);color:var(--gold);padding:5px 10px;outline:none;text-align:center;-moz-appearance:textfield;}
+.tax-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.tax-inp:focus{border-color:var(--gold);}
+
 /* ── BUTTONS ── */
 .btn{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:9px 16px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
 .btn:hover{background:var(--accent);color:var(--bg);}
@@ -136,20 +182,20 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .btn-green:hover{background:var(--accent3);color:var(--bg);}
 .btn-red{border-color:var(--red);color:var(--red);}
 .btn-red:hover{background:var(--red);color:var(--bg);}
+.btn-yellow{border-color:var(--yellow);color:var(--yellow);}
+.btn-yellow:hover{background:var(--yellow);color:var(--bg);}
 .btn-full{width:100%;}
 .btn-sm{padding:6px 12px;font-size:8px;}
 .btn-purple{border-color:var(--purple);color:var(--purple);}
 .btn-purple:hover{background:var(--purple);color:var(--bg);}
-
-/* Delta buttons */
 .delta-btn{font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 7px;background:transparent;border:1px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .delta-btn:hover{border-color:var(--accent);color:var(--accent);}
 .delta-btn.neg:hover{border-color:var(--accent2);color:var(--accent2);}
 
 /* ── MODAL ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:30px 20px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--surface);border:1px solid var(--accent);padding:28px;min-width:380px;max-width:560px;width:90%;max-height:85vh;overflow-y:auto;}
+.modal{background:var(--surface);border:1px solid var(--accent);padding:28px;min-width:380px;max-width:620px;width:90%;margin:auto;}
 .modal::-webkit-scrollbar{width:4px;}
 .modal::-webkit-scrollbar-thumb{background:var(--border);}
 .modal-title{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
@@ -158,7 +204,21 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .modal-input,.modal-select,.modal-textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px 14px;outline:none;}
 .modal-textarea{min-height:80px;resize:vertical;}
 .modal-input:focus,.modal-select:focus,.modal-textarea:focus{border-color:var(--accent);}
-.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.modal-select option{background:var(--surface);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-sep{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:14px 0;}
+
+/* Donate modal resource grid */
+.donate-resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;padding:8px 0;}
+.donate-res-row{display:flex;align-items:center;gap:6px;}
+.donate-res-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);flex:1;}
+.donate-res-inp{font-family:'Share Tech Mono',monospace;font-size:12px;width:80px;background:var(--bg);border:1px solid var(--border);color:var(--gold);padding:4px 8px;text-align:right;outline:none;-moz-appearance:textfield;}
+.donate-res-inp::-webkit-inner-spin-button{-webkit-appearance:none;}
+.donate-res-inp:focus{border-color:var(--accent);}
+.donate-cat-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;}
+.donate-cat-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;letter-spacing:1px;}
+.donate-cat-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.08);}
 
 /* Style selector */
 .style-options{display:flex;gap:8px;flex-wrap:wrap;}
@@ -168,34 +228,24 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .style-opt.selected-communist{border-color:var(--communist-color);color:var(--communist-color);background:rgba(255,140,66,.1);}
 .style-opt.selected-capitalist{border-color:var(--capitalist-color);color:var(--capitalist-color);background:rgba(57,255,20,.1);}
 
-/* Country selector in add modal */
+/* Country tag */
 .country-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(0,212,255,.08);border:1px solid var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin:3px;cursor:pointer;transition:all .15s;}
 .country-tag:hover{background:rgba(0,212,255,.15);}
 .country-tag.selected{background:rgba(0,212,255,.2);border-color:var(--accent3);color:var(--accent3);}
-.country-tag-remove{color:var(--red);font-size:12px;margin-left:2px;}
+
+/* Style desc */
+.style-desc{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;padding:12px;background:var(--bg);border:1px solid var(--border);margin-top:10px;}
+.style-desc strong{color:var(--text);}
+.obs-textarea{width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px;outline:none;resize:vertical;}
+.obs-textarea:focus{border-color:var(--accent);}
+.db-info-bar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(0,212,255,.04);border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.db-info-item{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
+.db-info-item span{color:var(--accent);}
+.contrib-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--gold);color:var(--gold);letter-spacing:1px;}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
-
-/* ── ALLIANCE STYLE DESCRIPTIONS ── */
-.style-desc{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;padding:12px;background:var(--bg);border:1px solid var(--border);margin-top:10px;}
-.style-desc strong{color:var(--text);}
-
-/* Textarea for observations */
-.obs-textarea{width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px;outline:none;resize:vertical;}
-.obs-textarea:focus{border-color:var(--accent);}
-
-/* Contribution badge */
-.contrib-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--gold);color:var(--gold);letter-spacing:1px;}
-
-/* Database info bar */
-.db-info-bar{display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(0,212,255,.04);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.db-info-item{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
-.db-info-item span{color:var(--accent);}
-
-/* Top action buttons */
-.ae-actions{display:flex;gap:8px;margin-left:auto;}
 </style>
 </head>
 <body>
@@ -223,7 +273,6 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
       <button class="btn btn-green btn-full" onclick="openAddModal()">+ NEW ALLIANCE</button>
     </div>
   </div>
-
   <div class="editor" id="editor">
     <div class="no-selection">
       <div class="no-selection-icon">🤝</div>
@@ -300,6 +349,46 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- ═══════════ DONATE RESOURCES MODAL ═══════════ -->
+<div class="modal-overlay" id="donate-modal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-title">📦 Donate to Alliance</div>
+    <div class="modal-field">
+      <div class="modal-label">Donating Country</div>
+      <select class="modal-select" id="donate-country"></select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Category</div>
+      <div class="donate-cat-tabs" id="donate-cat-tabs"></div>
+    </div>
+    <div class="modal-field">
+      <div id="donate-inputs"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmDonate()">✓ DONATE</button>
+      <button class="btn btn-orange" onclick="closeModal('donate-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAX CONFIG MODAL ═══════════ -->
+<div class="modal-overlay" id="tax-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">⚙ Alliance Tax Configuration</div>
+    <div class="modal-field">
+      <div class="modal-label">Fixed Tax per Member per Turn ($)</div>
+      <input class="modal-input" id="tax-fixed" type="number" min="0" value="0" placeholder="0">
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.7;padding:10px;background:var(--bg);border:1px solid var(--border);">
+      This amount is automatically collected from each member nation every time <strong style="color:var(--text);">Pass Turn</strong> is pressed. It is recorded in the Donations Backlog as a "Tax Collection".
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-yellow" onclick="confirmTaxConfig()">✓ SAVE TAX</button>
+      <button class="btn btn-orange" onclick="closeModal('tax-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -308,219 +397,180 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 // =====================================================
 const STYLE_INFO = {
   fascist: {
-    label: '⚔ Fascist',
-    color: 'var(--fascist-color)',
-    desc: '<strong>Fascist Alliance:</strong> All member nations pool funds primarily for military expansion and conquest. Monthly contributions are redirected into a shared war chest for arms procurement, troop augmentation, and offensive operations. Political power is centralized under the dominant nation.',
-    objective: 'Military Expansion & Conquest'
+    label:'⚔ Fascist', color:'var(--fascist-color)', objective:'Military Expansion & Conquest',
+    desc:'<strong>Fascist Alliance:</strong> Member nations donate resources, military and funds to a shared war entity. The alliance operates as an independent power. Military contributions are pooled but tracked per country.'
   },
   communist: {
-    label: '☭ Communist',
-    color: 'var(--communist-color)',
-    desc: '<strong>Communist Alliance:</strong> Resources and assets are collectively owned by all member nations, echoing the USSR model. Money, industry and brute resources are shared across the bloc. Each country surrenders sovereignty over key economic outputs in exchange for collective security and growth.',
-    objective: 'Collective Ownership & Unity'
+    label:'☭ Communist', color:'var(--communist-color)', objective:'Collective Ownership & Unity',
+    desc:'<strong>Communist Alliance:</strong> All member nation resources are fully collectivized. Money, industry, military and every resource are shared across the bloc. The database reflects the total sum of all member nations\' assets.'
   },
   capitalist: {
-    label: '🌐 Capitalist / Democratic',
-    color: 'var(--capitalist-color)',
-    desc: '<strong>Capitalist / Democratic Alliance:</strong> Member nations contribute financially to maintain a peacekeeping fund and shared diplomatic infrastructure. Each country retains sovereignty. Contributions go toward collective security, trade protection and international stability agreements.',
-    objective: 'World Peace & Economic Stability'
+    label:'🌐 Capitalist / Democratic', color:'var(--capitalist-color)', objective:'World Peace & Economic Stability',
+    desc:'<strong>Capitalist / Democratic Alliance:</strong> Member nations donate resources and funds voluntarily. The alliance operates its own treasury, owns mines, and employs civilians. Military contributions are tracked per contributing nation.'
   }
 };
 
-// Aggregatable schema keys from database.html
+const MINE_RESOURCES = {
+  'plains':    {iron:380,coal:190,gold:60,diamond:8,gravel:140,latex:100,silicon:48,oil:100,gas:160},
+  'forest':    {iron:500,coal:270,gold:72,diamond:16,gravel:120,latex:140,silicon:52,oil:112,gas:180},
+  'taiga':     {iron:540,coal:330,gold:68,diamond:14,gravel:128,latex:48,silicon:48,oil:104,gas:168},
+  'jungle':    {iron:390,coal:205,gold:72,diamond:14,gravel:100,latex:200,silicon:52,oil:140,gas:220},
+  'swamp':     {iron:305,coal:165,gold:48,diamond:8,gravel:112,latex:180,silicon:40,oil:200,gas:280},
+  'desert':    {iron:575,coal:265,gold:104,diamond:16,gravel:160,latex:0,silicon:140,oil:180,gas:260,uranium:4},
+  'badlands':  {iron:695,coal:350,gold:128,diamond:18,gravel:180,latex:0,silicon:120,oil:168,gas:240,uranium:7},
+  'mountains': {iron:900,coal:490,gold:140,diamond:40,gravel:200,latex:0,silicon:88,oil:72,gas:100,uranium:5},
+  'ocean':     {iron:0,coal:0,gold:32,diamond:0,gravel:60,latex:0,silicon:80,oil:280,gas:400},
+  'caves':     {iron:820,coal:450,gold:112,diamond:56,gravel:220,latex:0,silicon:72,oil:48,gas:72,uranium:12},
+  'rare':      {iron:400,coal:200,gold:120,diamond:48,gravel:100,latex:40,silicon:72,oil:88,gas:128,uranium:18},
+  'frozen':    {iron:530,coal:285,gold:72,diamond:12,gravel:140,latex:0,silicon:64,oil:120,gas:180,uranium:3},
+};
+const MINE_TYPES = ['plains','forest','taiga','jungle','swamp','desert','badlands','mountains','ocean','caves','rare','frozen'];
+const MINE_ICONS = {plains:'🌾',forest:'🌲',taiga:'🎄',jungle:'🌴',swamp:'🌿',desert:'🏜️',badlands:'🌋',mountains:'⛰️',ocean:'🌊',caves:'🕳️',rare:'✨',frozen:'❄️'};
+
+const BRUTE_FIELDS  = [{k:'iron',l:'Iron'},{k:'coal',l:'Coal'},{k:'gold',l:'Gold'},{k:'diamond',l:'Diamond'},{k:'gravel',l:'Gravel'},{k:'latex',l:'Latex'},{k:'silicon',l:'Silicon'},{k:'oil',l:'Oil (L)'},{k:'gas',l:'Gas (L)'},{k:'uranium',l:'Uranium'}];
+const REFINED_FIELDS= [{k:'refined_iron',l:'Refined Iron'},{k:'electronics',l:'Electronics'},{k:'chips',l:'Chips'},{k:'gunpowder',l:'Gunpowder'},{k:'tires',l:'Tires'},{k:'fuel',l:'Fuel (L)'},{k:'refined_uranium',l:'Refined Uranium'}];
+const MIL_FIELDS    = [{k:'army',l:'Army'},{k:'special_forces',l:'Special Forces'},{k:'generals',l:'Generals'},{k:'commanders',l:'Commanders'},{k:'majors',l:'Majors'}];
+
+// Communist aggregation schema
 const AGG_SCHEMA = [
-  { key:'population', label:'👥 Population', fields:[
-    {k:'civilians',l:'Civilians'},{k:'workers',l:'Workers'},
-    {k:'military',l:'Military'},{k:'members',l:'Members'},
-  ]},
-  { key:'economy', label:'💰 Economy', fields:[
-    {k:'money',l:'Money ($)'},
-  ]},
-  { key:'military', label:'🎖️ Military', fields:[
-    {k:'army',l:'Army'},{k:'special_forces',l:'Special Forces'},
-    {k:'generals',l:'Generals'},{k:'commanders',l:'Commanders'},{k:'majors',l:'Majors'},
-  ]},
-  { key:'brute', label:'🪨 Brute Resources', fields:[
-    {k:'iron',l:'Iron'},{k:'coal',l:'Coal'},{k:'gold',l:'Gold'},
-    {k:'diamond',l:'Diamond'},{k:'gravel',l:'Gravel'},{k:'latex',l:'Latex'},
-    {k:'silicon',l:'Silicon'},{k:'oil',l:'Oil (L)'},{k:'gas',l:'Gas (L)'},{k:'uranium',l:'Uranium'},
-  ]},
-  { key:'refined', label:'⚗️ Refined Resources', fields:[
-    {k:'refined_iron',l:'Refined Iron'},{k:'electronics',l:'Electronics'},
-    {k:'chips',l:'Chips'},{k:'gunpowder',l:'Gunpowder'},
-    {k:'tires',l:'Tires'},{k:'fuel',l:'Fuel (L)'},{k:'refined_uranium',l:'Refined Uranium'},
-  ]},
-  { key:'buildings', label:'🏗️ Buildings', fields:[
-    {k:'factories',l:'Factories / Industries'},{k:'businesses',l:'Businesses'},
-    {k:'mines',l:'Mines'},{k:'hospitals',l:'Hospitals'},
-  ]},
-  { key:'weapons', label:'🔫 Weapons', fields:[
-    {k:'knives',l:'Knives'},{k:'pistols',l:'Pistols'},{k:'smgs',l:'SMGs'},
-    {k:'rifles',l:'Rifles'},{k:'snipers',l:'Sniper Rifles'},{k:'heavy_weapons',l:'Heavy Weapons'},
-    {k:'atm',l:'Anti-Tank Missiles'},{k:'light_vests',l:'Light Vests'},{k:'heavy_vests',l:'Heavy Vests'},
-    {k:'old_mortar',l:'Old Mortar'},
-  ]},
-  { key:'ammo', label:'🔴 Ammunition', fields:[
-    {k:'ammo_50',l:'.50 Ammo'},{k:'ammo_22mm',l:'22mm Autocannon'},
-    {k:'ammo_pistol',l:'Pistol Ammo'},{k:'ammo_smg',l:'SMG Ammo'},
-    {k:'ammo_rifle',l:'Rifle Ammo'},{k:'ammo_sniper',l:'Sniper Ammo'},
-    {k:'ammo_heavy',l:'Heavy Ammo'},{k:'ammo_atm',l:'Anti-Tank Missiles'},
-    {k:'ammo_mortar',l:'Mortar Rounds'},
-  ]},
-  { key:'air', label:'✈️ Air Vehicles', fields:[
-    {k:'light_jet',l:'Light Jets'},{k:'med_jet',l:'Medium Jets'},
-    {k:'heavy_jet',l:'Heavy Jets'},{k:'bomber',l:'Bombers'},
-    {k:'helicopter',l:'Helicopters'},{k:'airplane',l:'Airplanes'},
-  ]},
-  { key:'land', label:'🪖 Land Vehicles', fields:[
-    {k:'light_tank',l:'Light Tanks'},{k:'med_tank',l:'Medium Tanks'},
-    {k:'heavy_tank',l:'Heavy Tanks'},{k:'motorbike',l:'Motorbikes'},
-    {k:'car',l:'Cars'},{k:'truck',l:'Trucks'},
-  ]},
-  { key:'water', label:'⚓ Water Vehicles', fields:[
-    {k:'submarine',l:'Submarines'},{k:'warship',l:'Warships'},
-    {k:'boat',l:'Boats'},{k:'ship',l:'Ships'},
-    {k:'carrier',l:'Carriers'},{k:'supercarrier',l:'Supercarriers'},
-  ]},
-  { key:'missiles', label:'🚀 Missiles & Torpedoes', fields:[
-    {k:'torpedo',l:'Torpedoes'},{k:'icbm',l:'ICBMs'},
-    {k:'cruise',l:'Cruise Missiles'},{k:'hypersonic',l:'Hypersonic Missiles'},
-    {k:'guided',l:'Guided Missiles'},{k:'nuclear',l:'Nuclear Missiles'},
-  ]},
-  { key:'others', label:'💣 Others', fields:[
-    {k:'grenade',l:'Grenades'},{k:'spec_grenade',l:'Specialized Grenades'},
-    {k:'land_bomb',l:'Land Bombs'},{k:'drone',l:'Drones'},
-    {k:'barricade',l:'Barricades'},{k:'barrier',l:'Barriers'},
-  ]},
+  {key:'population',label:'👥 Population',fields:[{k:'civilians',l:'Civilians'},{k:'workers',l:'Workers'},{k:'military',l:'Military'},{k:'members',l:'Members'}]},
+  {key:'economy',label:'💰 Economy',fields:[{k:'money',l:'Money ($)'}]},
+  {key:'military',label:'🎖️ Military',fields:[{k:'army',l:'Army'},{k:'special_forces',l:'Special Forces'},{k:'generals',l:'Generals'},{k:'commanders',l:'Commanders'},{k:'majors',l:'Majors'}]},
+  {key:'brute',label:'🪨 Brute Resources',fields:BRUTE_FIELDS},
+  {key:'refined',label:'⚗️ Refined Resources',fields:REFINED_FIELDS},
+  {key:'buildings',label:'🏗️ Buildings',fields:[{k:'factories',l:'Factories / Industries'},{k:'businesses',l:'Businesses'},{k:'mines',l:'Mines'},{k:'hospitals',l:'Hospitals'}]},
+  {key:'weapons',label:'🔫 Weapons',fields:[{k:'knives',l:'Knives'},{k:'pistols',l:'Pistols'},{k:'smgs',l:'SMGs'},{k:'rifles',l:'Rifles'},{k:'snipers',l:'Sniper Rifles'},{k:'heavy_weapons',l:'Heavy Weapons'},{k:'atm',l:'Anti-Tank Missiles'},{k:'light_vests',l:'Light Vests'},{k:'heavy_vests',l:'Heavy Vests'},{k:'old_mortar',l:'Old Mortar'}]},
+  {key:'ammo',label:'🔴 Ammunition',fields:[{k:'ammo_50',l:'.50 Ammo'},{k:'ammo_22mm',l:'22mm Autocannon'},{k:'ammo_pistol',l:'Pistol Ammo'},{k:'ammo_smg',l:'SMG Ammo'},{k:'ammo_rifle',l:'Rifle Ammo'},{k:'ammo_sniper',l:'Sniper Ammo'},{k:'ammo_heavy',l:'Heavy Ammo'},{k:'ammo_atm',l:'Anti-Tank Missiles'},{k:'ammo_mortar',l:'Mortar Rounds'}]},
+  {key:'air',label:'✈️ Air Vehicles',fields:[{k:'light_jet',l:'Light Jets'},{k:'med_jet',l:'Medium Jets'},{k:'heavy_jet',l:'Heavy Jets'},{k:'bomber',l:'Bombers'},{k:'helicopter',l:'Helicopters'},{k:'airplane',l:'Airplanes'}]},
+  {key:'land',label:'🪖 Land Vehicles',fields:[{k:'light_tank',l:'Light Tanks'},{k:'med_tank',l:'Medium Tanks'},{k:'heavy_tank',l:'Heavy Tanks'},{k:'motorbike',l:'Motorbikes'},{k:'car',l:'Cars'},{k:'truck',l:'Trucks'}]},
+  {key:'water',label:'⚓ Water Vehicles',fields:[{k:'submarine',l:'Submarines'},{k:'warship',l:'Warships'},{k:'boat',l:'Boats'},{k:'ship',l:'Ships'},{k:'carrier',l:'Carriers'},{k:'supercarrier',l:'Supercarriers'}]},
+  {key:'missiles',label:'🚀 Missiles',fields:[{k:'torpedo',l:'Torpedoes'},{k:'icbm',l:'ICBMs'},{k:'cruise',l:'Cruise Missiles'},{k:'hypersonic',l:'Hypersonic Missiles'},{k:'guided',l:'Guided Missiles'},{k:'nuclear',l:'Nuclear Missiles'}]},
+  {key:'others',label:'💣 Others',fields:[{k:'grenade',l:'Grenades'},{k:'spec_grenade',l:'Spec. Grenades'},{k:'land_bomb',l:'Land Bombs'},{k:'drone',l:'Drones'},{k:'barricade',l:'Barricades'},{k:'barrier',l:'Barriers'}]},
+];
+
+const DONATE_CATEGORIES = [
+  {id:'civilians', label:'👥 Civilians'},
+  {id:'money',     label:'💰 Money'},
+  {id:'military',  label:'🎖️ Military'},
+  {id:'brute',     label:'🪨 Brute Resources'},
+  {id:'refined',   label:'⚗️ Refined Resources'},
+  {id:'buildings', label:'🏗️ Buildings'},
 ];
 
 // =====================================================
 // STATE
 // =====================================================
-let alliances = [];
-let selectedId = null;
-let deletePending = {};
-let collapsedSections = new Set();
-let pendingStyle = null;
-let pendingEditStyle = null;
-let pendingMemberCountries = new Set();
+let alliances=[], selectedId=null, deletePending={}, collapsedSections=new Set();
+let pendingStyle=null, pendingEditStyle=null, pendingMemberCountries=new Set();
+let currentMemberAllianceId=null, currentDonateAllianceId=null;
+let activeDonateCategory='civilians';
 
 function uuid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
-function fmt(n){ return Number(n).toLocaleString(); }
+function fmt(n){ return Number(n||0).toLocaleString(); }
+function fmtTs(ts){ return ts?new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'; }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // =====================================================
 // PERSISTENCE
 // =====================================================
+function makeOwnEntity(){
+  const own={money:0,civilians:0,factories:0,businesses:0,hospitals:0,mines:{}};
+  MINE_TYPES.forEach(t=>own.mines[t]=0);
+  BRUTE_FIELDS.forEach(f=>own[f.k]=0);
+  REFINED_FIELDS.forEach(f=>own[f.k]=0);
+  return own;
+}
+
+function hydrateAlliance(a){
+  if(!a.members) a.members=[];
+  if(!a.observations) a.observations='';
+  if(!a.flag) a.flag='🤝';
+  if(!a.style) a.style='capitalist';
+  if(!a.own) a.own=makeOwnEntity();
+  else {
+    if(!a.own.mines) a.own.mines={};
+    MINE_TYPES.forEach(t=>{ if(a.own.mines[t]===undefined) a.own.mines[t]=0; });
+    BRUTE_FIELDS.forEach(f=>{ if(a.own[f.k]===undefined) a.own[f.k]=0; });
+    REFINED_FIELDS.forEach(f=>{ if(a.own[f.k]===undefined) a.own[f.k]=0; });
+    ['civilians','money','factories','businesses','hospitals'].forEach(k=>{ if(a.own[k]===undefined) a.own[k]=0; });
+  }
+  if(!a.militaryBreakdown) a.militaryBreakdown=[];
+  if(!a.donations) a.donations=[];
+  if(!a.taxConfig) a.taxConfig={fixedPerMember:0};
+  if(!a.turn) a.turn=0;
+}
+
 function load(){
-  try{ alliances = JSON.parse(localStorage.getItem('tc_alliances')||'[]'); }
-  catch(e){ alliances=[]; }
-  alliances.forEach(a=>{
-    if(!a.members) a.members=[];
-    if(!a.observations) a.observations='';
-    if(!a.flag) a.flag='🤝';
-    if(!a.style) a.style='capitalist';
-  });
+  try{ alliances=JSON.parse(localStorage.getItem('tc_alliances')||'[]'); }catch(e){ alliances=[]; }
+  alliances.forEach(hydrateAlliance);
 }
-
-function save(){
-  localStorage.setItem('tc_alliances', JSON.stringify(alliances));
-  showSaveBadge();
-}
-
+function save(){ localStorage.setItem('tc_alliances',JSON.stringify(alliances)); showSaveBadge(); }
 function getAlliance(id){ return alliances.find(a=>a.id===id)||null; }
-function getCountries(){ 
-  try{ return JSON.parse(localStorage.getItem('tc_countries')||'[]'); }
-  catch(e){ return []; }
-}
+function getCountries(){ try{ return JSON.parse(localStorage.getItem('tc_countries')||'[]'); }catch(e){ return []; } }
 
 // =====================================================
-// TOAST
+// TOAST / SAVE
 // =====================================================
 let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-function showSaveBadge(){
-  const b=document.getElementById('save-badge');
-  if(!b) return;
-  b.classList.add('show');
-  setTimeout(()=>b.classList.remove('show'),1500);
-}
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200); }
+function showSaveBadge(){ const b=document.getElementById('save-badge'); if(!b)return; b.classList.add('show'); setTimeout(()=>b.classList.remove('show'),1500); }
 
 // =====================================================
-// SIDEBAR TOGGLE
+// SIDEBAR
 // =====================================================
 function toggleSidebar(){
-  const app=document.getElementById('app');
-  const btn=document.getElementById('sidebar-toggle');
+  const app=document.getElementById('app'), btn=document.getElementById('sidebar-toggle');
   const collapsed=app.classList.toggle('sidebar-collapsed');
   btn.textContent=collapsed?'←':'→';
 }
 
 // =====================================================
-// LIST RENDER
+// LIST
 // =====================================================
 function renderList(){
   const q=document.getElementById('search').value.toLowerCase();
   const el=document.getElementById('alliance-list');
   const filtered=alliances.filter(a=>a.name.toLowerCase().includes(q));
-  if(filtered.length===0){
-    el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:30px;">No alliances found</div>`;
-    return;
-  }
+  if(!filtered.length){ el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:30px;">No alliances found</div>`; return; }
   el.innerHTML=filtered.map(a=>{
     const si=STYLE_INFO[a.style]||STYLE_INFO.capitalist;
-    const memberCount=a.members.length;
     const totalEffort=a.members.reduce((s,m)=>s+(parseInt(m.effort)||0),0);
-    return `
-    <div class="alliance-card ${selectedId===a.id?'active':''} style-${a.style}" onclick="selectAlliance('${a.id}')">
-      <button class="alliance-delete ${deletePending[a.id]?'confirm':''}" onclick="deleteAlliance(event,'${a.id}')" title="${deletePending[a.id]?'Click again to confirm':'Delete'}">
-        ${deletePending[a.id]?'✓':'×'}
-      </button>
+    const ownMoney = a.style!=='communist' ? a.own.money : null;
+    return `<div class="alliance-card ${selectedId===a.id?'active':''} style-${a.style}" onclick="selectAlliance('${a.id}')">
+      <button class="alliance-delete ${deletePending[a.id]?'confirm':''}" onclick="deleteAlliance(event,'${a.id}')">${deletePending[a.id]?'✓':'×'}</button>
       <div class="alliance-card-flag">${a.flag||'🤝'}</div>
       <div class="alliance-card-name">${a.name}</div>
       <div class="alliance-card-style" style="color:${si.color};">${si.label}</div>
       <div class="alliance-card-stats">
-        Members: <span>${memberCount}</span> &nbsp; Effort: <span>${fmt(totalEffort)} pts</span>
+        Members: <span>${a.members.length}</span> &nbsp; Effort: <span>${fmt(totalEffort)} pts</span>
+        ${ownMoney!==null?` &nbsp; Treasury: <span>$${fmt(ownMoney)}</span>`:''}
+        ${a.turn>0?` &nbsp; Turn: <span>${a.turn}</span>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
 // =====================================================
-// SELECT / EDITOR
+// EDITOR
 // =====================================================
-function selectAlliance(id){
-  selectedId=id;
-  renderList();
-  renderEditor();
-}
+function selectAlliance(id){ selectedId=id; renderList(); renderEditor(); }
 
 function renderEditor(){
   const editor=document.getElementById('editor');
   const a=getAlliance(selectedId);
-  if(!a){
-    editor.innerHTML=`<div class="no-selection"><div class="no-selection-icon">🤝</div><div class="no-selection-text">Select or create an alliance</div></div>`;
-    return;
-  }
+  if(!a){ editor.innerHTML=`<div class="no-selection"><div class="no-selection-icon">🤝</div><div class="no-selection-text">Select or create an alliance</div></div>`; return; }
   const si=STYLE_INFO[a.style]||STYLE_INFO.capitalist;
+  const isCommunist=(a.style==='communist');
   const totalEffort=a.members.reduce((s,m)=>s+(parseInt(m.effort)||0),0);
-  const maxEffort=Math.max(1,...a.members.map(m=>parseInt(m.effort)||0));
-
-  // Sort members by effort descending
   const sortedMembers=[...a.members].sort((x,y)=>(parseInt(y.effort)||0)-(parseInt(x.effort)||0));
 
-  const memberRows=sortedMembers.length===0
+  const memberRows = sortedMembers.length===0
     ? `<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:20px;text-align:center;">No member countries. Add one below.</div>`
     : sortedMembers.map((m,i)=>{
         const eff=parseInt(m.effort)||0;
         const pct=totalEffort>0?Math.round(eff/totalEffort*100):0;
-        const rankColor = i===0?'var(--gold)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--text-dim)';
-        const rankLabel = i===0?'#1':i===1?'#2':i===2?'#3':`#${i+1}`;
+        const rankColor=i===0?'var(--gold)':i===1?'#c0c0c0':i===2?'#cd7f32':'var(--text-dim)';
+        const rankLabel=i===0?'#1':i===1?'#2':i===2?'#3':`#${i+1}`;
         return `<div class="member-row">
           <span class="member-flag">${m.flag||'🏴'}</span>
           <span class="member-name">${m.name}</span>
@@ -529,511 +579,551 @@ function renderEditor(){
           <div class="member-effort-wrap">
             <button class="delta-btn neg" onclick="deltaMemberEffort('${a.id}','${m.name}',-10)">-10</button>
             <button class="delta-btn neg" onclick="deltaMemberEffort('${a.id}','${m.name}',-1)">-1</button>
-            <input class="member-effort-input" type="number" min="0" value="${eff}"
-              onchange="setMemberEffort('${a.id}','${m.name}',this.value)"
-              oninput="setMemberEffort('${a.id}','${m.name}',this.value)">
+            <input class="member-effort-input" type="number" min="0" value="${eff}" onchange="setMemberEffort('${a.id}','${m.name}',this.value)" oninput="setMemberEffort('${a.id}','${m.name}',this.value)">
             <button class="delta-btn" onclick="deltaMemberEffort('${a.id}','${m.name}',1)">+1</button>
             <button class="delta-btn" onclick="deltaMemberEffort('${a.id}','${m.name}',10)">+10</button>
           </div>
           <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-left:6px;">${pct}%</span>
-          <button class="member-remove" onclick="removeMember('${a.id}','${m.name}')" title="Remove member">×</button>
+          <button class="member-remove" onclick="removeMember('${a.id}','${m.name}')">×</button>
         </div>`;
       }).join('');
 
-  const dbSection=renderAllianceDatabase(a);
-
   let html=`<div class="alliance-editor">
     <div class="ae-top">
-      <input class="flag-input" id="ae-flag" type="text" value="${a.flag||'🤝'}" maxlength="4" onchange="updateAllianceMeta('flag',this.value)" title="Flag emoji">
-      <input class="name-input" id="ae-name" type="text" value="${a.name}" placeholder="Alliance Name" onchange="updateAllianceMeta('name',this.value)">
+      <input class="flag-input" type="text" value="${a.flag||'🤝'}" maxlength="4" onchange="updateAllianceMeta('flag',this.value)">
+      <input class="name-input" type="text" value="${a.name}" placeholder="Alliance Name" onchange="updateAllianceMeta('name',this.value)">
       <div class="style-badge ${a.style}" onclick="openStyleModal()" title="Click to change style">${si.label}</div>
       <span class="save-badge" id="save-badge">✓ SAVED</span>
       <div class="ae-actions">
+        ${!isCommunist?`<button class="btn btn-sm btn-yellow" onclick="openDonateModal('${a.id}')">📦 Donate</button>`:''}
+        ${!isCommunist?`<button class="btn btn-sm btn-green" onclick="passTurn('${a.id}')">⏳ Pass Turn</button>`:''}
         <button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh DB</button>
       </div>
     </div>
 
-    <!-- Style Description Banner -->
+    <!-- Style Banner -->
     <div class="style-desc" style="margin-bottom:12px;border-color:${si.color};">
       <strong style="color:${si.color};">${si.label}</strong> — ${si.objective}<br>
       <span style="font-size:9px;">${si.desc.replace(/<[^>]+>/g,'')}</span>
     </div>
 
-    <!-- MEMBER COUNTRIES SECTION -->
+    <!-- MEMBERS -->
     <div class="section" id="sec-members">
       <div class="section-header" onclick="toggleSection('members')">
         <span class="section-title">👥 Member Nations</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);margin-right:10px;">
-          ${a.members.length} nation${a.members.length!==1?'s':''} &nbsp;|&nbsp; Total Effort: ${fmt(totalEffort)} pts
-        </span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);margin-right:10px;">${a.members.length} nation${a.members.length!==1?'s':''} | Effort: ${fmt(totalEffort)} pts</span>
         <span class="section-toggle">▼</span>
       </div>
       <div class="section-body">
         ${memberRows}
-        <div style="margin-top:14px;">
-          <button class="btn btn-sm btn-green" onclick="openMemberModal('${a.id}')">+ ADD COUNTRY</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MONEY CONTRIBUTION SECTION -->
-    <div class="section" id="sec-contribution">
-      <div class="section-header" onclick="toggleSection('contribution')">
-        <span class="section-title">💰 Contributions & Funding</span>
-        <span class="section-toggle">▼</span>
-      </div>
-      <div class="section-body">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:10px 0 14px;border-bottom:1px solid rgba(26,48,69,.5);line-height:1.7;">
-          ${getContributionDesc(a.style)}
-        </div>
-        ${renderContributionTable(a)}
-      </div>
-    </div>
-
-    <!-- OBSERVATIONS SECTION -->
-    <div class="section" id="sec-observations">
-      <div class="section-header" onclick="toggleSection('observations')">
-        <span class="section-title">📝 Observations</span>
-        <span class="section-toggle">▼</span>
-      </div>
-      <div class="section-body">
-        <div style="padding:12px 0;">
-          <textarea class="obs-textarea" placeholder="Write observations, political notes, agreements, internal conflicts, intelligence…"
-            onchange="updateAllianceMeta('observations',this.value)">${escHtml(a.observations||'')}</textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- ALLIANCE DATABASE SECTION -->
-    ${dbSection}
-
-  </div>`;
-
-  editor.innerHTML=html;
-
-  // Restore collapsed sections
-  collapsedSections.forEach(key=>{
-    const sec=document.getElementById('sec-'+key);
-    if(sec) sec.classList.add('collapsed');
-  });
-}
-
-function getContributionDesc(style){
-  if(style==='fascist') return `<span style="color:var(--fascist-color);">⚔ FASCIST FUNDING:</span> All contributions are pooled into a <strong>shared military war chest</strong>. Funds are used exclusively for arms procurement, troop expansion, vehicle production and offensive operations. The dominant nation controls allocation.`;
-  if(style==='communist') return `<span style="color:var(--communist-color);">☭ COMMUNIST POOLING:</span> Resources and money are <strong>collectively shared</strong> across all member nations. Each country surrenders a portion of its economic output to the collective. In return, all members receive security guarantees and access to shared infrastructure.`;
-  return `<span style="color:var(--capitalist-color);">🌐 DEMOCRATIC FUND:</span> Contributions maintain a <strong>peacekeeping and diplomatic fund</strong>. Money is used for collective security, trade protection agreements, international diplomacy, and mutual defense treaties. Each nation retains full sovereignty.`;
-}
-
-function renderContributionTable(a){
-  const countries=getCountries();
-  if(a.members.length===0) return `<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:16px 0;">Add member nations to see contributions.</div>`;
-
-  const rows=a.members.map(m=>{
-    const cData=countries.find(c=>c.name===m.name);
-    const money=cData?(cData.economy?.money||0):0;
-    // Contribution: 5% of money for capitalist, 10% for communist, 8% for fascist
-    const pcts={fascist:0.08,communist:0.10,capitalist:0.05};
-    const pct=pcts[a.style]||0.05;
-    const contribution=Math.round(money*pct);
-    return `<div class="field-row">
-      <span class="field-label">${m.flag||'🏴'} ${m.name}</span>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">Treasury: <span style="color:var(--text);">$${fmt(money)}</span></span>
-        <span class="contrib-badge">Contributes: $${fmt(contribution)}/cycle</span>
+        <div style="margin-top:14px;"><button class="btn btn-sm btn-green" onclick="openMemberModal('${a.id}')">+ ADD COUNTRY</button></div>
       </div>
     </div>`;
-  }).join('');
 
-  const totalContrib=a.members.reduce((s,m)=>{
-    const cData=countries.find(c=>c.name===m.name);
-    const money=cData?(cData.economy?.money||0):0;
-    const pcts={fascist:0.08,communist:0.10,capitalist:0.05};
-    const pct=pcts[a.style]||0.05;
-    return s+Math.round(money*pct);
-  },0);
+  if(isCommunist){
+    // ─── COMMUNIST: show aggregated DB of all members ───
+    html += renderCommunistSection(a);
+  } else {
+    // ─── FASCIST/CAPITALIST: show own assets, military pool, donations backlog ───
+    html += renderAllianceAssets(a);
+    html += renderMilitaryPool(a);
+    html += renderDonationsBacklog(a);
+  }
 
-  const pctLabels={fascist:'8%',communist:'10%',capitalist:'5%'};
-
-  return `<div style="padding:6px 0;">
-    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-bottom:10px;">
-      Contribution rate: <span style="color:var(--gold);">${pctLabels[a.style]||'5%'} of each nation's treasury per cycle</span>
+  // Observations
+  html += `<div class="section" id="sec-observations">
+    <div class="section-header" onclick="toggleSection('observations')">
+      <span class="section-title">📝 Observations</span>
+      <span class="section-toggle">▼</span>
     </div>
-    ${rows}
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--text-dim);">TOTAL ALLIANCE FUND / CYCLE</span>
-      <span style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--gold);">$${fmt(totalContrib)}</span>
+    <div class="section-body">
+      <div style="padding:12px 0;">
+        <textarea class="obs-textarea" placeholder="Write observations, agreements, intelligence…"
+          onchange="updateAllianceMeta('observations',this.value)">${escHtml(a.observations||'')}</textarea>
+      </div>
     </div>
   </div>`;
+
+  html += `</div>`; // end .alliance-editor
+  editor.innerHTML=html;
+  collapsedSections.forEach(key=>{ const sec=document.getElementById('sec-'+key); if(sec) sec.classList.add('collapsed'); });
 }
 
-function renderAllianceDatabase(a){
+// =====================================================
+// COMMUNIST VIEW — Aggregate all member data
+// =====================================================
+function renderCommunistSection(a){
   const countries=getCountries();
   const memberNames=new Set(a.members.map(m=>m.name));
   const memberCountries=countries.filter(c=>memberNames.has(c.name));
-
   if(memberCountries.length===0){
-    return `<div class="section" id="sec-database">
-      <div class="section-header" onclick="toggleSection('database')">
-        <span class="section-title" style="color:var(--purple);">🗄️ Alliance Database</span>
+    return `<div class="section" id="sec-communist">
+      <div class="section-header" onclick="toggleSection('communist')">
+        <span class="section-title" style="color:var(--communist-color);">☭ Collective Resources</span>
         <span class="section-toggle">▼</span>
       </div>
-      <div class="section-body">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:20px 0;text-align:center;">No member countries with database records found.<br>Add countries that exist in the Country Database.</div>
-      </div>
+      <div class="section-body"><div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:20px;text-align:center;">No database records for member nations.</div></div>
     </div>`;
   }
 
-  // Aggregate all schema fields
-  const aggregated={};
+  const agg={};
   for(const cat of AGG_SCHEMA){
-    aggregated[cat.key]={};
+    agg[cat.key]={};
     for(const f of cat.fields){
-      aggregated[cat.key][f.k]=0;
-      for(const c of memberCountries){
-        aggregated[cat.key][f.k]+=(parseInt(c[cat.key]?.[f.k]||0)||0);
-      }
+      agg[cat.key][f.k]=0;
+      for(const c of memberCountries) agg[cat.key][f.k]+=(parseInt(c[cat.key]?.[f.k]||0)||0);
     }
   }
-
-  // Total mine counts
-  const mineTotal={};
   const MINE_KEYS=['mine_plains','mine_forest','mine_taiga','mine_jungle','mine_swamp','mine_desert','mine_badlands','mine_mountains','mine_ocean','mine_caves','mine_rare','mine_frozen'];
   const MINE_LABELS={mine_plains:'🌾 Plains',mine_forest:'🌲 Forest',mine_taiga:'🎄 Taiga',mine_jungle:'🌴 Jungle',mine_swamp:'🌿 Swamp',mine_desert:'🏜️ Desert',mine_badlands:'🌋 Badlands',mine_mountains:'⛰️ Mountains',mine_ocean:'🌊 Ocean',mine_caves:'🕳️ Caves',mine_rare:'✨ Rare',mine_frozen:'❄️ Frozen'};
-  for(const k of MINE_KEYS){ mineTotal[k]=0; for(const c of memberCountries) mineTotal[k]+=(parseInt(c.mines?.[k]||0)||0); }
-
-  const coveredCountries=memberCountries.length;
+  const mineTotal={};
+  MINE_KEYS.forEach(k=>{ mineTotal[k]=0; memberCountries.forEach(c=>mineTotal[k]+=(parseInt(c.mines?.[k]||0)||0)); });
 
   const dbSections=AGG_SCHEMA.map(cat=>{
-    const vals=aggregated[cat.key];
-    const rows=cat.fields.map(f=>{
-      const v=vals[f.k]||0;
-      return `<div class="field-row">
-        <span class="field-label">${f.l}</span>
-        <span class="field-value ${v===0?'zero':''}">${fmt(v)}</span>
-      </div>`;
-    }).join('');
-    return `<div class="db-subsection">
-      <div class="db-subsection-title">${cat.label}</div>
-      ${rows}
-    </div>`;
+    const rows=cat.fields.map(f=>{const v=agg[cat.key][f.k]||0;return `<div class="field-row"><span class="field-label">${f.l}</span><span class="field-value ${v===0?'zero':''}">${fmt(v)}</span></div>`;}).join('');
+    return `<div class="db-subsection"><div class="db-subsection-title">${cat.label}</div>${rows}</div>`;
   }).join('');
+  const mineRows=MINE_KEYS.map(k=>{const v=mineTotal[k]||0;return `<div class="field-row"><span class="field-label">${MINE_LABELS[k]}</span><span class="field-value ${v===0?'zero':''}">${fmt(v)}</span></div>`;}).join('');
 
-  // Mines aggregate
-  const mineRows=MINE_KEYS.map(k=>{
-    const v=mineTotal[k]||0;
-    return `<div class="field-row">
-      <span class="field-label">${MINE_LABELS[k]}</span>
-      <span class="field-value ${v===0?'zero':''}">${fmt(v)}</span>
-    </div>`;
-  }).join('');
-
-  return `<div class="section" id="sec-database">
-    <div class="section-header" onclick="toggleSection('database')">
-      <span class="section-title" style="color:var(--purple);">🗄️ Alliance Database</span>
-      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--purple);margin-right:10px;opacity:.7;">
-        Aggregated from ${coveredCountries}/${a.members.length} nations
-      </span>
+  return `<div class="section" id="sec-communist">
+    <div class="section-header" onclick="toggleSection('communist')">
+      <span class="section-title" style="color:var(--communist-color);">☭ Collective Resources</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--communist-color);margin-right:10px;opacity:.8;">Aggregated from ${memberCountries.length}/${a.members.length} nations</span>
       <span class="section-toggle">▼</span>
     </div>
     <div class="section-body">
       <div class="db-info-bar">
-        <div class="db-info-item">Nations with DB records: <span>${coveredCountries}</span></div>
+        <div class="db-info-item">Nations with DB: <span>${memberCountries.length}</span></div>
         <div class="db-info-item">Total Members: <span>${a.members.length}</span></div>
-        <div class="db-info-item">Alliance Money: <span>$${fmt(aggregated.economy?.money||0)}</span></div>
-        <div class="db-info-item">Alliance Population: <span>${fmt(aggregated.population?.civilians||0)}</span></div>
-        <div class="db-info-item" style="margin-left:auto;">
-          <button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh</button>
-        </div>
+        <div class="db-info-item">Collective Money: <span>$${fmt(agg.economy?.money||0)}</span></div>
+        <div class="db-info-item">Total Population: <span>${fmt(agg.population?.civilians||0)}</span></div>
+        <div class="db-info-item">Total Military: <span>${fmt(agg.military?.army||0)}</span></div>
+        <div class="db-info-item" style="margin-left:auto;"><button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh</button></div>
       </div>
-      <div style="padding-top:8px;">
-        ${dbSections}
-        <div class="db-subsection">
-          <div class="db-subsection-title">⛏️ Mines by Biome</div>
-          ${mineRows}
+      <div style="padding-top:8px;">${dbSections}<div class="db-subsection"><div class="db-subsection-title">⛏️ Mines by Biome</div>${mineRows}</div></div>
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// ALLIANCE ASSETS — Non-Communist
+// =====================================================
+function renderAllianceAssets(a){
+  const own=a.own;
+  const totalMines=MINE_TYPES.reduce((s,t)=>s+(own.mines[t]||0),0);
+
+  const bruteRows=BRUTE_FIELDS.map(f=>{const v=own[f.k]||0;return `<div class="asset-field"><span class="asset-field-lbl">${f.l}</span><span class="asset-field-val ${v===0?'az':''}">${fmt(v)}</span></div>`;}).join('');
+  const refinedRows=REFINED_FIELDS.map(f=>{const v=own[f.k]||0;return `<div class="asset-field"><span class="asset-field-lbl">${f.l}</span><span class="asset-field-val ${v===0?'az':''}">${fmt(v)}</span></div>`;}).join('');
+  const mineInputs=MINE_TYPES.map(t=>`<div class="mine-input-row">
+    <span class="mine-lbl">${MINE_ICONS[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}</span>
+    <input class="mine-inp" type="number" min="0" value="${own.mines[t]||0}"
+      onchange="updateOwnMine('${a.id}','${t}',this.value)" oninput="updateOwnMine('${a.id}','${t}',this.value)">
+  </div>`).join('');
+
+  const taxInfo=a.taxConfig.fixedPerMember>0
+    ? `$${fmt(a.taxConfig.fixedPerMember)}/member/turn · Total: $${fmt(a.members.length*a.taxConfig.fixedPerMember)}/turn`
+    : 'No tax set';
+
+  return `<div class="section" id="sec-assets">
+    <div class="section-header" onclick="toggleSection('assets')">
+      <span class="section-title">🏛️ Alliance Assets</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);margin-right:10px;">$${fmt(own.money)} · ${fmt(own.civilians)} civilians · ${totalMines} mines</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" style="padding:0;">
+      <!-- Turn & Tax bar -->
+      <div class="pass-turn-bar">
+        <span class="turn-label">TURN</span>
+        <span class="turn-counter">${a.turn}</span>
+        <button class="btn btn-sm btn-green" onclick="passTurn('${a.id}')">⏳ PASS TURN</button>
+        <button class="btn btn-sm btn-yellow" onclick="openTaxConfig('${a.id}')">⚙ Tax: ${taxInfo}</button>
+        <button class="btn btn-sm btn-orange" onclick="openDonateModal('${a.id}')">📦 Donate</button>
+      </div>
+      <!-- Core stats grid -->
+      <div style="padding:14px 18px;">
+        <div class="asset-grid">
+          <div class="asset-box">
+            <div class="asset-box-title">💰 Economy</div>
+            <div class="asset-field"><span class="asset-field-lbl">Money ($)</span><span class="asset-field-val">${fmt(own.money)}</span></div>
+            <div class="asset-field"><span class="asset-field-lbl">Civilians</span><span class="asset-field-val">${fmt(own.civilians)}</span></div>
+          </div>
+          <div class="asset-box">
+            <div class="asset-box-title">🏗️ Buildings</div>
+            <div class="asset-field"><span class="asset-field-lbl">Factories</span><span class="asset-field-val ${own.factories===0?'az':''}">${fmt(own.factories)}</span></div>
+            <div class="asset-field"><span class="asset-field-lbl">Businesses</span><span class="asset-field-val ${own.businesses===0?'az':''}">${fmt(own.businesses)}</span></div>
+            <div class="asset-field"><span class="asset-field-lbl">Hospitals</span><span class="asset-field-val ${own.hospitals===0?'az':''}">${fmt(own.hospitals)}</span></div>
+          </div>
+          <div class="asset-box" style="grid-column:span 2;">
+            <div class="asset-box-title">⛏️ Owned Mines (${totalMines} total)</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px;">${mineInputs}</div>
+          </div>
+          <div class="asset-box" style="grid-column:span 2;">
+            <div class="asset-box-title">🪨 Brute Resources</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:2px;">${bruteRows}</div>
+          </div>
+          <div class="asset-box" style="grid-column:span 2;">
+            <div class="asset-box-title">⚗️ Refined Resources</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;">${refinedRows}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;padding:8px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1);">
+          ⏳ Each <strong style="color:var(--text);">Pass Turn</strong> = 1 cycle. Civilians earn <strong style="color:var(--gold);">$10 each</strong>. Each business earns <strong style="color:var(--gold);">$15,000</strong>. Civilians grow by <strong style="color:var(--gold);">+10</strong> (+3 per hospital). Mines produce brute resources. Tax is auto-collected.
         </div>
       </div>
     </div>
   </div>`;
+}
+
+// =====================================================
+// MILITARY POOL — Non-Communist
+// =====================================================
+function renderMilitaryPool(a){
+  const totals={army:0,special_forces:0,generals:0,commanders:0,majors:0};
+  a.militaryBreakdown.forEach(entry=>{ MIL_FIELDS.forEach(f=>{ totals[f.k]+=(parseInt(entry[f.k])||0); }); });
+  const maxArmy=Math.max(1,...a.militaryBreakdown.map(e=>parseInt(e.army)||0));
+
+  const totalRows=MIL_FIELDS.map(f=>`<div class="mil-total-row">
+    <span class="mil-total-lbl">${f.l}</span>
+    <span class="mil-total-val">${fmt(totals[f.k])}</span>
+  </div>`).join('');
+
+  const breakdownRows=a.militaryBreakdown.length===0
+    ? `<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:10px 0;">No military contributions yet. Use 📦 Donate to add military.</div>`
+    : a.militaryBreakdown.map(entry=>{
+        const armyVal=parseInt(entry.army)||0;
+        const barW=maxArmy>0?Math.round(armyVal/maxArmy*100):0;
+        const other=MIL_FIELDS.filter(f=>f.k!=='army').map(f=>{const v=parseInt(entry[f.k])||0;return v>0?`${f.l}: ${fmt(v)}`:null;}).filter(Boolean).join(' · ');
+        return `<div class="mil-country-row">
+          <span style="font-size:16px;flex-shrink:0;">${entry.flag||'🏴'}</span>
+          <span class="mil-cname">${entry.country}${other?`<br><span style="font-size:9px;color:var(--text-dim);">${other}</span>`:''}</span>
+          <div class="mil-bar-wrap"><div class="mil-bar" style="width:${barW}%;"></div></div>
+          <span class="mil-val">${fmt(armyVal)}</span>
+          <button class="member-remove" onclick="removeMilBreakdown('${a.id}','${entry.country}')" title="Remove">×</button>
+        </div>`;
+      }).join('');
+
+  return `<div class="section" id="sec-military">
+    <div class="section-header" onclick="toggleSection('military')">
+      <span class="section-title">🎖️ Military Pool</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-right:10px;">Total Army: ${fmt(totals.army)}</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="margin-top:8px;">${totalRows}</div>
+      <div class="mil-breakdown-title">Per-Country Breakdown</div>
+      ${breakdownRows}
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// DONATIONS BACKLOG — Non-Communist
+// =====================================================
+function renderDonationsBacklog(a){
+  const count=a.donations.length;
+  const entries=a.donations.slice(0,50).map(d=>{
+    const itemTags=Object.entries(d.items||{}).filter(([,v])=>v&&Number(v)>0)
+      .map(([k,v])=>`<span class="donation-item-tag">${k}: ${fmt(v)}</span>`).join('');
+    return `<div class="donation-entry">
+      <div class="donation-header">
+        <span class="donation-from">${d.fromFlag||''} ${d.from}</span>
+        <span class="donation-cat">${d.category}</span>
+        <span class="donation-ts">${fmtTs(d.timestamp)}</span>
+        <button class="donation-remove" onclick="removeDonation('${a.id}','${d.id}')">×</button>
+      </div>
+      ${d.description?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:4px;">${escHtml(d.description)}</div>`:''}
+      <div class="donation-items">${itemTags}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="section" id="sec-donations">
+    <div class="section-header" onclick="toggleSection('donations')">
+      <span class="section-title">📋 Donation Backlog</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-right:10px;">${count} record${count!==1?'s':''}</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="display:flex;gap:8px;margin:10px 0;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-orange" onclick="openDonateModal('${a.id}')">📦 New Donation</button>
+        ${count>0?`<button class="btn btn-sm btn-red" onclick="clearDonations('${a.id}')">🗑 Clear All</button>`:''}
+      </div>
+      ${count===0?`<div class="no-donations">No donations recorded yet.</div>`:entries}
+      ${count>50?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:8px;text-align:center;">Showing 50 of ${count} records.</div>`:''}
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// PASS TURN — Non-Communist only
+// =====================================================
+function passTurn(allianceId){
+  const a=getAlliance(allianceId);
+  if(!a){ return; }
+  if(a.style==='communist'){ showToast('Communist alliances share member data — no turn needed.'); return; }
+  const own=a.own;
+
+  // Collect tax
+  const taxPer=parseInt(a.taxConfig.fixedPerMember)||0;
+  if(taxPer>0 && a.members.length>0){
+    const taxTotal=taxPer*a.members.length;
+    own.money+=taxTotal;
+    a.donations.unshift({id:uuid(),from:'Alliance — Auto Tax',fromFlag:'💰',category:'Tax Collection',
+      description:`${a.members.length} members × $${fmt(taxPer)} = $${fmt(taxTotal)}`,
+      items:{money:taxTotal},timestamp:Date.now()});
+  }
+
+  // Civilian growth
+  const civGrowth=10+(own.hospitals*3);
+  own.civilians+=civGrowth;
+
+  // Income
+  own.money+=(own.civilians*10)+(own.businesses*15000);
+
+  // Mine production
+  MINE_TYPES.forEach(t=>{
+    const count=parseInt(own.mines[t])||0;
+    if(count<=0) return;
+    const yields=MINE_RESOURCES[t]||{};
+    Object.entries(yields).forEach(([res,amt])=>{
+      own[res]=(own[res]||0)+(Number(amt)*count);
+    });
+  });
+
+  a.turn=(a.turn||0)+1;
+  save();
+  renderEditor();
+  renderList();
+  showToast(`⏳ Turn ${a.turn} completed! +${fmt(civGrowth)} civilians, +$${fmt((own.civilians*10)+(own.businesses*15000))} income`);
+}
+
+// =====================================================
+// DONATE MODAL
+// =====================================================
+function openDonateModal(allianceId){
+  currentDonateAllianceId=allianceId;
+  activeDonateCategory='civilians';
+  const a=getAlliance(allianceId); if(!a) return;
+  // Populate country dropdown
+  const sel=document.getElementById('donate-country');
+  sel.innerHTML=a.members.map(m=>`<option value="${m.name}" data-flag="${m.flag||'🏴'}">${m.flag||'🏴'} ${m.name}</option>`).join('');
+  // Category tabs
+  document.getElementById('donate-cat-tabs').innerHTML=DONATE_CATEGORIES.map(c=>
+    `<button class="donate-cat-btn ${c.id===activeDonateCategory?'active':''}" onclick="setDonateCategory('${c.id}')">${c.label}</button>`
+  ).join('');
+  renderDonateInputs();
+  openModal('donate-modal');
+}
+
+function setDonateCategory(cat){
+  activeDonateCategory=cat;
+  document.querySelectorAll('.donate-cat-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===DONATE_CATEGORIES.find(c=>c.id===cat)?.label?.trim()));
+  document.querySelectorAll('.donate-cat-btn').forEach(b=>{ b.className='donate-cat-btn'+(DONATE_CATEGORIES.findIndex(c=>c.id===cat)>=0&&b.onclick.toString().includes(`'${cat}'`)?' active':''); });
+  renderDonateInputs();
+}
+
+function renderDonateInputs(){
+  const wrap=document.getElementById('donate-inputs');
+  const cat=activeDonateCategory;
+  if(cat==='civilians'){
+    wrap.innerHTML=`<div class="donate-resource-grid"><div class="donate-res-row"><span class="donate-res-lbl">👥 Civilians</span><input class="donate-res-inp" id="di-civilians" type="number" min="0" value="0" placeholder="0"></div></div>`;
+  } else if(cat==='money'){
+    wrap.innerHTML=`<div class="donate-resource-grid"><div class="donate-res-row"><span class="donate-res-lbl">💰 Money ($)</span><input class="donate-res-inp" id="di-money" type="number" min="0" value="0" placeholder="0"></div></div>`;
+  } else if(cat==='military'){
+    wrap.innerHTML=`<div class="donate-resource-grid">${MIL_FIELDS.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`;
+  } else if(cat==='brute'){
+    wrap.innerHTML=`<div class="donate-resource-grid">${BRUTE_FIELDS.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`;
+  } else if(cat==='refined'){
+    wrap.innerHTML=`<div class="donate-resource-grid">${REFINED_FIELDS.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`;
+  } else if(cat==='buildings'){
+    const bFields=[{k:'factories',l:'🏭 Factories'},{k:'businesses',l:'🏪 Businesses'},{k:'hospitals',l:'🏥 Hospitals'}];
+    wrap.innerHTML=`<div class="donate-resource-grid">${bFields.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`;
+  }
+}
+
+function confirmDonate(){
+  const a=getAlliance(currentDonateAllianceId); if(!a) return;
+  const countryName=document.getElementById('donate-country').value;
+  const memberData=a.members.find(m=>m.name===countryName);
+  const fromFlag=memberData?.flag||'🏴';
+  const cat=activeDonateCategory;
+  const items={};
+
+  const readVal=(id)=>Math.max(0,parseInt(document.getElementById(id)?.value)||0);
+
+  if(cat==='civilians'){
+    const v=readVal('di-civilians');
+    if(v>0){ items.civilians=v; a.own.civilians+=v; }
+  } else if(cat==='money'){
+    const v=readVal('di-money');
+    if(v>0){ items.money=v; a.own.money+=v; }
+  } else if(cat==='military'){
+    let existing=a.militaryBreakdown.find(e=>e.country===countryName);
+    if(!existing){ existing={country:countryName,flag:fromFlag,...Object.fromEntries(MIL_FIELDS.map(f=>[f.k,0]))}; a.militaryBreakdown.push(existing); }
+    MIL_FIELDS.forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; existing[f.k]=(existing[f.k]||0)+v; } });
+  } else if(cat==='brute'){
+    BRUTE_FIELDS.forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; a.own[f.k]=(a.own[f.k]||0)+v; } });
+  } else if(cat==='refined'){
+    REFINED_FIELDS.forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; a.own[f.k]=(a.own[f.k]||0)+v; } });
+  } else if(cat==='buildings'){
+    [{k:'factories',l:'Factories'},{k:'businesses',l:'Businesses'},{k:'hospitals',l:'Hospitals'}].forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; a.own[f.k]=(a.own[f.k]||0)+v; } });
+  }
+
+  if(Object.keys(items).length===0){ showToast('No values entered.'); return; }
+
+  const catLabel=DONATE_CATEGORIES.find(c=>c.id===cat)?.label||cat;
+  a.donations.unshift({id:uuid(),from:countryName,fromFlag,category:catLabel,items,timestamp:Date.now()});
+  save(); closeModal('donate-modal'); renderEditor(); renderList();
+  showToast(`${fromFlag} ${countryName} donated successfully!`);
+}
+
+// =====================================================
+// TAX CONFIG
+// =====================================================
+function openTaxConfig(allianceId){
+  const a=getAlliance(allianceId); if(!a) return;
+  document.getElementById('tax-fixed').value=a.taxConfig.fixedPerMember||0;
+  currentDonateAllianceId=allianceId;
+  openModal('tax-modal');
+}
+function confirmTaxConfig(){
+  const a=getAlliance(currentDonateAllianceId); if(!a) return;
+  a.taxConfig.fixedPerMember=Math.max(0,parseInt(document.getElementById('tax-fixed').value)||0);
+  save(); closeModal('tax-modal'); renderEditor();
+  showToast(`Tax set to $${fmt(a.taxConfig.fixedPerMember)} per member per turn`);
+}
+
+// =====================================================
+// OWN MINE UPDATES
+// =====================================================
+function updateOwnMine(allianceId, mineType, val){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.own.mines[mineType]=Math.max(0,parseInt(val)||0);
+  save(); renderList();
+}
+
+// =====================================================
+// REMOVE HELPERS
+// =====================================================
+function removeMilBreakdown(allianceId, countryName){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.militaryBreakdown=a.militaryBreakdown.filter(e=>e.country!==countryName);
+  save(); renderEditor(); showToast('Military entry removed');
+}
+function removeDonation(allianceId, donationId){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.donations=a.donations.filter(d=>d.id!==donationId);
+  save(); renderEditor(); showToast('Record removed');
+}
+function clearDonations(allianceId){
+  if(!confirm('Clear all donation records? This does NOT remove donated resources.')) return;
+  const a=getAlliance(allianceId); if(!a) return;
+  a.donations=[]; save(); renderEditor(); showToast('Donation backlog cleared');
 }
 
 // =====================================================
 // SECTION TOGGLE
 // =====================================================
 function toggleSection(key){
-  const sec=document.getElementById('sec-'+key);
-  if(!sec) return;
+  const sec=document.getElementById('sec-'+key); if(!sec) return;
   const collapsed=sec.classList.toggle('collapsed');
-  if(collapsed) collapsedSections.add(key);
-  else collapsedSections.delete(key);
+  if(collapsed) collapsedSections.add(key); else collapsedSections.delete(key);
 }
 
 // =====================================================
-// ALLIANCE META UPDATES
+// META / MEMBER MANAGEMENT
 // =====================================================
-function updateAllianceMeta(field, value){
-  const a=getAlliance(selectedId);
-  if(!a) return;
-  a[field]=value;
-  save();
-  renderList();
-  if(field==='flag'||field==='name') renderList();
-}
+function updateAllianceMeta(field,value){ const a=getAlliance(selectedId); if(!a) return; a[field]=value; save(); renderList(); }
 
-// =====================================================
-// MEMBER MANAGEMENT
-// =====================================================
-function setMemberEffort(allianceId, memberName, value){
-  const a=getAlliance(allianceId);
-  if(!a) return;
-  const m=a.members.find(x=>x.name===memberName);
-  if(!m) return;
-  m.effort=Math.max(0,parseInt(value)||0);
-  save();
-  // Lightweight re-render of just the list
-  renderList();
-  // Rerender editor (effort rank updates)
-  renderEditor();
-}
-
-function deltaMemberEffort(allianceId, memberName, delta){
-  const a=getAlliance(allianceId);
-  if(!a) return;
-  const m=a.members.find(x=>x.name===memberName);
-  if(!m) return;
-  m.effort=Math.max(0,(parseInt(m.effort)||0)+delta);
-  save();
-  renderList();
-  renderEditor();
-}
-
-function removeMember(allianceId, memberName){
-  const a=getAlliance(allianceId);
-  if(!a) return;
-  a.members=a.members.filter(m=>m.name!==memberName);
-  save();
-  renderList();
-  renderEditor();
-  showToast(`Removed ${memberName}`);
-}
+function setMemberEffort(allianceId,memberName,value){ const a=getAlliance(allianceId); if(!a) return; const m=a.members.find(x=>x.name===memberName); if(!m) return; m.effort=Math.max(0,parseInt(value)||0); save(); renderList(); renderEditor(); }
+function deltaMemberEffort(allianceId,memberName,delta){ const a=getAlliance(allianceId); if(!a) return; const m=a.members.find(x=>x.name===memberName); if(!m) return; m.effort=Math.max(0,(parseInt(m.effort)||0)+delta); save(); renderList(); renderEditor(); }
+function removeMember(allianceId,memberName){ const a=getAlliance(allianceId); if(!a) return; a.members=a.members.filter(m=>m.name!==memberName); save(); renderList(); renderEditor(); showToast(`Removed ${memberName}`); }
 
 // =====================================================
 // ADD MEMBER MODAL
 // =====================================================
-let currentMemberAllianceId=null;
-
-function openMemberModal(allianceId){
-  currentMemberAllianceId=allianceId;
-  pendingMemberCountries=new Set();
-  document.getElementById('member-effort').value=0;
-  document.getElementById('member-search').value='';
-  filterMemberList();
-  openModal('member-modal');
-}
-
+function openMemberModal(allianceId){ currentMemberAllianceId=allianceId; pendingMemberCountries=new Set(); document.getElementById('member-effort').value=0; document.getElementById('member-search').value=''; filterMemberList(); openModal('member-modal'); }
 function filterMemberList(){
-  const a=getAlliance(currentMemberAllianceId);
-  if(!a) return;
+  const a=getAlliance(currentMemberAllianceId); if(!a) return;
   const q=document.getElementById('member-search').value.toLowerCase();
-  const allC=getCountries();
-  const alreadyIn=new Set(a.members.map(m=>m.name));
+  const allC=getCountries(); const alreadyIn=new Set(a.members.map(m=>m.name));
   const filtered=allC.filter(c=>!alreadyIn.has(c.name)&&c.name.toLowerCase().includes(q));
   const el=document.getElementById('member-country-list');
-  if(filtered.length===0){
-    el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:10px;">No countries available.</div>`;
-    return;
-  }
-  el.innerHTML=filtered.map(c=>`
-    <div class="country-tag ${pendingMemberCountries.has(c.name)?'selected':''}"
-      onclick="togglePendingMember('${c.name}','${(c.flag||'🏴').replace(/'/g,"&#39;")}')">
-      ${c.flag||'🏴'} ${c.name}${pendingMemberCountries.has(c.name)?' ✓':''}
-    </div>`).join('');
+  if(!filtered.length){ el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:10px;">No countries available.</div>`; return; }
+  el.innerHTML=filtered.map(c=>`<div class="country-tag ${pendingMemberCountries.has(c.name)?'selected':''}" onclick="togglePendingMember('${c.name}','${(c.flag||'🏴').replace(/'/g,"&#39;")}'">${c.flag||'🏴'} ${c.name}${pendingMemberCountries.has(c.name)?' ✓':''}</div>`).join('');
 }
-
-function togglePendingMember(name, flag){
-  if(pendingMemberCountries.has(name)) pendingMemberCountries.delete(name);
-  else pendingMemberCountries.add(name);
-  filterMemberList();
-}
-
+function togglePendingMember(name){ if(pendingMemberCountries.has(name)) pendingMemberCountries.delete(name); else pendingMemberCountries.add(name); filterMemberList(); }
 function confirmAddMember(){
-  const a=getAlliance(currentMemberAllianceId);
-  if(!a){ closeModal('member-modal'); return; }
+  const a=getAlliance(currentMemberAllianceId); if(!a){ closeModal('member-modal'); return; }
   const effort=Math.max(0,parseInt(document.getElementById('member-effort').value)||0);
-  const allC=getCountries();
-  let added=0;
+  const allC=getCountries(); let added=0;
   for(const name of pendingMemberCountries){
     if(a.members.find(m=>m.name===name)) continue;
     const cData=allC.find(c=>c.name===name);
-    a.members.push({ name, flag:cData?.flag||'🏴', effort });
-    added++;
+    a.members.push({name,flag:cData?.flag||'🏴',effort}); added++;
   }
-  save();
-  renderList();
-  renderEditor();
-  closeModal('member-modal');
+  save(); renderList(); renderEditor(); closeModal('member-modal');
   if(added>0) showToast(`Added ${added} nation${added!==1?'s':''}`);
 }
 
 // =====================================================
 // DELETE ALLIANCE
 // =====================================================
-function deleteAlliance(e, id){
+function deleteAlliance(e,id){
   e.stopPropagation();
-  if(deletePending[id]){
-    alliances=alliances.filter(a=>a.id!==id);
-    delete deletePending[id];
-    if(selectedId===id){ selectedId=null; }
-    save();
-    renderList();
-    renderEditor();
-    showToast('Alliance deleted');
-  } else {
-    deletePending[id]=true;
-    renderList();
-    setTimeout(()=>{ delete deletePending[id]; renderList(); },3000);
-  }
+  if(deletePending[id]){ alliances=alliances.filter(a=>a.id!==id); delete deletePending[id]; if(selectedId===id){ selectedId=null; } save(); renderList(); renderEditor(); showToast('Alliance deleted'); }
+  else { deletePending[id]=true; renderList(); setTimeout(()=>{ delete deletePending[id]; renderList(); },3000); }
 }
 
 // =====================================================
 // ADD ALLIANCE MODAL
 // =====================================================
 function openAddModal(){
-  pendingStyle=null;
-  document.getElementById('new-name').value='';
-  document.getElementById('new-flag').value='🤝';
+  pendingStyle=null; document.getElementById('new-name').value=''; document.getElementById('new-flag').value='🤝';
   document.querySelectorAll('#add-modal .style-opt').forEach(el=>el.className='style-opt');
   document.getElementById('style-desc').textContent='Select an organization style above.';
-  openModal('add-modal');
-  setTimeout(()=>document.getElementById('new-name').focus(),100);
+  openModal('add-modal'); setTimeout(()=>document.getElementById('new-name').focus(),100);
 }
-
 function selectStyle(style){
   pendingStyle=style;
-  document.querySelectorAll('#add-modal .style-opt').forEach(el=>{
-    el.className='style-opt';
-    if(el.dataset.style===style) el.classList.add(`selected-${style}`);
-  });
-  const si=STYLE_INFO[style];
-  document.getElementById('style-desc').innerHTML=si?si.desc:'';
+  document.querySelectorAll('#add-modal .style-opt').forEach(el=>{ el.className='style-opt'; if(el.dataset.style===style) el.classList.add(`selected-${style}`); });
+  const si=STYLE_INFO[style]; document.getElementById('style-desc').innerHTML=si?si.desc:'';
 }
-
 function confirmAdd(){
-  const name=document.getElementById('new-name').value.trim();
-  const flag=document.getElementById('new-flag').value.trim()||'🤝';
-  if(!name){ showToast('Enter an alliance name'); return; }
-  if(!pendingStyle){ showToast('Select a style'); return; }
-  const a={
-    id:uuid(), name, flag, style:pendingStyle,
-    members:[], observations:'', createdAt:Date.now()
-  };
-  alliances.push(a);
-  save();
-  renderList();
-  selectAlliance(a.id);
-  closeModal('add-modal');
-  showToast(`Alliance "${name}" created`);
+  const name=document.getElementById('new-name').value.trim(); const flag=document.getElementById('new-flag').value.trim()||'🤝';
+  if(!name){ showToast('Enter an alliance name'); return; } if(!pendingStyle){ showToast('Select a style'); return; }
+  const a={id:uuid(),name,flag,style:pendingStyle,members:[],observations:'',createdAt:Date.now(),own:makeOwnEntity(),militaryBreakdown:[],donations:[],taxConfig:{fixedPerMember:0},turn:0};
+  alliances.push(a); save(); renderList(); selectAlliance(a.id); closeModal('add-modal'); showToast(`Alliance "${name}" created`);
 }
 
 // =====================================================
-// STYLE EDIT MODAL
+// STYLE MODAL
 // =====================================================
-function openStyleModal(){
-  const a=getAlliance(selectedId);
-  if(!a) return;
-  pendingEditStyle=a.style;
-  document.querySelectorAll('#style-modal .style-opt').forEach(el=>{
-    el.className='style-opt';
-    if(el.dataset.style===a.style) el.classList.add(`selected-${a.style}`);
-  });
-  const si=STYLE_INFO[a.style];
-  document.getElementById('style-desc-edit').innerHTML=si?si.desc:'';
-  openModal('style-modal');
-}
-
-function selectEditStyle(style){
-  pendingEditStyle=style;
-  document.querySelectorAll('#style-modal .style-opt').forEach(el=>{
-    el.className='style-opt';
-    if(el.dataset.style===style) el.classList.add(`selected-${style}`);
-  });
-  const si=STYLE_INFO[style];
-  document.getElementById('style-desc-edit').innerHTML=si?si.desc:'';
-}
-
-function confirmStyleChange(){
-  const a=getAlliance(selectedId);
-  if(!a||!pendingEditStyle) return;
-  a.style=pendingEditStyle;
-  save();
-  renderList();
-  renderEditor();
-  closeModal('style-modal');
-  showToast('Organization style updated');
-}
+function openStyleModal(){ const a=getAlliance(selectedId); if(!a) return; pendingEditStyle=a.style; document.querySelectorAll('#style-modal .style-opt').forEach(el=>{ el.className='style-opt'; if(el.dataset.style===a.style) el.classList.add(`selected-${a.style}`); }); const si=STYLE_INFO[a.style]; document.getElementById('style-desc-edit').innerHTML=si?si.desc:''; openModal('style-modal'); }
+function selectEditStyle(style){ pendingEditStyle=style; document.querySelectorAll('#style-modal .style-opt').forEach(el=>{ el.className='style-opt'; if(el.dataset.style===style) el.classList.add(`selected-${style}`); }); const si=STYLE_INFO[style]; document.getElementById('style-desc-edit').innerHTML=si?si.desc:''; }
+function confirmStyleChange(){ const a=getAlliance(selectedId); if(!a||!pendingEditStyle) return; a.style=pendingEditStyle; save(); renderList(); renderEditor(); closeModal('style-modal'); showToast('Organization style updated'); }
 
 // =====================================================
 // DATABASE REFRESH
 // =====================================================
-function refreshDatabase(id){
-  // Re-render the full editor (which recalculates the database from localStorage)
-  renderEditor();
-  showToast('Alliance database refreshed');
-}
+function refreshDatabase(id){ renderEditor(); showToast('Refreshed'); }
 
 // =====================================================
 // MODAL HELPERS
 // =====================================================
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay=>{
-  overlay.addEventListener('click',e=>{ if(e.target===overlay) overlay.classList.remove('open'); });
-});
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{ overlay.addEventListener('click',e=>{ if(e.target===overlay) overlay.classList.remove('open'); }); });
 
 // =====================================================
 // IMPORT / EXPORT
 // =====================================================
-function exportJSON(){
-  const blob=new Blob([JSON.stringify(alliances,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download='alliances.json'; a.click();
-  URL.revokeObjectURL(url);
-  showToast('Exported alliances.json');
-}
-
-function importJSON(e){
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      if(!Array.isArray(data)) throw new Error('Expected an array');
-      alliances=data;
-      save();
-      renderList();
-      renderEditor();
-      showToast(`Imported ${alliances.length} alliances`);
-    }catch(err){ showToast('Import failed: '+err.message); }
-  };
-  reader.readAsText(file);
-  e.target.value='';
-}
-
-// =====================================================
-// UTIL
-// =====================================================
-function escHtml(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function exportJSON(){ const blob=new Blob([JSON.stringify(alliances,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='alliances.json'; a.click(); URL.revokeObjectURL(url); showToast('Exported alliances.json'); }
+function importJSON(e){ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); if(!Array.isArray(data)) throw new Error('Expected an array'); data.forEach(hydrateAlliance); alliances=data; save(); renderList(); renderEditor(); showToast(`Imported ${alliances.length} alliances`); }catch(err){ showToast('Import failed: '+err.message); } }; reader.readAsText(file); e.target.value=''; }
 
 // =====================================================
 // INIT
 // =====================================================
-load();
-renderList();
-renderEditor();
+load(); renderList(); renderEditor();
 </script>
 </body>
 </html>
