@@ -1490,7 +1490,7 @@
       "manpower": 1010
     },
     "economy": {
-      "money": 10200
+      "money": 200
     },
     "brute": {
       "iron": 0,
@@ -2139,7 +2139,7 @@
       "members": 13
     },
     "economy": {
-      "money": 500
+      "money": 5500
     },
     "brute": {
       "iron": 0,
@@ -2251,7 +2251,7 @@
       "mine_frozen": 0
     },
     "observations": {
-      "national_plan": "Hided, acting as a organization that pays service to the iraq government. It requests 5k per week to pay services"
+      "national_plan": "Hided as a private security organization working for Iraq. It requests 5k per month to pays service"
     },
     "production": []
   },
@@ -2397,7 +2397,7 @@
       "members": 10
     },
     "economy": {
-      "money": 500
+      "money": 5500
     },
     "brute": {
       "iron": 0,
@@ -2509,7 +2509,7 @@
       "mine_frozen": 0
     },
     "observations": {
-      "national_plan": "Hided as a private security organization working for Iraq. It requests 5k per week to pays service"
+      "national_plan": "Hided, acting as a organization that pays service to the iraq government. It requests 5k per month to pay services"
     },
     "production": []
   }
