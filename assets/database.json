@@ -284,13 +284,13 @@
     "flag": "🏴",
     "createdAt": 1776886139054,
     "population": {
-      "civilians": 950,
+      "civilians": 930,
       "workers": 60,
-      "military": 10,
+      "military": 30,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 0
     },
     "brute": {
       "iron": 320,
@@ -401,7 +401,7 @@
     },
     "military": {
       "generals": 1,
-      "army": 9
+      "army": 29
     },
     "production": [
       {
@@ -1498,9 +1498,9 @@
     "type": "country",
     "createdAt": 1777329095889,
     "population": {
-      "civilians": 1020,
+      "civilians": 1010,
       "workers": 0,
-      "military": 0,
+      "military": 10,
       "members": 0,
       "manpower": 1010
     },
@@ -1529,9 +1529,9 @@
       "refined_uranium": 0
     },
     "buildings": {
-      "factories": 0,
+      "factories": 1,
       "businesses": 0,
-      "mines": 0
+      "mines": 1
     },
     "weapons": {
       "knives": 0,
@@ -1610,7 +1610,7 @@
       "mine_swamp": 0,
       "mine_desert": 0,
       "mine_badlands": 0,
-      "mine_mountains": 0,
+      "mine_mountains": 1,
       "mine_ocean": 0,
       "mine_caves": 0,
       "mine_rare": 0,
@@ -1620,8 +1620,8 @@
       "national_plan": "Paying the services of Al-Quaeda and Taliban/Hezbollah"
     },
     "military": {
-      "army": 0,
-      "generals": 0
+      "army": 9,
+      "generals": 1
     },
     "production": []
   },
@@ -2154,7 +2154,7 @@
       "members": 13
     },
     "economy": {
-      "money": 5500
+      "money": 700
     },
     "brute": {
       "iron": 0,
@@ -2412,7 +2412,7 @@
       "members": 15
     },
     "economy": {
-      "money": 5500
+      "money": 700
     },
     "brute": {
       "iron": 0,
