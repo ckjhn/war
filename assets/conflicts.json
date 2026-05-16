@@ -64,7 +64,10 @@
           }
         ],
         "id": "mp7vco10mlhdmyka22a",
-        "objectives": []
+        "objectives": [],
+        "kills": {
+          "mp7vco105lb4bkf5hl": 216
+        }
       },
       {
         "name": "northen social army organization",
@@ -88,7 +91,10 @@
           }
         ],
         "id": "mp7vco105lb4bkf5hl",
-        "objectives": []
+        "objectives": [],
+        "kills": {
+          "mp7vco10mlhdmyka22a": 29
+        }
       }
     ]
   },
@@ -157,7 +163,10 @@
             "warships_lost": 0
           }
         ],
-        "objectives": []
+        "objectives": [],
+        "kills": {
+          "mp7vdceo3v2wj4o5nza": 1
+        }
       },
       {
         "id": "mp7vdceo3v2wj4o5nza",
@@ -181,7 +190,8 @@
             "warships_lost": 0
           }
         ],
-        "objectives": []
+        "objectives": [],
+        "kills": {}
       },
       {
         "id": "mp7vn83tnnwurm3cwwf",
@@ -205,7 +215,8 @@
             "warships_lost": 0
           }
         ],
-        "objectives": []
+        "objectives": [],
+        "kills": {}
       },
       {
         "id": "mp7vns9kmz79uj9sw6",
@@ -229,7 +240,8 @@
             "warships_lost": 0
           }
         ],
-        "objectives": []
+        "objectives": [],
+        "kills": {}
       },
       {
         "id": "mp7vo3zn25lz3bpred3",
@@ -253,7 +265,8 @@
             "warships_lost": 0
           }
         ],
-        "objectives": []
+        "objectives": [],
+        "kills": {}
       }
     ]
   }
