@@ -17,6 +17,14 @@ html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;display:flex;flex-direction:column;}
 
 header{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);}
+
+/* ── TOOLBAR (duplicate of header actions, shown when header is hidden by hub) ── */
+.app-toolbar{display:none;flex-shrink:0;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-wrap:wrap;}
+/* When hub hides header, toolbar becomes visible */
+body:not(:has(header:not([style*="display:none"]))) .app-toolbar,
+header[style*="display:none"] ~ .app-toolbar { display:flex; }
+/* Simpler fallback: hub injects a class we can target */
+body.hub-mode .app-toolbar{display:flex;}
 .logo{font-family:'Orbitron',monospace;font-size:clamp(13px,2vw,18px);font-weight:900;letter-spacing:4px;color:var(--cyan);text-shadow:0 0 20px rgba(0,212,255,.5);}
 .logo span{color:var(--orange);}
 .header-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
@@ -290,6 +298,17 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </header>
 
+<div class="app-toolbar" id="app-toolbar">
+  <div class="game-date-wrap">
+    <span class="game-date-lbl">🗓 Game Date:</span>
+    <input class="date-input" id="game-date-input-tb" type="text" placeholder="MM/DD/YYYY"
+      style="width:110px;" onchange="setGameDate(this.value)">
+  </div>
+  <button class="btn btn-sm" onclick="openAnalysisModal()">📊 Analysis</button>
+  <button class="btn btn-sm" onclick="exportJSON()">⬇ Export JSON</button>
+  <label class="btn btn-sm btn-orange" style="cursor:pointer;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
+</div>
+
 <div class="app" id="app">
   <div class="sidebar">
     <div class="sidebar-header">
@@ -394,6 +413,8 @@ function setGameDate(val){
   localStorage.setItem('tc_game_date', parsed);
   const inp = document.getElementById('game-date-input');
   if(inp && parsed) inp.value = displayDate(parsed);
+  const inpTb = document.getElementById('game-date-input-tb');
+  if(inpTb && parsed) inpTb.value = displayDate(parsed);
   renderList();
   if(selectedId) renderEditor();
 }
@@ -1262,7 +1283,10 @@ function openAnalysisModal(){
 // =====================================================
 load(); renderList();
 // Init game date display
-if(gameDate){ const inp=document.getElementById('game-date-input'); if(inp) inp.value=displayDate(gameDate); }
+if(gameDate){
+  const inp=document.getElementById('game-date-input'); if(inp) inp.value=displayDate(gameDate);
+  const inpTb=document.getElementById('game-date-input-tb'); if(inpTb) inpTb.value=displayDate(gameDate);
+}
 </script>
 </body>
 </html>
