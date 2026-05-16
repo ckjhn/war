@@ -2136,7 +2136,7 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 10
+      "members": 13
     },
     "economy": {
       "money": 500
@@ -2251,7 +2251,7 @@
       "mine_frozen": 0
     },
     "observations": {
-      "national_plan": ""
+      "national_plan": "Hided, acting as a organization that pays service to the iraq government"
     },
     "production": []
   },
