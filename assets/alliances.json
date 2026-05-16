@@ -352,7 +352,23 @@
     "name": "Northen Alliance",
     "flag": "☦",
     "style": "fascist",
-    "members": [],
+    "members": [
+      {
+        "name": "CV",
+        "flag": "🏴",
+        "effort": 0
+      },
+      {
+        "name": "Gulf Cartel",
+        "flag": "🏴",
+        "effort": 0
+      },
+      {
+        "name": "Hamas",
+        "flag": "🏴",
+        "effort": 0
+      }
+    ],
     "observations": "",
     "createdAt": 1778905248635,
     "own": {
