@@ -938,8 +938,10 @@
     },
     "type": "country",
     "military": {
-      "army": 9,
-      "generals": 1
+      "army": 5,
+      "generals": 1,
+      "special_forces": 3,
+      "commanders": 1
     },
     "observations": {
       "national_plan": ""
