@@ -6,84 +6,255 @@
     "description": "",
     "startDate": "1989-01-01",
     "createdAt": 1777291324712,
-    "sideA": {
-      "name": "allies",
-      "countries": [
-        {
-          "id": "moh5f4cwyvv0ze9aw5g",
-          "name": "USA",
-          "flag": "🏴",
-          "isMain": true,
-          "troops": 38,
-          "injured": 2,
-          "deaths": 19,
-          "tanks": 0,
-          "vehicles": 0,
-          "aircrafts": 0,
-          "warships": 0,
-          "tanks_lost": 0,
-          "vehicles_lost": 0,
-          "aircrafts_lost": 0,
-          "warships_lost": 0
-        },
-        {
-          "id": "moh5fb07j11z15non2q",
-          "name": "Israel",
-          "flag": "🏴",
-          "isMain": false,
-          "troops": 10,
-          "injured": 0,
-          "deaths": 5,
-          "tanks": 0,
-          "vehicles": 0,
-          "aircrafts": 0,
-          "warships": 0,
-          "tanks_lost": 0,
-          "vehicles_lost": 0,
-          "aircrafts_lost": 0,
-          "warships_lost": 0
-        },
-        {
-          "id": "moh5fecf0zixa7q062h",
-          "name": "Russia",
-          "flag": "🏴",
-          "isMain": false,
-          "troops": 30,
-          "injured": 0,
-          "deaths": 5,
-          "tanks": 0,
-          "vehicles": 0,
-          "aircrafts": 1,
-          "warships": 0,
-          "tanks_lost": 0,
-          "vehicles_lost": 0,
-          "aircrafts_lost": 0,
-          "warships_lost": 0
-        }
-      ]
-    },
-    "sideB": {
-      "name": "northen social army organization",
-      "countries": [
-        {
-          "id": "moh5f7fzs1t02vdxbp",
-          "name": "Taliban",
-          "flag": "🏴",
-          "isMain": true,
-          "troops": 240,
-          "injured": 0,
-          "deaths": 216,
-          "tanks": 0,
-          "vehicles": 0,
-          "aircrafts": 0,
-          "warships": 0,
-          "tanks_lost": 0,
-          "vehicles_lost": 0,
-          "aircrafts_lost": 0,
-          "warships_lost": 0
-        }
-      ]
-    },
-    "endDate": "1989-10-31"
+    "endDate": "1989-10-31",
+    "sides": [
+      {
+        "name": "allies",
+        "countries": [
+          {
+            "id": "moh5f4cwyvv0ze9aw5g",
+            "name": "USA",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 38,
+            "injured": 2,
+            "deaths": 19,
+            "tanks": 0,
+            "vehicles": 0,
+            "aircrafts": 0,
+            "warships": 0,
+            "tanks_lost": 0,
+            "vehicles_lost": 0,
+            "aircrafts_lost": 0,
+            "warships_lost": 0
+          },
+          {
+            "id": "moh5fb07j11z15non2q",
+            "name": "Israel",
+            "flag": "🏴",
+            "isMain": false,
+            "troops": 10,
+            "injured": 0,
+            "deaths": 5,
+            "tanks": 0,
+            "vehicles": 0,
+            "aircrafts": 0,
+            "warships": 0,
+            "tanks_lost": 0,
+            "vehicles_lost": 0,
+            "aircrafts_lost": 0,
+            "warships_lost": 0
+          },
+          {
+            "id": "moh5fecf0zixa7q062h",
+            "name": "Russia",
+            "flag": "🏴",
+            "isMain": false,
+            "troops": 30,
+            "injured": 0,
+            "deaths": 5,
+            "tanks": 0,
+            "vehicles": 0,
+            "aircrafts": 1,
+            "warships": 0,
+            "tanks_lost": 0,
+            "vehicles_lost": 0,
+            "aircrafts_lost": 0,
+            "warships_lost": 0
+          }
+        ],
+        "id": "mp7vco10mlhdmyka22a",
+        "objectives": []
+      },
+      {
+        "name": "northen social army organization",
+        "countries": [
+          {
+            "id": "moh5f7fzs1t02vdxbp",
+            "name": "Taliban",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 240,
+            "injured": 0,
+            "deaths": 216,
+            "tanks": 0,
+            "vehicles": 0,
+            "aircrafts": 0,
+            "warships": 0,
+            "tanks_lost": 0,
+            "vehicles_lost": 0,
+            "aircrafts_lost": 0,
+            "warships_lost": 0
+          }
+        ],
+        "id": "mp7vco105lb4bkf5hl",
+        "objectives": []
+      }
+    ]
+  },
+  {
+    "id": "mp7vdcelwm3uulpjj4p",
+    "name": "Terrorist's War",
+    "status": "ongoing",
+    "description": "War between every cartel/terrorist organization for control of territory, weapons, drugs and money. At first was PCC against CV, but CV got a alliance with Gulf Cartel.\nGulf Cartel was in war against Mara Cartel. And Hamas also joined the alliance, but they are in war with Talibans/Hezbollah and Al-Qaeda as well",
+    "startDate": "1989-11-10",
+    "endDate": "",
+    "createdAt": 1778907122448,
+    "sides": [
+      {
+        "id": "mp7vdceo7l22140vzdw",
+        "name": "NOrthen Alliance",
+        "countries": [
+          {
+            "id": "mp7vdpob2difgkwvb87",
+            "name": "CV",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 10,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          },
+          {
+            "id": "mp7vdwzv2zwd56w70cu",
+            "name": "Hamas",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 14,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          },
+          {
+            "id": "mp7ve7ohmtpx1qx5oo",
+            "name": "Gulf Cartel",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 10,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          }
+        ],
+        "objectives": []
+      },
+      {
+        "id": "mp7vdceo3v2wj4o5nza",
+        "name": "PCC",
+        "countries": [
+          {
+            "id": "mp7veetjoxyc6hzgphh",
+            "name": "PCC",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 9,
+            "injured": 0,
+            "deaths": 1,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          }
+        ],
+        "objectives": []
+      },
+      {
+        "id": "mp7vn83tnnwurm3cwwf",
+        "name": "Mara Cartel",
+        "countries": [
+          {
+            "id": "mp7vnmxdt9of5pz2jek",
+            "name": "Mara Cartel",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 10,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          }
+        ],
+        "objectives": []
+      },
+      {
+        "id": "mp7vns9kmz79uj9sw6",
+        "name": "Taliban/Hezbollah",
+        "countries": [
+          {
+            "id": "mp7vop0njahzzrwrxa",
+            "name": "Taliban/Hezbollah",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 15,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          }
+        ],
+        "objectives": []
+      },
+      {
+        "id": "mp7vo3zn25lz3bpred3",
+        "name": "Al-Quaeda",
+        "countries": [
+          {
+            "id": "mp7vog6f88ile0wwtym",
+            "name": "Al-Quaeda",
+            "flag": "🏴",
+            "isMain": true,
+            "troops": 13,
+            "injured": 0,
+            "deaths": 0,
+            "tanks": 0,
+            "tanks_lost": 0,
+            "vehicles": 0,
+            "vehicles_lost": 0,
+            "aircrafts": 0,
+            "aircrafts_lost": 0,
+            "warships": 0,
+            "warships_lost": 0
+          }
+        ],
+        "objectives": []
+      }
+    ]
   }
 ]
