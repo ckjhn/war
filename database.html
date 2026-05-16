@@ -131,6 +131,33 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .modal-input:focus,.modal-select:focus{border-color:var(--accent);}
 .modal-actions{display:flex;gap:10px;margin-top:20px;}
 
+/* ── PRODUCTION TRACKER ── */
+.prod-section{background:var(--surface);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.prod-line{border:1px solid rgba(255,107,53,.3);background:var(--surface2);margin-bottom:8px;overflow:hidden;}
+.prod-line-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,107,53,.06);border-bottom:1px solid rgba(255,107,53,.2);}
+.prod-line-label{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;}
+.prod-workers-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid rgba(255,107,53,.4);color:var(--accent2);letter-spacing:1px;}
+.prod-line-actions{display:flex;gap:4px;margin-left:auto;}
+.prod-queue{padding:6px 10px;}
+.prod-item{display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:4px;border:1px solid var(--border);background:var(--bg);position:relative;}
+.prod-item.pi-active{border-color:var(--accent3);background:rgba(57,255,20,.04);}
+.prod-item.pi-done{border-color:var(--text-dim);opacity:.55;}
+.prod-item.pi-queued{border-color:rgba(26,48,69,.8);}
+.prod-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pi-active .prod-status-dot{background:var(--accent3);box-shadow:0 0 6px var(--accent3);}
+.pi-done .prod-status-dot{background:var(--text-dim);}
+.pi-queued .prod-status-dot{background:var(--border);}
+.prod-item-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;color:var(--text);text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.prod-turns-badge{font-family:'Share Tech Mono',monospace;font-size:11px;padding:2px 8px;border:1px solid;white-space:nowrap;flex-shrink:0;}
+.pi-active .prod-turns-badge{border-color:var(--accent3);color:var(--accent3);}
+.pi-done .prod-turns-badge{border-color:var(--text-dim);color:var(--text-dim);}
+.pi-queued .prod-turns-badge{border-color:var(--border);color:var(--text-dim);}
+.prod-item-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);white-space:nowrap;flex-shrink:0;}
+.prod-item-del{background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:1px 5px;transition:all .15s;flex-shrink:0;}
+.prod-item-del:hover{border-color:var(--red);color:var(--red);}
+.prod-add-line{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);}
+.prod-workers-bar-wrap{width:100%;background:var(--bg);height:4px;border:1px solid var(--border);margin-top:4px;}
+.prod-workers-bar{height:100%;background:var(--accent2);}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -220,6 +247,77 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
     <div class="modal-actions">
       <button class="btn btn-green" onclick="executeCycle()">✓ CONFIRM CYCLE</button>
       <button class="btn btn-orange" onclick="closeModal('cycle-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prod-line-modal">
+  <div class="modal">
+    <div class="modal-title">🏭 New Production Line</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:14px;line-height:1.7;padding:8px;background:var(--bg);border:1px solid var(--border);">
+      ⚠ Note: Once production starts, <strong style="color:var(--text);">do not delete</strong> an item mid-production. Delete is available to fix mistakes only.
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Item Name / Type</div>
+      <input class="modal-input" id="pl-name" type="text" placeholder="e.g. T-90 Tank, AK-47 Rifles, Warship…" maxlength="60">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-field">
+        <div class="modal-label">Turns to Complete</div>
+        <input class="modal-input" id="pl-turns" type="number" min="1" value="10" placeholder="turns">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Workers Used</div>
+        <input class="modal-input" id="pl-workers" type="number" min="1" value="10" placeholder="int">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-field">
+        <div class="modal-label">Fuel Needed (L)</div>
+        <input class="modal-input" id="pl-fuel" type="number" min="0" step="0.1" value="0" placeholder="float">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">MP Required</div>
+        <input class="modal-input" id="pl-mp" type="number" min="0" value="0" placeholder="int">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAddProdLine()">✓ START PRODUCTION</button>
+      <button class="btn btn-orange" onclick="closeModal('prod-line-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prod-item-modal">
+  <div class="modal">
+    <div class="modal-title">➕ Add to Queue</div>
+    <div class="modal-field">
+      <div class="modal-label">Item Name / Type</div>
+      <input class="modal-input" id="pi-name" type="text" placeholder="e.g. Frigate, SMG batch…" maxlength="60">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-field">
+        <div class="modal-label">Turns to Complete</div>
+        <input class="modal-input" id="pi-turns" type="number" min="1" value="10" placeholder="turns">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Workers Used</div>
+        <input class="modal-input" id="pi-workers" type="number" min="1" value="10" placeholder="int">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="modal-field">
+        <div class="modal-label">Fuel Needed (L)</div>
+        <input class="modal-input" id="pi-fuel" type="number" min="0" step="0.1" value="0" placeholder="float">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">MP Required</div>
+        <input class="modal-input" id="pi-mp" type="number" min="0" value="0" placeholder="int">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAddProdItem()">✓ ADD TO QUEUE</button>
+      <button class="btn btn-orange" onclick="closeModal('prod-item-modal')">✕ CANCEL</button>
     </div>
   </div>
 </div>
@@ -400,6 +498,7 @@ function makeDefault(name='New Country', flag='🏴', type='country'){
   // Mines section — one entry per biome category
   c.mines = {};
   for(const m of MINE_CATS_DB) c.mines[m.k] = 0;
+  c.production = [];
   return c;
 }
 
@@ -410,6 +509,7 @@ function load(){
   countries.forEach(c => {
     if(!c.type) c.type = 'country';
     if(!c.mines){ c.mines={}; for(const m of MINE_CATS_DB) c.mines[m.k]=0; }
+    if(!c.production) c.production = [];
     // Ensure all countries have observations section
     if(!c.observations) { 
       c.observations = {}; 
@@ -496,6 +596,8 @@ function renderEditor(){
     
     // Show mines section only for countries
     if(s.key === 'buildings' && !isOrg) html += renderMinesSection(c);
+    // Show production tracker only for countries
+    if(s.key === 'buildings' && !isOrg) html += renderProductionSection(c);
   }
 
   html += `</div>`;
@@ -645,6 +747,149 @@ function renderMinesSection(c){
       ${rows}
     </div>
   </div>`;
+}
+
+// =====================================================
+// PRODUCTION TRACKER
+// =====================================================
+let _prodCountryId=null, _prodLineId=null;
+
+function uuidProd(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+
+function renderProductionSection(c){
+  if(!c.production) c.production=[];
+  const totalWorkers = c.production.reduce((s,line)=>{
+    const active=line.items.find(it=>it.turnsLeft>0);
+    return s+(active?active.workers:0);
+  },0);
+  const maxWorkers = parseInt(c.population?.workers||0)||0;
+
+  const linesHtml = c.production.map((line,idx)=>{
+    const activeItem = line.items.find(it=>it.turnsLeft>0);
+    const workerCount = activeItem?activeItem.workers:0;
+    const barW = maxWorkers>0?Math.min(100,Math.round(workerCount/maxWorkers*100)):0;
+
+    const itemsHtml = line.items.map((item,iq)=>{
+      const done = item.turnsLeft===0;
+      const isActive = !done && item===activeItem;
+      const isQueued = !done && !isActive;
+      const cls = done?'pi-done':isActive?'pi-active':'pi-queued';
+      const pct = item.turnsTotal>0?Math.round((1-item.turnsLeft/item.turnsTotal)*100):100;
+      const label = done?'✓ DONE':isActive?`${item.turnsLeft} turns left`:`Queued — ${item.turnsLeft} turns`;
+      const meta = `⚙ Workers: ${item.workers} | ⛽ Fuel: ${item.fuel}L | 🔧 MP: ${item.mp}`;
+      return `<div class="prod-item ${cls}">
+        <span class="prod-status-dot"></span>
+        <span class="prod-item-name" title="${escProd(item.name)}">${escProd(item.name)}</span>
+        <span class="prod-turns-badge">${label}</span>
+        <span class="prod-item-meta">${meta}</span>
+        <button class="prod-item-del" title="Delete item (mistakes only)" onclick="deleteProdItem('${c.id}','${line.id}','${item.id}')">×</button>
+      </div>`;
+    }).join('');
+
+    return `<div class="prod-line">
+      <div class="prod-line-header">
+        <span class="prod-line-label">Factory ${idx+1}</span>
+        <span class="prod-workers-badge">⚙ ${workerCount} workers</span>
+        ${activeItem?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-left:4px;">${Math.round((1-activeItem.turnsLeft/activeItem.turnsTotal)*100)}% complete</span>`:''}
+        <div class="prod-line-actions">
+          <button class="btn btn-sm" style="font-size:8px;padding:4px 8px;" onclick="openAddProdItem('${c.id}','${line.id}')">+ Queue</button>
+          <button class="btn btn-sm btn-red" style="font-size:8px;padding:4px 8px;" onclick="deleteProdLine('${c.id}','${line.id}')">× Line</button>
+        </div>
+      </div>
+      ${workerCount>0&&maxWorkers>0?`<div class="prod-workers-bar-wrap"><div class="prod-workers-bar" style="width:${barW}%;"></div></div>`:''}
+      <div class="prod-queue">${itemsHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim);padding:6px 0;">Queue empty.</div>'}</div>
+    </div>`;
+  }).join('');
+
+  const activePct = maxWorkers>0?Math.min(100,Math.round(totalWorkers/maxWorkers*100)):0;
+
+  return `<div class="section prod-section" id="sec-production">
+    <div class="section-header" onclick="toggleSection('production')">
+      <span class="section-title" style="color:var(--accent2);">🏭 Production</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);margin-right:10px;">
+        ${c.production.length} line${c.production.length!==1?'s':''} · ${totalWorkers}/${maxWorkers} workers
+      </span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="padding:8px 0 14px;border-bottom:1px solid rgba(26,48,69,.5);margin-bottom:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">
+        Each line = 1 factory. Workers in active item = production slots. Pass Turn advances all active productions by 1 turn.
+      </div>
+      ${linesHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--text-dim);padding:12px 0;text-align:center;">No production lines. Add one below.</div>'}
+      <div class="prod-add-line">
+        <button class="btn btn-sm btn-orange" onclick="openAddProdLine('${c.id}')">+ New Production Line</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function escProd(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function openAddProdLine(cid){
+  _prodCountryId=cid; _prodLineId=null;
+  document.getElementById('pl-name').value='';
+  document.getElementById('pl-turns').value=10;
+  document.getElementById('pl-workers').value=10;
+  document.getElementById('pl-fuel').value=0;
+  document.getElementById('pl-mp').value=0;
+  document.getElementById('prod-line-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pl-name').focus(),100);
+}
+
+function confirmAddProdLine(){
+  const c=getCountry(_prodCountryId); if(!c) return;
+  const name=(document.getElementById('pl-name').value||'').trim();
+  if(!name){ document.getElementById('pl-name').style.borderColor='var(--red)'; return; }
+  const turns=Math.max(1,parseInt(document.getElementById('pl-turns').value)||1);
+  const workers=Math.max(1,parseInt(document.getElementById('pl-workers').value)||1);
+  const fuel=Math.max(0,parseFloat(document.getElementById('pl-fuel').value)||0);
+  const mp=Math.max(0,parseInt(document.getElementById('pl-mp').value)||0);
+  if(!c.production) c.production=[];
+  const item={id:uuidProd(),name,turnsTotal:turns,turnsLeft:turns,fuel,workers,mp};
+  c.production.push({id:uuidProd(),items:[item]});
+  save(); closeModal('prod-line-modal'); renderEditor();
+  toast(`🏭 Production started: ${name}`);
+}
+
+function openAddProdItem(cid,lineId){
+  _prodCountryId=cid; _prodLineId=lineId;
+  document.getElementById('pi-name').value='';
+  document.getElementById('pi-turns').value=10;
+  document.getElementById('pi-workers').value=10;
+  document.getElementById('pi-fuel').value=0;
+  document.getElementById('pi-mp').value=0;
+  document.getElementById('prod-item-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pi-name').focus(),100);
+}
+
+function confirmAddProdItem(){
+  const c=getCountry(_prodCountryId); if(!c) return;
+  const line=(c.production||[]).find(l=>l.id===_prodLineId); if(!line) return;
+  const name=(document.getElementById('pi-name').value||'').trim();
+  if(!name){ document.getElementById('pi-name').style.borderColor='var(--red)'; return; }
+  const turns=Math.max(1,parseInt(document.getElementById('pi-turns').value)||1);
+  const workers=Math.max(1,parseInt(document.getElementById('pi-workers').value)||1);
+  const fuel=Math.max(0,parseFloat(document.getElementById('pi-fuel').value)||0);
+  const mp=Math.max(0,parseInt(document.getElementById('pi-mp').value)||0);
+  line.items.push({id:uuidProd(),name,turnsTotal:turns,turnsLeft:turns,fuel,workers,mp});
+  save(); closeModal('prod-item-modal'); renderEditor();
+  toast(`➕ Queued: ${name}`);
+}
+
+function deleteProdLine(cid,lineId){
+  const c=getCountry(cid); if(!c) return;
+  c.production=(c.production||[]).filter(l=>l.id!==lineId);
+  save(); renderEditor();
+  toast('Production line removed.');
+}
+
+function deleteProdItem(cid,lineId,itemId){
+  const c=getCountry(cid); if(!c) return;
+  const line=(c.production||[]).find(l=>l.id===lineId); if(!line) return;
+  line.items=line.items.filter(it=>it.id!==itemId);
+  if(line.items.length===0){ c.production=c.production.filter(l=>l.id!==lineId); }
+  save(); renderEditor();
+  toast('Item removed from queue.');
 }
 
 function applyAdjustment(id, section, field){
@@ -834,6 +1079,13 @@ function executeCycle(){
           }
         }
       }
+      // Production countdown: reduce active item per line by 1 turn
+      if(c.production && c.production.length>0){
+        c.production.forEach(line=>{
+          const activeItem=line.items.find(it=>(it.turnsLeft||0)>0);
+          if(activeItem) activeItem.turnsLeft=Math.max(0,(activeItem.turnsLeft||0)-1);
+        });
+      }
     }
   });
 
@@ -965,6 +1217,12 @@ document.getElementById('add-modal').addEventListener('click',function(e){
 
 document.getElementById('cycle-modal').addEventListener('click',function(e){
   if(e.target===this)closeModal('cycle-modal');
+});
+document.getElementById('prod-line-modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal('prod-line-modal');
+});
+document.getElementById('prod-item-modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal('prod-item-modal');
 });
 
 // =====================================================

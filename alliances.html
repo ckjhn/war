@@ -455,6 +455,21 @@ const DONATE_CATEGORIES = [
   {id:'brute',     label:'🪨 Brute Resources'},
   {id:'refined',   label:'⚗️ Refined Resources'},
   {id:'buildings', label:'🏗️ Buildings'},
+  {id:'weapons',   label:'🔫 Weapons'},
+  {id:'ammo',      label:'🔴 Ammo'},
+  {id:'vehicles',  label:'🚗 Vehicles'},
+  {id:'missiles',  label:'🚀 Missiles'},
+  {id:'others',    label:'💣 Others'},
+];
+
+const OWN_INVENTORY_CATS = [
+  {key:'weapons',  label:'🔫 Weapons',    fields:[{k:'knives',l:'Knives'},{k:'pistols',l:'Pistols'},{k:'smgs',l:'SMGs'},{k:'rifles',l:'Rifles'},{k:'snipers',l:'Sniper Rifles'},{k:'heavy_weapons',l:'Heavy Weapons'},{k:'atm',l:'Anti-Tank Missiles'},{k:'light_vests',l:'Light Vests'},{k:'heavy_vests',l:'Heavy Vests'},{k:'old_mortar',l:'Old Mortar'}]},
+  {key:'ammo',     label:'🔴 Ammunition', fields:[{k:'ammo_50',l:'.50 Ammo'},{k:'ammo_22mm',l:'22mm Autocannon'},{k:'ammo_pistol',l:'Pistol Ammo'},{k:'ammo_smg',l:'SMG Ammo'},{k:'ammo_rifle',l:'Rifle Ammo'},{k:'ammo_sniper',l:'Sniper Ammo'},{k:'ammo_heavy',l:'Heavy Ammo'},{k:'ammo_atm',l:'Anti-Tank Ammo'},{k:'ammo_mortar',l:'Mortar Rounds'}]},
+  {key:'air',      label:'✈️ Air',         fields:[{k:'light_jet',l:'Light Jets'},{k:'med_jet',l:'Medium Jets'},{k:'heavy_jet',l:'Heavy Jets'},{k:'bomber',l:'Bombers'},{k:'helicopter',l:'Helicopters'},{k:'airplane',l:'Airplanes'}]},
+  {key:'land',     label:'🪖 Land',        fields:[{k:'light_tank',l:'Light Tanks'},{k:'med_tank',l:'Medium Tanks'},{k:'heavy_tank',l:'Heavy Tanks'},{k:'motorbike',l:'Motorbikes'},{k:'car',l:'Cars'},{k:'truck',l:'Trucks'}]},
+  {key:'water',    label:'⚓ Water',       fields:[{k:'submarine',l:'Submarines'},{k:'warship',l:'Warships'},{k:'boat',l:'Boats'},{k:'ship',l:'Ships'},{k:'carrier',l:'Carriers'},{k:'supercarrier',l:'Supercarriers'}]},
+  {key:'missiles', label:'🚀 Missiles',   fields:[{k:'torpedo',l:'Torpedoes'},{k:'icbm',l:'ICBMs'},{k:'cruise',l:'Cruise Missiles'},{k:'hypersonic',l:'Hypersonic Missiles'},{k:'guided',l:'Guided Missiles'},{k:'nuclear',l:'Nuclear Missiles'}]},
+  {key:'others',   label:'💣 Others',     fields:[{k:'grenade',l:'Grenades'},{k:'spec_grenade',l:'Spec. Grenades'},{k:'land_bomb',l:'Land Bombs'},{k:'drone',l:'Drones'},{k:'barricade',l:'Barricades'},{k:'barrier',l:'Barriers'}]},
 ];
 
 // =====================================================
@@ -478,6 +493,7 @@ function makeOwnEntity(){
   MINE_TYPES.forEach(t=>own.mines[t]=0);
   BRUTE_FIELDS.forEach(f=>own[f.k]=0);
   REFINED_FIELDS.forEach(f=>own[f.k]=0);
+  OWN_INVENTORY_CATS.forEach(cat=>{ own[cat.key]={}; cat.fields.forEach(f=>own[cat.key][f.k]=0); });
   return own;
 }
 
@@ -498,6 +514,13 @@ function hydrateAlliance(a){
   if(!a.donations) a.donations=[];
   if(!a.taxConfig) a.taxConfig={fixedPerMember:0};
   if(!a.turn) a.turn=0;
+  // Ensure inventory sub-objects exist
+  if(typeof OWN_INVENTORY_CATS !== 'undefined'){
+    OWN_INVENTORY_CATS.forEach(cat=>{
+      if(!a.own[cat.key]) a.own[cat.key]={};
+      cat.fields.forEach(f=>{ if(a.own[cat.key][f.k]===undefined) a.own[cat.key][f.k]=0; });
+    });
+  }
 }
 
 function load(){
@@ -765,6 +788,10 @@ function renderAllianceAssets(a){
             <div class="asset-box-title">⚗️ Refined Resources</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:2px;">${refinedRows}</div>
           </div>
+          <div class="asset-box" style="grid-column:span 2;" id="alliance-inventory-box-${a.id}">
+            <div class="asset-box-title">🏛️ Donated Inventory</div>
+            ${renderDonatedInventory(a)}
+          </div>
         </div>
         <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;padding:8px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1);">
           ⏳ Each <strong style="color:var(--text);">Pass Turn</strong> = 1 cycle. Civilians earn <strong style="color:var(--gold);">$10 each</strong>. Each business earns <strong style="color:var(--gold);">$15,000</strong>. Civilians grow by <strong style="color:var(--gold);">+10</strong> (+3 per hospital). Mines produce brute resources. Tax is auto-collected.
@@ -856,6 +883,18 @@ function renderDonationsBacklog(a){
 // =====================================================
 // PASS TURN — Non-Communist only
 // =====================================================
+function renderDonatedInventory(a){
+  const rows=[];
+  OWN_INVENTORY_CATS.forEach(cat=>{
+    cat.fields.forEach(f=>{
+      const v=(a.own[cat.key]||{})[f.k]||0;
+      if(v>0) rows.push(`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);padding:2px 8px;margin:2px;display:inline-block;"><span style="color:var(--text-dim);">${f.l}:</span> <span style="color:var(--gold);">${v.toLocaleString()}</span></span>`);
+    });
+  });
+  if(!rows.length) return '<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">No donated inventory yet. Use 📦 Donate.</span>';
+  return `<div style="display:flex;flex-wrap:wrap;gap:2px;">${rows.join('')}</div>`;
+}
+
 function passTurn(allianceId){
   const a=getAlliance(allianceId);
   if(!a){ return; }
@@ -908,7 +947,7 @@ function openDonateModal(allianceId){
   sel.innerHTML=a.members.map(m=>`<option value="${m.name}" data-flag="${m.flag||'🏴'}">${m.flag||'🏴'} ${m.name}</option>`).join('');
   // Category tabs
   document.getElementById('donate-cat-tabs').innerHTML=DONATE_CATEGORIES.map(c=>
-    `<button class="donate-cat-btn ${c.id===activeDonateCategory?'active':''}" onclick="setDonateCategory('${c.id}')">${c.label}</button>`
+    `<button class="donate-cat-btn ${c.id===activeDonateCategory?'active':''}" data-catid="${c.id}" onclick="setDonateCategory('${c.id}')">${c.label}</button>`
   ).join('');
   renderDonateInputs();
   openModal('donate-modal');
@@ -916,8 +955,10 @@ function openDonateModal(allianceId){
 
 function setDonateCategory(cat){
   activeDonateCategory=cat;
-  document.querySelectorAll('.donate-cat-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===DONATE_CATEGORIES.find(c=>c.id===cat)?.label?.trim()));
-  document.querySelectorAll('.donate-cat-btn').forEach(b=>{ b.className='donate-cat-btn'+(DONATE_CATEGORIES.findIndex(c=>c.id===cat)>=0&&b.onclick.toString().includes(`'${cat}'`)?' active':''); });
+  document.querySelectorAll('.donate-cat-btn').forEach(b=>{
+    const matches=b.getAttribute('data-catid')===cat;
+    b.className='donate-cat-btn'+(matches?' active':'');
+  });
   renderDonateInputs();
 }
 
@@ -937,6 +978,18 @@ function renderDonateInputs(){
   } else if(cat==='buildings'){
     const bFields=[{k:'factories',l:'🏭 Factories'},{k:'businesses',l:'🏪 Businesses'},{k:'hospitals',l:'🏥 Hospitals'}];
     wrap.innerHTML=`<div class="donate-resource-grid">${bFields.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`;
+  } else {
+    // weapons, ammo, vehicles (air+land+water), missiles, others
+    const catMap={'weapons':0,'ammo':1,'vehicles':null,'missiles':5,'others':6};
+    const vehicleCats=['air','land','water'];
+    let fields=[];
+    if(cat==='vehicles'){
+      vehicleCats.forEach(vc=>{ const c2=OWN_INVENTORY_CATS.find(c=>c.key===vc); if(c2) fields=[...fields,...c2.fields.map(f=>({...f,l:`${c2.label} ${f.l}`}))]; });
+    } else {
+      const invCat=OWN_INVENTORY_CATS.find(c=>c.key===cat);
+      if(invCat) fields=invCat.fields;
+    }
+    wrap.innerHTML=fields.length?`<div class="donate-resource-grid">${fields.map(f=>`<div class="donate-res-row"><span class="donate-res-lbl">${f.l}</span><input class="donate-res-inp" id="di-${f.k}" type="number" min="0" value="0" placeholder="0"></div>`).join('')}</div>`:'<div style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;">No fields for this category.</div>';
   }
 }
 
@@ -966,6 +1019,24 @@ function confirmDonate(){
     REFINED_FIELDS.forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; a.own[f.k]=(a.own[f.k]||0)+v; } });
   } else if(cat==='buildings'){
     [{k:'factories',l:'Factories'},{k:'businesses',l:'Businesses'},{k:'hospitals',l:'Hospitals'}].forEach(f=>{ const v=readVal(`di-${f.k}`); if(v>0){ items[f.l]=v; a.own[f.k]=(a.own[f.k]||0)+v; } });
+  } else {
+    // weapons, ammo, vehicles, missiles, others
+    const vehicleCats=['air','land','water'];
+    let invFields=[];
+    if(cat==='vehicles'){
+      vehicleCats.forEach(vc=>{ const c2=OWN_INVENTORY_CATS.find(c=>c.key===vc); if(c2) invFields=[...invFields,...c2.fields.map(f=>({...f,key:vc}))]; });
+    } else {
+      const invCat=OWN_INVENTORY_CATS.find(c=>c.id===cat||c.key===cat);
+      if(invCat) invFields=invCat.fields.map(f=>({...f,key:invCat.key}));
+    }
+    invFields.forEach(f=>{ 
+      const v=readVal(`di-${f.k}`); 
+      if(v>0){ 
+        items[f.l||f.k]=v; 
+        if(!a.own[f.key]) a.own[f.key]={};
+        a.own[f.key][f.k]=(a.own[f.key][f.k]||0)+v;
+      }
+    });
   }
 
   if(Object.keys(items).length===0){ showToast('No values entered.'); return; }
@@ -1049,9 +1120,10 @@ function filterMemberList(){
   const filtered=allC.filter(c=>!alreadyIn.has(c.name)&&c.name.toLowerCase().includes(q));
   const el=document.getElementById('member-country-list');
   if(!filtered.length){ el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:10px;">No countries available.</div>`; return; }
-  el.innerHTML=filtered.map(c=>`<div class="country-tag ${pendingMemberCountries.has(c.name)?'selected':''}" onclick="togglePendingMember('${c.name}','${(c.flag||'🏴').replace(/'/g,"&#39;")}'">${c.flag||'🏴'} ${c.name}${pendingMemberCountries.has(c.name)?' ✓':''}</div>`).join('');
+  el.innerHTML=filtered.map(c=>`<div class="country-tag ${pendingMemberCountries.has(c.name)?'selected':''}" data-cname="${c.name.replace(/"/g,'&quot;')}" onclick="togglePendingMemberEl(this)">${c.flag||'🏴'} ${c.name}${pendingMemberCountries.has(c.name)?' ✓':''}</div>`).join('');
 }
 function togglePendingMember(name){ if(pendingMemberCountries.has(name)) pendingMemberCountries.delete(name); else pendingMemberCountries.add(name); filterMemberList(); }
+function togglePendingMemberEl(el){ togglePendingMember(el.dataset.cname); }
 function confirmAddMember(){
   const a=getAlliance(currentMemberAllianceId); if(!a){ closeModal('member-modal'); return; }
   const effort=Math.max(0,parseInt(document.getElementById('member-effort').value)||0);
