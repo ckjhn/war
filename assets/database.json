@@ -1602,7 +1602,7 @@
       "mine_frozen": 0
     },
     "observations": {
-      "national_plan": ""
+      "national_plan": "Paying the services of Al-Quaeda and Taliban/Hezbollah"
     },
     "military": {
       "army": 0,
@@ -1620,7 +1620,7 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 10
+      "members": 9
     },
     "economy": {
       "money": 500
@@ -2122,7 +2122,7 @@
       "mine_frozen": 0
     },
     "observations": {
-      "national_plan": ""
+      "national_plan": "Working for Mexico defense in exchange of weapons. Mexico provide weapons for them and they provide defense against other cartels."
     },
     "production": []
   },
@@ -2265,7 +2265,7 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 10
+      "members": 14
     },
     "economy": {
       "money": 500
@@ -2394,7 +2394,7 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 10
+      "members": 15
     },
     "economy": {
       "money": 5500
