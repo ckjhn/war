@@ -138,8 +138,8 @@
     "flag": "🏴",
     "createdAt": 1775928420708,
     "population": {
-      "civilians": 1040,
-      "workers": 20,
+      "civilians": 1000,
+      "workers": 60,
       "military": 22,
       "manpower": 1030
     },
@@ -155,7 +155,7 @@
       "latex": 1120,
       "silicon": 416,
       "oil": 896,
-      "gas": 1160,
+      "gas": 1535,
       "uranium": 0,
       "glass": 0
     },
@@ -263,16 +263,16 @@
     },
     "production": [
       {
-        "id": "mp7mmtobbdnk5j",
+        "id": "mp8z6iz4mfplvv",
         "items": [
           {
-            "id": "mp7mmtobifc94u",
-            "name": "Mountain mine",
-            "turnsTotal": 13,
-            "turnsLeft": 13,
-            "fuel": 325,
-            "workers": 20,
-            "mp": 250
+            "id": "mp8z6iz47pvg6i",
+            "name": "Mine",
+            "turnsTotal": 2,
+            "turnsLeft": 2,
+            "fuel": 50,
+            "workers": 60,
+            "mp": 100
           }
         ]
       }
@@ -432,7 +432,7 @@
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 3100
     },
     "brute": {
       "iron": 500,
@@ -443,7 +443,7 @@
       "latex": 140,
       "silicon": 52,
       "oil": 112,
-      "gas": 180,
+      "gas": 175,
       "uranium": 0
     },
     "refined": {
@@ -553,9 +553,9 @@
     "flag": "🏴",
     "createdAt": 1776894059083,
     "population": {
-      "civilians": 1000,
+      "civilians": 990,
       "workers": 10,
-      "military": 10,
+      "military": 20,
       "manpower": 1000
     },
     "economy": {
@@ -669,7 +669,7 @@
       "national_plan": ""
     },
     "military": {
-      "army": 9,
+      "army": 19,
       "generals": 1
     },
     "production": [
