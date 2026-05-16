@@ -120,7 +120,23 @@
     "name": "NATO",
     "flag": "🗽🗺",
     "style": "capitalist",
-    "members": [],
+    "members": [
+      {
+        "name": "United States",
+        "flag": "🏴",
+        "effort": 0
+      },
+      {
+        "name": "Russia",
+        "flag": "🏴",
+        "effort": 0
+      },
+      {
+        "name": "Israel",
+        "flag": "🏴",
+        "effort": 0
+      }
+    ],
     "observations": "",
     "createdAt": 1778905197499,
     "own": {
@@ -227,7 +243,7 @@
     "militaryBreakdown": [],
     "donations": [],
     "taxConfig": {
-      "fixedPerMember": 0
+      "fixedPerMember": 1000
     },
     "turn": 0
   },
