@@ -238,6 +238,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <li>+$10 per Civilian (Money)</li>
         <li>+$15,000 per Business (Money)</li>
         <li>+Brute Resources based on Mines</li>
+        <li style="color:var(--red);">−$20 per Worker (Salary cost)</li>
       </ul>
       <p style="color:var(--accent3);">🏢 <strong>Organizations:</strong></p>
       <ul style="margin-left:20px;font-size:11px;">
@@ -268,8 +269,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <input class="modal-input" id="pl-turns" type="number" min="1" value="10" placeholder="turns">
       </div>
       <div class="modal-field">
-        <div class="modal-label">Workers Used</div>
-        <input class="modal-input" id="pl-workers" type="number" min="1" value="10" placeholder="int">
+        <div class="modal-label">Workers Used <span style="color:var(--accent2);font-size:9px;">(max 100)</span></div>
+        <input class="modal-input" id="pl-workers" type="number" min="1" max="100" value="10" placeholder="int">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -302,8 +303,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <input class="modal-input" id="pi-turns" type="number" min="1" value="10" placeholder="turns">
       </div>
       <div class="modal-field">
-        <div class="modal-label">Workers Used</div>
-        <input class="modal-input" id="pi-workers" type="number" min="1" value="10" placeholder="int">
+        <div class="modal-label">Workers Used <span style="color:var(--accent2);font-size:9px;">(max 100)</span></div>
+        <input class="modal-input" id="pi-workers" type="number" min="1" max="100" value="10" placeholder="int">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -842,7 +843,7 @@ function confirmAddProdLine(){
   const name=(document.getElementById('pl-name').value||'').trim();
   if(!name){ document.getElementById('pl-name').style.borderColor='var(--red)'; return; }
   const turns=Math.max(1,parseInt(document.getElementById('pl-turns').value)||1);
-  const workers=Math.max(1,parseInt(document.getElementById('pl-workers').value)||1);
+  const workers=Math.min(100,Math.max(1,parseInt(document.getElementById('pl-workers').value)||1));
   const fuel=Math.max(0,parseFloat(document.getElementById('pl-fuel').value)||0);
   const mp=Math.max(0,parseInt(document.getElementById('pl-mp').value)||0);
   if(!c.production) c.production=[];
@@ -869,7 +870,7 @@ function confirmAddProdItem(){
   const name=(document.getElementById('pi-name').value||'').trim();
   if(!name){ document.getElementById('pi-name').style.borderColor='var(--red)'; return; }
   const turns=Math.max(1,parseInt(document.getElementById('pi-turns').value)||1);
-  const workers=Math.max(1,parseInt(document.getElementById('pi-workers').value)||1);
+  const workers=Math.min(100,Math.max(1,parseInt(document.getElementById('pi-workers').value)||1));
   const fuel=Math.max(0,parseFloat(document.getElementById('pi-fuel').value)||0);
   const mp=Math.max(0,parseInt(document.getElementById('pi-mp').value)||0);
   line.items.push({id:uuidProd(),name,turnsTotal:turns,turnsLeft:turns,fuel,workers,mp});
@@ -1064,7 +1065,11 @@ function executeCycle(){
 
       c.population.civilians = currentCivs + 10 + (currentHospitals * 3);
 
-      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 15000);
+      // Worker salary: -$20 per worker per cycle
+      const currentWorkers = Number(c.population.workers) || 0;
+      const workerSalaryTotal = currentWorkers * 20;
+
+      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 15000) - workerSalaryTotal;
       
       // Add brute resources based on mines
       if(!c.brute) c.brute = {};
