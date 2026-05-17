@@ -269,7 +269,7 @@
             "id": "mp8z6iz47pvg6i",
             "name": "Mine",
             "turnsTotal": 2,
-            "turnsLeft": 2,
+            "turnsLeft": 1,
             "fuel": 50,
             "workers": 60,
             "mp": 100
@@ -411,7 +411,7 @@
             "id": "mp8rfx0ypgwm4t",
             "name": "580 refined iron + 20 electronics",
             "turnsTotal": 3,
-            "turnsLeft": 3,
+            "turnsLeft": 2,
             "fuel": 75,
             "workers": 60,
             "mp": 120
@@ -680,7 +680,7 @@
             "id": "mp7mz8ud7qtgbi",
             "name": "3 pistols",
             "turnsTotal": 1,
-            "turnsLeft": 1,
+            "turnsLeft": 0,
             "fuel": 25,
             "workers": 10,
             "mp": 9
