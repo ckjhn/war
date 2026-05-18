@@ -243,6 +243,14 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .db-info-item span{color:var(--accent);}
 .contrib-badge{font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid var(--gold);color:var(--gold);letter-spacing:1px;}
 
+/* ── OBJECTIVES ── */
+.objective-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(26,48,69,.5);flex-wrap:wrap;}
+.objective-row:last-child{border-bottom:none;}
+.objective-name{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);flex:1;min-width:120px;}
+.objective-effort-badge{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);padding:2px 8px;border:1px solid rgba(255,215,0,.35);background:rgba(255,215,0,.06);white-space:nowrap;}
+.objective-completed-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);padding:2px 8px;border:1px solid rgba(57,255,20,.35);background:rgba(57,255,20,.06);white-space:nowrap;}
+.objective-pending-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:2px 8px;border:1px solid rgba(74,106,122,.3);}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -389,6 +397,44 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- ═══════════ OBJECTIVE MODAL (Add / Edit) ═══════════ -->
+<div class="modal-overlay" id="objective-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title" id="objective-modal-title">🎯 Add Objective</div>
+    <div class="modal-field">
+      <div class="modal-label">Objective Name</div>
+      <input class="modal-input" id="obj-name" type="text" placeholder="e.g. Capture Strategic City" maxlength="100">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Support Effort Reward (points given to completing faction)</div>
+      <input class="modal-input" id="obj-effort" type="number" min="0" value="0" placeholder="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmObjective()">✓ SAVE</button>
+      <button class="btn btn-orange" onclick="closeModal('objective-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COMPLETE OBJECTIVE MODAL ═══════════ -->
+<div class="modal-overlay" id="complete-objective-modal">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-title">🏆 Mark Objective as Completed</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);margin-bottom:16px;line-height:1.6;" id="complete-obj-info"></div>
+    <div class="modal-field">
+      <div class="modal-label">Country from this faction that completed this objective</div>
+      <select class="modal-select" id="complete-obj-country"></select>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.7;padding:10px;background:var(--bg);border:1px solid var(--border);margin-bottom:4px;">
+      The configured support effort reward will be added to that country's effort score. If the objective was previously completed by another country, their points are reversed first.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmCompleteObjective()">✓ CONFIRM</button>
+      <button class="btn btn-orange" onclick="closeModal('complete-objective-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -478,6 +524,7 @@ const OWN_INVENTORY_CATS = [
 let alliances=[], selectedId=null, deletePending={}, collapsedSections=new Set();
 let pendingStyle=null, pendingEditStyle=null, pendingMemberCountries=new Set();
 let currentMemberAllianceId=null, currentDonateAllianceId=null;
+let currentObjectiveAllianceId=null, editingObjectiveId=null;
 let activeDonateCategory='civilians';
 
 function uuid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
@@ -512,6 +559,7 @@ function hydrateAlliance(a){
   }
   if(!a.militaryBreakdown) a.militaryBreakdown=[];
   if(!a.donations) a.donations=[];
+  if(!a.objectives) a.objectives=[];
   if(!a.taxConfig) a.taxConfig={fixedPerMember:0};
   if(!a.turn) a.turn=0;
   // Ensure inventory sub-objects exist
@@ -652,6 +700,9 @@ function renderEditor(){
     html += renderMilitaryPool(a);
     html += renderDonationsBacklog(a);
   }
+
+  // Objectives (all alliance types)
+  html += renderObjectives(a);
 
   // Observations
   html += `<div class="section" id="sec-observations">
@@ -1164,7 +1215,7 @@ function selectStyle(style){
 function confirmAdd(){
   const name=document.getElementById('new-name').value.trim(); const flag=document.getElementById('new-flag').value.trim()||'🤝';
   if(!name){ showToast('Enter an alliance name'); return; } if(!pendingStyle){ showToast('Select a style'); return; }
-  const a={id:uuid(),name,flag,style:pendingStyle,members:[],observations:'',createdAt:Date.now(),own:makeOwnEntity(),militaryBreakdown:[],donations:[],taxConfig:{fixedPerMember:0},turn:0};
+  const a={id:uuid(),name,flag,style:pendingStyle,members:[],objectives:[],observations:'',createdAt:Date.now(),own:makeOwnEntity(),militaryBreakdown:[],donations:[],taxConfig:{fixedPerMember:0},turn:0};
   alliances.push(a); save(); renderList(); selectAlliance(a.id); closeModal('add-modal'); showToast(`Alliance "${name}" created`);
 }
 
@@ -1174,6 +1225,143 @@ function confirmAdd(){
 function openStyleModal(){ const a=getAlliance(selectedId); if(!a) return; pendingEditStyle=a.style; document.querySelectorAll('#style-modal .style-opt').forEach(el=>{ el.className='style-opt'; if(el.dataset.style===a.style) el.classList.add(`selected-${a.style}`); }); const si=STYLE_INFO[a.style]; document.getElementById('style-desc-edit').innerHTML=si?si.desc:''; openModal('style-modal'); }
 function selectEditStyle(style){ pendingEditStyle=style; document.querySelectorAll('#style-modal .style-opt').forEach(el=>{ el.className='style-opt'; if(el.dataset.style===style) el.classList.add(`selected-${style}`); }); const si=STYLE_INFO[style]; document.getElementById('style-desc-edit').innerHTML=si?si.desc:''; }
 function confirmStyleChange(){ const a=getAlliance(selectedId); if(!a||!pendingEditStyle) return; a.style=pendingEditStyle; save(); renderList(); renderEditor(); closeModal('style-modal'); showToast('Organization style updated'); }
+
+// =====================================================
+// OBJECTIVES — All alliance types
+// =====================================================
+function renderObjectives(a){
+  const objs=a.objectives||[];
+  const completedCount=objs.filter(o=>o.completedBy).length;
+  const totalPts=objs.reduce((s,o)=>s+(parseInt(o.supportEffort)||0),0);
+
+  const rows=objs.length===0
+    ? `<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:20px;text-align:center;">No objectives defined. Add one below.</div>`
+    : objs.map(o=>{
+        const eff=parseInt(o.supportEffort)||0;
+        const statusEl=o.completedBy
+          ? `<span class="objective-completed-tag">✓ ${escHtml(o.completedBy)}</span>`
+          : `<span class="objective-pending-tag">Pending</span>`;
+        return `<div class="objective-row">
+          <span class="objective-name">${escHtml(o.name)}</span>
+          <span class="objective-effort-badge">+${fmt(eff)} pts</span>
+          ${statusEl}
+          <button class="btn btn-sm" style="border-color:var(--accent3);color:var(--accent3);" onclick="openCompleteObjectiveModal('${a.id}','${o.id}')">🏆 Complete</button>
+          <button class="btn btn-sm btn-yellow" onclick="openObjectiveModal('${a.id}','${o.id}')">✎ Edit</button>
+          <button class="member-remove" onclick="deleteObjective('${a.id}','${o.id}')" title="Delete objective">×</button>
+        </div>`;
+      }).join('');
+
+  return `<div class="section" id="sec-objectives">
+    <div class="section-header" onclick="toggleSection('objectives')">
+      <span class="section-title">🎯 Objectives</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-right:10px;">${completedCount}/${objs.length} completed · ${fmt(totalPts)} pts pool</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      ${rows}
+      <div style="margin-top:14px;">
+        <button class="btn btn-sm btn-green" onclick="openObjectiveModal('${a.id}',null)">+ ADD OBJECTIVE</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// OBJECTIVE MODAL — Add / Edit
+// =====================================================
+function openObjectiveModal(allianceId, objId){
+  currentObjectiveAllianceId=allianceId;
+  editingObjectiveId=objId||null;
+  const a=getAlliance(allianceId); if(!a) return;
+  if(objId){
+    const o=(a.objectives||[]).find(x=>x.id===objId); if(!o) return;
+    document.getElementById('objective-modal-title').textContent='✎ Edit Objective';
+    document.getElementById('obj-name').value=o.name;
+    document.getElementById('obj-effort').value=o.supportEffort||0;
+  } else {
+    document.getElementById('objective-modal-title').textContent='🎯 Add Objective';
+    document.getElementById('obj-name').value='';
+    document.getElementById('obj-effort').value=0;
+  }
+  openModal('objective-modal');
+  setTimeout(()=>document.getElementById('obj-name').focus(),100);
+}
+
+function confirmObjective(){
+  const name=document.getElementById('obj-name').value.trim();
+  if(!name){ showToast('Enter an objective name'); return; }
+  const effort=Math.max(0,parseInt(document.getElementById('obj-effort').value)||0);
+  const a=getAlliance(currentObjectiveAllianceId); if(!a) return;
+  if(!a.objectives) a.objectives=[];
+  if(editingObjectiveId){
+    const o=a.objectives.find(x=>x.id===editingObjectiveId);
+    if(o){ o.name=name; o.supportEffort=effort; }
+  } else {
+    a.objectives.push({id:uuid(),name,supportEffort:effort,completedBy:null});
+  }
+  save(); renderEditor(); closeModal('objective-modal');
+  showToast(editingObjectiveId?'Objective updated':'Objective added');
+}
+
+function deleteObjective(allianceId,objId){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.objectives=(a.objectives||[]).filter(o=>o.id!==objId);
+  save(); renderEditor(); showToast('Objective deleted');
+}
+
+// =====================================================
+// COMPLETE OBJECTIVE MODAL
+// =====================================================
+function openCompleteObjectiveModal(allianceId,objId){
+  currentObjectiveAllianceId=allianceId;
+  editingObjectiveId=objId;
+  const a=getAlliance(allianceId); if(!a) return;
+  const o=(a.objectives||[]).find(x=>x.id===objId); if(!o) return;
+  const eff=parseInt(o.supportEffort)||0;
+  document.getElementById('complete-obj-info').innerHTML=
+    `Objective: <strong style="color:var(--text);">${escHtml(o.name)}</strong><br>Reward: <strong style="color:var(--gold);">+${fmt(eff)} support effort pts</strong>`+
+    (o.completedBy?`<br>Currently completed by: <strong style="color:var(--accent3);">${escHtml(o.completedBy)}</strong>`:'');
+  const sel=document.getElementById('complete-obj-country');
+  const opts=[`<option value="">— Select Country —</option>`];
+  if(o.completedBy) opts.push(`<option value="__remove">✕ Remove completion</option>`);
+  a.members.forEach(m=>{
+    opts.push(`<option value="${escHtml(m.name)}" ${o.completedBy===m.name?'selected':''}>${m.flag||'🏴'} ${escHtml(m.name)}</option>`);
+  });
+  sel.innerHTML=opts.join('');
+  openModal('complete-objective-modal');
+}
+
+function confirmCompleteObjective(){
+  const a=getAlliance(currentObjectiveAllianceId); if(!a) return;
+  const o=(a.objectives||[]).find(x=>x.id===editingObjectiveId); if(!o) return;
+  const val=document.getElementById('complete-obj-country').value;
+  if(!val){ showToast('Select a country'); return; }
+  const eff=parseInt(o.supportEffort)||0;
+  if(val==='__remove'){
+    // Reverse points from previous completer
+    if(o.completedBy){
+      const prev=a.members.find(m=>m.name===o.completedBy);
+      if(prev) prev.effort=Math.max(0,(parseInt(prev.effort)||0)-eff);
+    }
+    o.completedBy=null;
+    save(); renderList(); renderEditor(); closeModal('complete-objective-modal');
+    showToast('Completion removed');
+    return;
+  }
+  // If previously completed by a different country, reverse their points first
+  if(o.completedBy && o.completedBy!==val){
+    const prev=a.members.find(m=>m.name===o.completedBy);
+    if(prev) prev.effort=Math.max(0,(parseInt(prev.effort)||0)-eff);
+  }
+  // Award points only if this is a new or changed completion
+  if(o.completedBy!==val){
+    const m=a.members.find(m=>m.name===val);
+    if(m) m.effort=(parseInt(m.effort)||0)+eff;
+  }
+  o.completedBy=val;
+  save(); renderList(); renderEditor(); closeModal('complete-objective-modal');
+  showToast(`Objective completed by ${val}! +${fmt(eff)} pts`);
+}
 
 // =====================================================
 // DATABASE REFRESH
