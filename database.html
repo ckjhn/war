@@ -60,6 +60,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .app.sidebar-collapsed .sidebar-header-content{display:none;}
 .app.sidebar-collapsed .country-list{display:none;}
 .app.sidebar-collapsed .sidebar-footer{display:none;}
+.app.sidebar-collapsed .sidebar-header{padding:10px 8px;justify-content:center;}
+.app.sidebar-collapsed .sidebar-header .btn-green{display:none;}
 
 /* ── MAIN EDITOR ── */
 .editor{flex:1;overflow-y:auto;background:var(--bg);}
@@ -1605,6 +1607,16 @@ function toggleSBD(sbdId){
   else collapsedSBDs.add(sbdId);
   renderEditor();
 }
+function collapseAllSBDs(cid){
+  const c=getCountry(cid); if(!c) return;
+  [...(c.divisions||[]),...(c.battalions||[]),...(c.squads||[])].forEach(e=>collapsedSBDs.add(e.id));
+  renderEditor();
+}
+function expandAllSBDs(cid){
+  const c=getCountry(cid); if(!c) return;
+  [...(c.divisions||[]),...(c.battalions||[]),...(c.squads||[])].forEach(e=>collapsedSBDs.delete(e.id));
+  renderEditor();
+}
 
 // ─── Objectives inline ───
 function renderObjsInline(c, sbd){
@@ -1770,6 +1782,8 @@ function renderMilitaryCommandSection(c){
         · ${fmt(stats.army)} army · ${fmt(stats.sf)} SF · ${fmt(stats.maj)} maj · ${fmt(stats.spy)} spy
         · <span style="color:var(--accent3);">${fmt(totalMen)} men</span>${stats.deaths>0?` · <span style="color:var(--red);">💀${fmt(stats.deaths)}</span>`:''}
       </span>
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;margin-right:4px;" onclick="event.stopPropagation();expandAllSBDs('${c.id}')">▼ All</button>
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;margin-right:6px;" onclick="event.stopPropagation();collapseAllSBDs('${c.id}')">▶ All</button>
       <span class="section-toggle">▼</span>
     </div>
     <div class="section-body">
