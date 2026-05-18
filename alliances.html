@@ -435,6 +435,109 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- ═══════════ CYCLE CONFIRM MODAL ═══════════ -->
+<div class="modal-overlay" id="cycle-confirm-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">⏳ Confirm New Cycle</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.7;">
+      The following changes will be applied to this alliance's assets:
+    </div>
+    <div id="cycle-confirm-body" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.9;padding:10px;background:var(--bg);border:1px solid var(--border);"></div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="executeCycleAlliance()">✓ CONFIRM CYCLE</button>
+      <button class="btn btn-orange" onclick="closeModal('cycle-confirm-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ALLIANCE PRODUCTION LINE MODAL ═══════════ -->
+<div class="modal-overlay" id="a-prod-line-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">🏭 New Production Line</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:14px;line-height:1.7;padding:8px;background:var(--bg);border:1px solid var(--border);">
+      ⚠ Do not delete an item mid-production. Delete is for mistakes only.
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Item Name / Type</div>
+      <input class="modal-input" id="apl-name" type="text" placeholder="e.g. T-90 Tank, Warship…" maxlength="60">
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <div class="modal-label">Turns to Complete</div>
+        <input class="modal-input" id="apl-turns" type="number" min="1" value="10">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Workers Used</div>
+        <input class="modal-input" id="apl-workers" type="number" min="1" max="100" value="10">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <div class="modal-label">Fuel Needed (L)</div>
+        <input class="modal-input" id="apl-fuel" type="number" min="0" step="0.1" value="0">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">MP Required</div>
+        <input class="modal-input" id="apl-mp" type="number" min="0" value="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAddAllianceProdLine()">✓ START PRODUCTION</button>
+      <button class="btn btn-orange" onclick="closeModal('a-prod-line-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ALLIANCE PRODUCTION ITEM MODAL ═══════════ -->
+<div class="modal-overlay" id="a-prod-item-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">➕ Add to Queue</div>
+    <div class="modal-field">
+      <div class="modal-label">Item Name / Type</div>
+      <input class="modal-input" id="api-name" type="text" placeholder="e.g. Frigate, SMG batch…" maxlength="60">
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <div class="modal-label">Turns to Complete</div>
+        <input class="modal-input" id="api-turns" type="number" min="1" value="10">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Workers Used</div>
+        <input class="modal-input" id="api-workers" type="number" min="1" max="100" value="10">
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field">
+        <div class="modal-label">Fuel Needed (L)</div>
+        <input class="modal-input" id="api-fuel" type="number" min="0" step="0.1" value="0">
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">MP Required</div>
+        <input class="modal-input" id="api-mp" type="number" min="0" value="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAddAllianceProdItem()">✓ ADD TO QUEUE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-prod-item-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ EDIT MODAL ═══════════ -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-title">✎ Edit Alliance Assets</div>
+    <div class="modal-field">
+      <div class="modal-label">Category</div>
+      <div class="donate-cat-tabs" id="edit-cat-tabs"></div>
+    </div>
+    <div id="edit-fields" style="max-height:380px;overflow-y:auto;padding-right:4px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-orange" onclick="closeModal('edit-modal')">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -536,7 +639,7 @@ function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&l
 // PERSISTENCE
 // =====================================================
 function makeOwnEntity(){
-  const own={money:0,civilians:0,factories:0,businesses:0,hospitals:0,mines:{}};
+  const own={money:0,civilians:0,workers:0,factories:0,businesses:0,hospitals:0,mines:{},production:[]};
   MINE_TYPES.forEach(t=>own.mines[t]=0);
   BRUTE_FIELDS.forEach(f=>own[f.k]=0);
   REFINED_FIELDS.forEach(f=>own[f.k]=0);
@@ -556,6 +659,8 @@ function hydrateAlliance(a){
     BRUTE_FIELDS.forEach(f=>{ if(a.own[f.k]===undefined) a.own[f.k]=0; });
     REFINED_FIELDS.forEach(f=>{ if(a.own[f.k]===undefined) a.own[f.k]=0; });
     ['civilians','money','factories','businesses','hospitals'].forEach(k=>{ if(a.own[k]===undefined) a.own[k]=0; });
+    if(a.own.workers===undefined) a.own.workers=0;
+    if(!a.own.production) a.own.production=[];
   }
   if(!a.militaryBreakdown) a.militaryBreakdown=[];
   if(!a.donations) a.donations=[];
@@ -667,7 +772,9 @@ function renderEditor(){
       <span class="save-badge" id="save-badge">✓ SAVED</span>
       <div class="ae-actions">
         ${!isCommunist?`<button class="btn btn-sm btn-yellow" onclick="openDonateModal('${a.id}')">📦 Donate</button>`:''}
-        ${!isCommunist?`<button class="btn btn-sm btn-green" onclick="passTurn('${a.id}')">⏳ Pass Turn</button>`:''}
+        ${!isCommunist?`<button class="btn btn-sm" style="border-color:var(--purple);color:var(--purple);" onclick="openEditModal('${a.id}')">✎ Edit</button>`:''}
+        ${!isCommunist?`<button class="btn btn-sm btn-green" onclick="openCycleConfirmModal('${a.id}')">⏳ Cycle</button>`:''}
+        ${!isCommunist?`<button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ Pass Turn</button>`:''}
         <button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh DB</button>
       </div>
     </div>
@@ -809,9 +916,11 @@ function renderAllianceAssets(a){
       <div class="pass-turn-bar">
         <span class="turn-label">TURN</span>
         <span class="turn-counter">${a.turn}</span>
-        <button class="btn btn-sm btn-green" onclick="passTurn('${a.id}')">⏳ PASS TURN</button>
+        <button class="btn btn-sm btn-green" onclick="openCycleConfirmModal('${a.id}')">⏳ CYCLE</button>
+        <button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ PASS TURN</button>
         <button class="btn btn-sm btn-yellow" onclick="openTaxConfig('${a.id}')">⚙ Tax: ${taxInfo}</button>
         <button class="btn btn-sm btn-orange" onclick="openDonateModal('${a.id}')">📦 Donate</button>
+        <button class="btn btn-sm" style="border-color:var(--purple);color:var(--purple);" onclick="openEditModal('${a.id}')">✎ Edit</button>
       </div>
       <!-- Core stats grid -->
       <div style="padding:14px 18px;">
@@ -820,6 +929,7 @@ function renderAllianceAssets(a){
             <div class="asset-box-title">💰 Economy</div>
             <div class="asset-field"><span class="asset-field-lbl">Money ($)</span><span class="asset-field-val">${fmt(own.money)}</span></div>
             <div class="asset-field"><span class="asset-field-lbl">Civilians</span><span class="asset-field-val">${fmt(own.civilians)}</span></div>
+            <div class="asset-field"><span class="asset-field-lbl">Workers</span><span class="asset-field-val ${(own.workers||0)===0?'az':''}">${fmt(own.workers||0)}</span></div>
           </div>
           <div class="asset-box">
             <div class="asset-box-title">🏗️ Buildings</div>
@@ -845,8 +955,10 @@ function renderAllianceAssets(a){
           </div>
         </div>
         <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);line-height:1.7;padding:8px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.1);">
-          ⏳ Each <strong style="color:var(--text);">Pass Turn</strong> = 1 cycle. Civilians earn <strong style="color:var(--gold);">$10 each</strong>. Each business earns <strong style="color:var(--gold);">$15,000</strong>. Civilians grow by <strong style="color:var(--gold);">+10</strong> (+3 per hospital). Mines produce brute resources. Tax is auto-collected every 4 turns (1 cycle).
+          ⏳ <strong style="color:var(--text);">Cycle</strong> = Economic pass. +10 civilians (+3/hospital), +$10/civilian, +$15k/business, −$20/worker. Mines produce brute resources. Tax auto-collected every 4 turns.<br>
+          ⚙ <strong style="color:var(--text);">Pass Turn</strong> = Production only. Advances all active production lines by 1 turn.
         </div>
+        ${renderAllianceProductionSection(a)}
       </div>
     </div>
   </div>`;
@@ -932,7 +1044,88 @@ function renderDonationsBacklog(a){
 }
 
 // =====================================================
-// PASS TURN — Non-Communist only
+// CYCLE CONFIRM MODAL
+// =====================================================
+let _cycleTargetId = null;
+function openCycleConfirmModal(allianceId){
+  _cycleTargetId = allianceId;
+  const a = getAlliance(allianceId); if(!a) return;
+  const own = a.own;
+  const civGrowth = 10 + ((own.hospitals||0)*3);
+  const nextCivs = (own.civilians||0) + civGrowth;
+  const income = nextCivs*10 + (own.businesses||0)*15000;
+  const workerCost = (own.workers||0)*20;
+  const taxPer = parseInt(a.taxConfig.fixedPerMember)||0;
+  const isTaxTurn = (a.turn+1)%4===0;
+  const taxLine = (taxPer>0&&isTaxTurn)
+    ? `<li>+$${fmt(taxPer*a.members.length)} Tax Collection (${a.members.length} members × $${fmt(taxPer)})</li>` : '';
+  const totalMines = MINE_TYPES.reduce((s,t)=>s+(parseInt(own.mines[t])||0),0);
+  document.getElementById('cycle-confirm-body').innerHTML=`
+    <ul style="margin-left:18px;font-size:11px;line-height:1.9;">
+      <li>+${civGrowth} Civilians (+10 base, +3 per hospital)</li>
+      <li>+$${fmt(nextCivs*10)} from Civilians (${fmt(nextCivs)} × $10)</li>
+      <li>+$${fmt((own.businesses||0)*15000)} from Businesses (${own.businesses||0} × $15,000)</li>
+      ${(own.workers||0)>0?`<li style="color:var(--red);">−$${fmt(workerCost)} Worker Salaries (${own.workers} × $20)</li>`:''}
+      ${totalMines>0?`<li>+Brute Resources from ${totalMines} mine${totalMines!==1?'s':''}</li>`:''}
+      ${taxLine}
+    </ul>`;
+  document.getElementById('cycle-confirm-modal').classList.add('open');
+}
+
+function executeCycleAlliance(){
+  const a = getAlliance(_cycleTargetId); if(!a) return;
+  const own = a.own;
+
+  // Tax — every 4 turns (1 cycle)
+  const taxPer = parseInt(a.taxConfig.fixedPerMember)||0;
+  const isTaxTurn = (a.turn+1)%4===0;
+  if(taxPer>0 && a.members.length>0 && isTaxTurn){
+    const taxTotal = taxPer*a.members.length;
+    own.money += taxTotal;
+    a.donations.unshift({id:uuid(),from:'Alliance — Auto Tax',fromFlag:'💰',category:'Tax Collection',
+      description:`Cycle ${Math.floor((a.turn+1)/4)} — ${a.members.length} members × $${fmt(taxPer)} = $${fmt(taxTotal)}`,
+      items:{money:taxTotal},timestamp:Date.now()});
+  }
+
+  // Civilian growth
+  const civGrowth = 10 + ((own.hospitals||0)*3);
+  own.civilians = (own.civilians||0) + civGrowth;
+
+  // Income − worker salary
+  const income = (own.civilians*10) + ((own.businesses||0)*15000);
+  const workerCost = (own.workers||0)*20;
+  own.money = (own.money||0) + income - workerCost;
+
+  // Mine production
+  MINE_TYPES.forEach(t=>{
+    const count = parseInt(own.mines[t])||0; if(count<=0) return;
+    const yields = MINE_RESOURCES[t]||{};
+    Object.entries(yields).forEach(([res,amt])=>{ own[res]=(own[res]||0)+(Number(amt)*count); });
+  });
+
+  a.turn = (a.turn||0)+1;
+  save(); renderEditor(); renderList();
+  closeModal('cycle-confirm-modal');
+  showToast(`⏳ Cycle ${a.turn} completed! +${fmt(civGrowth)} civilians, net income $${fmt(income-workerCost)}`);
+}
+
+// =====================================================
+// PASS TURN — Production lines only
+// =====================================================
+function passTurnAlliance(allianceId){
+  const a = getAlliance(allianceId); if(!a) return;
+  if(a.style==='communist'){ showToast('Communist alliances share member data — no turn needed.'); return; }
+  let advanced = 0;
+  (a.own.production||[]).forEach(line=>{
+    const activeItem = line.items.find(it=>(it.turnsLeft||0)>0);
+    if(activeItem){ activeItem.turnsLeft = Math.max(0,(activeItem.turnsLeft||0)-1); advanced++; }
+  });
+  save(); renderEditor();
+  showToast(`⚙ Turn passed! ${advanced} production line${advanced!==1?'s':''} advanced.`);
+}
+
+// =====================================================
+// DONATED INVENTORY RENDER
 // =====================================================
 function renderDonatedInventory(a){
   const rows=[];
@@ -946,45 +1139,213 @@ function renderDonatedInventory(a){
   return `<div style="display:flex;flex-wrap:wrap;gap:2px;">${rows.join('')}</div>`;
 }
 
-function passTurn(allianceId){
-  const a=getAlliance(allianceId);
-  if(!a){ return; }
-  if(a.style==='communist'){ showToast('Communist alliances share member data — no turn needed.'); return; }
-  const own=a.own;
+// =====================================================
+// ALLIANCE PRODUCTION LINE
+// =====================================================
+let _aProdAllianceId=null, _aProdLineId=null;
+function uuidA(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function escA(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-  // Collect tax — only every 4 turns (1 cycle)
-  const taxPer=parseInt(a.taxConfig.fixedPerMember)||0;
-  const isTaxTurn=(a.turn+1)%4===0;
-  if(taxPer>0 && a.members.length>0 && isTaxTurn){
-    const taxTotal=taxPer*a.members.length;
-    own.money+=taxTotal;
-    a.donations.unshift({id:uuid(),from:'Alliance — Auto Tax',fromFlag:'💰',category:'Tax Collection',
-      description:`Cycle ${Math.floor((a.turn+1)/4)} — ${a.members.length} members × $${fmt(taxPer)} = $${fmt(taxTotal)}`,
-      items:{money:taxTotal},timestamp:Date.now()});
+function renderAllianceProductionSection(a){
+  const production = a.own.production||[];
+  const linesHtml = production.map((line,idx)=>{
+    const activeItem = line.items.find(it=>it.turnsLeft>0);
+    const itemsHtml = line.items.map(item=>{
+      const done = item.turnsLeft===0;
+      const isActive = !done && item===activeItem;
+      const statusColor = done?'var(--text-dim)':isActive?'var(--accent3)':'var(--border)';
+      const label = done?'✓ Done':isActive?`${item.turnsLeft} turns left`:`Queued — ${item.turnsLeft} turns`;
+      const meta = `⚙ ${item.workers}w · ⛽ ${item.fuel}L · 🔧 ${item.mp}MP`;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid ${statusColor};background:var(--bg);margin-bottom:4px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${statusColor};flex-shrink:0;">●</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escA(item.name)}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${statusColor};white-space:nowrap;">${label}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);white-space:nowrap;">${meta}</span>
+        <button style="background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:1px 5px;flex-shrink:0;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';" onmouseout="this.style.borderColor='transparent';this.style.color='var(--text-dim)';" onclick="deleteAllianceProdItem('${a.id}','${line.id}','${item.id}')">×</button>
+      </div>`;
+    }).join('');
+    const workerBadge = activeItem?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid rgba(255,107,53,.4);color:var(--accent2);">⚙ ${activeItem.workers} workers</span>`:'';
+    return `<div style="border:1px solid rgba(255,107,53,.3);background:var(--surface2);margin-bottom:8px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,107,53,.06);border-bottom:1px solid rgba(255,107,53,.2);">
+        <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;">Factory ${idx+1}</span>
+        ${workerBadge}
+        <div style="display:flex;gap:4px;margin-left:auto;">
+          <button class="btn btn-sm" style="font-size:8px;padding:3px 8px;" onclick="openAddAllianceProdItem('${a.id}','${line.id}')">+ Queue</button>
+          <button class="btn btn-sm btn-red" style="font-size:8px;padding:3px 8px;" onclick="deleteAllianceProdLine('${a.id}','${line.id}')">× Line</button>
+        </div>
+      </div>
+      <div style="padding:6px 10px;">${itemsHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim);padding:4px 0;">Queue empty.</div>'}</div>
+    </div>`;
+  }).join('');
+
+  return `<div style="margin-top:14px;padding:12px 18px;background:rgba(255,107,53,.03);border:1px solid rgba(255,107,53,.2);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--accent2);text-transform:uppercase;">🏭 Production Lines · ${production.length} line${production.length!==1?'s':''}</span>
+      <button class="btn btn-sm btn-orange" style="font-size:8px;" onclick="openAddAllianceProdLine('${a.id}')">+ New Line</button>
+    </div>
+    ${linesHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:8px 0;">No production lines. Add one above.</div>'}
+  </div>`;
+}
+
+function openAddAllianceProdLine(allianceId){
+  _aProdAllianceId=allianceId; _aProdLineId=null;
+  ['apl-name','apl-turns','apl-workers','apl-fuel','apl-mp'].forEach(id=>{
+    const el=document.getElementById(id); if(el){ if(id==='apl-name') el.value=''; else if(id==='apl-turns') el.value=10; else if(id==='apl-workers') el.value=10; else el.value=0; }
+  });
+  openModal('a-prod-line-modal');
+  setTimeout(()=>document.getElementById('apl-name').focus(),100);
+}
+function confirmAddAllianceProdLine(){
+  const a=getAlliance(_aProdAllianceId); if(!a) return;
+  const name=(document.getElementById('apl-name').value||'').trim();
+  if(!name){ document.getElementById('apl-name').style.borderColor='var(--red)'; return; }
+  const turns=Math.max(1,parseInt(document.getElementById('apl-turns').value)||1);
+  const workers=Math.min(100,Math.max(1,parseInt(document.getElementById('apl-workers').value)||1));
+  const fuel=Math.max(0,parseFloat(document.getElementById('apl-fuel').value)||0);
+  const mp=Math.max(0,parseInt(document.getElementById('apl-mp').value)||0);
+  if(!a.own.production) a.own.production=[];
+  const item={id:uuidA(),name,turnsTotal:turns,turnsLeft:turns,workers,fuel,mp};
+  a.own.production.push({id:uuidA(),items:[item]});
+  save(); closeModal('a-prod-line-modal'); renderEditor();
+  showToast(`🏭 Production started: ${name}`);
+}
+
+function openAddAllianceProdItem(allianceId,lineId){
+  _aProdAllianceId=allianceId; _aProdLineId=lineId;
+  ['api-name','api-turns','api-workers','api-fuel','api-mp'].forEach(id=>{
+    const el=document.getElementById(id); if(el){ if(id==='api-name') el.value=''; else if(id==='api-turns') el.value=10; else if(id==='api-workers') el.value=10; else el.value=0; }
+  });
+  openModal('a-prod-item-modal');
+  setTimeout(()=>document.getElementById('api-name').focus(),100);
+}
+function confirmAddAllianceProdItem(){
+  const a=getAlliance(_aProdAllianceId); if(!a) return;
+  const line=(a.own.production||[]).find(l=>l.id===_aProdLineId); if(!line) return;
+  const name=(document.getElementById('api-name').value||'').trim();
+  if(!name){ document.getElementById('api-name').style.borderColor='var(--red)'; return; }
+  const turns=Math.max(1,parseInt(document.getElementById('api-turns').value)||1);
+  const workers=Math.min(100,Math.max(1,parseInt(document.getElementById('api-workers').value)||1));
+  const fuel=Math.max(0,parseFloat(document.getElementById('api-fuel').value)||0);
+  const mp=Math.max(0,parseInt(document.getElementById('api-mp').value)||0);
+  line.items.push({id:uuidA(),name,turnsTotal:turns,turnsLeft:turns,workers,fuel,mp});
+  save(); closeModal('a-prod-item-modal'); renderEditor();
+  showToast(`➕ Queued: ${name}`);
+}
+
+function deleteAllianceProdLine(allianceId,lineId){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.own.production=(a.own.production||[]).filter(l=>l.id!==lineId);
+  save(); renderEditor(); showToast('Production line removed.');
+}
+function deleteAllianceProdItem(allianceId,lineId,itemId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const line=(a.own.production||[]).find(l=>l.id===lineId); if(!line) return;
+  line.items=line.items.filter(it=>it.id!==itemId);
+  if(line.items.length===0) a.own.production=a.own.production.filter(l=>l.id!==lineId);
+  save(); renderEditor(); showToast('Item removed from queue.');
+}
+
+// =====================================================
+// EDIT MODAL
+// =====================================================
+let _editAllianceId=null, _editCategory='economy';
+
+const EDIT_CATEGORIES = [
+  {id:'economy',   label:'💰 Economy'},
+  {id:'buildings', label:'🏗️ Buildings'},
+  {id:'brute',     label:'🪨 Brute'},
+  {id:'refined',   label:'⚗️ Refined'},
+  {id:'weapons',   label:'🔫 Weapons'},
+  {id:'ammo',      label:'🔴 Ammo'},
+  {id:'vehicles',  label:'🚗 Vehicles'},
+  {id:'missiles',  label:'🚀 Missiles'},
+  {id:'others',    label:'💣 Others'},
+];
+
+function openEditModal(allianceId){
+  _editAllianceId=allianceId; _editCategory='economy';
+  renderEditTabs(); renderEditFields();
+  openModal('edit-modal');
+}
+
+function renderEditTabs(){
+  document.getElementById('edit-cat-tabs').innerHTML=EDIT_CATEGORIES.map(c=>
+    `<button class="donate-cat-btn ${c.id===_editCategory?'active':''}" onclick="setEditCategory('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+
+function setEditCategory(cat){
+  _editCategory=cat; renderEditTabs(); renderEditFields();
+}
+
+function renderEditFields(){
+  const a=getAlliance(_editAllianceId); if(!a) return;
+  const own=a.own;
+  const wrap=document.getElementById('edit-fields');
+  let fields=[];
+
+  if(_editCategory==='economy'){
+    fields=[
+      {k:'money',    l:'💰 Money ($)',   val:own.money||0,   isFlat:true},
+      {k:'civilians',l:'👥 Civilians',   val:own.civilians||0,isFlat:true},
+      {k:'workers',  l:'⚙ Workers',     val:own.workers||0, isFlat:true},
+    ];
+  } else if(_editCategory==='buildings'){
+    fields=[
+      {k:'factories', l:'🏭 Factories',  val:own.factories||0, isFlat:true},
+      {k:'businesses',l:'🏪 Businesses', val:own.businesses||0,isFlat:true},
+      {k:'hospitals', l:'🏥 Hospitals',  val:own.hospitals||0, isFlat:true},
+    ];
+  } else if(_editCategory==='brute'){
+    fields=BRUTE_FIELDS.map(f=>({k:f.k,l:f.l,val:own[f.k]||0,isFlat:true}));
+  } else if(_editCategory==='refined'){
+    fields=REFINED_FIELDS.map(f=>({k:f.k,l:f.l,val:own[f.k]||0,isFlat:true}));
+  } else if(_editCategory==='vehicles'){
+    ['air','land','water'].forEach(catKey=>{
+      const c=OWN_INVENTORY_CATS.find(c=>c.key===catKey);
+      if(c) c.fields.forEach(f=>fields.push({k:f.k,l:`${c.label} ${f.l}`,val:(own[catKey]||{})[f.k]||0,sub:catKey}));
+    });
+  } else {
+    const catKey=_editCategory==='weapons'?'weapons':_editCategory==='ammo'?'ammo':_editCategory==='missiles'?'missiles':'others';
+    const c=OWN_INVENTORY_CATS.find(c=>c.key===catKey);
+    if(c) fields=c.fields.map(f=>({k:f.k,l:f.l,val:(own[catKey]||{})[f.k]||0,sub:catKey}));
   }
 
-  // Civilian growth
-  const civGrowth=10+(own.hospitals*3);
-  own.civilians+=civGrowth;
+  wrap.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px;">${fields.map(f=>`
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid rgba(26,48,69,.5);">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);flex:1;">${f.l}</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gold);width:80px;text-align:right;">${fmt(f.val)}</span>
+      <select id="eop-${f.k}" style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;height:28px;padding:0 4px;outline:none;">
+        <option value="add">+ Add</option>
+        <option value="sub">- Remove</option>
+      </select>
+      <input id="eam-${f.k}" type="number" min="0" step="any" placeholder="Amount"
+        style="font-family:'Share Tech Mono',monospace;font-size:12px;width:90px;background:var(--bg);border:1px solid var(--border);color:var(--accent);padding:4px 8px;outline:none;height:28px;text-align:center;-moz-appearance:textfield;"
+        onkeydown="if(event.key==='Enter')applyEditField('${f.k}','${f.sub||'flat'}','${f.isFlat?'flat':'sub'}')">
+      <button class="btn btn-sm" style="padding:4px 10px;font-size:8px;" onclick="applyEditField('${f.k}','${f.sub||''}','${f.isFlat?'flat':'sub'}')">APPLY</button>
+    </div>`).join('')}</div>`;
+}
 
-  // Income
-  own.money+=(own.civilians*10)+(own.businesses*15000);
-
-  // Mine production
-  MINE_TYPES.forEach(t=>{
-    const count=parseInt(own.mines[t])||0;
-    if(count<=0) return;
-    const yields=MINE_RESOURCES[t]||{};
-    Object.entries(yields).forEach(([res,amt])=>{
-      own[res]=(own[res]||0)+(Number(amt)*count);
-    });
-  });
-
-  a.turn=(a.turn||0)+1;
-  save();
-  renderEditor();
-  renderList();
-  showToast(`⏳ Turn ${a.turn} completed! +${fmt(civGrowth)} civilians, +$${fmt((own.civilians*10)+(own.businesses*15000))} income`);
+function applyEditField(fieldKey, sub, mode){
+  const a=getAlliance(_editAllianceId); if(!a) return;
+  const op=document.getElementById('eop-'+fieldKey)?.value;
+  const amt=parseFloat(document.getElementById('eam-'+fieldKey)?.value);
+  if(!Number.isFinite(amt)||amt<0) return;
+  const own=a.own;
+  let before, after;
+  if(mode==='flat'){
+    before=Number(own[fieldKey])||0;
+    after=op==='sub'?Math.max(0,before-amt):before+amt;
+    own[fieldKey]=after;
+  } else {
+    if(!own[sub]) own[sub]={};
+    before=Number(own[sub][fieldKey])||0;
+    after=op==='sub'?Math.max(0,before-amt):before+amt;
+    own[sub][fieldKey]=after;
+  }
+  save(); renderEditor(); renderList();
+  renderEditFields();
+  showToast(`${fieldKey}: ${fmt(before)} → ${fmt(after)}`);
 }
 
 // =====================================================
