@@ -148,8 +148,15 @@
         "commander": null,
         "higher_commander": null,
         "deaths": 0,
-        "points": 0,
-        "objectives": [],
+        "points": 5,
+        "objectives": [
+          {
+            "id": "mpbz4ecpzwr0idc294",
+            "name": "Give Support",
+            "points": 5,
+            "completed": true
+          }
+        ],
         "support": {
           "air": {
             "light_jet": 0,
@@ -201,8 +208,15 @@
         "commander": null,
         "higher_commander": null,
         "deaths": 0,
-        "points": 0,
-        "objectives": [],
+        "points": 10,
+        "objectives": [
+          {
+            "id": "mpbz4914015gy4vqa0re",
+            "name": "Give Support",
+            "points": 10,
+            "completed": true
+          }
+        ],
         "support": {
           "air": {
             "light_jet": 0,
@@ -333,6 +347,57 @@
             "completed": false
           }
         ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        }
+      },
+      {
+        "id": "mpbz9k5rv5qmawicv29",
+        "name": "Charlie",
+        "type": "squad",
+        "parent_id": "mpbz0u1i777xhlpxrda",
+        "men": {
+          "army": 0,
+          "special_forces": 4,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
         "support": {
           "air": {
             "light_jet": 0,
