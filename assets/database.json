@@ -130,7 +130,141 @@
     "observations": {
       "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un"
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": [
+      {
+        "id": "mpbynqjqr8lp38ik47",
+        "name": "Alpha",
+        "type": "squad",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 3,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 1,
+        "points": 20,
+        "objectives": [
+          {
+            "id": "mpbyv2htwjr1pudv8v",
+            "name": "Give support from Israeli Northeast",
+            "points": 20,
+            "completed": true
+          },
+          {
+            "id": "mpbyxptrzg4z8p5k0kk",
+            "name": "Apply pressure on East",
+            "points": 15,
+            "completed": false
+          }
+        ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        }
+      },
+      {
+        "id": "mpbynt1othhnbih176e",
+        "name": "Bravo",
+        "type": "squad",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 4,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 20,
+        "objectives": [
+          {
+            "id": "mpbytw9rfljmwg0t4nm",
+            "name": "Give support from Israeli North",
+            "points": 20,
+            "completed": true
+          },
+          {
+            "id": "mpbyviey9o50rkb84l",
+            "name": "Apply pressure on North",
+            "points": 15,
+            "completed": false
+          }
+        ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        }
+      }
+    ]
   },
   {
     "id": "mnulxffollz0xwr86a",
@@ -276,7 +410,12 @@
           }
         ]
       }
-    ]
+    ],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moag4nn2r5o6utoasd",
@@ -418,7 +557,12 @@
           }
         ]
       }
-    ]
+    ],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moahlygpwufwpxx2i9",
@@ -545,7 +689,12 @@
       "commanders": 3,
       "army": 7
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moakuervmfd7z3gvths",
@@ -705,7 +854,12 @@
           }
         ]
       }
-    ]
+    ],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moakuucd7h9zupzw8eu",
@@ -832,7 +986,12 @@
       "army": 9,
       "generals": 1
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moakv16u66cps8ch8b4",
@@ -961,7 +1120,12 @@
     "observations": {
       "national_plan": ""
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "moeuuhuo8e086wjtvwd",
@@ -1087,7 +1251,12 @@
       "generals": 3,
       "army": 2
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrrzlylhelxn67uo",
@@ -1221,7 +1390,12 @@
       "generals": 1,
       "army": 9
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrtjbp6w3n5v4vxad",
@@ -1355,7 +1529,12 @@
       "army": 9,
       "generals": 1
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrtqp2ctj8sckm3zr",
@@ -1489,7 +1668,12 @@
       "army": 9,
       "generals": 1
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrurblqfd9j4epawk",
@@ -1623,7 +1807,12 @@
       "army": 9,
       "generals": 1
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrv1sbfdycppugmut",
@@ -1752,7 +1941,12 @@
     "observations": {
       "national_plan": ""
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrvboh36b015rnx74",
@@ -1881,7 +2075,12 @@
     "observations": {
       "national_plan": ""
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrvio57kiiiseucd8",
@@ -2010,7 +2209,12 @@
     "observations": {
       "national_plan": ""
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrvm64e7ii5dnf6t",
@@ -2139,7 +2343,12 @@
     "observations": {
       "national_plan": "Working for Mexico defense in exchange of weapons. Mexico provide weapons for them and they provide defense against other cartels."
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrvv9nkw6lysx4xtk",
@@ -2268,7 +2477,12 @@
     "observations": {
       "national_plan": "Hided as a private security organization working for Iraq. It requests 5k per month to pays service"
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrvyzppmcr4ysgd2",
@@ -2397,7 +2611,12 @@
     "observations": {
       "national_plan": ""
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   },
   {
     "id": "mohrwa7b0jokjo70oek",
@@ -2526,6 +2745,11 @@
     "observations": {
       "national_plan": "Hided, acting as a organization that pays service to the iraq government. It requests 5k per month to pay services"
     },
-    "production": []
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [],
+    "battalions": [],
+    "squads": []
   }
 ]
