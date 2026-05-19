@@ -129,6 +129,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .sbd-body{padding:4px 12px 8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
 .sbd-obj-tag{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(26,48,69,.7);margin:2px;cursor:default;transition:border-color .15s;}
 .sbd-obj-tag.done{border-color:rgba(57,255,20,.4);color:var(--accent3);background:rgba(57,255,20,.04);}
+.sbd-obj-tag.failed{border-color:rgba(255,58,58,.45);color:var(--red);background:rgba(255,58,58,.06);text-decoration:line-through;opacity:.85;}
+.sbd-obj-btn.fail-btn:hover{color:var(--red);}
 .sbd-obj-btn{background:transparent;border:none;cursor:pointer;padding:0 2px;line-height:1;font-size:10px;color:var(--text-dim);transition:color .15s;}
 .sbd-obj-btn:hover{color:var(--accent);}
 .sbd-obj-btn.del:hover{color:var(--red);}
@@ -190,6 +192,8 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .prod-add-line{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border);}
 .prod-workers-bar-wrap{width:100%;background:var(--bg);height:4px;border:1px solid var(--border);margin-top:4px;}
 .prod-workers-bar{height:100%;background:var(--accent2);}
+.sbd-observation-area{width:100%;min-height:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:vertical;border-radius:2px;line-height:1.5;}
+.sbd-observation-area:focus{border-color:var(--accent);}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -645,7 +649,7 @@ function makeSBD(type, name){
     support[sk]=Object.fromEntries(MIL_SUPPORT_TYPES[sk].fields.map(f=>[f.k,0]));
   return { id:uuid(), name:name||(type.charAt(0).toUpperCase()+type.slice(1)+' Unit'), type, parent_id:null,
            men:{army:0,special_forces:0,majors:0,spies:0}, commander:null, higher_commander:null,
-           deaths:0, points:0, objectives:[], support };
+           deaths:0, points:0, objectives:[], support, observation:'' };
 }
 function escMil(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function getMilEntity(c,id){ return [...(c.divisions||[]),...(c.battalions||[]),...(c.squads||[])].find(e=>e.id===id)||null; }
@@ -662,6 +666,7 @@ function hydrateSBD(sbd){
   if(sbd.commander===undefined) sbd.commander=null;
   if(sbd.higher_commander===undefined) sbd.higher_commander=null;
   if(sbd.deaths===undefined) sbd.deaths=0;
+  if(sbd.observation===undefined) sbd.observation='';
 }
 // =====================================================
 let countries = [];
@@ -1529,8 +1534,11 @@ function sbdCardBody(c, sbd){
   const hasChildren=(sbd.type==='division'&&agg.childBats>0)||(sbd.type==='battalion'&&agg.childSqs>0);
   const ownLine=sbdMenLine(sbd);
   const supportLine=sbdSupportLine(sbd);
+  const obsPreview=sbd.observation
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:5px;padding:4px 8px;border-left:2px solid rgba(0,212,255,.25);white-space:pre-wrap;max-height:52px;overflow:hidden;text-overflow:ellipsis;">📝 ${escMil(sbd.observation.slice(0,160))}${sbd.observation.length>160?'…':''}</div>`
+    :'';
   if(!hasChildren){
-    return `<div class="sbd-body">${ownLine}${supportLine}</div>`;
+    return `<div class="sbd-body">${ownLine}${supportLine}${obsPreview}</div>`;
   }
   const childLabel=sbd.type==='division'
     ? `${agg.childBats} bat${agg.childBats!==1?'s':''}${agg.childSqs>0?` + ${agg.childSqs} sq`:''}`
@@ -1551,6 +1559,7 @@ function sbdCardBody(c, sbd){
       <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);">${aggParts.join(' · ')||'—'}</span>
       ${agg.deaths>0?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">💀${fmt(agg.deaths)} dead</span>`:''}
     </div>
+    ${obsPreview}
   </div>`;
 }
 
@@ -1622,11 +1631,12 @@ function expandAllSBDs(cid){
 function renderObjsInline(c, sbd){
   const objs=sbd.objectives||[];
   const tags=objs.map(o=>`
-    <span class="sbd-obj-tag ${o.completed?'done':''}">
-      ${o.completed?'✓ ':''}<span style="color:var(--text);">${escMil(o.name)}</span>
-      <span style="color:var(--gold);margin-left:3px;">+${o.points}pt${o.points!==1?'s':''}</span>
+    <span class="sbd-obj-tag ${o.completed?'done':o.failed?'failed':''}">
+      ${o.completed?'✓ ':o.failed?'✗ ':''}<span style="color:var(--text);">${escMil(o.name)}</span>
+      <span style="color:${o.failed?'var(--red)':'var(--gold)'};margin-left:3px;">${o.failed?'-10':'+'+o.points}pt${o.failed||o.points!==1?'s':''}</span>
       <button class="sbd-obj-btn" title="Edit" onclick="openMilObjModal('${c.id}','${sbd.id}','${o.id}')">✎</button>
-      ${!o.completed?`<button class="sbd-obj-btn done-btn" title="Mark complete" onclick="completeMilObj('${c.id}','${sbd.id}','${o.id}')">✓</button>`:''}
+      ${!o.completed&&!o.failed?`<button class="sbd-obj-btn done-btn" title="Mark complete" onclick="completeMilObj('${c.id}','${sbd.id}','${o.id}')">✓</button>`:''}
+      ${!o.completed&&!o.failed?`<button class="sbd-obj-btn fail-btn" title="Mark as failed" onclick="failMilObj('${c.id}','${sbd.id}','${o.id}')">✗</button>`:''}
       <button class="sbd-obj-btn del" title="Delete" onclick="deleteMilObj('${c.id}','${sbd.id}','${o.id}')">×</button>
     </span>`).join('');
   return `<div style="padding:3px 12px 6px;display:flex;flex-wrap:wrap;align-items:center;gap:1px;">
@@ -1945,8 +1955,8 @@ function setMilEditTab(tab){ _milEditTab=tab; renderMilEditModal(); }
 function renderMilEditModal(){
   const c=getCountry(_milEditCid); if(!c) return;
   const sbd=getMilEntity(c,_milEditId); if(!sbd) return;
-  const tabs=['personnel',...Object.keys(MIL_SUPPORT_TYPES),'objectives'];
-  const tabLabels={personnel:'👥 Personnel',air:'✈️ Air',land:'🪖 Land',water:'⚓ Water',missiles:'🚀 Missiles',objectives:'🎯 Objectives'};
+  const tabs=['personnel',...Object.keys(MIL_SUPPORT_TYPES),'objectives','observation'];
+  const tabLabels={personnel:'👥 Personnel',air:'✈️ Air',land:'🪖 Land',water:'⚓ Water',missiles:'🚀 Missiles',objectives:'🎯 Objectives',observation:'📝 Notes'};
   const typeColors={division:'var(--red)',battalion:'var(--accent2)',squad:'var(--accent3)'};
   document.getElementById('mil-edit-title').innerHTML=
     `✎ <span style="color:${typeColors[sbd.type]||'var(--accent)'};">${sbd.type.toUpperCase()}</span>: ${escMil(sbd.name)}`;
@@ -2021,11 +2031,16 @@ function renderMilEditModal(){
       ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:12px 0;text-align:center;">No objectives.</div>`
       :objs.map(o=>`
         <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(26,48,69,.5);">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${o.completed?'var(--accent3)':'var(--text)'};flex:1;">
-            ${o.completed?'✓ ':''} ${escMil(o.name)}
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${o.failed?'var(--red)':o.completed?'var(--accent3)':'var(--text)'};flex:1;${o.failed?'text-decoration:line-through;opacity:.8;':''}">
+            ${o.completed?'✓ ':o.failed?'✗ ':''} ${escMil(o.name)}
           </span>
-          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold);flex-shrink:0;">+${o.points}pt${o.points!==1?'s':''}</span>
-          ${o.completed?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);">✓ Done</span>`:`<button class="btn btn-sm btn-green" style="font-size:7px;padding:2px 7px;" onclick="completeMilObj('${c.id}','${sbd.id}','${o.id}')">✓ Complete</button>`}
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${o.failed?'var(--red)':'var(--gold)'};flex-shrink:0;">${o.failed?'−10pt':'+'+o.points+'pt'+(o.points!==1?'s':'')}</span>
+          ${o.completed
+            ?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);">✓ Done</span>`
+            :o.failed
+            ?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">✗ Failed</span>`
+            :`<button class="btn btn-sm btn-green" style="font-size:7px;padding:2px 7px;" onclick="completeMilObj('${c.id}','${sbd.id}','${o.id}')">✓ Complete</button>
+             <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="failMilObj('${c.id}','${sbd.id}','${o.id}')">✗ Fail</button>`}
           <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openMilObjModal('${c.id}','${sbd.id}','${o.id}')">✎</button>
           <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteMilObj('${c.id}','${sbd.id}','${o.id}')">×</button>
         </div>`).join('');
@@ -2035,8 +2050,21 @@ function renderMilEditModal(){
         <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="openMilObjModal('${c.id}','${sbd.id}',null)">+ Add Objective</button>
       </div>
       ${rows}`;
+  } else if(_milEditTab==='observation'){
+    const obsVal=escMil(sbd.observation||'');
+    content=`
+      <div style="margin-bottom:8px;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:10px;">📝 OBSERVATION / NOTES</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:10px;line-height:1.6;padding:6px 10px;background:var(--bg);border:1px solid var(--border);">
+          Use this field to record detailed objectives, briefings, tactical notes or any relevant information for this unit.
+        </div>
+        <textarea class="sbd-observation-area" id="mle-observation" placeholder="Enter notes, objectives detail, briefings…"
+          oninput="autoSaveObservation('${c.id}','${sbd.id}',this.value)">${obsVal}</textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn btn-green btn-sm" style="font-size:8px;" onclick="saveObservation('${c.id}','${sbd.id}')">✓ Save Notes</button>
+        </div>
+      </div>`;
   } else {
-    // Support tab
     const typeKey=_milEditTab;
     const def=MIL_SUPPORT_TYPES[typeKey]; if(!def) return;
     const vals=sbd.support[typeKey]||{};
@@ -2115,13 +2143,39 @@ function confirmMilObj(){
 function completeMilObj(cid,sbdId,objId){
   const c=getCountry(cid); if(!c) return;
   const sbd=getMilEntity(c,sbdId); if(!sbd) return;
-  const obj=(sbd.objectives||[]).find(o=>o.id===objId); if(!obj||obj.completed) return;
+  const obj=(sbd.objectives||[]).find(o=>o.id===objId); if(!obj||obj.completed||obj.failed) return;
   obj.completed=true;
   sbd.points=(sbd.points||0)+obj.points;
   save(); renderEditor();
   const editOpen=document.getElementById('mil-edit-modal').classList.contains('open');
   if(editOpen) renderMilEditModal();
   toast(`✓ Objective complete! +${obj.points}pts → ${sbd.name} now has ${sbd.points}pts`);
+}
+function failMilObj(cid,sbdId,objId){
+  const c=getCountry(cid); if(!c) return;
+  const sbd=getMilEntity(c,sbdId); if(!sbd) return;
+  const obj=(sbd.objectives||[]).find(o=>o.id===objId); if(!obj||obj.completed||obj.failed) return;
+  obj.failed=true;
+  sbd.points=Math.max(0,(sbd.points||0)-10);
+  save(); renderEditor();
+  const editOpen=document.getElementById('mil-edit-modal').classList.contains('open');
+  if(editOpen) renderMilEditModal();
+  toast(`✗ Objective failed! −10pts → ${sbd.name} now has ${sbd.points}pts`);
+}
+function saveObservation(cid,sbdId){
+  const c=getCountry(cid); if(!c) return;
+  const sbd=getMilEntity(c,sbdId); if(!sbd) return;
+  const el=document.getElementById('mle-observation');
+  if(el){ sbd.observation=el.value; save(); flashSaved(); toast('📝 Notes saved!'); }
+}
+let _obsTimer=null;
+function autoSaveObservation(cid,sbdId,val){
+  clearTimeout(_obsTimer);
+  _obsTimer=setTimeout(()=>{
+    const c=getCountry(cid); if(!c) return;
+    const sbd=getMilEntity(c,sbdId); if(!sbd) return;
+    sbd.observation=val; save(); flashSaved();
+  }, 800);
 }
 function deleteMilObj(cid,sbdId,objId){
   const c=getCountry(cid); if(!c) return;
