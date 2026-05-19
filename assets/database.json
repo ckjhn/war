@@ -190,7 +190,8 @@
             "guided": 0,
             "nuclear": 0
           }
-        }
+        },
+        "observation": ""
       }
     ],
     "battalions": [
@@ -250,7 +251,8 @@
             "guided": 0,
             "nuclear": 0
           }
-        }
+        },
+        "observation": ""
       }
     ],
     "squads": [
@@ -268,7 +270,7 @@
         "commander": null,
         "higher_commander": null,
         "deaths": 1,
-        "points": 20,
+        "points": 10,
         "objectives": [
           {
             "id": "mpbyv2htwjr1pudv8v",
@@ -280,7 +282,8 @@
             "id": "mpbyxptrzg4z8p5k0kk",
             "name": "Apply pressure on East",
             "points": 15,
-            "completed": false
+            "completed": false,
+            "failed": true
           }
         ],
         "support": {
@@ -316,7 +319,8 @@
             "guided": 0,
             "nuclear": 0
           }
-        }
+        },
+        "observation": ""
       },
       {
         "id": "mpbynt1othhnbih176e",
@@ -332,7 +336,7 @@
         "commander": null,
         "higher_commander": null,
         "deaths": 0,
-        "points": 20,
+        "points": 10,
         "objectives": [
           {
             "id": "mpbytw9rfljmwg0t4nm",
@@ -344,7 +348,8 @@
             "id": "mpbyviey9o50rkb84l",
             "name": "Apply pressure on North",
             "points": 15,
-            "completed": false
+            "completed": false,
+            "failed": true
           }
         ],
         "support": {
@@ -380,7 +385,8 @@
             "guided": 0,
             "nuclear": 0
           }
-        }
+        },
+        "observation": ""
       },
       {
         "id": "mpbz9k5rv5qmawicv29",
@@ -431,7 +437,8 @@
             "guided": 0,
             "nuclear": 0
           }
-        }
+        },
+        "observation": "- On training (March 1989 - November, 1989)"
       }
     ]
   },
