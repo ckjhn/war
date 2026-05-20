@@ -2958,10 +2958,30 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
-      "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "main_objective": "Execute the Gulf Cartel",
+      "action_plan_text": "Preparing an attack against Gulf Cartel, where the objective is to advance while weak force, looks perished, retreat, and made them fall into a trap",
+      "sub_objectives": [
+        {
+          "id": "mpe6cfzhzldq5djlay9",
+          "text": "Find a weapon provider"
+        },
+        {
+          "id": "mpe6et3x6jomykrkxcv",
+          "text": "Find a neutral territory to flourish"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe6d0jpkip4zkpw7f9",
+          "text": "Buy weapons from the provider (mexico)",
+          "done": true
+        },
+        {
+          "id": "mpe6d81pznb3o3b281",
+          "text": "Increase their stronghold",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -3098,10 +3118,26 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Take over Iraq",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe6fe6e798pv3qdhd4",
+          "text": "Dominate Iraq without the use of force"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe6fo5jkvtl2kk5xbf",
+          "text": "Worker as a provider, building for them",
+          "done": false
+        },
+        {
+          "id": "mpe6g4yd2gx9o93d1la",
+          "text": "Increase relations overtime, sharing the same ideas of sacred Iraq",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -3238,10 +3274,21 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Revenge",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe6gmk51l4of3a6v3c",
+          "text": "Destroy Taliban/Hezbollah and Al-Quaeda"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe6h3clorl9jpfem",
+          "text": "find a ally",
+          "done": true
+        }
+      ]
     }
   },
   {
@@ -3378,10 +3425,25 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Retake their sacred land, Israel",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe6hwd163g59p138p7",
+          "text": "Stay hided joining forces and weapons"
+        },
+        {
+          "id": "mpe6ickmxxwic0arui",
+          "text": "Do attacks randomly on Israel just for panic, disorganization and chaos"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe6hndhfxmok1ckqrh",
+          "text": "Work for receive money and invest on guns",
+          "done": false
+        }
+      ]
     }
   }
 ]
