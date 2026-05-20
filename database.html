@@ -706,6 +706,7 @@ function makeDefault(name='New Country', flag='🏴', type='country'){
   c.divisions = [];
   c.battalions = [];
   c.squads = [];
+  c.action_plan = {main_objective:'', action_plan_text:'', sub_objectives:[], tasks:[]};
   return c;
 }
 
@@ -723,6 +724,8 @@ function load(){
     if(!c.battalions) c.battalions=[];
     if(!c.squads) c.squads=[];
     [...c.divisions,...c.battalions,...c.squads].forEach(hydrateSBD);
+    // Ensure action_plan exists
+    if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
     // Ensure all countries have observations section
     if(!c.observations) { 
       c.observations = {}; 
@@ -815,6 +818,7 @@ function renderEditor(){
     if(s.key === 'buildings' && !isOrg) html += renderProductionSection(c);
   }
 
+  html += renderActionPlanSection(c);
   html += `</div>`;
   editor.innerHTML = html;
   // Restore collapsed state that was active before re-render
@@ -960,6 +964,130 @@ function renderMinesSection(c){
     <div class="section-body">
       ${total > 0 ? `<div style="padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:4px;line-height:1.6;">${summaryPills}</div>` : ''}
       ${rows}
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// ACTION PLAN SECTION
+// =====================================================
+function escAP(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function saveActionPlanField(cid, field, val){
+  const c=getCountry(cid); if(!c) return;
+  if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
+  c.action_plan[field]=val;
+  save(); flashSaved();
+}
+
+function addActionSubObj(cid){
+  const c=getCountry(cid); if(!c) return;
+  if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
+  const el=document.getElementById('ap-new-subobj-'+cid); if(!el) return;
+  const text=el.value.trim(); if(!text) return;
+  c.action_plan.sub_objectives.push({id:uuid(),text});
+  el.value='';
+  save(); renderEditor();
+}
+
+function removeActionSubObj(cid,id){
+  const c=getCountry(cid); if(!c) return;
+  c.action_plan.sub_objectives=(c.action_plan.sub_objectives||[]).filter(x=>x.id!==id);
+  save(); renderEditor();
+}
+
+function addActionTask(cid){
+  const c=getCountry(cid); if(!c) return;
+  if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
+  const el=document.getElementById('ap-new-task-'+cid); if(!el) return;
+  const text=el.value.trim(); if(!text) return;
+  c.action_plan.tasks.push({id:uuid(),text,done:false});
+  el.value='';
+  save(); renderEditor();
+}
+
+function removeActionTask(cid,id){
+  const c=getCountry(cid); if(!c) return;
+  c.action_plan.tasks=(c.action_plan.tasks||[]).filter(x=>x.id!==id);
+  save(); renderEditor();
+}
+
+function toggleActionTask(cid,id){
+  const c=getCountry(cid); if(!c) return;
+  const task=(c.action_plan.tasks||[]).find(t=>t.id===id); if(!task) return;
+  task.done=!task.done;
+  save(); renderEditor();
+}
+
+function renderActionPlanSection(c){
+  if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
+  const ap=c.action_plan;
+  const doneCount=(ap.tasks||[]).filter(t=>t.done).length;
+  const totalTasks=(ap.tasks||[]).length;
+
+  const subObjHtml=(ap.sub_objectives||[]).length===0
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:6px 0;">No sub-objectives yet.</div>`
+    :(ap.sub_objectives||[]).map(o=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,48,69,.4);">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text);flex:1;">◦ ${escAP(o.text)}</span>
+        <button class="delta-btn neg" onclick="removeActionSubObj('${c.id}','${o.id}')">×</button>
+      </div>`).join('');
+
+  const tasksHtml=(ap.tasks||[]).length===0
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:6px 0;">No tasks yet.</div>`
+    :(ap.tasks||[]).map(t=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,48,69,.4);">
+        <button onclick="toggleActionTask('${c.id}','${t.id}')" style="background:transparent;border:1px solid ${t.done?'var(--accent3)':'var(--border)'};color:${t.done?'var(--accent3)':'var(--text-dim)'};width:20px;height:20px;cursor:pointer;flex-shrink:0;font-size:10px;line-height:1;">${t.done?'✓':''}</button>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:${t.done?'var(--text-dim)':'var(--text)'};flex:1;${t.done?'text-decoration:line-through;opacity:.6;':''}">${escAP(t.text)}</span>
+        <button class="delta-btn neg" onclick="removeActionTask('${c.id}','${t.id}')">×</button>
+      </div>`).join('');
+
+  return `<div class="section" id="sec-action-plan">
+    <div class="section-header" onclick="toggleSection('action-plan')">
+      <span class="section-title" style="color:var(--accent2);">📋 Action Plan</span>
+      ${totalTasks>0?`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);margin-right:10px;">${doneCount}/${totalTasks} tasks done</span>`:''}
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div style="padding:0 0 14px;border-bottom:1px solid rgba(26,48,69,.5);">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">🎯 Main Objective</div>
+        <input type="text" value="${escAP(ap.main_objective)}" maxlength="200" placeholder="Enter main objective…"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:13px;padding:8px 12px;outline:none;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+          onchange="saveActionPlanField('${c.id}','main_objective',this.value)"
+          oninput="saveActionPlanField('${c.id}','main_objective',this.value)">
+      </div>
+      <div style="padding:14px 0;border-bottom:1px solid rgba(26,48,69,.5);">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">◦ Sub Objectives <span style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;">(${(ap.sub_objectives||[]).length})</span></div>
+        ${subObjHtml}
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="text" id="ap-new-subobj-${c.id}" placeholder="New sub-objective…" maxlength="200"
+            style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:6px 10px;outline:none;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter')addActionSubObj('${c.id}')">
+          <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="addActionSubObj('${c.id}')">+ Add</button>
+        </div>
+      </div>
+      <div style="padding:14px 0;border-bottom:1px solid rgba(26,48,69,.5);">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">📝 Action Plan</div>
+        <textarea placeholder="Describe how objectives and sub-objectives will be managed…"
+          style="width:100%;min-height:90px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:vertical;border-radius:2px;line-height:1.5;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+          onchange="saveActionPlanField('${c.id}','action_plan_text',this.value)"
+          oninput="saveActionPlanField('${c.id}','action_plan_text',this.value)"
+        >${escAP(ap.action_plan_text)}</textarea>
+      </div>
+      <div style="padding:14px 0 0;">
+        <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;">☑ Tasks <span style="color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;">(${doneCount}/${totalTasks} done)</span></div>
+        ${tasksHtml}
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="text" id="ap-new-task-${c.id}" placeholder="New task…" maxlength="200"
+            style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:6px 10px;outline:none;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter')addActionTask('${c.id}')">
+          <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="addActionTask('${c.id}')">+ Add</button>
+        </div>
+      </div>
     </div>
   </div>`;
 }
@@ -1309,6 +1437,7 @@ function executeCycle(){
       sq.special_training.forEach(t => {
         t.cyclesLeft = Math.max(0, t.cyclesLeft - 1);
         if(t.cyclesLeft === 0){
+          sq.men.army = Math.max(0, (sq.men.army || 0) - 4);
           sq.men.special_forces = (sq.men.special_forces || 0) + 4;
           completedTrainings.push(sq.name);
         } else {
@@ -1421,6 +1550,7 @@ function importJSON(e){
       data.forEach(c=>{ 
         if(!c.mines){ c.mines={}; for(const m of MINE_CATS_DB) c.mines[m.k]=0; }
         if(!c.type) c.type='country';
+        if(!c.action_plan) c.action_plan={main_objective:'',action_plan_text:'',sub_objectives:[],tasks:[]};
         // Hydrate observations field for any country that lacks it
         if(!c.observations) {
           c.observations = {};
@@ -2420,6 +2550,9 @@ function startSpecialTraining(cid,sbdId,trainerType){
   if(sq.special_training.find(t=>t.trainer===trainerType)){ toast('This commander is already training.'); return; }
   if(trainerType==='commander'&&!sq.commander){ toast('No Field Commander assigned.'); return; }
   if(trainerType==='higher_commander'&&!sq.higher_commander){ toast('No Operational Commander assigned.'); return; }
+  const reservedArmy = sq.special_training.length * 4;
+  const availableArmy = (sq.men.army || 0) - reservedArmy;
+  if(availableArmy < 4){ toast(`Not enough army men. Need 4 available soldiers (have ${Math.max(0,availableArmy)}).`); return; }
   const cycles=trainerType==='commander'?6:5;
   sq.special_training.push({id:uuid(),trainer:trainerType,cyclesLeft:cycles,cyclesTotal:cycles});
   save(); renderEditor(); renderSpecialTrainingModal();
