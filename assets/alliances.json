@@ -106,14 +106,17 @@
         "drone": 0,
         "barricade": 0,
         "barrier": 0
-      }
+      },
+      "workers": 0,
+      "production": []
     },
     "militaryBreakdown": [],
     "donations": [],
     "taxConfig": {
       "fixedPerMember": 0
     },
-    "turn": 0
+    "turn": 0,
+    "objectives": []
   },
   {
     "id": "mp7u833vfc3o52",
@@ -238,14 +241,36 @@
         "drone": 0,
         "barricade": 0,
         "barrier": 0
-      }
+      },
+      "workers": 0,
+      "production": []
     },
     "militaryBreakdown": [],
     "donations": [],
     "taxConfig": {
       "fixedPerMember": 1000
     },
-    "turn": 0
+    "turn": 0,
+    "objectives": [
+      {
+        "id": "mpdxdnyfmyzw7l",
+        "name": "Build the NATO parlament",
+        "supportEffort": 35,
+        "completedBy": null
+      },
+      {
+        "id": "mpdxe4p1p3ncrv",
+        "name": "Build roads between USA and Russia",
+        "supportEffort": 20,
+        "completedBy": null
+      },
+      {
+        "id": "mpdxeg4je14i80",
+        "name": "Build roads between USA and Israel",
+        "supportEffort": 20,
+        "completedBy": null
+      }
+    ]
   },
   {
     "id": "mp7u8izfgu7u3r",
@@ -354,14 +379,17 @@
         "drone": 0,
         "barricade": 0,
         "barrier": 0
-      }
+      },
+      "workers": 0,
+      "production": []
     },
     "militaryBreakdown": [],
     "donations": [],
     "taxConfig": {
       "fixedPerMember": 0
     },
-    "turn": 0
+    "turn": 0,
+    "objectives": []
   },
   {
     "id": "mp7u96kbuqtscd",
@@ -486,13 +514,16 @@
         "drone": 0,
         "barricade": 0,
         "barrier": 0
-      }
+      },
+      "workers": 0,
+      "production": []
     },
     "militaryBreakdown": [],
     "donations": [],
     "taxConfig": {
       "fixedPerMember": 0
     },
-    "turn": 0
+    "turn": 0,
+    "objectives": []
   }
 ]
