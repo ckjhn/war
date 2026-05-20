@@ -128,7 +128,7 @@
       "majors": 1
     },
     "observations": {
-      "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un"
+      "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un\n\nMove troops towards East of USA"
     },
     "production": [],
     "military_generals": [],
@@ -320,7 +320,7 @@
             "nuclear": 0
           }
         },
-        "observation": ""
+        "observation": "Navy SEALs Alpha Squad started their training on March, 1989, while USA was fighting aggainst Talibans in their own territory. They didn't intervein on that conflict, instead, kept training. \n\nOn July, 1989, they finished their 5 months of training, and was deployed on action on their first mission, on Israel soil. They Objective was clear, give support to the frontline from a safe distance, taking positions on North of Israel, above a mountain, using the high ground in their favor. Keep the sniper there, and advance with the troops to create panic and pressure, making the talibans loose organization and died easily.\n\nThey succeeded on giving support from distance shooting, but failed on applying pressure. They applied pressure, indeed, but they took so many time, since the mountain was not safe for troops to advance. "
       },
       {
         "id": "mpbynt1othhnbih176e",
@@ -336,7 +336,7 @@
         "commander": null,
         "higher_commander": null,
         "deaths": 0,
-        "points": 10,
+        "points": 30,
         "objectives": [
           {
             "id": "mpbytw9rfljmwg0t4nm",
@@ -345,11 +345,10 @@
             "completed": true
           },
           {
-            "id": "mpbyviey9o50rkb84l",
-            "name": "Apply pressure on North",
-            "points": 15,
-            "completed": false,
-            "failed": true
+            "id": "mpdz8yhv1y1d8xbwij4",
+            "name": "Applying pressure on North-East",
+            "points": 10,
+            "completed": true
           }
         ],
         "support": {
@@ -386,7 +385,7 @@
             "nuclear": 0
           }
         },
-        "observation": ""
+        "observation": "Navy SEALs Bravo Squad started their training on March, 1989, while USA was fighting against Talibans in their own territory. They didn't intervein on that conflict, instead, kept training. \n\nOn July, 1989, they finished their 5 months of training, and was deployed on action on their first mission, on Israel soil. They Objective was clear, give support to the frontline from a safe distance, taking positions on North of Israel, above a mountain, using the high ground in their favor. Keep the sniper there, and advance with the troops to create panic and pressure, making the talibans loose organization and died easily.\n\nThey succeeded on giving support from distance shooting and also succeed on applying pressure. But this success comes with a price, one member died inside a building, where he was surprised by an armed Taliban"
       },
       {
         "id": "mpbz9k5rv5qmawicv29",
