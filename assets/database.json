@@ -1645,10 +1645,26 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Rebuild the country",
       "action_plan_text": "",
       "sub_objectives": [],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "mpe5kwwvmbemp16u4d",
+          "text": "reconstruct the capital",
+          "done": false
+        },
+        {
+          "id": "mpe5l5cwvue9a49u4j",
+          "text": "reconstruct the houses infrastructure",
+          "done": false
+        },
+        {
+          "id": "mpe5lko1lmwblr6wdr",
+          "text": "rearmy the country",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -1790,10 +1806,41 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Build a reliable country",
       "action_plan_text": "",
       "sub_objectives": [],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "mpe5n9doxb1yp27231j",
+          "text": "Finish roads",
+          "done": false
+        },
+        {
+          "id": "mpe5net0t2a2vi95wxb",
+          "text": "Build more houses",
+          "done": false
+        },
+        {
+          "id": "mpe5nlv08tgvvlfdz94",
+          "text": "Increase the army to a sustainable state",
+          "done": false
+        },
+        {
+          "id": "mpe5o4vsj70onvu5lgp",
+          "text": "Build towers outposts on high elevation terrain for advantage",
+          "done": false
+        },
+        {
+          "id": "mpe5obbkgal7sih2a44",
+          "text": "Increase diplomacy",
+          "done": false
+        },
+        {
+          "id": "mpe5p2rqkxr4pfcswgk",
+          "text": "Prevent any kind of aggression against anyone on the world",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -1935,10 +1982,50 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Industrial Progress",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe5ptdu58asp5zd1pi",
+          "text": "Increase factories amount"
+        },
+        {
+          "id": "mpe5q942krgv17wch0k",
+          "text": "Dominate the world production being a reliable country to produce for others"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe5pa3r0bj0a28c3noa",
+          "text": "Build more roads",
+          "done": false
+        },
+        {
+          "id": "mpe5rdv0b48sf8mxgvk",
+          "text": "Find allies that are essentially disponible to defend their own country, since military increase is not an option now",
+          "done": false
+        },
+        {
+          "id": "mpe5rrrnz2798sqf48",
+          "text": "Prevent fight against them",
+          "done": false
+        },
+        {
+          "id": "mpe5rvdfpxzi1rmogz",
+          "text": "Take care of their borders",
+          "done": false
+        },
+        {
+          "id": "mpe5sb0d0v57zfja4fki",
+          "text": "Buy resources from others countries to build more factories",
+          "done": false
+        },
+        {
+          "id": "mpe5si79dki6g8v7ig",
+          "text": "Build a new mine a a new factory",
+          "done": false
+        }
+      ]
     }
   },
   {
