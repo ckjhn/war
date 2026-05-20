@@ -2167,10 +2167,31 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Be the Strongest Military",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe5tcbqp769h2ecsnh",
+          "text": "Invest on militaries and tactical comabat"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe601578c7khuon4m",
+          "text": "Develop a diplomatic network, where they can fight and prove their force",
+          "done": false
+        },
+        {
+          "id": "mpe60b56eugf3udb2a6",
+          "text": "Increase the army size",
+          "done": false
+        },
+        {
+          "id": "mpe60lcyg9yz6mjb8qm",
+          "text": "Buy a tank",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -2312,10 +2333,26 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Create the perfect sacred place",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe6169n2o06q68moq9",
+          "text": "Develop their country the fastest possible"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe61e6iwq9vyg9y8qr",
+          "text": "Hire someone to increase their country defense",
+          "done": false
+        },
+        {
+          "id": "mpe61o2y3x9m1etcqci",
+          "text": "Hire someone to build houses, infrastructures, etc",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -2452,9 +2489,18 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Chaos",
       "action_plan_text": "",
-      "sub_objectives": [],
+      "sub_objectives": [
+        {
+          "id": "mpe61vyaybl1te9zz4j",
+          "text": "Kill"
+        },
+        {
+          "id": "mpe61yje1clk5lq5lz7",
+          "text": "Steal"
+        }
+      ],
       "tasks": []
     }
   },
@@ -2592,10 +2638,30 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Increase CV actuation on Amazon",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe62r7n5oi5ixjwala",
+          "text": "Protect their capital"
+        },
+        {
+          "id": "mpe62zjf6idcrwvpdwr",
+          "text": "Increase their manpower"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe637szzrpmyu3mw4k",
+          "text": "Buy weapons",
+          "done": false
+        },
+        {
+          "id": "mpe63hlf54bzidgivq9",
+          "text": "Keep finding more drugs for founding",
+          "done": false
+        }
+      ]
     }
   },
   {
@@ -2732,10 +2798,30 @@
     "battalions": [],
     "squads": [],
     "action_plan": {
-      "main_objective": "",
+      "main_objective": "Take all the region from South Mexico as their territory",
       "action_plan_text": "",
-      "sub_objectives": [],
-      "tasks": []
+      "sub_objectives": [
+        {
+          "id": "mpe64fwspy8lfhnoue",
+          "text": "Increase the strengh"
+        },
+        {
+          "id": "mpe64q775m6cet1hl0j",
+          "text": "Protect the drug route that has access to the ocean"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe65kz74fwfthpzp05",
+          "text": "Build an outpost on South Mexico exactly on the drug's route",
+          "done": false
+        },
+        {
+          "id": "mpe65pmz9id7xs6vgsm",
+          "text": "Keep increasing force",
+          "done": false
+        }
+      ]
     }
   },
   {
