@@ -272,7 +272,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <li>+10 Civilians</li>
         <li>+3 Civilians per Hospital</li>
         <li>+$10 per Civilian (Money)</li>
-        <li>+$15,000 per Business (Money)</li>
+        <li>+$5,000 per Business (Money)</li>
         <li>+Brute Resources based on Mines</li>
         <li style="color:var(--red);">−$20 per Worker (Salary cost)</li>
       </ul>
@@ -1248,7 +1248,7 @@ function executeCycle(){
       const currentMoney = Number(c.economy.money) || 0;
       c.economy.money = currentMoney + (currentMembers + 10) * 50;
     } else {
-      // Countries: +10 civilians, +$10 per civilian, +$15,000 per business, +brute resources from mines
+      // Countries: +10 civilians, +$10 per civilian, +$5,000 per business, +brute resources from mines
       if(!c.population) c.population = {};
       const currentCivs = Number(c.population.civilians) || 0;
       
@@ -1265,7 +1265,7 @@ function executeCycle(){
       const currentWorkers = Number(c.population.workers) || 0;
       const workerSalaryTotal = currentWorkers * 20;
 
-      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 15000) - workerSalaryTotal;
+      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 5000) - workerSalaryTotal;
       
       // Add brute resources based on mines
       if(!c.brute) c.brute = {};
