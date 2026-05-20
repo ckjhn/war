@@ -281,6 +281,11 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
         <li>+10 Members</li>
         <li>+$50 per Member (Money)</li>
       </ul>
+      <p style="color:var(--accent3);margin-top:8px;">🎖️ <strong>Special Ops Training (Squads only):</strong></p>
+      <ul style="margin-left:20px;font-size:11px;">
+        <li>Active training countdowns advance by 1 cycle</li>
+        <li>Completed trainings add +4 Special Forces to the squad</li>
+      </ul>
     </div>
     <div class="modal-actions">
       <button class="btn btn-green" onclick="executeCycle()">✓ CONFIRM CYCLE</button>
@@ -473,6 +478,17 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- Special Training Modal -->
+<div class="modal-overlay" id="spec-train-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">🎖️ Special Ops Training</div>
+    <div id="spec-train-content" style="min-height:80px;"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-orange" onclick="closeModal('spec-train-modal')">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -649,7 +665,7 @@ function makeSBD(type, name){
     support[sk]=Object.fromEntries(MIL_SUPPORT_TYPES[sk].fields.map(f=>[f.k,0]));
   return { id:uuid(), name:name||(type.charAt(0).toUpperCase()+type.slice(1)+' Unit'), type, parent_id:null,
            men:{army:0,special_forces:0,majors:0,spies:0}, commander:null, higher_commander:null,
-           deaths:0, points:0, objectives:[], support, observation:'' };
+           deaths:0, points:0, objectives:[], support, observation:'', special_training:[] };
 }
 function escMil(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function getMilEntity(c,id){ return [...(c.divisions||[]),...(c.battalions||[]),...(c.squads||[])].find(e=>e.id===id)||null; }
@@ -667,6 +683,7 @@ function hydrateSBD(sbd){
   if(sbd.higher_commander===undefined) sbd.higher_commander=null;
   if(sbd.deaths===undefined) sbd.deaths=0;
   if(sbd.observation===undefined) sbd.observation='';
+  if(!sbd.special_training) sbd.special_training=[];
 }
 // =====================================================
 let countries = [];
@@ -1237,6 +1254,8 @@ function executeCycle(){
     return;
   }
 
+  const completedTrainings = [];
+
   countries.forEach(c => {
     if(c.type === 'organization'){
       // Organizations: +10 members, +$50 per member
@@ -1282,13 +1301,33 @@ function executeCycle(){
         }
       }
     }
+
+    // Advance special ops training in squads (squads only, all countries)
+    (c.squads||[]).forEach(sq => {
+      if(!sq.special_training || sq.special_training.length === 0) return;
+      const stillActive = [];
+      sq.special_training.forEach(t => {
+        t.cyclesLeft = Math.max(0, t.cyclesLeft - 1);
+        if(t.cyclesLeft === 0){
+          sq.men.special_forces = (sq.men.special_forces || 0) + 4;
+          completedTrainings.push(sq.name);
+        } else {
+          stillActive.push(t);
+        }
+      });
+      sq.special_training = stillActive;
+    });
   });
+
+  const completedMsg = completedTrainings.length > 0
+    ? ` | 🎖 ${completedTrainings.length} training(s) complete: ${completedTrainings.join(', ')}`
+    : '';
 
   save();
   renderList();
   renderEditor();
   closeModal('cycle-modal');
-  toast('⏳ New cycle completed!');
+  toast('⏳ New cycle completed!' + completedMsg, completedTrainings.length > 0 ? 4000 : 2500);
 }
 
 // =====================================================
@@ -1440,7 +1479,7 @@ document.getElementById('prod-line-modal').addEventListener('click',function(e){
 document.getElementById('prod-item-modal').addEventListener('click',function(e){
   if(e.target===this)closeModal('prod-item-modal');
 });
-['mil-gen-modal','mil-create-modal','mil-assign-modal','mil-edit-modal','mil-obj-modal','mil-cmd-modal'].forEach(id=>{
+['mil-gen-modal','mil-create-modal','mil-assign-modal','mil-edit-modal','mil-obj-modal','mil-cmd-modal','spec-train-modal'].forEach(id=>{
   const el=document.getElementById(id);
   if(el) el.addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
 });
@@ -1651,6 +1690,21 @@ function renderSquadCard(c, sq, standalone){
   const agg=sbdAggregate(c,sq);
   const assignBtns = standalone && c.battalions.length>0
     ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openMilAssignModal('${c.id}','${sq.id}','sq-to-bat')">Assign→Bat.</button>`:'';
+  const hasAnyCmd = !!(sq.commander || sq.higher_commander);
+  const trainBtn = hasAnyCmd
+    ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--accent3);color:var(--accent3);" onclick="openSpecialTrainingModal('${c.id}','${sq.id}')">🎖 Train</button>`
+    : '';
+  const trainings = sq.special_training || [];
+  const trainStatusHtml = trainings.length > 0
+    ? `<div style="padding:3px 12px 4px;display:flex;gap:6px;flex-wrap:wrap;">
+        ${trainings.map(t => {
+          const isCmd = t.trainer === 'commander';
+          const col = isCmd ? 'var(--gold)' : 'var(--purple)';
+          const pct = Math.round((1 - t.cyclesLeft / t.cyclesTotal) * 100);
+          return `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid ${col};color:${col};">🎖 ${isCmd?'⭐':'♛'} ${t.cyclesLeft}cy left (${pct}%)</span>`;
+        }).join('')}
+      </div>`
+    : '';
   return `<div class="sbd-card sbd-card-sq">
     <div class="sbd-header sbd-header-sq">
       <button onclick="toggleSBD('${sq.id}')" style="background:transparent;border:1px solid rgba(57,255,20,.2);color:var(--accent3);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
@@ -1662,11 +1716,12 @@ function renderSquadCard(c, sq, standalone){
       ${sbdPromoteBtn(c,sq)}
       <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
         ${assignBtns}
+        ${trainBtn}
         <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openMilEditModal('${c.id}','${sq.id}')">✎ Edit</button>
         <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteSBD('${c.id}','${sq.id}')">× Del</button>
       </div>
     </div>
-    ${collapsed?'':`${sbdCardBody(c,sq)}${renderObjsInline(c,sq)}`}
+    ${collapsed?'':`${sbdCardBody(c,sq)}${trainStatusHtml}${renderObjsInline(c,sq)}`}
   </div>`;
 }
 
@@ -2274,6 +2329,110 @@ function removeMilHigherCmd(cid,sbdId){
 }
 // Legacy alias kept for any old references
 function removeMilCmd(cid,sbdId){ removeMilFieldCmd(cid,sbdId); }
+
+// =====================================================
+// MILITARY — SPECIAL OPS TRAINING (Squad only)
+// =====================================================
+let _specTrainCid=null, _specTrainSbdId=null;
+
+function openSpecialTrainingModal(cid,sbdId){
+  const c=getCountry(cid); if(!c) return;
+  const sq=getMilEntity(c,sbdId); if(!sq||sq.type!=='squad') return;
+  _specTrainCid=cid; _specTrainSbdId=sbdId;
+  renderSpecialTrainingModal();
+  document.getElementById('spec-train-modal').classList.add('open');
+}
+
+function renderSpecialTrainingModal(){
+  const c=getCountry(_specTrainCid); if(!c) return;
+  const sq=getMilEntity(c,_specTrainSbdId); if(!sq) return;
+  const hasCmd=!!sq.commander;
+  const hasHigher=!!sq.higher_commander;
+  const trainings=sq.special_training||[];
+  const cmdTraining=trainings.find(t=>t.trainer==='commander');
+  const higherTraining=trainings.find(t=>t.trainer==='higher_commander');
+
+  let html=`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:14px;line-height:1.7;padding:8px;background:var(--bg);border:1px solid var(--border);">
+    Special Ops units are trained 4 men at a time. Each commander slot trains independently. Training completes when the cycle countdown reaches zero.
+  </div>`;
+
+  if(!hasCmd&&!hasHigher){
+    html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:12px 0;text-align:center;">No commander present. A Field Commander or Operational Commander is required to train Special Operations units.</div>`;
+    document.getElementById('spec-train-content').innerHTML=html;
+    return;
+  }
+
+  if(hasCmd){
+    if(cmdTraining){
+      const pct=Math.round((1-cmdTraining.cyclesLeft/cmdTraining.cyclesTotal)*100);
+      html+=`<div style="padding:10px;border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.04);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);">⭐ CMD. TRAINING</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escMil(sq.commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">4 Special Forces · ${cmdTraining.cyclesLeft} cycle${cmdTraining.cyclesLeft!==1?'s':''} remaining</div>
+        <div style="width:100%;height:4px;background:var(--bg);border:1px solid var(--border);margin-top:6px;"><div style="width:${pct}%;height:100%;background:var(--gold);"></div></div>
+        <button class="btn btn-sm btn-red" style="font-size:7px;margin-top:8px;" onclick="cancelSpecialTraining('${c.id}','${sq.id}','commander')">✕ Cancel</button>
+      </div>`;
+    } else {
+      html+=`<div style="padding:10px;border:1px solid rgba(255,215,0,.2);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);">⭐ FIELD COMMANDER</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escMil(sq.commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;">Trains 4 Special Forces · 6 cycles</div>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="startSpecialTraining('${c.id}','${sq.id}','commander')">▶ Start Training (6 cycles)</button>
+      </div>`;
+    }
+  }
+
+  if(hasHigher){
+    if(higherTraining){
+      const pct=Math.round((1-higherTraining.cyclesLeft/higherTraining.cyclesTotal)*100);
+      html+=`<div style="padding:10px;border:1px solid rgba(192,132,252,.3);background:rgba(192,132,252,.04);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--purple);">♛ OP.CMD. TRAINING</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escMil(sq.higher_commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">4 Special Forces · ${higherTraining.cyclesLeft} cycle${higherTraining.cyclesLeft!==1?'s':''} remaining</div>
+        <div style="width:100%;height:4px;background:var(--bg);border:1px solid var(--border);margin-top:6px;"><div style="width:${pct}%;height:100%;background:var(--purple);"></div></div>
+        <button class="btn btn-sm btn-red" style="font-size:7px;margin-top:8px;" onclick="cancelSpecialTraining('${c.id}','${sq.id}','higher_commander')">✕ Cancel</button>
+      </div>`;
+    } else {
+      html+=`<div style="padding:10px;border:1px solid rgba(192,132,252,.2);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--purple);">♛ OPERATIONAL COMMANDER</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escMil(sq.higher_commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;">Trains 4 Special Forces · 5 cycles</div>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="startSpecialTraining('${c.id}','${sq.id}','higher_commander')">▶ Start Training (5 cycles)</button>
+      </div>`;
+    }
+  }
+
+  document.getElementById('spec-train-content').innerHTML=html;
+}
+
+function startSpecialTraining(cid,sbdId,trainerType){
+  const c=getCountry(cid); if(!c) return;
+  const sq=getMilEntity(c,sbdId); if(!sq||sq.type!=='squad') return;
+  if(!sq.special_training) sq.special_training=[];
+  if(sq.special_training.find(t=>t.trainer===trainerType)){ toast('This commander is already training.'); return; }
+  if(trainerType==='commander'&&!sq.commander){ toast('No Field Commander assigned.'); return; }
+  if(trainerType==='higher_commander'&&!sq.higher_commander){ toast('No Operational Commander assigned.'); return; }
+  const cycles=trainerType==='commander'?6:5;
+  sq.special_training.push({id:uuid(),trainer:trainerType,cyclesLeft:cycles,cyclesTotal:cycles});
+  save(); renderEditor(); renderSpecialTrainingModal();
+  toast(`🎖 Special Ops training started! ${cycles} cycles remaining.`);
+}
+
+function cancelSpecialTraining(cid,sbdId,trainerType){
+  const c=getCountry(cid); if(!c) return;
+  const sq=getMilEntity(c,sbdId); if(!sq) return;
+  sq.special_training=(sq.special_training||[]).filter(t=>t.trainer!==trainerType);
+  save(); renderEditor(); renderSpecialTrainingModal();
+  toast('Training cancelled.');
+}
 // =====================================================
 load();
 renderList();
