@@ -417,7 +417,43 @@
         "observation": "- On training (March 1989 - November, 1989)",
         "special_training": []
       }
-    ]
+    ],
+    "action_plan": {
+      "main_objective": "Protect USA integrity",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe4leubv9kkayls87n",
+          "text": "Take over USA east, assuring their own territory is safe"
+        },
+        {
+          "id": "mpe4m2307adnrudmp3",
+          "text": "Build an military outpost on the East to prevent criminal organizations from tacking action"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe4mbpw7dr46nizbr",
+          "text": "Send troops to East",
+          "done": false
+        },
+        {
+          "id": "mpe4min0cjzj3uan80d",
+          "text": "Build East output",
+          "done": false
+        },
+        {
+          "id": "mpe4muic2mypkma0l7j",
+          "text": "Send spies to Iran and Iraq",
+          "done": false
+        },
+        {
+          "id": "mpe4xsccvw70a73e2ee",
+          "text": "Give Brazil weapons (unofficially) to fight against criminal organizations",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "mnulxffollz0xwr86a",
@@ -568,7 +604,47 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Defend Russia Supremacy",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe527m6nap97604vx",
+          "text": "Create the Soviet Union (USSR)"
+        },
+        {
+          "id": "mpe547dpi99tuq406g",
+          "text": "Increase the army"
+        },
+        {
+          "id": "mpe55t5xx190jh2k8p",
+          "text": "Economic Grew though resource production"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe52ckd5eypgwdrn1k",
+          "text": "Send diplomats to Ukraine",
+          "done": false
+        },
+        {
+          "id": "mpe52hilim0fl1m5oek",
+          "text": "Send diplomats to China/Japan",
+          "done": false
+        },
+        {
+          "id": "mpe53f5zjn36j9losv",
+          "text": "Train more 30 troops and buy weapons for them",
+          "done": false
+        },
+        {
+          "id": "mpe556lpgstgcn8jra",
+          "text": "Build more mines (9 missing)",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "moag4nn2r5o6utoasd",
@@ -715,7 +791,42 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Be the strongest country in the world",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe56orikuv9xwykl28",
+          "text": "Make weapons and supply criminal organizations"
+        },
+        {
+          "id": "mpe576v1c2d2cqg3quk",
+          "text": "Stop being dependent on civilians taxes"
+        },
+        {
+          "id": "mpe57e1aqtj3xxf4vk",
+          "text": "Increase the army"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe57mxqzkqirumrl1j",
+          "text": "Supply the new mans that are being trained",
+          "done": false
+        },
+        {
+          "id": "mpe57yxpdjfyopo4ig",
+          "text": "Sell weapons for criminal organizations",
+          "done": false
+        },
+        {
+          "id": "mpe58d65f7lzg8p7fc9",
+          "text": "Sign a cooperation with criminal organizations (they pay money, and Iran produce weapons)",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "moahlygpwufwpxx2i9",
@@ -847,7 +958,43 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Develop a better place",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe599wu4mr361jmh4q",
+          "text": "Industrialize the country"
+        },
+        {
+          "id": "mpe59eomoo2txqgn1x",
+          "text": "Be able to defend themselves"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe5a0s6cxbxya9n2zp",
+          "text": "Finish the ocean route for weapons aquisition",
+          "done": false
+        },
+        {
+          "id": "mpe5a4xyiprtycszcp",
+          "text": "Increase the army",
+          "done": false
+        },
+        {
+          "id": "mpe5aasuvl8uscu2n3b",
+          "text": "Develop a spy network",
+          "done": false
+        },
+        {
+          "id": "mpe5aro78lsq0hge16i",
+          "text": "Increase diplomatic relation with border neighbors",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "moakuervmfd7z3gvths",
@@ -1012,7 +1159,33 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Prove the Korea State",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe5beeu5jg5vuyf82v",
+          "text": "Spy Network"
+        },
+        {
+          "id": "mpe5bsry2v7d9fhen0z",
+          "text": "Defenses"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe5c4sn0jb0dl78x35",
+          "text": "Build towers distant from the capital, and provide army for those towers",
+          "done": false
+        },
+        {
+          "id": "mpe5co3im4k888ed69q",
+          "text": "Train and send more spies worldwide, provinding them weapons",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "moakuucd7h9zupzw8eu",
@@ -1144,7 +1317,24 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Fairy Tale, just be happy",
+      "action_plan_text": "Provide weapons for Mara Cartel, while Mara provides Mexico defense against Gulf Cartel specifically",
+      "sub_objectives": [
+        {
+          "id": "mpe5d8fq2nn0w67jpxa",
+          "text": "Defense"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe5df47h7mx50rcu9",
+          "text": "Mara Cartel as allied for defense",
+          "done": true
+        }
+      ]
+    }
   },
   {
     "id": "moakv16u66cps8ch8b4",
@@ -1278,7 +1468,51 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "Develop a better country",
+      "action_plan_text": "",
+      "sub_objectives": [
+        {
+          "id": "mpe5exkufl2gc415dri",
+          "text": "Combat criminal organizations"
+        },
+        {
+          "id": "mpe5f2va74ecu4w4qjb",
+          "text": "Clear the country from danger"
+        },
+        {
+          "id": "mpe5fbuf38u3y4qm7ig",
+          "text": "Be able to transit in their own country"
+        },
+        {
+          "id": "mpe5hn143ar9zk1grfu",
+          "text": "A safe route to allies"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "mpe5if2e8qo6454sqkl",
+          "text": "Build navy as a transport for the country, since their borders are dangereous",
+          "done": false
+        },
+        {
+          "id": "mpe5j0lsga354xb558m",
+          "text": "Build a military outpost above the volcano, providing high ground and information advantage for Brazil",
+          "done": false
+        },
+        {
+          "id": "mpe5jj32pl70mxekpdk",
+          "text": "Send troops for the Amazon Forest and build traps, outposts, and defenses",
+          "done": false
+        },
+        {
+          "id": "mpe5k17qx1585vdzs49",
+          "text": "Move PCC away from the north of Brazil capital",
+          "done": false
+        }
+      ]
+    }
   },
   {
     "id": "moeuuhuo8e086wjtvwd",
@@ -1409,7 +1643,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrrzlylhelxn67uo",
@@ -1548,7 +1788,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrtjbp6w3n5v4vxad",
@@ -1687,7 +1933,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrtqp2ctj8sckm3zr",
@@ -1826,7 +2078,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrurblqfd9j4epawk",
@@ -1965,7 +2223,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrv1sbfdycppugmut",
@@ -2099,7 +2363,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrvboh36b015rnx74",
@@ -2233,7 +2503,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrvio57kiiiseucd8",
@@ -2367,7 +2643,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrvm64e7ii5dnf6t",
@@ -2501,7 +2783,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrvv9nkw6lysx4xtk",
@@ -2635,7 +2923,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrvyzppmcr4ysgd2",
@@ -2769,7 +3063,13 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   },
   {
     "id": "mohrwa7b0jokjo70oek",
@@ -2903,6 +3203,12 @@
     "military_leader_id": null,
     "divisions": [],
     "battalions": [],
-    "squads": []
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
   }
 ]
