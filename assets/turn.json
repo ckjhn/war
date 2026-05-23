@@ -43,7 +43,7 @@
     "CV": true,
     "PCC": true,
     "Iran": false,
-    "Iraq/Affeganisthan": false,
+    "Iraq/Affeganisthan": true,
     "Taliban/Hezbollah": true,
     "Hamas": true,
     "Al-Qaeda": true,
