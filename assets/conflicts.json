@@ -288,9 +288,9 @@
             "name": "Northern Alliance",
             "flag": "🏴",
             "isMain": true,
-            "troops": 32,
+            "troops": 31,
             "injured": 0,
-            "deaths": 2,
+            "deaths": 3,
             "tanks": 0,
             "tanks_lost": 0,
             "vehicles": 0,
@@ -328,7 +328,7 @@
         ],
         "objectives": [],
         "kills": {
-          "mpitypuq9twhiqn3pdv": 2
+          "mpitypuq9twhiqn3pdv": 3
         }
       }
     ]
