@@ -1634,13 +1634,14 @@ function sbdTotalRoster(sbd){
   return (m.army||0)+(m.special_forces||0)+(m.majors||0)+(m.spies||0)+(sbd.commander?1:0)+(sbd.higher_commander?1:0);
 }
 function sbdStrengthBar(sbd){
-  const total=sbdTotalRoster(sbd);
-  const dead=Math.min(total,sbd.deaths||0);
-  const alive=total-dead;
-  if(total===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0 men</span>`;
-  const alivePct=total>0?Math.round(alive/total*100):0;
-  return `<div style="display:flex;align-items:center;gap:5px;" title="${fmt(alive)} alive · ${fmt(dead)} dead / ${fmt(total)} total">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(total)}</span>
+  const alive=sbdTotalRoster(sbd);
+  const dead=sbd.deaths||0;
+  if(alive===0&&dead===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0 men</span>`;
+  const barTotal=alive+dead;
+  const alivePct=barTotal>0?Math.round(alive/barTotal*100):100;
+  const diff=alive-dead;
+  return `<div style="display:flex;align-items:center;gap:5px;" title="${fmt(alive)} alive · ${fmt(dead)} dead · diff: ${diff>=0?'+':''}${fmt(diff)}">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(alive)}</span>
     <div style="width:64px;height:5px;background:var(--bg);border:1px solid var(--border);display:flex;overflow:hidden;flex-shrink:0;">
       <div style="width:${alivePct}%;background:var(--accent3);transition:width .3s;"></div>
       <div style="width:${100-alivePct}%;background:var(--red);transition:width .3s;"></div>
@@ -1682,13 +1683,14 @@ function aggRosterTotal(agg){ return agg.army+agg.sf+agg.maj+agg.spy+agg.cmds; }
 
 // Strength bar built from an aggregate object (works for both own and inherited totals)
 function sbdStrengthBarFromAgg(agg, label){
-  const total=aggRosterTotal(agg);
-  const dead=Math.min(total,agg.deaths||0);
-  const alive=total-dead;
-  if(total===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0</span>`;
-  const alivePct=total>0?Math.round(alive/total*100):0;
-  return `<div style="display:flex;align-items:center;gap:5px;" title="${label||''}${fmt(alive)} alive · ${fmt(dead)} dead / ${fmt(total)} total">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(total)}</span>
+  const alive=aggRosterTotal(agg);
+  const dead=agg.deaths||0;
+  if(alive===0&&dead===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0</span>`;
+  const barTotal=alive+dead;
+  const alivePct=barTotal>0?Math.round(alive/barTotal*100):100;
+  const diff=alive-dead;
+  return `<div style="display:flex;align-items:center;gap:5px;" title="${label||''}${fmt(alive)} alive · ${fmt(dead)} dead · diff: ${diff>=0?'+':''}${fmt(diff)}">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(alive)}</span>
     <div style="width:64px;height:5px;background:var(--bg);border:1px solid var(--border);display:flex;overflow:hidden;flex-shrink:0;">
       <div style="width:${alivePct}%;background:var(--accent3);"></div>
       <div style="width:${100-alivePct}%;background:var(--red);"></div>
@@ -2193,7 +2195,7 @@ function renderMilEditModal(){
       <div style="margin-top:6px;padding:8px;background:var(--bg);border:1px solid var(--border);">
         ${sbdStrengthBar(sbd)}
         <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-left:8px;">
-          Alive: ${fmt(Math.max(0,sbdTotalRoster(sbd)-(sbd.deaths||0)))} / Total: ${fmt(sbdTotalRoster(sbd))}
+          Alive: ${fmt(sbdTotalRoster(sbd))} · 💀 Dead: ${fmt(sbd.deaths||0)} · Diff: ${fmt(sbdTotalRoster(sbd)-(sbd.deaths||0))}
         </span>
       </div>
       <div class="modal-field" style="margin-top:12px;">
