@@ -64,7 +64,18 @@
             "warships_lost": 0
           }
         ],
-        "objectives": [],
+        "objectives": [
+          {
+            "id": "mpiusyvu9uxbx2v0318",
+            "text": "Defend USA and Israel",
+            "checked": true
+          },
+          {
+            "id": "mpiuta0m5ntnoqh0nfw",
+            "text": "Retake Israel Control",
+            "checked": true
+          }
+        ],
         "kills": {
           "mp7vco105lb4bkf5hl": 216
         }
@@ -91,7 +102,13 @@
             "warships_lost": 0
           }
         ],
-        "objectives": [],
+        "objectives": [
+          {
+            "id": "mpiuthy2a86dq8bg2xt",
+            "text": "Eliminate USA",
+            "checked": false
+          }
+        ],
         "kills": {
           "mp7vco10mlhdmyka22a": 29
         }
