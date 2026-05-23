@@ -11,7 +11,7 @@
       "manpower": 1000
     },
     "economy": {
-      "money": 4000
+      "money": 11500
     },
     "brute": {
       "iron": 2035,
@@ -131,21 +131,8 @@
       "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un\n\nMove troops towards East of USA"
     },
     "production": [],
-    "military_generals": [
-      {
-        "id": "mpil7470theyrc7l4",
-        "name": "Roosevelt"
-      },
-      {
-        "id": "mpildj0xueqtw6kq85m",
-        "name": "Dwight D. Eisenhower"
-      },
-      {
-        "id": "mpilduaqr0vt1u9vls",
-        "name": "George Washington"
-      }
-    ],
-    "military_leader_id": "mpil7470theyrc7l4",
+    "military_generals": [],
+    "military_leader_id": null,
     "divisions": [
       {
         "id": "mpbz0yq8wv50l7j9gj",
@@ -170,59 +157,6 @@
             "completed": true
           }
         ],
-        "support": {
-          "air": {
-            "light_jet": 0,
-            "med_jet": 0,
-            "heavy_jet": 0,
-            "bomber": 0,
-            "helicopter": 0,
-            "airplane": 0
-          },
-          "land": {
-            "light_tank": 0,
-            "med_tank": 0,
-            "heavy_tank": 0,
-            "motorbike": 0,
-            "car": 0,
-            "truck": 0
-          },
-          "water": {
-            "submarine": 0,
-            "warship": 0,
-            "boat": 0,
-            "ship": 0,
-            "carrier": 0,
-            "supercarrier": 0
-          },
-          "missiles": {
-            "torpedo": 0,
-            "icbm": 0,
-            "cruise": 0,
-            "hypersonic": 0,
-            "guided": 0,
-            "nuclear": 0
-          }
-        },
-        "observation": "",
-        "special_training": []
-      },
-      {
-        "id": "mpilaq4b1n85k0x6irj",
-        "name": "1st Defense Division",
-        "type": "division",
-        "parent_id": null,
-        "men": {
-          "army": 17,
-          "special_forces": 0,
-          "majors": 1,
-          "spies": 0
-        },
-        "commander": null,
-        "higher_commander": null,
-        "deaths": 0,
-        "points": 0,
-        "objectives": [],
         "support": {
           "air": {
             "light_jet": 0,
