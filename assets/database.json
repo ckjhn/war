@@ -5,13 +5,13 @@
     "flag": "🏴",
     "createdAt": 1775928417678,
     "population": {
-      "civilians": 1010,
+      "civilians": 1000,
       "workers": 20,
-      "military": 36,
+      "military": 42,
       "manpower": 1000
     },
     "economy": {
-      "money": 11500
+      "money": 4000
     },
     "brute": {
       "iron": 2035,
@@ -131,8 +131,21 @@
       "national_plan": "Iron -> 8,250 un\nCoal -> 4,950 un\nDiamond -> 1,500 un\nSilicon -> 7,500 un\nGold -> 1,250 un\n\nMove troops towards East of USA"
     },
     "production": [],
-    "military_generals": [],
-    "military_leader_id": null,
+    "military_generals": [
+      {
+        "id": "mpil7470theyrc7l4",
+        "name": "Roosevelt"
+      },
+      {
+        "id": "mpildj0xueqtw6kq85m",
+        "name": "Dwight D. Eisenhower"
+      },
+      {
+        "id": "mpilduaqr0vt1u9vls",
+        "name": "George Washington"
+      }
+    ],
+    "military_leader_id": "mpil7470theyrc7l4",
     "divisions": [
       {
         "id": "mpbz0yq8wv50l7j9gj",
@@ -157,6 +170,59 @@
             "completed": true
           }
         ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpilaq4b1n85k0x6irj",
+        "name": "1st Defense Division",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 17,
+          "special_forces": 0,
+          "majors": 1,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
         "support": {
           "air": {
             "light_jet": 0,
@@ -416,6 +482,78 @@
         },
         "observation": "- On training (March 1989 - November, 1989)",
         "special_training": []
+      },
+      {
+        "id": "mpincxxod0z3i2mydqe",
+        "name": "Spy",
+        "type": "squad",
+        "parent_id": "mpbz0u1i777xhlpxrda",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 4
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [
+          {
+            "id": "mpind7jainxlww1mb9i",
+            "name": "Spy Iran",
+            "points": 10,
+            "completed": false
+          },
+          {
+            "id": "mpind9zov3hz1kooduf",
+            "name": "Spy Iraq",
+            "points": 10,
+            "completed": false
+          },
+          {
+            "id": "mpindo9ly2gshe80lre",
+            "name": "Spy Mexico",
+            "points": 10,
+            "completed": false
+          }
+        ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
       }
     ],
     "action_plan": {
@@ -673,8 +811,8 @@
       "uranium": 5
     },
     "refined": {
-      "refined_iron": 0,
-      "electronics": 0,
+      "refined_iron": 580,
+      "electronics": 20,
       "chips": 0,
       "gunpowder": 0,
       "tires": 0,
@@ -1342,13 +1480,13 @@
     "flag": "🏴",
     "createdAt": 1776894088134,
     "population": {
-      "civilians": 1010,
+      "civilians": 1000,
       "workers": 0,
-      "military": 10,
+      "military": 20,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 2680
     },
     "brute": {
       "iron": 390,
@@ -1464,11 +1602,297 @@
       "national_plan": ""
     },
     "production": [],
-    "military_generals": [],
-    "military_leader_id": null,
-    "divisions": [],
-    "battalions": [],
-    "squads": [],
+    "military_generals": [
+      {
+        "id": "mpiohbpw6h7ioim4d0f",
+        "name": "Getúlio Vargas"
+      }
+    ],
+    "military_leader_id": "mpiohbpw6h7ioim4d0f",
+    "divisions": [
+      {
+        "id": "mpiojvt7hyizpwj1xo",
+        "name": "Special Forces",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpiolhow24dovedzpqm",
+        "name": "Exercito",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 13,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [
+      {
+        "id": "mpiok72d7jw6211w1k",
+        "name": "Comandos",
+        "type": "battalion",
+        "parent_id": "mpiojvt7hyizpwj1xo",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "squads": [
+      {
+        "id": "mpiokj40tr3jxfljcs",
+        "name": "QUEBEC",
+        "type": "squad",
+        "parent_id": "mpiok72d7jw6211w1k",
+        "men": {
+          "army": 0,
+          "special_forces": 4,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpiokxi79dajhdh7h4m",
+        "name": "Estados",
+        "type": "squad",
+        "parent_id": "mpiok72d7jw6211w1k",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 2
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [
+          {
+            "id": "mpirbh5rdw0k0oxub8n",
+            "name": "Spy on Iran",
+            "points": 10,
+            "completed": false
+          },
+          {
+            "id": "mpirbl8w3by5bmdcuqh",
+            "name": "Spy on PCC",
+            "points": 10,
+            "completed": false
+          }
+        ],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
     "action_plan": {
       "main_objective": "Develop a better country",
       "action_plan_text": "",
