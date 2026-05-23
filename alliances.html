@@ -251,6 +251,39 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .objective-completed-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);padding:2px 8px;border:1px solid rgba(57,255,20,.35);background:rgba(57,255,20,.06);white-space:nowrap;}
 .objective-pending-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:2px 8px;border:1px solid rgba(74,106,122,.3);}
 
+/* ── ALLIANCE MILITARY HIERARCHY ── */
+.a-mil-nest{padding:4px 6px 4px 14px;border-left:2px solid rgba(26,48,69,.5);margin:4px 0 4px 4px;}
+.sbd-card{margin-bottom:8px;overflow:hidden;}
+.sbd-card-div{border:1px solid rgba(255,58,58,.35);background:var(--surface2);}
+.sbd-card-bat{border:1px solid rgba(255,107,53,.3);background:rgba(255,107,53,.02);}
+.sbd-card-sq{border:1px solid rgba(57,255,20,.22);background:rgba(57,255,20,.02);}
+.sbd-header{display:flex;align-items:center;gap:8px;padding:8px 12px;flex-wrap:wrap;cursor:default;}
+.sbd-header-div{background:rgba(255,58,58,.07);border-bottom:1px solid rgba(255,58,58,.2);}
+.sbd-header-bat{background:rgba(255,107,53,.05);border-bottom:1px solid rgba(255,107,53,.15);}
+.sbd-header-sq{background:rgba(57,255,20,.03);border-bottom:1px solid rgba(57,255,20,.12);}
+.sbd-type{font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 7px;border:1px solid;letter-spacing:1px;flex-shrink:0;}
+.sbd-type-div{border-color:rgba(255,58,58,.6);color:var(--red);}
+.sbd-type-bat{border-color:rgba(255,107,53,.6);color:var(--accent2);}
+.sbd-type-sq{border-color:rgba(57,255,20,.5);color:var(--accent3);}
+.sbd-name{font-family:'Orbitron',monospace;font-size:11px;color:var(--text);letter-spacing:1px;}
+.sbd-pts-bar{display:flex;align-items:center;gap:5px;}
+.sbd-pts-track{width:54px;height:4px;background:var(--bg);border:1px solid var(--border);}
+.sbd-pts-fill{height:100%;}
+.sbd-body{padding:4px 12px 8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);}
+.sbd-obj-tag{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(26,48,69,.7);margin:2px;cursor:default;}
+.sbd-obj-tag.done{border-color:rgba(57,255,20,.4);color:var(--accent3);background:rgba(57,255,20,.04);}
+.sbd-obj-tag.failed{border-color:rgba(255,58,58,.45);color:var(--red);background:rgba(255,58,58,.06);text-decoration:line-through;opacity:.85;}
+.mil-tab-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px 10px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .2s;letter-spacing:1px;white-space:nowrap;}
+.mil-tab-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.08);}
+.mil-tab-btn:hover:not(.active){border-color:var(--text-dim);color:var(--text);}
+.sbd-obj-btn{background:transparent;border:none;cursor:pointer;padding:0 2px;line-height:1;font-size:10px;color:var(--text-dim);transition:color .15s;}
+.sbd-obj-btn:hover{color:var(--accent);}
+.sbd-obj-btn.del:hover{color:var(--red);}
+.sbd-obj-btn.done-btn:hover{color:var(--accent3);}
+.sbd-obj-btn.fail-btn:hover{color:var(--red);}
+.sbd-observation-area{width:100%;min-height:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:vertical;line-height:1.5;}
+.sbd-observation-area:focus{border-color:var(--accent);}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -538,6 +571,83 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- ═══════════ EDIT MILITARY BREAKDOWN ENTRY ═══════════ -->
+<div class="modal-overlay" id="a-mil-breakdown-edit-modal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-title">✎ Edit Military Contribution</div>
+    <div class="modal-field">
+      <div class="modal-label">Reassign to Country</div>
+      <select class="modal-select" id="ambe-country"></select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="ambe-fields"></div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmMilBreakdownEdit()">✓ SAVE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-breakdown-edit-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CREATE ALLIANCE MIL UNIT ═══════════ -->
+<div class="modal-overlay" id="a-mil-create-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title">➕ New <span id="a-mil-create-type-lbl">Unit</span></div>
+    <div class="modal-field">
+      <div class="modal-label">Unit Name</div>
+      <input class="modal-input" id="a-mil-create-name" type="text" placeholder="e.g. 1st Division, Iron Battalion…" maxlength="60"
+        onkeydown="if(event.key==='Enter')confirmAMilCreate()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAMilCreate()">✓ CREATE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-create-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ASSIGN ALLIANCE MIL UNIT ═══════════ -->
+<div class="modal-overlay" id="a-mil-assign-modal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-title">🔗 Assign Unit</div>
+    <div class="modal-label" id="a-mil-assign-lbl" style="margin-bottom:10px;"></div>
+    <div id="a-mil-assign-list" style="max-height:280px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;padding:6px;background:var(--bg);border:1px solid var(--border);margin-bottom:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAMilAssign()">✓ ASSIGN</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-assign-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ EDIT ALLIANCE MIL UNIT ═══════════ -->
+<div class="modal-overlay" id="a-mil-edit-modal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-title" id="a-mil-edit-title">✎ Edit Unit</div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px;" id="a-mil-edit-tabs"></div>
+    <div id="a-mil-edit-content" style="min-height:180px;max-height:420px;overflow-y:auto;"></div>
+    <div class="modal-actions" style="margin-top:12px;">
+      <button class="btn btn-orange" onclick="closeModal('a-mil-edit-modal');renderEditor();">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ALLIANCE MIL UNIT OBJECTIVE MODAL ═══════════ -->
+<div class="modal-overlay" id="a-mil-obj-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title" id="a-mil-obj-title">🎯 Unit Objective</div>
+    <div class="modal-field">
+      <div class="modal-label">Objective Name</div>
+      <input class="modal-input" id="a-mil-obj-name" type="text" placeholder="e.g. Hold the line…" maxlength="100"
+        onkeydown="if(event.key==='Enter')confirmAMilObj()">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Points Reward</div>
+      <input class="modal-input" id="a-mil-obj-pts" type="number" min="0" value="10">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAMilObj()">✓ SAVE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-obj-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -579,6 +689,40 @@ const MINE_ICONS = {plains:'🌾',forest:'🌲',taiga:'🎄',jungle:'🌴',swamp
 const BRUTE_FIELDS  = [{k:'iron',l:'Iron'},{k:'coal',l:'Coal'},{k:'gold',l:'Gold'},{k:'diamond',l:'Diamond'},{k:'gravel',l:'Gravel'},{k:'latex',l:'Latex'},{k:'silicon',l:'Silicon'},{k:'oil',l:'Oil (L)'},{k:'gas',l:'Gas (L)'},{k:'uranium',l:'Uranium'}];
 const REFINED_FIELDS= [{k:'refined_iron',l:'Refined Iron'},{k:'electronics',l:'Electronics'},{k:'chips',l:'Chips'},{k:'gunpowder',l:'Gunpowder'},{k:'tires',l:'Tires'},{k:'fuel',l:'Fuel (L)'},{k:'refined_uranium',l:'Refined Uranium'}];
 const MIL_FIELDS    = [{k:'army',l:'Army'},{k:'special_forces',l:'Special Forces'},{k:'generals',l:'Generals'},{k:'commanders',l:'Commanders'},{k:'majors',l:'Majors'}];
+
+const A_MIL_SUPPORT_TYPES = {
+  air:     {label:'✈️ Air',     fields:[{k:'light_jet',l:'Light Jets'},{k:'med_jet',l:'Med. Jets'},{k:'heavy_jet',l:'Heavy Jets'},{k:'bomber',l:'Bombers'},{k:'helicopter',l:'Helicopters'},{k:'airplane',l:'Airplanes'}]},
+  land:    {label:'🪖 Land',    fields:[{k:'light_tank',l:'Light Tanks'},{k:'med_tank',l:'Med. Tanks'},{k:'heavy_tank',l:'Heavy Tanks'},{k:'motorbike',l:'Motorbikes'},{k:'car',l:'Cars'},{k:'truck',l:'Trucks'}]},
+  water:   {label:'⚓ Water',   fields:[{k:'submarine',l:'Submarines'},{k:'warship',l:'Warships'},{k:'boat',l:'Boats'},{k:'ship',l:'Ships'},{k:'carrier',l:'Carriers'},{k:'supercarrier',l:'Supercarriers'}]},
+  missiles:{label:'🚀 Missiles',fields:[{k:'torpedo',l:'Torpedoes'},{k:'icbm',l:'ICBMs'},{k:'cruise',l:'Cruise Missiles'},{k:'hypersonic',l:'Hypersonic'},{k:'guided',l:'Guided'},{k:'nuclear',l:'Nuclear'}]},
+};
+
+function makeAllianceSBD(type, name){
+  const support={};
+  for(const sk of Object.keys(A_MIL_SUPPORT_TYPES))
+    support[sk]=Object.fromEntries(A_MIL_SUPPORT_TYPES[sk].fields.map(f=>[f.k,0]));
+  return { id:uuid(), name:name||(type.charAt(0).toUpperCase()+type.slice(1)+' Unit'), type, parent_id:null,
+           men:{army:0,special_forces:0,majors:0,spies:0}, commander:null, higher_commander:null,
+           deaths:0, points:0, objectives:[], support, observation:'', special_training:[] };
+}
+function hydrateAllianceSBD(sbd){
+  if(!sbd.men) sbd.men={army:0,special_forces:0,majors:0,spies:0};
+  if(!sbd.support) sbd.support={};
+  for(const sk of Object.keys(A_MIL_SUPPORT_TYPES)){
+    if(!sbd.support[sk]) sbd.support[sk]={};
+    for(const f of A_MIL_SUPPORT_TYPES[sk].fields)
+      if(sbd.support[sk][f.k]===undefined) sbd.support[sk][f.k]=0;
+  }
+  if(!sbd.objectives) sbd.objectives=[];
+  if(sbd.points===undefined) sbd.points=0;
+  if(sbd.commander===undefined) sbd.commander=null;
+  if(sbd.higher_commander===undefined) sbd.higher_commander=null;
+  if(sbd.deaths===undefined) sbd.deaths=0;
+  if(sbd.observation===undefined) sbd.observation='';
+  if(!sbd.special_training) sbd.special_training=[];
+}
+function getAllianceMilEntity(a, id){ return [...(a.milDivisions||[]),...(a.milBattalions||[]),...(a.milSquads||[])].find(e=>e.id===id)||null; }
+function escAMil(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;'); }
 
 // Communist aggregation schema
 const AGG_SCHEMA = [
@@ -624,7 +768,7 @@ const OWN_INVENTORY_CATS = [
 // =====================================================
 // STATE
 // =====================================================
-let alliances=[], selectedId=null, deletePending={}, collapsedSections=new Set();
+let alliances=[], selectedId=null, deletePending={}, collapsedSections=new Set(), collapsedAllianceSBDs=new Set();
 let pendingStyle=null, pendingEditStyle=null, pendingMemberCountries=new Set();
 let currentMemberAllianceId=null, currentDonateAllianceId=null;
 let currentObjectiveAllianceId=null, editingObjectiveId=null;
@@ -663,6 +807,10 @@ function hydrateAlliance(a){
     if(!a.own.production) a.own.production=[];
   }
   if(!a.militaryBreakdown) a.militaryBreakdown=[];
+  if(!a.milDivisions) a.milDivisions=[];
+  if(!a.milBattalions) a.milBattalions=[];
+  if(!a.milSquads) a.milSquads=[];
+  [...a.milDivisions,...a.milBattalions,...a.milSquads].forEach(hydrateAllianceSBD);
   if(!a.donations) a.donations=[];
   if(!a.objectives) a.objectives=[];
   if(!a.taxConfig) a.taxConfig={fixedPerMember:0};
@@ -965,7 +1113,7 @@ function renderAllianceAssets(a){
 }
 
 // =====================================================
-// MILITARY POOL — Non-Communist
+// MILITARY POOL — Non-Communist (with Edit + SBD hierarchy)
 // =====================================================
 function renderMilitaryPool(a){
   const totals={army:0,special_forces:0,generals:0,commanders:0,majors:0};
@@ -988,22 +1136,628 @@ function renderMilitaryPool(a){
           <span class="mil-cname">${entry.country}${other?`<br><span style="font-size:9px;color:var(--text-dim);">${other}</span>`:''}</span>
           <div class="mil-bar-wrap"><div class="mil-bar" style="width:${barW}%;"></div></div>
           <span class="mil-val">${fmt(armyVal)}</span>
+          <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;border-color:var(--purple);color:var(--purple);" onclick="openMilBreakdownEdit('${a.id}','${entry.country}')" title="Edit">✎ Edit</button>
           <button class="member-remove" onclick="removeMilBreakdown('${a.id}','${entry.country}')" title="Remove">×</button>
         </div>`;
       }).join('');
 
+  // SBD hierarchy
+  const hierHtml = renderAllianceMilHierarchy(a);
+
   return `<div class="section" id="sec-military">
     <div class="section-header" onclick="toggleSection('military')">
       <span class="section-title">🎖️ Military Pool</span>
-      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-right:10px;">Total Army: ${fmt(totals.army)}</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-right:10px;">Pool: ${fmt(totals.army)} army · ${a.milDivisions.length} div · ${a.milBattalions.length} bat · ${a.milSquads.length} sq</span>
       <span class="section-toggle">▼</span>
     </div>
     <div class="section-body">
-      <div style="margin-top:8px;">${totalRows}</div>
+      <!-- Per-country contributions -->
+      <div class="mil-breakdown-title" style="margin-top:4px;">📊 Contribution Pool (per country)</div>
+      <div style="margin-top:4px;">${totalRows}</div>
       <div class="mil-breakdown-title">Per-Country Breakdown</div>
       ${breakdownRows}
+      <!-- Hierarchy (Divisions / Battalions / Squads) -->
+      ${hierHtml}
     </div>
   </div>`;
+}
+
+// =====================================================
+// ALLIANCE MILITARY HIERARCHY — SBD Rendering
+// =====================================================
+function toggleAllianceSBD(sbdId){
+  if(collapsedAllianceSBDs.has(sbdId)) collapsedAllianceSBDs.delete(sbdId);
+  else collapsedAllianceSBDs.add(sbdId);
+  renderEditor();
+}
+
+function asbdTotalRoster(sbd){
+  const m=sbd.men||{};
+  return (m.army||0)+(m.special_forces||0)+(m.majors||0)+(m.spies||0)+(sbd.commander?1:0)+(sbd.higher_commander?1:0);
+}
+
+function asbdAggregate(a, sbd){
+  const m=sbd.men||{};
+  const agg={army:m.army||0, sf:m.special_forces||0, maj:m.majors||0, spy:m.spies||0,
+              cmds:(sbd.commander?1:0)+(sbd.higher_commander?1:0), deaths:sbd.deaths||0, childBats:0, childSqs:0};
+  if(sbd.type==='division'){
+    const bats=(a.milBattalions||[]).filter(b=>b.parent_id===sbd.id);
+    agg.childBats=bats.length;
+    for(const bat of bats){
+      const ba=asbdAggregate(a,bat);
+      agg.army+=ba.army; agg.sf+=ba.sf; agg.maj+=ba.maj;
+      agg.spy+=ba.spy; agg.cmds+=ba.cmds; agg.deaths+=ba.deaths;
+      agg.childSqs+=ba.childSqs;
+    }
+  } else if(sbd.type==='battalion'){
+    const sqs=(a.milSquads||[]).filter(s=>s.parent_id===sbd.id);
+    agg.childSqs=sqs.length;
+    for(const sq of sqs){
+      agg.army+=(sq.men.army||0); agg.sf+=(sq.men.special_forces||0);
+      agg.maj+=(sq.men.majors||0); agg.spy+=(sq.men.spies||0);
+      agg.cmds+=(sq.commander?1:0)+(sq.higher_commander?1:0);
+      agg.deaths+=(sq.deaths||0);
+    }
+  }
+  return agg;
+}
+function asbdAggTotal(agg){ return agg.army+agg.sf+agg.maj+agg.spy+agg.cmds; }
+
+function asbdStrengthBar(sbd){
+  const total=asbdTotalRoster(sbd);
+  const dead=Math.min(total,sbd.deaths||0);
+  const alive=total-dead;
+  if(total===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0 men</span>`;
+  const alivePct=total>0?Math.round(alive/total*100):0;
+  return `<div style="display:flex;align-items:center;gap:5px;" title="${fmt(alive)} alive · ${fmt(dead)} dead / ${fmt(total)} total">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(total)}</span>
+    <div style="width:64px;height:5px;background:var(--bg);border:1px solid var(--border);display:flex;overflow:hidden;flex-shrink:0;">
+      <div style="width:${alivePct}%;background:var(--accent3);transition:width .3s;"></div>
+      <div style="width:${100-alivePct}%;background:var(--red);transition:width .3s;"></div>
+    </div>
+    ${dead>0?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">💀${fmt(dead)}</span>`:''}
+  </div>`;
+}
+
+function asbdStrengthBarFromAgg(agg, label){
+  const total=asbdAggTotal(agg);
+  const dead=Math.min(total,agg.deaths||0);
+  const alive=total-dead;
+  if(total===0) return `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">⚔ 0</span>`;
+  const alivePct=total>0?Math.round(alive/total*100):0;
+  return `<div style="display:flex;align-items:center;gap:5px;" title="${label||''}${fmt(alive)} alive · ${fmt(dead)} dead / ${fmt(total)} total">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);font-weight:700;">⚔${fmt(total)}</span>
+    <div style="width:64px;height:5px;background:var(--bg);border:1px solid var(--border);display:flex;overflow:hidden;flex-shrink:0;">
+      <div style="width:${alivePct}%;background:var(--accent3);"></div>
+      <div style="width:${100-alivePct}%;background:var(--red);"></div>
+    </div>
+    ${dead>0?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">💀${fmt(dead)}</span>`:''}
+  </div>`;
+}
+
+function asbdPtsBar(points){
+  const pct=Math.min(100,Math.round(points%100));
+  const col=points>=100?'var(--gold)':points>=50?'var(--accent2)':'var(--accent)';
+  return `<div class="sbd-pts-bar" title="${fmt(points)} points · ${fmt(Math.max(0,100-(points%100)||100))} to next promotion">
+    <div class="sbd-pts-track"><div class="sbd-pts-fill" style="width:${points>=100&&points%100===0?100:pct}%;background:${col};"></div></div>
+    <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${col};">${fmt(points)}pts</span>
+  </div>`;
+}
+
+function asbdCmdTags(sbd){
+  const parts=[];
+  if(sbd.higher_commander) parts.push(`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(192,132,252,.4);color:var(--purple);">♛ Op. ${escAMil(sbd.higher_commander.name)}</span>`);
+  if(sbd.commander) parts.push(`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid rgba(255,215,0,.4);color:var(--gold);">⭐ Cmd. ${escAMil(sbd.commander.name)}</span>`);
+  return parts.join(' ');
+}
+
+function asbdMenLine(sbd){
+  const m=sbd.men||{};
+  const parts=[];
+  if(m.army>0) parts.push(`${fmt(m.army)} Army`);
+  if(m.special_forces>0) parts.push(`${fmt(m.special_forces)} SF`);
+  if(m.majors>0) parts.push(`${fmt(m.majors)} Maj.`);
+  if(m.spies>0) parts.push(`${fmt(m.spies)} Spy`);
+  if(sbd.higher_commander) parts.push(`<span style="color:var(--purple);">♛ Op.Cmd.</span>`);
+  if(sbd.commander) parts.push(`<span style="color:var(--gold);">⭐ Cmd.</span>`);
+  return parts.length?parts.join(' · '):'<em style="color:var(--text-dim);">No personnel</em>';
+}
+
+function asbdSupportLine(sbd){
+  const parts=[];
+  for(const [sk,sd] of Object.entries(A_MIL_SUPPORT_TYPES)){
+    const total=Object.values(sbd.support[sk]||{}).reduce((a,b)=>a+(Number(b)||0),0);
+    if(total>0) parts.push(`${sd.label.split(' ')[0]}×${fmt(total)}`);
+  }
+  return parts.length?`<span style="margin-left:6px;">${parts.join(' ')}</span>`:'';
+}
+
+function asbdCardBody(a, sbd){
+  const agg=asbdAggregate(a,sbd);
+  const hasChildren=(sbd.type==='division'&&agg.childBats>0)||(sbd.type==='battalion'&&agg.childSqs>0);
+  const ownLine=asbdMenLine(sbd);
+  const supportLine=asbdSupportLine(sbd);
+  const obsPreview=sbd.observation
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:5px;padding:4px 8px;border-left:2px solid rgba(0,212,255,.25);white-space:pre-wrap;max-height:52px;overflow:hidden;">📝 ${escAMil(sbd.observation.slice(0,160))}${sbd.observation.length>160?'…':''}</div>`
+    :'';
+  if(!hasChildren){
+    return `<div class="sbd-body">${ownLine}${supportLine}${obsPreview}</div>`;
+  }
+  const childLabel=sbd.type==='division'
+    ? `${agg.childBats} bat${agg.childBats!==1?'s':''}${agg.childSqs>0?` + ${agg.childSqs} sq`:''}`
+    : `${agg.childSqs} squad${agg.childSqs!==1?'s':''}`;
+  const aggParts=[];
+  if(agg.army>0) aggParts.push(`${fmt(agg.army)} Army`);
+  if(agg.sf>0)   aggParts.push(`${fmt(agg.sf)} SF`);
+  if(agg.maj>0)  aggParts.push(`${fmt(agg.maj)} Maj.`);
+  if(agg.spy>0)  aggParts.push(`${fmt(agg.spy)} Spy`);
+  if(agg.cmds>0) aggParts.push(`${fmt(agg.cmds)} Cmd.`);
+  return `<div class="sbd-body">
+    <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text-dim);flex-shrink:0;">OWN:</span>
+      <span>${ownLine}</span>${supportLine}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px;padding-top:4px;border-top:1px dashed rgba(26,48,69,.6);">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--accent);flex-shrink:0;">TOTAL (${childLabel}):</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);">${aggParts.join(' · ')||'—'}</span>
+      ${agg.deaths>0?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">💀${fmt(agg.deaths)} dead</span>`:''}
+    </div>
+    ${obsPreview}
+  </div>`;
+}
+
+function renderAObjsInline(a, sbd){
+  const objs=sbd.objectives||[];
+  const tags=objs.map(o=>`
+    <span class="sbd-obj-tag ${o.completed?'done':o.failed?'failed':''}">
+      ${o.completed?'✓ ':o.failed?'✗ ':''}<span style="color:var(--text);">${escAMil(o.name)}</span>
+      <span style="color:${o.failed?'var(--red)':'var(--gold)'};margin-left:3px;">${o.failed?'-10':'+'+o.points}pt${o.failed||o.points!==1?'s':''}</span>
+      <button class="sbd-obj-btn" title="Edit" onclick="openAMilObjModal('${a.id}','${sbd.id}','${o.id}')">✎</button>
+      ${!o.completed&&!o.failed?`<button class="sbd-obj-btn done-btn" title="Complete" onclick="completeAMilObj('${a.id}','${sbd.id}','${o.id}')">✓</button>`:''}
+      ${!o.completed&&!o.failed?`<button class="sbd-obj-btn fail-btn" title="Fail" onclick="failAMilObj('${a.id}','${sbd.id}','${o.id}')">✗</button>`:''}
+      <button class="sbd-obj-btn del" title="Delete" onclick="deleteAMilObj('${a.id}','${sbd.id}','${o.id}')">×</button>
+    </span>`).join('');
+  return `<div style="padding:3px 12px 6px;display:flex;flex-wrap:wrap;align-items:center;gap:1px;">
+    ${tags}
+    <button class="btn btn-sm" style="font-size:7px;padding:1px 7px;margin:2px;" onclick="openAMilObjModal('${a.id}','${sbd.id}',null)">+ Obj.</button>
+  </div>`;
+}
+
+function renderASqCard(a, sq, standalone){
+  const collapsed=collapsedAllianceSBDs.has(sq.id);
+  const agg=asbdAggregate(a,sq);
+  const assignBtn=standalone && (a.milBattalions||[]).length>0
+    ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${sq.id}','sq-to-bat')">Assign→Bat.</button>`:'';
+  return `<div class="sbd-card sbd-card-sq">
+    <div class="sbd-header sbd-header-sq">
+      <button onclick="toggleAllianceSBD('${sq.id}')" style="background:transparent;border:1px solid rgba(57,255,20,.2);color:var(--accent3);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
+      <span class="sbd-type sbd-type-sq">SQUAD</span>
+      <span class="sbd-name">${escAMil(sq.name)}</span>
+      ${asbdCmdTags(sq)}
+      ${asbdStrengthBarFromAgg(agg)}
+      ${asbdPtsBar(sq.points)}
+      <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
+        ${assignBtn}
+        <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${sq.id}')">✎ Edit</button>
+        <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteAMilSBD('${a.id}','${sq.id}')">× Del</button>
+      </div>
+    </div>
+    ${collapsed?'':asbdCardBody(a,sq)+renderAObjsInline(a,sq)}
+  </div>`;
+}
+
+function renderABatCard(a, bat, squads, standalone){
+  const collapsed=collapsedAllianceSBDs.has(bat.id);
+  const agg=asbdAggregate(a,bat);
+  const assignSqBtns=(a.milSquads||[]).filter(s=>!s.parent_id).length>0
+    ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${bat.id}','squad')">+ Assign Sq.</button>`:'';
+  const assignDivBtn=standalone && (a.milDivisions||[]).length>0
+    ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${bat.id}','bat-to-div')">Assign→Div.</button>`:'';
+  const sqHtml=squads.map(s=>renderASqCard(a,s,false)).join('');
+  return `<div class="sbd-card sbd-card-bat">
+    <div class="sbd-header sbd-header-bat">
+      <button onclick="toggleAllianceSBD('${bat.id}')" style="background:transparent;border:1px solid rgba(255,107,53,.3);color:var(--accent2);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
+      <span class="sbd-type sbd-type-bat">BATTALION</span>
+      <span class="sbd-name">${escAMil(bat.name)}</span>
+      ${asbdCmdTags(bat)}
+      ${asbdStrengthBarFromAgg(agg,'Total incl. squads: ')}
+      ${asbdPtsBar(bat.points)}
+      <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
+        ${assignDivBtn}${assignSqBtns}
+        <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${bat.id}')">✎ Edit</button>
+        <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteAMilSBD('${a.id}','${bat.id}')">× Del</button>
+      </div>
+    </div>
+    ${collapsed?'':`${asbdCardBody(a,bat)}${renderAObjsInline(a,bat)}
+    ${squads.length>0?`<div class="a-mil-nest">${sqHtml}</div>`:''}
+    <div style="padding:4px 12px 8px;">
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilCreateModal('${a.id}','squad','${bat.id}')">+ New Squad here</button>
+    </div>`}
+  </div>`;
+}
+
+function renderADivCard(a, div){
+  const collapsed=collapsedAllianceSBDs.has(div.id);
+  const agg=asbdAggregate(a,div);
+  const bats=(a.milBattalions||[]).filter(b=>b.parent_id===div.id);
+  const assignBatBtns=(a.milBattalions||[]).filter(b=>!b.parent_id).length>0
+    ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${div.id}','battalion')">+ Assign Bat.</button>`:'';
+  const batHtml=bats.map(b=>renderABatCard(a,b,(a.milSquads||[]).filter(s=>s.parent_id===b.id),false)).join('');
+  return `<div class="sbd-card sbd-card-div">
+    <div class="sbd-header sbd-header-div">
+      <button onclick="toggleAllianceSBD('${div.id}')" style="background:transparent;border:1px solid rgba(255,58,58,.3);color:var(--red);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
+      <span class="sbd-type sbd-type-div">DIVISION</span>
+      <span class="sbd-name">${escAMil(div.name)}</span>
+      ${asbdCmdTags(div)}
+      ${asbdStrengthBarFromAgg(agg,'Total incl. all sub-units: ')}
+      ${asbdPtsBar(div.points)}
+      <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
+        ${assignBatBtns}
+        <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${div.id}')">✎ Edit</button>
+        <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteAMilSBD('${a.id}','${div.id}')">× Del</button>
+      </div>
+    </div>
+    ${collapsed?'':`${asbdCardBody(a,div)}${renderAObjsInline(a,div)}
+    ${bats.length>0?`<div class="a-mil-nest">${batHtml}</div>`:''}
+    <div style="padding:4px 12px 8px;display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilCreateModal('${a.id}','battalion','${div.id}')">+ New Battalion here</button>
+    </div>`}
+  </div>`;
+}
+
+function renderAllianceMilHierarchy(a){
+  if(!a.milDivisions) a.milDivisions=[];
+  if(!a.milBattalions) a.milBattalions=[];
+  if(!a.milSquads) a.milSquads=[];
+  const divHtml=a.milDivisions.map(div=>renderADivCard(a,div)).join('');
+  const unassignedBats=a.milBattalions.filter(b=>!b.parent_id);
+  const unassignedSqs=a.milSquads.filter(s=>!s.parent_id);
+  const unBatHtml=unassignedBats.map(b=>renderABatCard(a,b,a.milSquads.filter(s=>s.parent_id===b.id),true)).join('');
+  const unSqHtml=unassignedSqs.map(s=>renderASqCard(a,s,true)).join('');
+  const emptyMsg=!a.milDivisions.length&&!unassignedBats.length&&!unassignedSqs.length
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:14px 0;">No military units. Create divisions, battalions or squads below.</div>`:'';
+  return `<div style="margin-top:14px;padding:12px 0;border-top:1px solid rgba(26,48,69,.5);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">
+      <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;">🏛️ Military Structure · ${a.milDivisions.length} div · ${a.milBattalions.length} bat · ${a.milSquads.length} sq</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-red" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','division',null)">+ New Division</button>
+        <button class="btn btn-sm btn-orange" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','battalion',null)">+ New Battalion</button>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','squad',null)">+ New Squad</button>
+      </div>
+    </div>
+    ${emptyMsg}
+    ${divHtml}
+    ${unBatHtml}
+    ${unSqHtml}
+  </div>`;
+}
+
+// =====================================================
+// MILITARY BREAKDOWN EDIT MODAL
+// =====================================================
+let _ambeAllianceId=null, _ambeOrigCountry=null;
+function openMilBreakdownEdit(allianceId, countryName){
+  _ambeAllianceId=allianceId; _ambeOrigCountry=countryName;
+  const a=getAlliance(allianceId); if(!a) return;
+  const entry=a.militaryBreakdown.find(e=>e.country===countryName); if(!entry) return;
+  // Populate country select (all alliance members)
+  const sel=document.getElementById('ambe-country');
+  sel.innerHTML=a.members.map(m=>`<option value="${escHtml(m.name)}" ${m.name===countryName?'selected':''}>${m.flag||'🏴'} ${escHtml(m.name)}</option>`).join('');
+  // Populate fields
+  document.getElementById('ambe-fields').innerHTML=MIL_FIELDS.map(f=>`
+    <div class="modal-field">
+      <div class="modal-label">${f.l}</div>
+      <input class="modal-input" id="ambe-${f.k}" type="number" min="0" value="${parseInt(entry[f.k])||0}">
+    </div>`).join('');
+  openModal('a-mil-breakdown-edit-modal');
+}
+function confirmMilBreakdownEdit(){
+  const a=getAlliance(_ambeAllianceId); if(!a) return;
+  const newCountry=document.getElementById('ambe-country').value;
+  const entryIdx=a.militaryBreakdown.findIndex(e=>e.country===_ambeOrigCountry);
+  if(entryIdx===-1) return;
+  const entry=a.militaryBreakdown[entryIdx];
+  // Reassign country if changed
+  if(newCountry && newCountry!==_ambeOrigCountry){
+    const m=a.members.find(x=>x.name===newCountry);
+    entry.country=newCountry;
+    entry.flag=m?.flag||'🏴';
+  }
+  // Update values
+  MIL_FIELDS.forEach(f=>{
+    const el=document.getElementById('ambe-'+f.k);
+    if(el) entry[f.k]=Math.max(0,parseInt(el.value)||0);
+  });
+  save(); closeModal('a-mil-breakdown-edit-modal'); renderEditor();
+  showToast(`✎ Military contribution updated for ${entry.country}`);
+}
+
+// =====================================================
+// ALLIANCE MIL — CREATE SBD MODAL
+// =====================================================
+let _aMilCreateAllianceId=null, _aMilCreateType=null, _aMilCreateParentId=null;
+function openAMilCreateModal(allianceId, type, parentId){
+  _aMilCreateAllianceId=allianceId; _aMilCreateType=type; _aMilCreateParentId=parentId||null;
+  const labels={division:'Division',battalion:'Battalion',squad:'Squad'};
+  document.getElementById('a-mil-create-type-lbl').textContent=labels[type]||type;
+  document.getElementById('a-mil-create-name').value='';
+  document.getElementById('a-mil-create-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('a-mil-create-name').focus(),100);
+}
+function confirmAMilCreate(){
+  const a=getAlliance(_aMilCreateAllianceId); if(!a) return;
+  const name=(document.getElementById('a-mil-create-name').value||'').trim();
+  if(!name){ document.getElementById('a-mil-create-name').style.borderColor='var(--red)'; return; }
+  const sbd=makeAllianceSBD(_aMilCreateType, name);
+  if(_aMilCreateParentId) sbd.parent_id=_aMilCreateParentId;
+  if(_aMilCreateType==='division'){ if(!a.milDivisions) a.milDivisions=[]; a.milDivisions.push(sbd); }
+  else if(_aMilCreateType==='battalion'){ if(!a.milBattalions) a.milBattalions=[]; a.milBattalions.push(sbd); }
+  else { if(!a.milSquads) a.milSquads=[]; a.milSquads.push(sbd); }
+  save(); closeModal('a-mil-create-modal'); renderEditor();
+  showToast(`${sbd.name} created!`);
+}
+
+// =====================================================
+// ALLIANCE MIL — DELETE SBD
+// =====================================================
+function deleteAMilSBD(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  if(sbd.type==='division') (a.milBattalions||[]).forEach(b=>{ if(b.parent_id===sbdId) b.parent_id=null; });
+  if(sbd.type==='battalion') (a.milSquads||[]).forEach(s=>{ if(s.parent_id===sbdId) s.parent_id=null; });
+  if(sbd.type==='division') a.milDivisions=a.milDivisions.filter(x=>x.id!==sbdId);
+  else if(sbd.type==='battalion') a.milBattalions=a.milBattalions.filter(x=>x.id!==sbdId);
+  else a.milSquads=a.milSquads.filter(x=>x.id!==sbdId);
+  save(); renderEditor(); showToast(`${sbd.name} deleted. Children unassigned.`);
+}
+
+// =====================================================
+// ALLIANCE MIL — ASSIGN MODAL
+// =====================================================
+let _aMilAssignAllianceId=null, _aMilAssignTargetId=null, _aMilAssignMode=null;
+function openAMilAssignModal(allianceId, targetId, mode){
+  _aMilAssignAllianceId=allianceId; _aMilAssignTargetId=targetId; _aMilAssignMode=mode;
+  const a=getAlliance(allianceId); if(!a) return;
+  const lbls={
+    'battalion':'Select battalions to assign to this division:',
+    'squad':'Select squads to assign to this battalion:',
+    'bat-to-div':'Select a division to assign this battalion to:',
+    'sq-to-bat':'Select a battalion to assign this squad to:',
+  };
+  document.getElementById('a-mil-assign-lbl').textContent=lbls[mode]||'Select:';
+  let items=[];
+  if(mode==='battalion') items=(a.milBattalions||[]).filter(b=>!b.parent_id);
+  else if(mode==='squad') items=(a.milSquads||[]).filter(s=>!s.parent_id);
+  else if(mode==='bat-to-div') items=a.milDivisions||[];
+  else if(mode==='sq-to-bat') items=a.milBattalions||[];
+  if(!items.length){ showToast('Nothing available to assign.'); return; }
+  const multi=(mode==='battalion'||mode==='squad');
+  document.getElementById('a-mil-assign-list').innerHTML=items.map(it=>
+    `<div class="country-tag" data-id="${it.id}" onclick="aMilItemClick(this)" style="cursor:pointer;">${it.name}</div>`
+  ).join('');
+  document.getElementById('a-mil-assign-modal').classList.add('open');
+}
+function aMilItemClick(el){
+  if(_aMilAssignMode==='battalion'||_aMilAssignMode==='squad'){
+    el.classList.toggle('selected');
+  } else {
+    document.querySelectorAll('#a-mil-assign-list .country-tag').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+}
+function aMilAssignSelectSingle(el){
+  if(_aMilAssignMode==='bat-to-div'||_aMilAssignMode==='sq-to-bat'){
+    document.querySelectorAll('#a-mil-assign-list .country-tag').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+}
+function confirmAMilAssign(){
+  const a=getAlliance(_aMilAssignAllianceId); if(!a) return;
+  const selected=[...document.querySelectorAll('#a-mil-assign-list .country-tag.selected')].map(el=>el.dataset.id);
+  if(!selected.length){ showToast('Select at least one item.'); return; }
+  if(_aMilAssignMode==='battalion') selected.forEach(id=>{const b=(a.milBattalions||[]).find(x=>x.id===id);if(b)b.parent_id=_aMilAssignTargetId;});
+  else if(_aMilAssignMode==='squad') selected.forEach(id=>{const s=(a.milSquads||[]).find(x=>x.id===id);if(s)s.parent_id=_aMilAssignTargetId;});
+  else if(_aMilAssignMode==='bat-to-div'){const bat=(a.milBattalions||[]).find(x=>x.id===_aMilAssignTargetId);if(bat)bat.parent_id=selected[0];}
+  else if(_aMilAssignMode==='sq-to-bat'){const sq=(a.milSquads||[]).find(x=>x.id===_aMilAssignTargetId);if(sq)sq.parent_id=selected[0];}
+  save(); closeModal('a-mil-assign-modal'); renderEditor(); showToast('Assignment updated!');
+}
+
+// =====================================================
+// ALLIANCE MIL — EDIT SBD MODAL (tabbed)
+// =====================================================
+let _aMilEditAllianceId=null, _aMilEditId=null, _aMilEditTab='personnel';
+function openAMilEditModal(allianceId, sbdId){
+  _aMilEditAllianceId=allianceId; _aMilEditId=sbdId; _aMilEditTab='personnel';
+  renderAMilEditModal();
+  document.getElementById('a-mil-edit-modal').classList.add('open');
+}
+function setAMilEditTab(tab){ _aMilEditTab=tab; renderAMilEditModal(); }
+function renderAMilEditModal(){
+  const a=getAlliance(_aMilEditAllianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,_aMilEditId); if(!sbd) return;
+  const tabs=['personnel',...Object.keys(A_MIL_SUPPORT_TYPES),'objectives','observation'];
+  const tabLabels={personnel:'👥 Personnel',air:'✈️ Air',land:'🪖 Land',water:'⚓ Water',missiles:'🚀 Missiles',objectives:'🎯 Objectives',observation:'📝 Notes'};
+  const typeColors={division:'var(--red)',battalion:'var(--accent2)',squad:'var(--accent3)'};
+  document.getElementById('a-mil-edit-title').innerHTML=
+    `✎ <span style="color:${typeColors[sbd.type]||'var(--accent)'};">${sbd.type.toUpperCase()}</span>: ${escAMil(sbd.name)}`;
+  document.getElementById('a-mil-edit-tabs').innerHTML=tabs.map(t=>
+    `<button class="mil-tab-btn${_aMilEditTab===t?' active':''}" onclick="setAMilEditTab('${t}')">${tabLabels[t]||t}</button>`
+  ).join('');
+  let content='';
+  if(_aMilEditTab==='personnel'){
+    const m=sbd.men||{};
+    content=`
+      <div class="modal-field">
+        <div class="modal-label">Unit Name</div>
+        <input class="modal-input" id="amle-name" type="text" value="${escAMil(sbd.name)}" maxlength="60">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${[{k:'army',l:'Army Soldiers'},{k:'special_forces',l:'Special Forces'},{k:'majors',l:'Majors'},{k:'spies',l:'Spies'}].map(f=>`
+          <div class="modal-field">
+            <div class="modal-label">${f.l}</div>
+            <input class="modal-input" id="amle-men-${f.k}" type="number" min="0" value="${m[f.k]||0}">
+          </div>`).join('')}
+        <div class="modal-field">
+          <div class="modal-label" style="color:var(--red);">💀 Deaths</div>
+          <input class="modal-input" id="amle-deaths" type="number" min="0" value="${sbd.deaths||0}" style="border-color:rgba(255,58,58,.3);">
+        </div>
+      </div>
+      <div style="margin-top:6px;padding:8px;background:var(--bg);border:1px solid var(--border);">
+        ${asbdStrengthBar(sbd)}
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-left:8px;">
+          Alive: ${fmt(Math.max(0,asbdTotalRoster(sbd)-(sbd.deaths||0)))} / Total: ${fmt(asbdTotalRoster(sbd))}
+        </span>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);padding:6px 8px;background:var(--bg);border:1px solid var(--border);line-height:1.7;margin:8px 0;">
+        Points: <strong style="color:${sbd.points>=100?'var(--gold)':'var(--text)'};">${fmt(sbd.points)}</strong>
+        · Commander: <strong>${sbd.higher_commander?'♛ '+escAMil(sbd.higher_commander.name):sbd.commander?'⭐ '+escAMil(sbd.commander.name):'None'}</strong>
+      </div>
+      <div><button class="btn btn-green" onclick="saveAMilPersonnel()">✓ Save Personnel</button></div>`;
+  } else if(_aMilEditTab==='objectives'){
+    const objs=sbd.objectives||[];
+    const rows=objs.length===0
+      ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:12px 0;text-align:center;">No objectives.</div>`
+      :objs.map(o=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(26,48,69,.5);">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${o.failed?'var(--red)':o.completed?'var(--accent3)':'var(--text)'};flex:1;${o.failed?'text-decoration:line-through;opacity:.8;':''}">
+            ${o.completed?'✓ ':o.failed?'✗ ':''} ${escAMil(o.name)}
+          </span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${o.failed?'var(--red)':'var(--gold)'};flex-shrink:0;">${o.failed?'−10pt':'+'+o.points+'pt'+(o.points!==1?'s':'')}</span>
+          ${o.completed
+            ?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);">✓ Done</span>`
+            :o.failed
+            ?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--red);">✗ Failed</span>`
+            :`<button class="btn btn-sm btn-green" style="font-size:7px;padding:2px 7px;" onclick="completeAMilObj('${a.id}','${sbd.id}','${o.id}')">✓ Complete</button>
+             <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="failAMilObj('${a.id}','${sbd.id}','${o.id}')">✗ Fail</button>`}
+          <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilObjModal('${a.id}','${sbd.id}','${o.id}')">✎</button>
+          <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteAMilObj('${a.id}','${sbd.id}','${o.id}')">×</button>
+        </div>`).join('');
+    content=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-family:'Orbitron',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;">OBJECTIVES · ${fmt(sbd.points)} pts total</span>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="openAMilObjModal('${a.id}','${sbd.id}',null)">+ Add Objective</button>
+      </div>
+      ${rows}`;
+  } else if(_aMilEditTab==='observation'){
+    content=`
+      <div style="margin-bottom:8px;">
+        <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:10px;">📝 OBSERVATION / NOTES</div>
+        <textarea class="sbd-observation-area" id="amle-observation" placeholder="Enter notes, objectives detail, briefings…"
+          oninput="autoSaveAMilObservation('${a.id}','${sbd.id}',this.value)">${escAMil(sbd.observation||'')}</textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn btn-green btn-sm" style="font-size:8px;" onclick="saveAMilObservation('${a.id}','${sbd.id}')">✓ Save Notes</button>
+        </div>
+      </div>`;
+  } else {
+    const typeKey=_aMilEditTab;
+    const def=A_MIL_SUPPORT_TYPES[typeKey]; if(!def) return;
+    const vals=sbd.support[typeKey]||{};
+    content=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${def.fields.map(f=>`
+          <div class="modal-field">
+            <div class="modal-label">${f.l}</div>
+            <input class="modal-input" id="amle-sup-${typeKey}-${f.k}" type="number" min="0" value="${vals[f.k]||0}">
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:6px;"><button class="btn btn-green" onclick="saveAMilSupport('${typeKey}')">✓ Save ${def.label}</button></div>`;
+  }
+  document.getElementById('a-mil-edit-content').innerHTML=content;
+}
+function saveAMilPersonnel(){
+  const a=getAlliance(_aMilEditAllianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,_aMilEditId); if(!sbd) return;
+  const nameEl=document.getElementById('amle-name');
+  if(nameEl){const n=nameEl.value.trim(); if(n) sbd.name=n;}
+  ['army','special_forces','majors','spies'].forEach(k=>{
+    const el=document.getElementById('amle-men-'+k);
+    if(el) sbd.men[k]=Math.max(0,parseInt(el.value)||0);
+  });
+  const deathsEl=document.getElementById('amle-deaths');
+  if(deathsEl) sbd.deaths=Math.max(0,parseInt(deathsEl.value)||0);
+  save(); renderEditor(); renderAMilEditModal(); showToast(`${sbd.name} updated.`);
+}
+function saveAMilSupport(typeKey){
+  const a=getAlliance(_aMilEditAllianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,_aMilEditId); if(!sbd) return;
+  const def=A_MIL_SUPPORT_TYPES[typeKey]; if(!def) return;
+  if(!sbd.support[typeKey]) sbd.support[typeKey]={};
+  def.fields.forEach(f=>{
+    const el=document.getElementById(`amle-sup-${typeKey}-${f.k}`);
+    if(el) sbd.support[typeKey][f.k]=Math.max(0,parseInt(el.value)||0);
+  });
+  save(); renderEditor(); renderAMilEditModal(); showToast(`${def.label} support saved.`);
+}
+
+// =====================================================
+// ALLIANCE MIL — OBJECTIVE MODAL
+// =====================================================
+let _aMilObjAllianceId=null, _aMilObjSbdId=null, _aMilObjEditId=null;
+function openAMilObjModal(allianceId, sbdId, objId){
+  _aMilObjAllianceId=allianceId; _aMilObjSbdId=sbdId; _aMilObjEditId=objId||null;
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  const obj=objId?(sbd.objectives||[]).find(o=>o.id===objId):null;
+  document.getElementById('a-mil-obj-title').textContent=objId?'✎ Edit Objective':'🎯 New Objective';
+  document.getElementById('a-mil-obj-name').value=obj?obj.name:'';
+  document.getElementById('a-mil-obj-pts').value=obj?obj.points:10;
+  document.getElementById('a-mil-obj-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('a-mil-obj-name').focus(),100);
+}
+function confirmAMilObj(){
+  const a=getAlliance(_aMilObjAllianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,_aMilObjSbdId); if(!sbd) return;
+  const name=(document.getElementById('a-mil-obj-name').value||'').trim();
+  if(!name){ document.getElementById('a-mil-obj-name').style.borderColor='var(--red)'; return; }
+  const pts=Math.max(0,parseInt(document.getElementById('a-mil-obj-pts').value)||0);
+  if(!sbd.objectives) sbd.objectives=[];
+  if(_aMilObjEditId){ const o=sbd.objectives.find(x=>x.id===_aMilObjEditId); if(o){o.name=name;o.points=pts;} }
+  else sbd.objectives.push({id:uuid(),name,points:pts,completed:false});
+  save();
+  closeModal('a-mil-obj-modal'); renderEditor();
+  if(document.getElementById('a-mil-edit-modal').classList.contains('open')) renderAMilEditModal();
+  showToast(_aMilObjEditId?'Objective updated!':'Objective added!');
+}
+function completeAMilObj(allianceId, sbdId, objId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  const obj=(sbd.objectives||[]).find(o=>o.id===objId); if(!obj||obj.completed||obj.failed) return;
+  obj.completed=true; sbd.points=(sbd.points||0)+obj.points;
+  save(); renderEditor();
+  if(document.getElementById('a-mil-edit-modal').classList.contains('open')) renderAMilEditModal();
+  showToast(`✓ Objective complete! +${obj.points}pts → ${sbd.name} now has ${sbd.points}pts`);
+}
+function failAMilObj(allianceId, sbdId, objId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  const obj=(sbd.objectives||[]).find(o=>o.id===objId); if(!obj||obj.completed||obj.failed) return;
+  obj.failed=true; sbd.points=Math.max(0,(sbd.points||0)-10);
+  save(); renderEditor();
+  if(document.getElementById('a-mil-edit-modal').classList.contains('open')) renderAMilEditModal();
+  showToast(`✗ Objective failed! −10pts → ${sbd.name} now has ${sbd.points}pts`);
+}
+function deleteAMilObj(allianceId, sbdId, objId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  sbd.objectives=(sbd.objectives||[]).filter(o=>o.id!==objId);
+  save(); renderEditor();
+  if(document.getElementById('a-mil-edit-modal').classList.contains('open')) renderAMilEditModal();
+  showToast('Objective deleted.');
+}
+function saveAMilObservation(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  const el=document.getElementById('amle-observation');
+  if(el){ sbd.observation=el.value; save(); showToast('📝 Notes saved!'); }
+}
+let _aMilObsTimer=null;
+function autoSaveAMilObservation(allianceId, sbdId, val){
+  clearTimeout(_aMilObsTimer);
+  _aMilObsTimer=setTimeout(()=>{
+    const a=getAlliance(allianceId); if(!a) return;
+    const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+    sbd.observation=val; save(); showSaveBadge();
+  }, 800);
 }
 
 // =====================================================
