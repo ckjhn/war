@@ -2009,7 +2009,7 @@
     "population": {
       "civilians": 1010,
       "workers": 0,
-      "military": 5,
+      "military": 4,
       "manpower": 1000
     },
     "economy": {
@@ -3788,7 +3788,7 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 15
+      "members": 14
     },
     "economy": {
       "money": 700
