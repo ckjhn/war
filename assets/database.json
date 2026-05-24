@@ -746,6 +746,10 @@
       {
         "id": "mpj0f0rxivjiulpda9",
         "name": "Vladmir Lenin"
+      },
+      {
+        "id": "mpj0muy3fba4pbucsl",
+        "name": "Vladmir Putin"
       }
     ],
     "military_leader_id": "mpj0bb0oxgdx7v1oqt",
@@ -802,12 +806,65 @@
         },
         "observation": "",
         "special_training": []
+      },
+      {
+        "id": "mpj0hkh3jllrfm7ysz9",
+        "name": "East Front",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 12,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
       }
     ],
     "battalions": [
       {
-        "id": "mpj0gtu4k3j1ofieo8",
-        "name": "East Front",
+        "id": "mpj0gwhseuuxdntl7ld",
+        "name": "KGB",
         "type": "battalion",
         "parent_id": "mpj0gbxpg1i3z8s4txc",
         "men": {
@@ -859,8 +916,8 @@
         "special_training": []
       },
       {
-        "id": "mpj0gwhseuuxdntl7ld",
-        "name": "KGB",
+        "id": "mpj0j9uj46dg6yb9p07",
+        "name": "Ionov",
         "type": "battalion",
         "parent_id": "mpj0gbxpg1i3z8s4txc",
         "men": {
@@ -920,6 +977,59 @@
         "parent_id": "mpj0gwhseuuxdntl7ld",
         "men": {
           "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpj0jcqen73n4bdz2le",
+        "name": "Alpha",
+        "type": "squad",
+        "parent_id": "mpj0j9uj46dg6yb9p07",
+        "men": {
+          "army": 4,
           "special_forces": 0,
           "majors": 0,
           "spies": 0
