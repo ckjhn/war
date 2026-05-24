@@ -1057,7 +1057,12 @@ function renderCommunistSection(a){
     agg[cat.key]={};
     for(const f of cat.fields){
       agg[cat.key][f.k]=0;
-      for(const c of memberCountries) agg[cat.key][f.k]+=(parseInt(c[cat.key]?.[f.k]||0)||0);
+      for(const c of memberCountries){
+        if(f.k==='civilians'&&c.type==='organization') continue;
+        if(f.k==='workers'&&c.type==='organization') continue;
+        if(f.k==='members'&&c.type!=='organization') continue;
+        agg[cat.key][f.k]+=(parseInt(c[cat.key]?.[f.k]||0)||0);
+      }
     }
   }
   const MINE_KEYS=['mine_plains','mine_forest','mine_taiga','mine_jungle','mine_swamp','mine_desert','mine_badlands','mine_mountains','mine_ocean','mine_caves','mine_rare','mine_frozen'];
@@ -2700,7 +2705,7 @@ function renderCommunistMilSection(a){
   (a.militaryBreakdown||[]).forEach(entry=>{ MIL_FIELDS.forEach(f=>{ totals[f.k]+=(parseInt(entry[f.k])||0); }); });
   const maxArmy=Math.max(1,...(a.militaryBreakdown||[]).map(e=>parseInt(e.army)||0));
   const breakdownRows=(a.militaryBreakdown||[]).length===0
-    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:8px 0;">No military contributions yet. Use 📦 Donate to add military.</div>`
+    ?``
     :(a.militaryBreakdown||[]).map(entry=>{
         const armyVal=parseInt(entry.army)||0;
         const barW=maxArmy>0?Math.round(armyVal/maxArmy*100):0;
