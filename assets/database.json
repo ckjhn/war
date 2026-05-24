@@ -634,7 +634,7 @@
       "town_hall": 1,
       "factories": 1,
       "businesses": 0,
-      "mines": 1
+      "mines": 2
     },
     "weapons": {
       "knives": 0,
@@ -705,7 +705,7 @@
       "mine_swamp": 0,
       "mine_desert": 0,
       "mine_badlands": 0,
-      "mine_mountains": 0,
+      "mine_mountains": 1,
       "mine_ocean": 0,
       "mine_caves": 0,
       "mine_rare": 0,
@@ -813,9 +813,9 @@
         "type": "division",
         "parent_id": null,
         "men": {
-          "army": 0,
+          "army": 12,
           "special_forces": 0,
-          "majors": 0,
+          "majors": 1,
           "spies": 0
         },
         "commander": null,
@@ -976,7 +976,7 @@
         "type": "squad",
         "parent_id": "mpj0gwhseuuxdntl7ld",
         "men": {
-          "army": 0,
+          "army": 3,
           "special_forces": 0,
           "majors": 0,
           "spies": 0
@@ -1029,7 +1029,7 @@
         "type": "squad",
         "parent_id": "mpj0j9uj46dg6yb9p07",
         "men": {
-          "army": 0,
+          "army": 4,
           "special_forces": 0,
           "majors": 0,
           "spies": 0
