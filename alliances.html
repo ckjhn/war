@@ -284,6 +284,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 .sbd-observation-area{width:100%;min-height:80px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:vertical;line-height:1.5;}
 .sbd-observation-area:focus{border-color:var(--accent);}
 
+.gen-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,48,69,.5);}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -648,6 +649,59 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- ═══════════ ADD/EDIT GENERAL MODAL (Communist) ═══════════ -->
+<div class="modal-overlay" id="a-mil-gen-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title">⭐ General</div>
+    <div class="modal-field">
+      <div class="modal-label">General's Full Name</div>
+      <input class="modal-input" id="a-mil-gen-name" type="text" placeholder="e.g. Alexander Montgomery" maxlength="60"
+        onkeydown="if(event.key==='Enter')confirmAMilGen()">
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:8px;background:var(--bg);border:1px solid var(--border);margin-bottom:12px;line-height:1.7;">
+      Generals are high command figures. They are not counted as army, population or workers — they exist independently.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-green" onclick="confirmAMilGen()">✓ SAVE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-gen-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COMMANDER PROMOTION MODAL (Communist) ═══════════ -->
+<div class="modal-overlay" id="a-mil-cmd-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title" id="a-mil-cmd-title">🏅 Promote Commander</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);margin-bottom:14px;line-height:1.7;padding:10px;background:var(--bg);border:1px solid var(--border);">
+      <div id="a-mil-cmd-info"></div>
+      <div style="margin-top:6px;">
+        Unit: <strong id="a-mil-cmd-sbd-name" style="color:var(--text);"></strong> &nbsp;·&nbsp;
+        Points: <strong id="a-mil-cmd-pts" style="color:var(--gold);"></strong>
+      </div>
+    </div>
+    <div class="modal-field" id="a-mil-cmd-name-row">
+      <div class="modal-label">Commander's Full Name</div>
+      <input class="modal-input" id="a-mil-cmd-name" type="text" placeholder="e.g. Cpt. Maria Reyes" maxlength="60"
+        onkeydown="if(event.key==='Enter')confirmAMilCmd()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="a-mil-cmd-btn" style="border-color:var(--gold);color:var(--gold);" onclick="confirmAMilCmd()">🏅 PROMOTE</button>
+      <button class="btn btn-orange" onclick="closeModal('a-mil-cmd-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SPECIAL OPS TRAINING MODAL (Communist) ═══════════ -->
+<div class="modal-overlay" id="a-spec-train-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">🎖️ Special Ops Training</div>
+    <div id="a-spec-train-content" style="min-height:80px;"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-orange" onclick="closeModal('a-spec-train-modal')">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -810,6 +864,8 @@ function hydrateAlliance(a){
   if(!a.milDivisions) a.milDivisions=[];
   if(!a.milBattalions) a.milBattalions=[];
   if(!a.milSquads) a.milSquads=[];
+  if(!a.military_generals) a.military_generals=[];
+  if(a.military_leader_id===undefined) a.military_leader_id=null;
   [...a.milDivisions,...a.milBattalions,...a.milSquads].forEach(hydrateAllianceSBD);
   if(!a.donations) a.donations=[];
   if(!a.objectives) a.objectives=[];
@@ -919,7 +975,7 @@ function renderEditor(){
       <div class="style-badge ${a.style}" onclick="openStyleModal()" title="Click to change style">${si.label}</div>
       <span class="save-badge" id="save-badge">✓ SAVED</span>
       <div class="ae-actions">
-        ${!isCommunist?`<button class="btn btn-sm btn-yellow" onclick="openDonateModal('${a.id}')">📦 Donate</button>`:''}
+        <button class="btn btn-sm btn-yellow" onclick="openDonateModal('${a.id}')">📦 Donate</button>
         ${!isCommunist?`<button class="btn btn-sm" style="border-color:var(--purple);color:var(--purple);" onclick="openEditModal('${a.id}')">✎ Edit</button>`:''}
         ${!isCommunist?`<button class="btn btn-sm btn-green" onclick="openCycleConfirmModal('${a.id}')">⏳ Cycle</button>`:''}
         ${!isCommunist?`<button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ Pass Turn</button>`:''}
@@ -947,8 +1003,9 @@ function renderEditor(){
     </div>`;
 
   if(isCommunist){
-    // ─── COMMUNIST: show aggregated DB of all members ───
+    // ─── COMMUNIST: show aggregated DB of all members + enhanced military command ───
     html += renderCommunistSection(a);
+    html += renderCommunistMilSection(a);
   } else {
     // ─── FASCIST/CAPITALIST: show own assets, military pool, donations backlog ───
     html += renderAllianceAssets(a);
@@ -1008,11 +1065,29 @@ function renderCommunistSection(a){
   const mineTotal={};
   MINE_KEYS.forEach(k=>{ mineTotal[k]=0; memberCountries.forEach(c=>mineTotal[k]+=(parseInt(c.mines?.[k]||0)||0)); });
 
-  const dbSections=AGG_SCHEMA.map(cat=>{
-    const rows=cat.fields.map(f=>{const v=agg[cat.key][f.k]||0;return `<div class="field-row"><span class="field-label">${f.l}</span><span class="field-value ${v===0?'zero':''}">${fmt(v)}</span></div>`;}).join('');
-    return `<div class="db-subsection"><div class="db-subsection-title">${cat.label}</div>${rows}</div>`;
+  // Build asset-box cards for each AGG_SCHEMA category
+  const catBoxes = AGG_SCHEMA.map(cat => {
+    const v = (k) => agg[cat.key]?.[k] || 0;
+    const fields = cat.fields.map(f => {
+      const val = v(f.k);
+      return `<div class="asset-field"><span class="asset-field-lbl">${f.l}</span><span class="asset-field-val ${val===0?'az':''}">${fmt(val)}</span></div>`;
+    }).join('');
+    const wide = cat.fields.length > 5;
+    const innerGrid = wide ? `style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:2px;"` : '';
+    return `<div class="asset-box" ${wide?'style="grid-column:span 2;"':''}>
+      <div class="asset-box-title">${cat.label}</div>
+      <div ${innerGrid}>${fields}</div>
+    </div>`;
   }).join('');
-  const mineRows=MINE_KEYS.map(k=>{const v=mineTotal[k]||0;return `<div class="field-row"><span class="field-label">${MINE_LABELS[k]}</span><span class="field-value ${v===0?'zero':''}">${fmt(v)}</span></div>`;}).join('');
+
+  const mineFields = MINE_KEYS.map(k => {
+    const val = mineTotal[k] || 0;
+    return `<div class="asset-field"><span class="asset-field-lbl">${MINE_LABELS[k]}</span><span class="asset-field-val ${val===0?'az':''}">${fmt(val)}</span></div>`;
+  }).join('');
+  const mineBox = `<div class="asset-box" style="grid-column:span 2;">
+    <div class="asset-box-title">⛏️ Mines by Biome</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:2px;">${mineFields}</div>
+  </div>`;
 
   return `<div class="section" id="sec-communist">
     <div class="section-header" onclick="toggleSection('communist')">
@@ -1020,16 +1095,21 @@ function renderCommunistSection(a){
       <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--communist-color);margin-right:10px;opacity:.8;">Aggregated from ${memberCountries.length}/${a.members.length} nations</span>
       <span class="section-toggle">▼</span>
     </div>
-    <div class="section-body">
-      <div class="db-info-bar">
-        <div class="db-info-item">Nations with DB: <span>${memberCountries.length}</span></div>
-        <div class="db-info-item">Total Members: <span>${a.members.length}</span></div>
-        <div class="db-info-item">Collective Money: <span>$${fmt(agg.economy?.money||0)}</span></div>
-        <div class="db-info-item">Total Population: <span>${fmt(agg.population?.civilians||0)}</span></div>
-        <div class="db-info-item">Total Military: <span>${fmt(agg.military?.army||0)}</span></div>
-        <div class="db-info-item" style="margin-left:auto;"><button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh</button></div>
+    <div class="section-body" style="padding:0;">
+      <div class="assets-header-bar">
+        <span class="assets-stat">Nations w/ DB: <strong>${memberCountries.length}</strong></span>
+        <span class="assets-stat">Total Members: <strong>${a.members.length}</strong></span>
+        <span class="assets-stat">Collective Money: <strong>$${fmt(agg.economy?.money||0)}</strong></span>
+        <span class="assets-stat">Total Population: <strong>${fmt(agg.population?.civilians||0)}</strong></span>
+        <span class="assets-stat">Total Military: <strong>${fmt(agg.military?.army||0)}</strong></span>
+        <span style="margin-left:auto;"><button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh</button></span>
       </div>
-      <div style="padding-top:8px;">${dbSections}<div class="db-subsection"><div class="db-subsection-title">⛏️ Mines by Biome</div>${mineRows}</div></div>
+      <div style="padding:14px 18px;">
+        <div class="asset-grid">
+          ${catBoxes}
+          ${mineBox}
+        </div>
+      </div>
     </div>
   </div>`;
 }
@@ -1330,6 +1410,17 @@ function renderASqCard(a, sq, standalone){
   const agg=asbdAggregate(a,sq);
   const assignBtn=standalone && (a.milBattalions||[]).length>0
     ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${sq.id}','sq-to-bat')">Assign→Bat.</button>`:'';
+  const isCom=a.style==='communist';
+  const promoteBtn=isCom?asbdPromoteBtn(a,sq):'';
+  const trainBtn=isCom&&(sq.commander||sq.higher_commander)
+    ?`<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--accent3);color:var(--accent3);" onclick="openASpecialTrainingModal('${a.id}','${sq.id}')">🎖 Train</button>`:'';
+  const trainings=sq.special_training||[];
+  const trainStatusHtml=isCom&&trainings.length>0
+    ?`<div style="padding:3px 12px 4px;display:flex;gap:6px;flex-wrap:wrap;">
+        ${trainings.map(t=>{const isCmd=t.trainer==='commander';const col=isCmd?'var(--gold)':'var(--purple)';const pct=Math.round((1-t.cyclesLeft/t.cyclesTotal)*100);
+          return `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 7px;border:1px solid ${col};color:${col};">🎖 ${isCmd?'⭐':'♛'} ${t.cyclesLeft}cy left (${pct}%)</span>`;
+        }).join('')}
+      </div>`:'';
   return `<div class="sbd-card sbd-card-sq">
     <div class="sbd-header sbd-header-sq">
       <button onclick="toggleAllianceSBD('${sq.id}')" style="background:transparent;border:1px solid rgba(57,255,20,.2);color:var(--accent3);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
@@ -1338,13 +1429,15 @@ function renderASqCard(a, sq, standalone){
       ${asbdCmdTags(sq)}
       ${asbdStrengthBarFromAgg(agg)}
       ${asbdPtsBar(sq.points)}
+      ${promoteBtn}
       <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
         ${assignBtn}
+        ${trainBtn}
         <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${sq.id}')">✎ Edit</button>
         <button class="btn btn-sm btn-red" style="font-size:7px;padding:2px 7px;" onclick="deleteAMilSBD('${a.id}','${sq.id}')">× Del</button>
       </div>
     </div>
-    ${collapsed?'':asbdCardBody(a,sq)+renderAObjsInline(a,sq)}
+    ${collapsed?'':asbdCardBody(a,sq)+trainStatusHtml+renderAObjsInline(a,sq)}
   </div>`;
 }
 
@@ -1356,6 +1449,7 @@ function renderABatCard(a, bat, squads, standalone){
   const assignDivBtn=standalone && (a.milDivisions||[]).length>0
     ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${bat.id}','bat-to-div')">Assign→Div.</button>`:'';
   const sqHtml=squads.map(s=>renderASqCard(a,s,false)).join('');
+  const batPromoteBtn=a.style==='communist'?asbdPromoteBtn(a,bat):'';
   return `<div class="sbd-card sbd-card-bat">
     <div class="sbd-header sbd-header-bat">
       <button onclick="toggleAllianceSBD('${bat.id}')" style="background:transparent;border:1px solid rgba(255,107,53,.3);color:var(--accent2);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
@@ -1364,6 +1458,7 @@ function renderABatCard(a, bat, squads, standalone){
       ${asbdCmdTags(bat)}
       ${asbdStrengthBarFromAgg(agg,'Total incl. squads: ')}
       ${asbdPtsBar(bat.points)}
+      ${batPromoteBtn}
       <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
         ${assignDivBtn}${assignSqBtns}
         <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${bat.id}')">✎ Edit</button>
@@ -1385,6 +1480,7 @@ function renderADivCard(a, div){
   const assignBatBtns=(a.milBattalions||[]).filter(b=>!b.parent_id).length>0
     ? `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;" onclick="openAMilAssignModal('${a.id}','${div.id}','battalion')">+ Assign Bat.</button>`:'';
   const batHtml=bats.map(b=>renderABatCard(a,b,(a.milSquads||[]).filter(s=>s.parent_id===b.id),false)).join('');
+  const divPromoteBtn=a.style==='communist'?asbdPromoteBtn(a,div):'';
   return `<div class="sbd-card sbd-card-div">
     <div class="sbd-header sbd-header-div">
       <button onclick="toggleAllianceSBD('${div.id}')" style="background:transparent;border:1px solid rgba(255,58,58,.3);color:var(--red);font-size:9px;padding:1px 5px;cursor:pointer;flex-shrink:0;">${collapsed?'▶':'▼'}</button>
@@ -1393,6 +1489,7 @@ function renderADivCard(a, div){
       ${asbdCmdTags(div)}
       ${asbdStrengthBarFromAgg(agg,'Total incl. all sub-units: ')}
       ${asbdPtsBar(div.points)}
+      ${divPromoteBtn}
       <div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;">
         ${assignBatBtns}
         <button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilEditModal('${a.id}','${div.id}')">✎ Edit</button>
@@ -1588,6 +1685,44 @@ function renderAMilEditModal(){
   let content='';
   if(_aMilEditTab==='personnel'){
     const m=sbd.men||{};
+    const isCom=a.style==='communist';
+    // Full commander blocks (communist only)
+    const higherCmdBlock=isCom
+      ?(sbd.higher_commander
+        ?`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border:1px solid rgba(192,132,252,.3);background:rgba(192,132,252,.05);">
+             <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--purple);">♛ Op.Cmd. ${escAMil(sbd.higher_commander.name)}</span>
+             <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">(counts as 1 man)</span>
+             <button class="btn btn-sm btn-red" style="font-size:8px;margin-left:auto;" onclick="removeAMilHigherCmd('${a.id}','${sbd.id}')">Remove</button>
+           </div>`
+        :`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);padding:4px 0;">No Operational Commander — promoted from Field Commander slot (100pts).</div>`)
+      :'';
+    const fieldCmdBlock=isCom
+      ?(sbd.commander
+        ?`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.05);">
+             <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--gold);">⭐ Cmd. ${escAMil(sbd.commander.name)}</span>
+             <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">(counts as 1 man)</span>
+             ${!sbd.higher_commander&&sbd.points>=100?`<button class="btn btn-sm" style="font-size:8px;border-color:var(--purple);color:var(--purple);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">⬆ Upgrade to Op.Cmd.</button>`:''}
+             <button class="btn btn-sm btn-red" style="font-size:8px;margin-left:auto;" onclick="removeAMilFieldCmd('${a.id}','${sbd.id}')">Remove</button>
+           </div>`
+        :`<div style="display:flex;align-items:center;gap:8px;">
+             <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">No Field Commander.</span>
+             ${sbd.points>=100
+               ?`<button class="btn btn-sm" style="font-size:8px;border-color:var(--gold);color:var(--gold);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">🏅 Assign Field Cmd.</button>`
+               :`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">(needs ${100-(sbd.points%100||100)}pts more)</span>`}
+           </div>`)
+      :'';
+    const cmdSection=isCom?`
+      <div class="modal-field" style="margin-top:12px;">
+        <div class="modal-label" style="color:var(--purple);">♛ Operational Commander (Higher)</div>
+        ${higherCmdBlock}
+      </div>
+      <div class="modal-field">
+        <div class="modal-label" style="color:var(--gold);">⭐ Field Commander</div>
+        ${fieldCmdBlock}
+      </div>`:'';
+    const ptsLine=isCom
+      ?`Points: <strong style="color:${sbd.points>=100?'var(--gold)':'var(--text)'};">${fmt(sbd.points)}</strong> · Next promotion in: <strong>${fmt(Math.max(0,100-(sbd.points%100)||100))}pts</strong> · Promotions earned: <strong>${Math.floor(sbd.points/100)}</strong>`
+      :`Points: <strong style="color:${sbd.points>=100?'var(--gold)':'var(--text)'};">${fmt(sbd.points)}</strong> · Commander: <strong>${sbd.higher_commander?'♛ '+escAMil(sbd.higher_commander.name):sbd.commander?'⭐ '+escAMil(sbd.commander.name):'None'}</strong>`;
     content=`
       <div class="modal-field">
         <div class="modal-label">Unit Name</div>
@@ -1610,9 +1745,9 @@ function renderAMilEditModal(){
           Alive: ${fmt(asbdTotalRoster(sbd))} · 💀 Dead: ${fmt(sbd.deaths||0)} · Diff: ${fmt(asbdTotalRoster(sbd)-(sbd.deaths||0))}
         </span>
       </div>
+      ${cmdSection}
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);padding:6px 8px;background:var(--bg);border:1px solid var(--border);line-height:1.7;margin:8px 0;">
-        Points: <strong style="color:${sbd.points>=100?'var(--gold)':'var(--text)'};">${fmt(sbd.points)}</strong>
-        · Commander: <strong>${sbd.higher_commander?'♛ '+escAMil(sbd.higher_commander.name):sbd.commander?'⭐ '+escAMil(sbd.commander.name):'None'}</strong>
+        ${ptsLine}
       </div>
       <div><button class="btn btn-green" onclick="saveAMilPersonnel()">✓ Save Personnel</button></div>`;
   } else if(_aMilEditTab==='objectives'){
@@ -2491,6 +2626,357 @@ function refreshDatabase(id){ renderEditor(); showToast('Refreshed'); }
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{ overlay.addEventListener('click',e=>{ if(e.target===overlay) overlay.classList.remove('open'); }); });
+
+// =====================================================
+// COMMUNIST MILITARY — PROMOTE BUTTON HELPER
+// =====================================================
+function asbdPromoteBtn(a, sbd){
+  if(sbd.points<100) return '';
+  if(!sbd.commander){
+    return `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--gold);color:var(--gold);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">🏅 Assign Cmd.</button>`;
+  }
+  if(sbd.commander && !sbd.higher_commander){
+    return `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--purple);color:var(--purple);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">⬆ Upgrade Cmd.</button>`;
+  }
+  if(!sbd.commander && sbd.higher_commander){
+    return `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--gold);color:var(--gold);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">🏅 New Cmd.</button>`;
+  }
+  return '';
+}
+
+// =====================================================
+// COMMUNIST MILITARY — FULL SECTION RENDERER
+// =====================================================
+function renderCommunistMilSection(a){
+  if(!a.military_generals) a.military_generals=[];
+  if(a.military_leader_id===undefined) a.military_leader_id=null;
+  if(!a.milDivisions) a.milDivisions=[];
+  if(!a.milBattalions) a.milBattalions=[];
+  if(!a.milSquads) a.milSquads=[];
+
+  const allSBD=[...a.milDivisions,...a.milBattalions,...a.milSquads];
+  const stats=allSBD.reduce((acc,e)=>{
+    acc.army+=(e.men.army||0); acc.sf+=(e.men.special_forces||0);
+    acc.maj+=(e.men.majors||0); acc.spy+=(e.men.spies||0);
+    acc.cmds+=(e.commander?1:0)+(e.higher_commander?1:0);
+    acc.deaths+=(e.deaths||0);
+    return acc;
+  },{army:0,sf:0,maj:0,spy:0,cmds:0,deaths:0});
+  const totalMen=stats.army+stats.sf+stats.maj+stats.spy+stats.cmds;
+
+  const leader=a.military_leader_id?(a.military_generals||[]).find(g=>g.id===a.military_leader_id):null;
+
+  const genRows=a.military_generals.length===0
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:4px 0;">No generals assigned.</div>`
+    :a.military_generals.map(g=>{
+        const isLeader=a.military_leader_id===g.id;
+        return `<div class="gen-row" style="${isLeader?'background:rgba(255,215,0,.06);border-left:2px solid var(--gold);padding-left:8px;':''}">
+          <span style="font-size:14px;">${isLeader?'♛':'⭐'}</span>
+          <span class="gen-name" style="${isLeader?'color:var(--gold);':''}">${isLeader?'<strong>[LEADER]</strong> ':''} Gen. ${escAMil(g.name)}</span>
+          ${isLeader
+            ?`<button class="delta-btn neg" style="margin-left:auto;font-size:9px;" onclick="setAMilLeader('${a.id}',null)">♛ Remove Leader</button>`
+            :`<button class="delta-btn" style="margin-left:auto;font-size:9px;border-color:rgba(255,215,0,.4);color:var(--gold);" onclick="setAMilLeader('${a.id}','${g.id}')">♛ Set Leader</button>`}
+          <button class="delta-btn" onclick="openAMilGenModal('${a.id}','${g.id}')">✎</button>
+          <button class="delta-btn neg" onclick="deleteAMilGen('${a.id}','${g.id}')">×</button>
+        </div>`;
+      }).join('');
+
+  // SBD tree
+  const divHtml=a.milDivisions.map(div=>renderADivCard(a,div)).join('');
+  const unassignedBats=a.milBattalions.filter(b=>!b.parent_id);
+  const unassignedSqs=a.milSquads.filter(s=>!s.parent_id);
+  const unBatHtml=unassignedBats.map(b=>renderABatCard(a,b,(a.milSquads||[]).filter(s=>s.parent_id===b.id),true)).join('');
+  const unSqHtml=unassignedSqs.map(s=>renderASqCard(a,s,true)).join('');
+  const unassignedHtml=(unassignedBats.length||unassignedSqs.length)
+    ?`<div style="margin-bottom:10px;padding:8px;background:rgba(255,215,0,.03);border:1px dashed rgba(255,215,0,.2);">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">UNASSIGNED UNITS</div>
+        ${unBatHtml}${unSqHtml}
+      </div>`:''  ;
+  const emptyMsg=!a.milDivisions.length&&!unassignedBats.length&&!unassignedSqs.length
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:18px 0;">No military units. Create divisions, battalions or squads below.</div>`:'';
+
+  // Contribution pool
+  const totals={army:0,special_forces:0,generals:0,commanders:0,majors:0};
+  (a.militaryBreakdown||[]).forEach(entry=>{ MIL_FIELDS.forEach(f=>{ totals[f.k]+=(parseInt(entry[f.k])||0); }); });
+  const maxArmy=Math.max(1,...(a.militaryBreakdown||[]).map(e=>parseInt(e.army)||0));
+  const breakdownRows=(a.militaryBreakdown||[]).length===0
+    ?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:8px 0;">No military contributions yet. Use 📦 Donate to add military.</div>`
+    :(a.militaryBreakdown||[]).map(entry=>{
+        const armyVal=parseInt(entry.army)||0;
+        const barW=maxArmy>0?Math.round(armyVal/maxArmy*100):0;
+        const other=MIL_FIELDS.filter(f=>f.k!=='army').map(f=>{const v=parseInt(entry[f.k])||0;return v>0?`${f.l}: ${fmt(v)}`:null;}).filter(Boolean).join(' · ');
+        return `<div class="mil-country-row">
+          <span style="font-size:16px;flex-shrink:0;">${entry.flag||'🏴'}</span>
+          <span class="mil-cname">${entry.country}${other?`<br><span style="font-size:9px;color:var(--text-dim);">${other}</span>`:''}</span>
+          <div class="mil-bar-wrap"><div class="mil-bar" style="width:${barW}%;"></div></div>
+          <span class="mil-val">${fmt(armyVal)}</span>
+          <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;border-color:var(--purple);color:var(--purple);" onclick="openMilBreakdownEdit('${a.id}','${entry.country}')">✎ Edit</button>
+          <button class="member-remove" onclick="removeMilBreakdown('${a.id}','${entry.country}')">×</button>
+        </div>`;
+      }).join('');
+
+  return `<div class="section" id="sec-military">
+    <div class="section-header" onclick="toggleSection('military')">
+      <span class="section-title">🎖️ Military Command</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-right:6px;line-height:1.6;">
+        ${a.military_generals.length} gen · ${a.milDivisions.length} div · ${a.milBattalions.length} bat · ${a.milSquads.length} sq
+        · <span style="color:var(--accent3);">${fmt(totalMen)} men</span>${stats.deaths>0?` · <span style="color:var(--red);">💀${fmt(stats.deaths)}</span>`:''}
+      </span>
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;margin-right:4px;" onclick="event.stopPropagation();expandAllAMilSBDs('${a.id}')">▼ All</button>
+      <button class="btn btn-sm" style="font-size:7px;padding:2px 8px;margin-right:6px;" onclick="event.stopPropagation();collapseAllAMilSBDs('${a.id}')">▶ All</button>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <!-- Generals sub-section -->
+      <div style="padding:8px 0 12px;border-bottom:1px solid rgba(26,48,69,.5);margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;">⭐ Generals</span>
+            ${leader?`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 10px;border:1px solid var(--gold);color:var(--gold);background:rgba(255,215,0,.07);">♛ Leader: Gen. ${escAMil(leader.name)}</span>`:''}
+          </div>
+          <button class="btn btn-sm" style="font-size:8px;padding:3px 9px;border-color:var(--gold);color:var(--gold);" onclick="openAMilGenModal('${a.id}',null)">+ Add General</button>
+        </div>
+        ${genRows}
+      </div>
+      <!-- Contribution pool -->
+      <div class="mil-breakdown-title" style="margin-top:4px;">📊 Contribution Pool (per country)</div>
+      ${breakdownRows}
+      <!-- SBD tree -->
+      <div style="margin-top:12px;">${emptyMsg}${divHtml}${unassignedHtml}</div>
+      <!-- Action bar -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <button class="btn btn-sm btn-red" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','division',null)">+ New Division</button>
+        <button class="btn btn-sm btn-orange" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','battalion',null)">+ New Battalion</button>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="openAMilCreateModal('${a.id}','squad',null)">+ New Squad</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// =====================================================
+// COMMUNIST MILITARY — EXPAND / COLLAPSE ALL
+// =====================================================
+function collapseAllAMilSBDs(allianceId){
+  const a=getAlliance(allianceId); if(!a) return;
+  [...(a.milDivisions||[]),...(a.milBattalions||[]),...(a.milSquads||[])].forEach(e=>collapsedAllianceSBDs.add(e.id));
+  renderEditor();
+}
+function expandAllAMilSBDs(allianceId){
+  const a=getAlliance(allianceId); if(!a) return;
+  [...(a.milDivisions||[]),...(a.milBattalions||[]),...(a.milSquads||[])].forEach(e=>collapsedAllianceSBDs.delete(e.id));
+  renderEditor();
+}
+
+// =====================================================
+// COMMUNIST MILITARY — GENERALS
+// =====================================================
+let _aMilGenAllianceId=null, _aMilGenId=null;
+function openAMilGenModal(allianceId, genId){
+  _aMilGenAllianceId=allianceId; _aMilGenId=genId||null;
+  const a=getAlliance(allianceId); if(!a) return;
+  const g=genId?(a.military_generals||[]).find(x=>x.id===genId):null;
+  document.getElementById('a-mil-gen-name').value=g?g.name:'';
+  openModal('a-mil-gen-modal');
+  setTimeout(()=>document.getElementById('a-mil-gen-name').focus(),100);
+}
+function confirmAMilGen(){
+  const a=getAlliance(_aMilGenAllianceId); if(!a) return;
+  const name=(document.getElementById('a-mil-gen-name').value||'').trim();
+  if(!name){ document.getElementById('a-mil-gen-name').style.borderColor='var(--red)'; return; }
+  if(!a.military_generals) a.military_generals=[];
+  if(_aMilGenId){ const g=a.military_generals.find(x=>x.id===_aMilGenId); if(g) g.name=name; }
+  else a.military_generals.push({id:uuid(),name});
+  save(); closeModal('a-mil-gen-modal'); renderEditor();
+  showToast(_aMilGenId?'General updated!':'General added!');
+}
+function deleteAMilGen(allianceId, genId){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.military_generals=(a.military_generals||[]).filter(g=>g.id!==genId);
+  if(a.military_leader_id===genId) a.military_leader_id=null;
+  save(); renderEditor(); showToast('General removed.');
+}
+function setAMilLeader(allianceId, genId){
+  const a=getAlliance(allianceId); if(!a) return;
+  a.military_leader_id=genId||null;
+  save(); renderEditor();
+  showToast(genId?'♛ Leader assigned!':'Leader removed.');
+}
+
+// =====================================================
+// COMMUNIST MILITARY — COMMANDER PROMOTION
+// =====================================================
+let _aMilCmdAllianceId=null, _aMilCmdSbdId=null, _aMilCmdAction=null;
+function openAMilCmdModal(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  if(sbd.points<100){ showToast('Unit needs 100+ points to promote.'); return; }
+  _aMilCmdAllianceId=allianceId; _aMilCmdSbdId=sbdId;
+
+  const nameRow=document.getElementById('a-mil-cmd-name-row');
+  const titleEl=document.getElementById('a-mil-cmd-title');
+  const infoEl=document.getElementById('a-mil-cmd-info');
+  const btnEl=document.getElementById('a-mil-cmd-btn');
+
+  document.getElementById('a-mil-cmd-sbd-name').textContent=sbd.name;
+  document.getElementById('a-mil-cmd-pts').textContent=fmt(sbd.points);
+
+  if(sbd.commander && !sbd.higher_commander){
+    _aMilCmdAction='upgrade-to-higher';
+    titleEl.textContent='⬆ Upgrade to Operational Commander';
+    infoEl.innerHTML=`Field Commander <strong style="color:var(--gold);">${escAMil(sbd.commander.name)}</strong> will be promoted to <strong style="color:var(--purple);">Operational Commander</strong>.<br>The Field Commander slot will be freed for a new appointment. <span style="color:var(--red);">−100 pts</span>`;
+    nameRow.style.display='none';
+    btnEl.textContent='⬆ UPGRADE';
+    btnEl.style.borderColor='var(--purple)'; btnEl.style.color='var(--purple)';
+  } else {
+    _aMilCmdAction='assign-field';
+    const hasHigher=!!sbd.higher_commander;
+    titleEl.textContent='🏅 Assign Field Commander';
+    infoEl.innerHTML=`Assign a Field Commander to <strong>${escAMil(sbd.name)}</strong>.${hasHigher?` Current Op.Cmd: <strong style="color:var(--purple);">${escAMil(sbd.higher_commander.name)}</strong>.`:''} The Field Commander counts as 1 man on the field. <span style="color:var(--red);">−100 pts</span>`;
+    nameRow.style.display='';
+    document.getElementById('a-mil-cmd-name').value='';
+    btnEl.textContent='🏅 PROMOTE';
+    btnEl.style.borderColor='var(--gold)'; btnEl.style.color='var(--gold)';
+  }
+  openModal('a-mil-cmd-modal');
+  if(_aMilCmdAction==='assign-field') setTimeout(()=>document.getElementById('a-mil-cmd-name').focus(),100);
+}
+function confirmAMilCmd(){
+  const a=getAlliance(_aMilCmdAllianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,_aMilCmdSbdId); if(!sbd) return;
+  const editOpen=document.getElementById('a-mil-edit-modal').classList.contains('open');
+  if(_aMilCmdAction==='upgrade-to-higher'){
+    sbd.higher_commander=sbd.commander;
+    sbd.commander=null;
+    sbd.points=Math.max(0,(sbd.points||0)-100);
+    save(); closeModal('a-mil-cmd-modal'); renderEditor();
+    if(editOpen) renderAMilEditModal();
+    showToast(`⬆ ${sbd.higher_commander.name} is now Operational Commander of ${sbd.name}!`);
+  } else {
+    const name=(document.getElementById('a-mil-cmd-name').value||'').trim();
+    if(!name){ document.getElementById('a-mil-cmd-name').style.borderColor='var(--red)'; return; }
+    sbd.commander={name};
+    sbd.points=Math.max(0,(sbd.points||0)-100);
+    save(); closeModal('a-mil-cmd-modal'); renderEditor();
+    if(editOpen) renderAMilEditModal();
+    showToast(`🏅 ${name} assigned as Field Commander of ${sbd.name}! (−100pts)`);
+  }
+}
+function removeAMilFieldCmd(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  sbd.commander=null;
+  save(); renderEditor();
+  const editOpen=document.getElementById('a-mil-edit-modal').classList.contains('open');
+  if(editOpen) renderAMilEditModal();
+  showToast('Field Commander removed.');
+}
+function removeAMilHigherCmd(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sbd=getAllianceMilEntity(a,sbdId); if(!sbd) return;
+  sbd.higher_commander=null;
+  save(); renderEditor();
+  const editOpen=document.getElementById('a-mil-edit-modal').classList.contains('open');
+  if(editOpen) renderAMilEditModal();
+  showToast('Operational Commander removed.');
+}
+
+// =====================================================
+// COMMUNIST MILITARY — SPECIAL OPS TRAINING (Squad only)
+// =====================================================
+let _aSpecTrainAllianceId=null, _aSpecTrainSbdId=null;
+function openASpecialTrainingModal(allianceId, sbdId){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sq=getAllianceMilEntity(a,sbdId); if(!sq||sq.type!=='squad') return;
+  _aSpecTrainAllianceId=allianceId; _aSpecTrainSbdId=sbdId;
+  renderASpecialTrainingModal();
+  openModal('a-spec-train-modal');
+}
+function renderASpecialTrainingModal(){
+  const a=getAlliance(_aSpecTrainAllianceId); if(!a) return;
+  const sq=getAllianceMilEntity(a,_aSpecTrainSbdId); if(!sq) return;
+  const hasCmd=!!sq.commander, hasHigher=!!sq.higher_commander;
+  const trainings=sq.special_training||[];
+  const cmdTraining=trainings.find(t=>t.trainer==='commander');
+  const higherTraining=trainings.find(t=>t.trainer==='higher_commander');
+
+  let html=`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:14px;line-height:1.7;padding:8px;background:var(--bg);border:1px solid var(--border);">
+    Special Ops units are trained 4 men at a time. Each commander slot trains independently. Training completes when the cycle countdown reaches zero.
+  </div>`;
+
+  if(!hasCmd&&!hasHigher){
+    html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);padding:12px 0;text-align:center;">No commander present. A Field Commander or Operational Commander is required to train Special Operations units.</div>`;
+    document.getElementById('a-spec-train-content').innerHTML=html; return;
+  }
+  if(hasCmd){
+    if(cmdTraining){
+      const pct=Math.round((1-cmdTraining.cyclesLeft/cmdTraining.cyclesTotal)*100);
+      html+=`<div style="padding:10px;border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.04);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);">⭐ CMD. TRAINING</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escAMil(sq.commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">4 Special Forces · ${cmdTraining.cyclesLeft} cycle${cmdTraining.cyclesLeft!==1?'s':''} remaining</div>
+        <div style="width:100%;height:4px;background:var(--bg);border:1px solid var(--border);margin-top:6px;"><div style="width:${pct}%;height:100%;background:var(--gold);"></div></div>
+        <button class="btn btn-sm btn-red" style="font-size:7px;margin-top:8px;" onclick="cancelASpecialTraining('${a.id}','${sq.id}','commander')">✕ Cancel</button>
+      </div>`;
+    } else {
+      html+=`<div style="padding:10px;border:1px solid rgba(255,215,0,.2);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);">⭐ FIELD COMMANDER</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escAMil(sq.commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;">Trains 4 Special Forces · 6 cycles</div>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="startASpecialTraining('${a.id}','${sq.id}','commander')">▶ Start Training (6 cycles)</button>
+      </div>`;
+    }
+  }
+  if(hasHigher){
+    if(higherTraining){
+      const pct=Math.round((1-higherTraining.cyclesLeft/higherTraining.cyclesTotal)*100);
+      html+=`<div style="padding:10px;border:1px solid rgba(192,132,252,.3);background:rgba(192,132,252,.04);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--purple);">♛ OP.CMD. TRAINING</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escAMil(sq.higher_commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);">4 Special Forces · ${higherTraining.cyclesLeft} cycle${higherTraining.cyclesLeft!==1?'s':''} remaining</div>
+        <div style="width:100%;height:4px;background:var(--bg);border:1px solid var(--border);margin-top:6px;"><div style="width:${pct}%;height:100%;background:var(--purple);"></div></div>
+        <button class="btn btn-sm btn-red" style="font-size:7px;margin-top:8px;" onclick="cancelASpecialTraining('${a.id}','${sq.id}','higher_commander')">✕ Cancel</button>
+      </div>`;
+    } else {
+      html+=`<div style="padding:10px;border:1px solid rgba(192,132,252,.2);margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--purple);">♛ OPERATIONAL COMMANDER</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);">${escAMil(sq.higher_commander.name)}</span>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;">Trains 4 Special Forces · 5 cycles</div>
+        <button class="btn btn-sm btn-green" style="font-size:8px;" onclick="startASpecialTraining('${a.id}','${sq.id}','higher_commander')">▶ Start Training (5 cycles)</button>
+      </div>`;
+    }
+  }
+  document.getElementById('a-spec-train-content').innerHTML=html;
+}
+function startASpecialTraining(allianceId, sbdId, trainerType){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sq=getAllianceMilEntity(a,sbdId); if(!sq||sq.type!=='squad') return;
+  if(!sq.special_training) sq.special_training=[];
+  if(sq.special_training.find(t=>t.trainer===trainerType)){ showToast('This commander is already training.'); return; }
+  if(trainerType==='commander'&&!sq.commander){ showToast('No Field Commander assigned.'); return; }
+  if(trainerType==='higher_commander'&&!sq.higher_commander){ showToast('No Operational Commander assigned.'); return; }
+  const reservedArmy=sq.special_training.length*4;
+  const availableArmy=(sq.men.army||0)-reservedArmy;
+  if(availableArmy<4){ showToast(`Not enough army men. Need 4 available soldiers (have ${Math.max(0,availableArmy)}).`); return; }
+  const cycles=trainerType==='commander'?6:5;
+  sq.special_training.push({id:uuid(),trainer:trainerType,cyclesLeft:cycles,cyclesTotal:cycles});
+  save(); renderEditor(); renderASpecialTrainingModal();
+  showToast(`🎖 Special Ops training started! ${cycles} cycles remaining.`);
+}
+function cancelASpecialTraining(allianceId, sbdId, trainerType){
+  const a=getAlliance(allianceId); if(!a) return;
+  const sq=getAllianceMilEntity(a,sbdId); if(!sq) return;
+  sq.special_training=(sq.special_training||[]).filter(t=>t.trainer!==trainerType);
+  save(); renderEditor(); renderASpecialTrainingModal();
+  showToast('Training cancelled.');
+}
 
 // =====================================================
 // IMPORT / EXPORT
