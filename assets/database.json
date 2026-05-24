@@ -738,11 +738,235 @@
         ]
       }
     ],
-    "military_generals": [],
-    "military_leader_id": null,
-    "divisions": [],
-    "battalions": [],
-    "squads": [],
+    "military_generals": [
+      {
+        "id": "mpj0bb0oxgdx7v1oqt",
+        "name": "Yosef Stalin"
+      },
+      {
+        "id": "mpj0f0rxivjiulpda9",
+        "name": "Vladmir Lenin"
+      }
+    ],
+    "military_leader_id": "mpj0bb0oxgdx7v1oqt",
+    "divisions": [
+      {
+        "id": "mpj0gbxpg1i3z8s4txc",
+        "name": "Spetsnaz",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [
+      {
+        "id": "mpj0gtu4k3j1ofieo8",
+        "name": "East Front",
+        "type": "battalion",
+        "parent_id": "mpj0gbxpg1i3z8s4txc",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpj0gwhseuuxdntl7ld",
+        "name": "KGB",
+        "type": "battalion",
+        "parent_id": "mpj0gbxpg1i3z8s4txc",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "squads": [
+      {
+        "id": "mpj0h2ajv0o0391ewj",
+        "name": "1st Spy Group",
+        "type": "squad",
+        "parent_id": "mpj0gwhseuuxdntl7ld",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
     "action_plan": {
       "main_objective": "Defend Russia Supremacy",
       "action_plan_text": "",
