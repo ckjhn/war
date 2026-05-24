@@ -809,10 +809,10 @@
     "military_leader_id": null
   },
   {
-    "id": "mp7u96kbuqtscd",
-    "name": "Northen Alliance",
+    "id": "mpjaqmdcjck9fg",
+    "name": "Northern Alliance",
     "flag": "☦",
-    "style": "fascist",
+    "style": "communist",
     "members": [
       {
         "name": "CV",
@@ -830,11 +830,13 @@
         "effort": 0
       }
     ],
+    "objectives": [],
     "observations": "",
-    "createdAt": 1778905248635,
+    "createdAt": 1779598064064,
     "own": {
       "money": 0,
       "civilians": 0,
+      "workers": 0,
       "factories": 0,
       "businesses": 0,
       "hospitals": 0,
@@ -852,6 +854,7 @@
         "rare": 0,
         "frozen": 0
       },
+      "production": [],
       "iron": 0,
       "coal": 0,
       "gold": 0,
@@ -931,9 +934,7 @@
         "drone": 0,
         "barricade": 0,
         "barrier": 0
-      },
-      "workers": 0,
-      "production": []
+      }
     },
     "militaryBreakdown": [],
     "donations": [],
@@ -941,11 +942,10 @@
       "fixedPerMember": 0
     },
     "turn": 0,
-    "objectives": [],
+    "military_generals": [],
+    "military_leader_id": null,
     "milDivisions": [],
     "milBattalions": [],
-    "milSquads": [],
-    "military_generals": [],
-    "military_leader_id": null
+    "milSquads": []
   }
 ]
