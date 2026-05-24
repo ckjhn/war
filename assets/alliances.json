@@ -128,9 +128,402 @@
     },
     "turn": 0,
     "objectives": [],
-    "milDivisions": [],
-    "milBattalions": [],
-    "milSquads": []
+    "milDivisions": [
+      {
+        "id": "mpjabt9gqwrw5a",
+        "name": "Spetsnaz",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpjaktvlvlr3ut",
+        "name": "Southeast Front",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 12,
+          "special_forces": 0,
+          "majors": 1,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpjakxtgd90adw",
+        "name": "East Front",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 9,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "milBattalions": [
+      {
+        "id": "mpjaby2a2tfxij",
+        "name": "KGB",
+        "type": "battalion",
+        "parent_id": "mpjabt9gqwrw5a",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpjacyqaw6h8fy",
+        "name": "GRU",
+        "type": "battalion",
+        "parent_id": "mpjabt9gqwrw5a",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "milSquads": [
+      {
+        "id": "mpjad566lpx7ez",
+        "name": "Alpha",
+        "type": "squad",
+        "parent_id": "mpjacyqaw6h8fy",
+        "men": {
+          "army": 4,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpjadch7ljvn3o",
+        "name": "1st Spy Group",
+        "type": "squad",
+        "parent_id": "mpjaby2a2tfxij",
+        "men": {
+          "army": 3,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "military_generals": [
+      {
+        "id": "mpja4e62pr6j5t",
+        "name": "Yosef Stalin"
+      },
+      {
+        "id": "mpja4m4jome70k",
+        "name": "Vladmir Putin"
+      },
+      {
+        "id": "mpja4udcwhbdb6",
+        "name": "Valdmir Lenin"
+      },
+      {
+        "id": "mpja542yyuglfi",
+        "name": "Leonid Kravchuk"
+      }
+    ],
+    "military_leader_id": "mpja4e62pr6j5t"
   },
   {
     "id": "mp7u833vfc3o52",
@@ -287,7 +680,9 @@
     ],
     "milDivisions": [],
     "milBattalions": [],
-    "milSquads": []
+    "milSquads": [],
+    "military_generals": [],
+    "military_leader_id": null
   },
   {
     "id": "mp7u8izfgu7u3r",
@@ -409,7 +804,9 @@
     "objectives": [],
     "milDivisions": [],
     "milBattalions": [],
-    "milSquads": []
+    "milSquads": [],
+    "military_generals": [],
+    "military_leader_id": null
   },
   {
     "id": "mp7u96kbuqtscd",
@@ -547,6 +944,8 @@
     "objectives": [],
     "milDivisions": [],
     "milBattalions": [],
-    "milSquads": []
+    "milSquads": [],
+    "military_generals": [],
+    "military_leader_id": null
   }
 ]
