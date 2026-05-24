@@ -978,7 +978,7 @@ function renderEditor(){
         <button class="btn btn-sm btn-yellow" onclick="openDonateModal('${a.id}')">📦 Donate</button>
         ${!isCommunist?`<button class="btn btn-sm" style="border-color:var(--purple);color:var(--purple);" onclick="openEditModal('${a.id}')">✎ Edit</button>`:''}
         ${!isCommunist?`<button class="btn btn-sm btn-green" onclick="openCycleConfirmModal('${a.id}')">⏳ Cycle</button>`:''}
-        ${!isCommunist?`<button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ Pass Turn</button>`:''}
+        <button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ Pass Turn</button>
         <button class="btn btn-sm btn-purple" onclick="refreshDatabase('${a.id}')">🔄 Refresh DB</button>
       </div>
     </div>
@@ -1006,6 +1006,7 @@ function renderEditor(){
     // ─── COMMUNIST: show aggregated DB of all members + enhanced military command ───
     html += renderCommunistSection(a);
     html += renderCommunistMilSection(a);
+    html += renderCommunistProductionSection(a);
   } else {
     // ─── FASCIST/CAPITALIST: show own assets, military pool, donations backlog ───
     html += renderAllianceAssets(a);
@@ -2010,7 +2011,6 @@ function executeCycleAlliance(){
 // =====================================================
 function passTurnAlliance(allianceId){
   const a = getAlliance(allianceId); if(!a) return;
-  if(a.style==='communist'){ showToast('Communist alliances share member data — no turn needed.'); return; }
   let advanced = 0;
   (a.own.production||[]).forEach(line=>{
     const activeItem = line.items.find(it=>(it.turnsLeft||0)>0);
@@ -2647,6 +2647,68 @@ function asbdPromoteBtn(a, sbd){
     return `<button class="btn btn-sm" style="font-size:7px;padding:2px 7px;border-color:var(--gold);color:var(--gold);" onclick="openAMilCmdModal('${a.id}','${sbd.id}')">🏅 New Cmd.</button>`;
   }
   return '';
+}
+
+// =====================================================
+// COMMUNIST PRODUCTION SECTION
+// =====================================================
+function renderCommunistProductionSection(a){
+  if(!a.own.production) a.own.production=[];
+  const prodLines = a.own.production;
+  const linesHtml = prodLines.map((line,idx)=>{
+    const activeItem = line.items.find(it=>it.turnsLeft>0);
+    const itemsHtml = line.items.map(item=>{
+      const done = item.turnsLeft===0;
+      const isActive = !done && item===activeItem;
+      const statusColor = done?'var(--text-dim)':isActive?'var(--communist-color)':'var(--border)';
+      const label = done?'✓ Done':isActive?`${item.turnsLeft} turns left`:`Queued — ${item.turnsLeft} turns`;
+      const meta = `⚙ ${item.workers}w · ⛽ ${item.fuel}L · 🔧 ${item.mp}MP`;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid ${statusColor};background:var(--bg);margin-bottom:4px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${statusColor};flex-shrink:0;">●</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escA(item.name)}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${statusColor};white-space:nowrap;">${label}</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);white-space:nowrap;">${meta}</span>
+        <button style="background:transparent;border:1px solid transparent;color:var(--text-dim);font-size:11px;cursor:pointer;padding:1px 5px;flex-shrink:0;transition:all .15s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)';" onmouseout="this.style.borderColor='transparent';this.style.color='var(--text-dim)';" onclick="deleteAllianceProdItem('${a.id}','${line.id}','${item.id}')">×</button>
+      </div>`;
+    }).join('');
+    const workerBadge = activeItem?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;border:1px solid rgba(255,140,66,.4);color:var(--communist-color);">⚙ ${activeItem.workers} workers</span>`:'';
+    const progressPct = activeItem&&activeItem.turnsTotal>0?Math.round((1-activeItem.turnsLeft/activeItem.turnsTotal)*100):null;
+    return `<div style="border:1px solid rgba(255,140,66,.3);background:var(--surface2);margin-bottom:8px;overflow:hidden;">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,140,66,.06);border-bottom:1px solid rgba(255,140,66,.2);">
+        <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--communist-color);text-transform:uppercase;">Factory ${idx+1}</span>
+        ${workerBadge}
+        ${progressPct!==null?`<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-left:4px;">${progressPct}% complete</span>`:''}
+        <div style="display:flex;gap:4px;margin-left:auto;">
+          <button class="btn btn-sm" style="font-size:8px;padding:3px 8px;" onclick="openAddAllianceProdItem('${a.id}','${line.id}')">+ Queue</button>
+          <button class="btn btn-sm btn-red" style="font-size:8px;padding:3px 8px;" onclick="deleteAllianceProdLine('${a.id}','${line.id}')">× Line</button>
+        </div>
+      </div>
+      <div style="padding:6px 10px;">${itemsHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--text-dim);padding:4px 0;">Queue empty.</div>'}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="section" id="sec-production">
+    <div class="section-header" onclick="toggleSection('production')">
+      <span class="section-title" style="color:var(--communist-color);">🏭 Alliance Production</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--communist-color);margin-right:10px;">${prodLines.length} line${prodLines.length!==1?'s':''}</span>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" style="padding:0;">
+      <div class="pass-turn-bar" style="background:rgba(255,140,66,.04);border-top-color:rgba(255,140,66,.2);">
+        <span class="turn-label">TURN</span>
+        <span class="turn-counter">${a.turn||0}</span>
+        <button class="btn btn-sm btn-orange" onclick="passTurnAlliance('${a.id}')">⚙ PASS TURN</button>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);">Advances all active production lines by 1 turn.</span>
+      </div>
+      <div style="padding:14px 18px;">
+        <div style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--communist-color);text-transform:uppercase;">🏭 Production Lines · ${prodLines.length} line${prodLines.length!==1?'s':''}</span>
+          <button class="btn btn-sm btn-orange" style="font-size:8px;" onclick="openAddAllianceProdLine('${a.id}')">+ New Line</button>
+        </div>
+        ${linesHtml||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--text-dim);text-align:center;padding:8px 0;">No production lines. Add one above.</div>'}
+      </div>
+    </div>
+  </div>`;
 }
 
 // =====================================================
