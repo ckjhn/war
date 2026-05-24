@@ -44,7 +44,7 @@
     "PCC": false,
     "Iran": false,
     "Iraq/Affeganisthan": false,
-    "Taliban/Hezbollah": false,
+    "Taliban/Hezbollah": true,
     "Hamas": false,
     "Al-Qaeda": false,
     "Ukraine": false,
