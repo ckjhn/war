@@ -2185,11 +2185,11 @@ function renderMilEditModal(){
         ${[{k:'army',l:'Army Soldiers'},{k:'special_forces',l:'Special Forces'},{k:'majors',l:'Majors'},{k:'spies',l:'Spies'}].map(f=>`
           <div class="modal-field">
             <div class="modal-label">${f.l}</div>
-            <input class="modal-input" id="mle-men-${f.k}" type="number" min="0" value="${m[f.k]||0}">
+            <input class="modal-input" id="mle-men-${f.k}" type="number" min="0" value="${m[f.k]||0}" oninput="autoSaveMilMen('${f.k}',this.value)">
           </div>`).join('')}
         <div class="modal-field">
           <div class="modal-label" style="color:var(--red);">💀 Deaths</div>
-          <input class="modal-input" id="mle-deaths" type="number" min="0" value="${sbd.deaths||0}" style="border-color:rgba(255,58,58,.3);">
+          <input class="modal-input" id="mle-deaths" type="number" min="0" value="${sbd.deaths||0}" style="border-color:rgba(255,58,58,.3);" oninput="autoSaveMilMen('deaths',this.value)">
         </div>
       </div>
       <div style="margin-top:6px;padding:8px;background:var(--bg);border:1px solid var(--border);">
@@ -2260,7 +2260,7 @@ function renderMilEditModal(){
         ${def.fields.map(f=>`
           <div class="modal-field">
             <div class="modal-label">${f.l}</div>
-            <input class="modal-input" id="mle-sup-${typeKey}-${f.k}" type="number" min="0" value="${vals[f.k]||0}">
+            <input class="modal-input" id="mle-sup-${typeKey}-${f.k}" type="number" min="0" value="${vals[f.k]||0}" oninput="autoSaveMilSupport('${typeKey}','${f.k}',this.value)">
           </div>`).join('')}
       </div>
       <div style="margin-top:6px;"><button class="btn btn-green" onclick="saveMilSupport('${typeKey}')">✓ Save ${def.label}</button></div>`;
@@ -2363,6 +2363,22 @@ function autoSaveObservation(cid,sbdId,val){
     const sbd=getMilEntity(c,sbdId); if(!sbd) return;
     sbd.observation=val; save(); flashSaved();
   }, 800);
+}
+function autoSaveMilMen(field,val){
+  const c=getCountry(_milEditCid); if(!c) return;
+  const sbd=getMilEntity(c,_milEditId); if(!sbd) return;
+  const num=Math.max(0,parseInt(val)||0);
+  if(field==='deaths') sbd.deaths=num;
+  else { if(!sbd.men) sbd.men={}; sbd.men[field]=num; }
+  save(); flashSaved();
+}
+function autoSaveMilSupport(typeKey,field,val){
+  const c=getCountry(_milEditCid); if(!c) return;
+  const sbd=getMilEntity(c,_milEditId); if(!sbd) return;
+  if(!sbd.support) sbd.support={};
+  if(!sbd.support[typeKey]) sbd.support[typeKey]={};
+  sbd.support[typeKey][field]=Math.max(0,parseInt(val)||0);
+  save(); flashSaved();
 }
 function deleteMilObj(cid,sbdId,objId){
   const c=getCountry(cid); if(!c) return;
