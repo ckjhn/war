@@ -116,7 +116,10 @@
       "fixedPerMember": 0
     },
     "turn": 0,
-    "objectives": []
+    "objectives": [],
+    "milDivisions": [],
+    "milBattalions": [],
+    "milSquads": []
   },
   {
     "id": "mp7u833vfc3o52",
@@ -270,7 +273,10 @@
         "supportEffort": 20,
         "completedBy": null
       }
-    ]
+    ],
+    "milDivisions": [],
+    "milBattalions": [],
+    "milSquads": []
   },
   {
     "id": "mp7u8izfgu7u3r",
@@ -389,7 +395,225 @@
       "fixedPerMember": 0
     },
     "turn": 0,
-    "objectives": []
+    "objectives": [],
+    "milDivisions": [
+      {
+        "id": "mpj0cfsj8gi3xm",
+        "name": "Spetsnaz",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "milBattalions": [
+      {
+        "id": "mpj0d1xbo4mdn4",
+        "name": "Ianov",
+        "type": "battalion",
+        "parent_id": "mpj0cfsj8gi3xm",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      },
+      {
+        "id": "mpj0dd04wu3kxn",
+        "name": "KGB",
+        "type": "battalion",
+        "parent_id": "mpj0cfsj8gi3xm",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "milSquads": [
+      {
+        "id": "mpj0dir15zcahy",
+        "name": "1st Spy Group",
+        "type": "squad",
+        "parent_id": "mpj0dd04wu3kxn",
+        "men": {
+          "army": 0,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ]
   },
   {
     "id": "mp7u96kbuqtscd",
@@ -524,6 +748,9 @@
       "fixedPerMember": 0
     },
     "turn": 0,
-    "objectives": []
+    "objectives": [],
+    "milDivisions": [],
+    "milBattalions": [],
+    "milSquads": []
   }
 ]
