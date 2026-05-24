@@ -48,7 +48,7 @@
     "Hamas": true,
     "Al-Qaeda": true,
     "Ukraine": false,
-    "Germany": false,
+    "Germany": true,
     "United Kingdom": true
   },
   "monthHistory": {
