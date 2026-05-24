@@ -2870,7 +2870,7 @@
         "type": "division",
         "parent_id": null,
         "men": {
-          "army": 9,
+          "army": 0,
           "special_forces": 0,
           "majors": 0,
           "spies": 0
