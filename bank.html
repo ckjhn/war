@@ -1132,6 +1132,7 @@ NATIONS.forEach(n => {
     creditDebt: 0,
     cardDisabled: false,
     cardNumber: generateCardNumber(),
+    highestCardTier: 'basic',
   };
 });
 
@@ -1509,6 +1510,7 @@ function loadState() {
         accounts[n.id].creditDebt     = s.creditDebt     ?? 0;
         accounts[n.id].cardDisabled   = s.cardDisabled   ?? false;
         accounts[n.id].cardNumber     = s.cardNumber     || generateCardNumber();
+        accounts[n.id].highestCardTier= s.highestCardTier ?? s.cardTier ?? 'basic';
       }
     });
     treasury            = saved.treasury            ?? 50000;
@@ -1617,6 +1619,12 @@ function renderCards() {
     const warningClass = acc.cardDisabled ? 'card-suspended'
       : acc.balance < -2500 ? 'card-debt-warning' : '';
 
+    const nextIdx     = nextTier ? TIER_ORDER.indexOf(nextTier) : -1;
+    const highestIdx  = TIER_ORDER.indexOf(acc.highestCardTier || 'basic');
+    const isReupgrade = nextTier && nextIdx <= highestIdx;
+    const nextBaseCost= nextTier ? CARD_TIERS[nextTier].upgradeCost : 0;
+    const nextCost    = isReupgrade ? Math.round(nextBaseCost * 0.75) : nextBaseCost;
+
     return `
     <div class="card-grid-item ${warningClass}" id="cc-item-${n.id}">
       <div class="card-nation-name">
@@ -1656,11 +1664,15 @@ function renderCards() {
       </div>
       <div class="cc-upgrade-row">
         ${nextTier ? `<button class="btn btn-upgrade" onclick="upgradeCard('${n.id}')" ${!en||acc.cardDisabled?'disabled':''}>
-          ↑ Upgrade to ${CARD_TIERS[nextTier].name}
-        </button>` : `<span style="font-size:9px;color:var(--gold);letter-spacing:2px;flex:1;text-align:center">✦ MAX TIER REACHED</span>`}
+          ↑ Upgrade to ${CARD_TIERS[nextTier].name}${isReupgrade?' ✦':''}</button>`
+          : `<span style="font-size:9px;color:var(--gold);letter-spacing:2px;flex:1;text-align:center">✦ MAX TIER REACHED</span>`}
         ${prevTier ? `<button class="btn btn-downgrade btn" onclick="downgradeCard('${n.id}')" ${!en?'disabled':''}>↓ Downgrade</button>` : ''}
       </div>
-      ${nextTier ? `<div class="tier-cost-note">Upgrade cost: ${fmt(CARD_TIERS[nextTier].upgradeCost)} → paid to Dubai Treasury</div>` : ''}
+      ${nextTier ? `<div class="tier-cost-note">
+        ${isReupgrade
+          ? `Re-upgrade: <span style="color:var(--green)">${fmt(nextCost)}</span> <span style="opacity:.5;text-decoration:line-through">${fmt(nextBaseCost)}</span> <span style="color:var(--green);font-weight:600">−25% loyalty</span>`
+          : `Upgrade cost: ${fmt(nextCost)}`} → Dubai Treasury
+      </div>` : ''}
     </div>`;
   }).join('');
 }
@@ -1733,20 +1745,28 @@ function upgradeCard(id) {
   const tidx    = TIER_ORDER.indexOf(acc.cardTier);
   const nextKey = TIER_ORDER[tidx + 1];
   if (!nextKey) { notify('Max Tier', 'Already at Infinity tier.', 'gold'); return; }
-  const cost = CARD_TIERS[nextKey].upgradeCost;
+
+  const nextIdx    = TIER_ORDER.indexOf(nextKey);
+  const highestIdx = TIER_ORDER.indexOf(acc.highestCardTier || 'basic');
+  const isReupgrade = nextIdx <= highestIdx;
+  const baseCost   = CARD_TIERS[nextKey].upgradeCost;
+  const cost       = isReupgrade ? Math.round(baseCost * 0.75) : baseCost;
+
   if (acc.balance < cost) {
-    notify('Insufficient Funds', `Need ${fmt(cost)} to upgrade to ${CARD_TIERS[nextKey].name}.`, 'red'); return;
+    notify('Insufficient Funds', `Need ${fmt(cost)} to upgrade to ${CARD_TIERS[nextKey].name}${isReupgrade?' (25% loyalty discount applied)':''}.`, 'red'); return;
   }
   acc.balance  -= cost;
   acc.cardTier  = nextKey;
+  if (nextIdx > highestIdx) acc.highestCardTier = nextKey;
   treasury     += cost;
   treasuryTaxTotal += cost;
   updateCard(id);
   updateTreasury();
   updateCreditCardDisplay(id);
-  addLog('loss', acc.name, `Card upgraded → ${CARD_TIERS[nextKey].name} (paid ${fmt(cost)} to Treasury)`, -cost);
+  const discountNote = isReupgrade ? ` (loyalty discount: saved ${fmt(baseCost - cost)})` : '';
+  addLog('loss', acc.name, `Card upgraded → ${CARD_TIERS[nextKey].name} — paid ${fmt(cost)}${discountNote}`, -cost);
   addLog('treasury', 'Dubai Treasury', `Card upgrade fee from ${acc.name}`, cost);
-  notify('Card Upgraded', `${acc.name} upgraded to ${CARD_TIERS[nextKey].name}`, 'gold');
+  notify('Card Upgraded', `${acc.name} → ${CARD_TIERS[nextKey].name}${isReupgrade?' (−25% loyalty discount)':''}`, 'gold');
   saveState();
 }
 
@@ -1807,6 +1827,11 @@ function applyEditReserve() {
 renderNations();
 renderBlocked();
 loadState();
+// Self-hide header when embedded inside the hub iframe
+if (window.self !== window.top) {
+  const hdr = document.getElementById('header');
+  if (hdr) hdr.style.display = 'none';
+}
 // Sync slider UI to loaded (or default) taxRate
 slider.value = taxRate;
 taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);

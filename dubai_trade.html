@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dubai Trade Desk</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+:root {
+  --gold: #c9a84c; --gold-light: #e0c06a; --gold-dark: #9a7a2e;
+  --bg: #0a0a0a; --bg2: #101010; --bg3: #161616; --bg4: #1e1e1e;
+  --card: #121212; --card-border: rgba(201,168,76,0.18);
+  --text: #e8e0cc; --text-muted: #7a7265; --text-dim: #4a4540;
+  --green: #3dba74; --red: #d94f4f; --blue: #4a8adf;
+  --radius: 4px; --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.05) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.02) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.02) 40px);
+}
+
+/* ── HEADER ── */
+#header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.97);
+  border-bottom: 1px solid rgba(201,168,76,0.25);
+  backdrop-filter: blur(12px);
+  padding: 0 32px;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1700px; margin: 0 auto; height: 70px;
+}
+.bank-logo { display: flex; align-items: center; gap: 16px; }
+.logo-emblem {
+  width: 42px; height: 42px; border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; transform: rotate(45deg); flex-shrink: 0;
+}
+.logo-emblem::before { content:''; position:absolute; inset:4px; border:1px solid rgba(201,168,76,0.4); }
+.logo-emblem-inner { transform: rotate(-45deg); font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--gold); letter-spacing:-1px; }
+.bank-name { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--gold-light); letter-spacing:2px; text-transform:uppercase; }
+.bank-sub { font-size:9px; letter-spacing:4px; color:var(--text-muted); text-transform:uppercase; margin-top:2px; }
+.header-right { font-size:10px; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase; text-align:right; }
+.live-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:6px; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── PAGE ── */
+.page-wrap {
+  max-width: 1700px; margin: 0 auto;
+  padding: 24px 32px 48px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+/* ── STATS BAR ── */
+.stats-bar {
+  background: linear-gradient(135deg, #0e0b05, #131008);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: var(--radius-lg);
+  padding: 18px 28px;
+  display: flex; gap: 0; align-items: center;
+  flex-wrap: wrap;
+}
+.stat-item {
+  flex: 1; min-width: 140px;
+  border-right: 1px solid rgba(201,168,76,0.12);
+  padding: 0 24px;
+  text-align: center;
+}
+.stat-item:first-child { padding-left: 0; }
+.stat-item:last-child  { border-right: none; }
+.stat-label { font-size:8px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; margin-bottom:5px; }
+.stat-val   { font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--gold-light); font-weight:300; }
+.stat-val.green { color: var(--green); }
+.stat-val.small { font-size:16px; color:var(--text-muted); }
+
+/* ── MARKUP CONTROL ── */
+.markup-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding-top: 14px; margin-top: 14px;
+  border-top: 1px solid rgba(201,168,76,0.1);
+  width: 100%;
+}
+.markup-label { font-size:9px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
+.markup-val   { font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--gold); min-width:52px; text-align:right; }
+input[type=range] {
+  -webkit-appearance:none; flex:1; height:2px; outline:none; border-radius:2px; cursor:pointer;
+  background: linear-gradient(90deg, var(--gold) var(--pct,25%), rgba(201,168,76,.15) var(--pct,25%));
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:14px; height:14px; background:var(--gold);
+  border-radius:50%; border:2px solid var(--bg); box-shadow:0 0 8px rgba(201,168,76,.5);
+}
+
+/* ── MAIN LAYOUT ── */
+.trade-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── ITEM BROWSER ── */
+.browser-panel {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.browser-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.section-label {
+  font-size:9px; letter-spacing:4px; color:var(--gold-dark); text-transform:uppercase;
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(201,168,76,.3),transparent); }
+.search-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius); padding: 8px 12px;
+}
+.search-row input {
+  flex:1; background:transparent; border:none; outline:none;
+  color:var(--text); font-family:'Montserrat',sans-serif; font-size:12px;
+}
+.search-row input::placeholder { color:var(--text-dim); }
+.search-icon { color:var(--text-dim); font-size:13px; }
+
+.cat-tabs {
+  display:flex; gap:4px; padding:12px 20px; flex-wrap:wrap;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.cat-tab {
+  font-size:9px; letter-spacing:2px; font-weight:600; text-transform:uppercase;
+  padding:5px 11px; border-radius:2px; cursor:pointer; transition:all .2s;
+  background:transparent; border:1px solid rgba(255,255,255,.07); color:var(--text-muted);
+  font-family:'Montserrat',sans-serif;
+}
+.cat-tab:hover { color:var(--text); border-color:rgba(201,168,76,.3); }
+.cat-tab.active { background:rgba(201,168,76,.12); border-color:var(--gold-dark); color:var(--gold); }
+
+.items-list {
+  padding:12px; display:flex; flex-direction:column; gap:4px;
+  max-height:560px; overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:rgba(201,168,76,.2) transparent;
+}
+.items-list::-webkit-scrollbar { width:4px; }
+.items-list::-webkit-scrollbar-thumb { background:rgba(201,168,76,.2); border-radius:2px; }
+
+.item-row {
+  display:grid; grid-template-columns:1fr auto auto;
+  align-items:center; gap:10px;
+  padding:9px 12px; border-radius:var(--radius);
+  border:1px solid transparent; cursor:pointer;
+  transition:all .15s; background:rgba(255,255,255,.02);
+}
+.item-row:hover { background:rgba(201,168,76,.06); border-color:rgba(201,168,76,.2); }
+.item-row.selected { background:rgba(201,168,76,.1); border-color:rgba(201,168,76,.4); }
+.item-name-col { min-width:0; }
+.item-name-text { font-size:12px; color:var(--text); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.item-cat-badge { font-size:8px; letter-spacing:1.5px; color:var(--text-dim); text-transform:uppercase; margin-top:2px; }
+.item-market-price { font-family:'Cormorant Garamond',serif; font-size:13px; color:var(--text-muted); text-align:right; white-space:nowrap; }
+.item-dubai-price  { font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--gold); font-weight:600; text-align:right; white-space:nowrap; }
+
+/* missile size inside row */
+.missile-size-select {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  color:var(--text); font-family:'Montserrat',sans-serif; font-size:10px;
+  padding:4px 6px; border-radius:3px; cursor:pointer; outline:none;
+}
+
+/* ── ORDER PANEL ── */
+.order-panel {
+  position: sticky; top: 90px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.order-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.order-title {
+  font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600;
+  color:var(--gold-light); margin-bottom:16px;
+}
+
+.selected-item-display {
+  background: rgba(201,168,76,.06);
+  border:1px solid rgba(201,168,76,.2);
+  border-radius:var(--radius); padding:12px 14px; margin-bottom:14px;
+  min-height:52px; display:flex; align-items:center;
+}
+.selected-item-display.empty { color:var(--text-dim); font-size:11px; letter-spacing:1.5px; justify-content:center; }
+.sel-item-name { font-size:13px; font-weight:600; color:var(--text); }
+.sel-item-meta { font-size:10px; color:var(--text-muted); margin-top:3px; }
+
+.form-group { margin-bottom:12px; }
+.form-label {
+  font-size:9px; letter-spacing:2.5px; color:var(--text-muted);
+  text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:6px;
+}
+.form-label .private-badge {
+  font-size:7px; letter-spacing:2px; color:#e0a0a0;
+  background:rgba(217,79,79,.12); border:1px solid rgba(217,79,79,.25);
+  padding:2px 7px; border-radius:2px;
+}
+.form-select, .form-input {
+  width:100%; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+  border-radius:var(--radius); padding:9px 11px; color:var(--text);
+  font-family:'Montserrat',sans-serif; font-size:12px; outline:none; transition:border-color .2s;
+}
+.form-select:focus, .form-input:focus { border-color:rgba(201,168,76,.4); background:rgba(201,168,76,.04); }
+.form-select option { background:#1a1a1a; }
+
+.price-breakdown {
+  background: rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06); border-radius:var(--radius);
+  padding:12px 14px; margin:14px 0;
+  display:flex; flex-direction:column; gap:6px;
+}
+.pb-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:11px; color:var(--text-muted);
+}
+.pb-row.total { border-top:1px solid rgba(255,255,255,.06); padding-top:8px; margin-top:2px; font-size:13px; color:var(--text); }
+.pb-row.earn  { color:var(--gold); font-weight:600; }
+.pb-val { font-family:'Cormorant Garamond',serif; font-size:15px; }
+.pb-row.total .pb-val { font-size:19px; color:var(--gold-light); }
+.pb-row.earn  .pb-val { color:var(--gold); }
+
+.balance-check {
+  font-size:10px; color:var(--text-muted); margin-bottom:10px; letter-spacing:.5px;
+}
+.balance-check.warn { color:var(--red); }
+.balance-check.ok   { color:var(--green); }
+
+.privacy-row {
+  display:flex; gap:8px; margin-bottom:14px;
+}
+.priv-btn {
+  flex:1; font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:2px;
+  font-weight:600; text-transform:uppercase; padding:8px; border-radius:var(--radius);
+  cursor:pointer; transition:all .2s; border:1px solid rgba(255,255,255,.08);
+  background:transparent; color:var(--text-muted);
+}
+.priv-btn.active-pub  { background:rgba(61,186,116,.12); color:var(--green); border-color:rgba(61,186,116,.3); }
+.priv-btn.active-priv { background:rgba(217,79,79,.12); color:var(--red); border-color:rgba(217,79,79,.3); }
+
+/* buttons */
+.btn {
+  font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:3px; font-weight:600;
+  text-transform:uppercase; padding:11px 22px; border:none; cursor:pointer;
+  border-radius:var(--radius); transition:all .2s;
+}
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold)); color:#0a0700; width:100%;
+}
+.btn-gold:hover { background:linear-gradient(135deg,var(--gold),var(--gold-light)); box-shadow:0 0 18px rgba(201,168,76,.35); transform:translateY(-1px); }
+.btn-gold:disabled { opacity:.35; cursor:not-allowed; transform:none; box-shadow:none; }
+
+/* ── LOG SECTION ── */
+.log-wrap {
+  background:var(--bg2); border:1px solid rgba(201,168,76,.12);
+  border-radius:var(--radius-lg); overflow:hidden;
+}
+.log-toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 18px; border-bottom:1px solid rgba(255,255,255,.04);
+  flex-wrap:wrap; gap:10px;
+}
+.log-toggle { display:flex; gap:6px; }
+.log-btn {
+  font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:2px; font-weight:600;
+  text-transform:uppercase; padding:6px 14px; border-radius:var(--radius);
+  cursor:pointer; transition:all .2s; border:1px solid rgba(255,255,255,.08);
+  background:transparent; color:var(--text-muted);
+}
+.log-btn.active { background:rgba(201,168,76,.1); border-color:rgba(201,168,76,.3); color:var(--gold); }
+.log-count { font-size:10px; color:var(--text-dim); letter-spacing:2px; }
+#trade-log {
+  max-height:340px; overflow-y:auto;
+  scrollbar-width:thin; scrollbar-color:rgba(201,168,76,.2) transparent;
+}
+#trade-log::-webkit-scrollbar { width:4px; }
+#trade-log::-webkit-scrollbar-thumb { background:rgba(201,168,76,.2); }
+
+.log-entry {
+  padding:11px 18px; border-bottom:1px solid rgba(255,255,255,.03);
+  transition:background .15s;
+}
+.log-entry:hover { background:rgba(255,255,255,.02); }
+.log-entry:last-child { border-bottom:none; }
+.log-row1 {
+  display:grid; grid-template-columns:90px 100px 1fr auto;
+  gap:12px; align-items:baseline; font-size:11px; margin-bottom:4px;
+}
+.log-time { color:var(--text-dim); font-size:10px; }
+.log-buyer { color:var(--text-muted); font-weight:500; }
+.log-item  { color:var(--text); }
+.log-total { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--gold); text-align:right; white-space:nowrap; }
+.log-row2  { font-size:10px; color:var(--text-dim); letter-spacing:.5px; padding-left:202px; }
+.log-private-row { font-size:10px; color:#d06060; letter-spacing:.5px; padding-left:202px; }
+.log-priv-badge {
+  display:inline-block; font-size:7px; letter-spacing:2px;
+  padding:2px 7px; border-radius:2px; margin-left:8px; vertical-align:middle;
+  background:rgba(217,79,79,.12); color:#d08080; border:1px solid rgba(217,79,79,.2);
+}
+.log-empty {
+  display:flex; align-items:center; justify-content:center; height:120px;
+  color:var(--text-dim); font-size:10px; letter-spacing:3px; text-transform:uppercase;
+}
+
+/* ── NOTIF ── */
+#notif-container {
+  position:fixed; top:88px; right:24px;
+  display:flex; flex-direction:column; gap:8px; z-index:999; pointer-events:none;
+}
+.notif {
+  background:var(--bg3); border:1px solid rgba(201,168,76,.3);
+  border-radius:var(--radius-lg); padding:12px 18px;
+  font-size:11px; color:var(--text); min-width:260px; max-width:340px;
+  animation:notifIn .3s ease, notifOut .4s 2.8s ease forwards;
+  box-shadow:0 8px 24px rgba(0,0,0,.5); pointer-events:none;
+}
+.notif.green { border-color:rgba(61,186,116,.4); }
+.notif.red   { border-color:rgba(217,79,79,.4); }
+.notif.gold  { border-color:rgba(201,168,76,.5); }
+.notif-title { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; }
+.notif.green .notif-title { color:var(--green); }
+.notif.red   .notif-title { color:var(--red); }
+.notif.gold  .notif-title { color:var(--gold); }
+@keyframes notifIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes notifOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(20px)} }
+
+@media(max-width:1000px){
+  .trade-layout { grid-template-columns:1fr; }
+  .order-panel { position:static; }
+}
+@media(max-width:640px){
+  .page-wrap { padding:16px; }
+  .log-row1 { grid-template-columns:80px 1fr auto; }
+  .log-buyer,.log-row2,.log-private-row { display:none; }
+}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="header-inner">
+    <div class="bank-logo">
+      <div class="logo-emblem"><div class="logo-emblem-inner">DIB</div></div>
+      <div>
+        <div class="bank-name">Dubai International Bank</div>
+        <div class="bank-sub">Trade Desk — Sovereign Brokerage</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="live-dot"></span>DESK OPEN<br>
+      <span id="clock">—</span>
+    </div>
+  </div>
+</header>
+
+<div id="notif-container"></div>
+
+<div class="page-wrap">
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Dubai Treasury</div>
+      <div class="stat-val" id="stat-treasury">$50,000.00</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Trade Revenue</div>
+      <div class="stat-val green" id="stat-trade-rev">$0.00</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Trades Executed</div>
+      <div class="stat-val small" id="stat-trade-count">0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Total Volume</div>
+      <div class="stat-val small" id="stat-volume">$0</div>
+    </div>
+    <div class="stat-item" style="flex:2">
+      <div class="markup-row">
+        <span class="markup-label">Dubai Service Fee</span>
+        <div class="markup-val"><span id="markup-val">15</span>%</div>
+        <input type="range" id="markup-slider" min="0" max="30" value="15" step="0.5" style="flex:1">
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="trade-layout">
+
+    <!-- LEFT: Item Browser -->
+    <div class="browser-panel">
+      <div class="browser-header">
+        <div class="section-label">Item Catalogue</div>
+        <div class="search-row">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search items…" oninput="filterItems()">
+        </div>
+      </div>
+      <div class="cat-tabs" id="cat-tabs"></div>
+      <div class="items-list" id="items-list"></div>
+    </div>
+
+    <!-- RIGHT: Order Form -->
+    <div class="order-panel">
+      <div class="order-card">
+        <div class="order-title">Trade Order</div>
+
+        <div class="selected-item-display" id="sel-item-display">
+          <span class="empty">← Select an item from the catalogue</span>
+        </div>
+
+        <!-- Explosion size (missiles only) -->
+        <div class="form-group" id="explosion-group" style="display:none">
+          <div class="form-label">Explosion Size</div>
+          <select class="form-select" id="explosion-select" onchange="updateBreakdown()">
+            <option value="small">Small (0.6×)</option>
+            <option value="medium" selected>Medium (1.0×)</option>
+            <option value="big">Big (1.5×)</option>
+            <option value="huge">Huge (2.3×)</option>
+            <option value="gigantic">Gigantic (3.8×)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">Quantity</div>
+          <input class="form-input" type="number" id="qty-input" value="1" min="1" step="1" oninput="updateBreakdown()">
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">Buyer Nation</div>
+          <select class="form-select" id="buyer-select" onchange="updateBreakdown()">
+            <option value="">— Select buyer —</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            Seller / Source
+            <span class="private-badge">🔒 DUBAI PRIVATE</span>
+          </div>
+          <select class="form-select" id="seller-select">
+            <option value="external">External Source (no in-game payment)</option>
+          </select>
+        </div>
+
+        <!-- Log privacy -->
+        <div class="form-label" style="margin-bottom:8px">Log Entry Type</div>
+        <div class="privacy-row">
+          <button class="priv-btn active-pub" id="priv-pub-btn"  onclick="setPrivacy(false)">🌐 Public</button>
+          <button class="priv-btn"            id="priv-priv-btn" onclick="setPrivacy(true)">🔒 Private (Dubai only)</button>
+        </div>
+
+        <!-- Price breakdown -->
+        <div class="price-breakdown" id="price-breakdown">
+          <div class="pb-row"><span>Select an item to see pricing</span></div>
+        </div>
+
+        <div class="balance-check" id="balance-check"></div>
+
+        <button class="btn btn-gold" id="execute-btn" onclick="executeTrade()" disabled>Execute Trade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log-wrap">
+    <div class="log-toolbar">
+      <div class="section-label" style="margin:0;flex:1">Transaction Ledger</div>
+      <div class="log-toggle">
+        <button class="log-btn active" id="log-pub-btn"  onclick="setLogView('public')">🌐 Public</button>
+        <button class="log-btn"        id="log-priv-btn" onclick="setLogView('private')">🔒 Dubai Private</button>
+      </div>
+      <div class="log-count" id="log-count">0 entries</div>
+    </div>
+    <div id="trade-log"><div class="log-empty">No trades executed yet</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ── SHARED DATA (mirrors bank.html) ── */
+const NATION_LIST = [
+  {id:'usa',    name:'USA'},            {id:'russia', name:'Russia'},
+  {id:'israel', name:'Israel'},         {id:'brazil', name:'Brazil'},
+  {id:'mexico', name:'Mexico'},         {id:'iran',   name:'Iran'},
+  {id:'iraq',   name:'Iraq'},           {id:'korea',  name:'Korea'},
+  {id:'chinajp',name:'China / Japan'},  {id:'uk',     name:'UK'},
+  {id:'germany',name:'Germany'},        {id:'canada', name:'Canada'},
+  {id:'denswiss',name:'Denmark / Switzerland'},{id:'sweden', name:'Sweden'},
+  {id:'ukraine',name:'Ukraine'},
+];
+
+const CATEGORIES = [
+  {id:'all',label:'All'},{id:'brute',label:'Resources'},{id:'refined',label:'Refined'},
+  {id:'weapons',label:'Weapons'},{id:'ammo',label:'Ammo'},{id:'air',label:'Air'},
+  {id:'land',label:'Land'},{id:'water',label:'Water'},{id:'missiles',label:'Missiles'},
+  {id:'other',label:'Other'},
+];
+const CAT_LABEL = {brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other',loans:'Finance'};
+
+const ITEMS = [
+  {id:1,cat:'brute',name:'Iron',price:2,unit:'un'},{id:2,cat:'brute',name:'Coal',price:1,unit:'un'},
+  {id:3,cat:'brute',name:'Gravel',price:0.50,unit:'un'},{id:4,cat:'brute',name:'Latex',price:4,unit:'un'},
+  {id:5,cat:'brute',name:'Silicon',price:8,unit:'un'},{id:6,cat:'brute',name:'Gold',price:45,unit:'un'},
+  {id:7,cat:'brute',name:'Diamond',price:180,unit:'un'},{id:8,cat:'brute',name:'Oil',price:3,unit:'L'},
+  {id:9,cat:'brute',name:'Gas',price:2,unit:'L'},{id:10,cat:'brute',name:'Uranium',price:800,unit:'un'},
+  {id:11,cat:'refined',name:'Refined Iron',price:22,unit:'un'},{id:12,cat:'refined',name:'Gunpowder',price:1.80,unit:'un'},
+  {id:13,cat:'refined',name:'Tires',price:60,unit:'un'},{id:14,cat:'refined',name:'Fuel',price:3,unit:'L'},
+  {id:15,cat:'refined',name:'Electronics',price:250,unit:'un'},{id:16,cat:'refined',name:'Chips',price:700,unit:'un'},
+  {id:17,cat:'refined',name:'Refined Uranium',price:55000,unit:'un'},
+  {id:18,cat:'weapons',name:'Knife',price:80,unit:'un'},{id:19,cat:'weapons',name:'Pistol',price:280,unit:'un'},
+  {id:20,cat:'weapons',name:'SMG',price:900,unit:'un'},{id:21,cat:'weapons',name:'Rifle',price:1200,unit:'un'},
+  {id:22,cat:'weapons',name:'Sniper Rifle',price:2000,unit:'un'},{id:23,cat:'weapons',name:'Heavy Weapon',price:3000,unit:'un'},
+  {id:24,cat:'weapons',name:'Hand Anti-Tank Missile',price:7500,unit:'un'},
+  {id:25,cat:'weapons',name:'Light Military Vest',price:500,unit:'un'},{id:26,cat:'weapons',name:'Heavy Military Vest',price:1000,unit:'un'},
+  {id:27,cat:'weapons',name:'Old Mortar',price:28000,unit:'un'},{id:28,cat:'weapons',name:'Resources / Supplies',price:1.50,unit:'pack'},
+  {id:37,cat:'ammo',name:'Pistol Ammo',price:140,unit:'100 bullets'},{id:29,cat:'ammo',name:'SMG Ammo',price:150,unit:'100 bullets'},
+  {id:30,cat:'ammo',name:'Rifle Ammo',price:160,unit:'50 bullets'},{id:31,cat:'ammo',name:'Heavy Ammo',price:360,unit:'50 bullets'},
+  {id:32,cat:'ammo',name:'.50 Cal Ammo',price:350,unit:'100 bullets'},{id:33,cat:'ammo',name:'22mm Autocannon Ammo',price:650,unit:'25 bullets'},
+  {id:34,cat:'ammo',name:'Sniper Ammo',price:320,unit:'50 bullets'},{id:35,cat:'ammo',name:'Anti-Tank Missile Ammo',price:2500,unit:'1 missile'},
+  {id:38,cat:'ammo',name:'Mortar Ammo',price:1500,unit:'4 rounds'},
+  {id:43,cat:'air',name:'Helicopter',price:45000,unit:'un'},{id:80,cat:'air',name:'Warfare Helicopter',price:135000,unit:'un'},
+  {id:44,cat:'air',name:'Light Fighter Jet',price:55000,unit:'un'},{id:45,cat:'air',name:'Medium Fighter Jet',price:120000,unit:'un'},
+  {id:46,cat:'air',name:'Airplane',price:180000,unit:'un'},{id:47,cat:'air',name:'Heavy Fighter Jet',price:175000,unit:'un'},
+  {id:48,cat:'air',name:'Bomber Jet',price:220000,unit:'un'},
+  {id:49,cat:'land',name:'Motorbike',price:3500,unit:'un'},{id:50,cat:'land',name:'Car',price:7000,unit:'un'},
+  {id:51,cat:'land',name:'Truck',price:18000,unit:'un'},{id:52,cat:'land',name:'Light Tank',price:50000,unit:'un'},
+  {id:53,cat:'land',name:'Medium Tank',price:80000,unit:'un'},{id:54,cat:'land',name:'Heavy Tank',price:125000,unit:'un'},
+  {id:55,cat:'water',name:'Boat',price:2500,unit:'un'},{id:56,cat:'water',name:'Ship',price:90000,unit:'un'},
+  {id:57,cat:'water',name:'Submarine',price:200000,unit:'un'},{id:58,cat:'water',name:'Warship',price:230000,unit:'un'},
+  {id:59,cat:'water',name:'Carrier',price:580000,unit:'un'},{id:60,cat:'water',name:'Supercarrier',price:1000000,unit:'un'},
+  {id:61,cat:'missiles',name:'Unguided Missile (Drop)',isMissile:true,basePrice:3500,explosionPrices:{small:2100,medium:3500,big:5250,huge:8050,gigantic:13300},unit:'un'},
+  {id:62,cat:'missiles',name:'Unguided Missile (Rocket)',isMissile:true,basePrice:6500,explosionPrices:{small:3900,medium:6500,big:9750,huge:14950,gigantic:24700},unit:'un'},
+  {id:63,cat:'missiles',name:'Submarine Torpedo',isMissile:true,basePrice:7000,explosionPrices:{small:4200,medium:7000,big:10500,huge:16100,gigantic:26600},unit:'un'},
+  {id:64,cat:'missiles',name:'Cruise Missile',isMissile:true,basePrice:25000,explosionPrices:{small:15000,medium:25000,big:37500,huge:57500,gigantic:95000},unit:'un'},
+  {id:65,cat:'missiles',name:'Guided Missile',isMissile:true,basePrice:27000,explosionPrices:{small:16200,medium:27000,big:40500,huge:62100,gigantic:102600},unit:'un'},
+  {id:66,cat:'missiles',name:'Anti-Missile Rocket',isMissile:true,basePrice:18000,explosionPrices:{small:10800,medium:18000,big:27000,huge:41400,gigantic:68400},unit:'un'},
+  {id:67,cat:'missiles',name:'Hypersonic Missile',isMissile:true,basePrice:62000,explosionPrices:{small:37200,medium:62000,big:93000,huge:142600,gigantic:235600},unit:'un'},
+  {id:68,cat:'missiles',name:'Ballistic Missile (ICBM)',isMissile:true,basePrice:130000,explosionPrices:{small:78000,medium:130000,big:195000,huge:299000,gigantic:494000},unit:'un'},
+  {id:69,cat:'missiles',name:'Nuclear Missile',isMissile:true,basePrice:380000,explosionPrices:{small:228000,medium:380000,big:570000,huge:874000,gigantic:1444000},unit:'un'},
+  {id:70,cat:'other',name:'Grenade',price:40,unit:'un'},{id:71,cat:'other',name:'Specialized Grenade',price:75,unit:'un'},
+  {id:72,cat:'other',name:'Land Bomb (Anti-Tank)',price:300,unit:'un'},{id:81,cat:'other',name:'C4 Explosive',price:750,unit:'un'},
+  {id:73,cat:'other',name:'Drone',price:7500,unit:'un'},{id:74,cat:'other',name:'Barricade',price:350,unit:'un'},
+  {id:75,cat:'other',name:'Barrier',price:850,unit:'un'},
+  {id:39,cat:'other',name:'Other Stuff (Small)',price:100,unit:'un'},{id:40,cat:'other',name:'Other Stuff (Medium)',price:300,unit:'un'},
+  {id:41,cat:'other',name:'Other Stuff (Big)',price:550,unit:'un'},{id:42,cat:'other',name:'Other Stuff (Huge)',price:850,unit:'un'},
+];
+
+/* ── STATE ── */
+let markupPct  = 15;
+let selectedItem = null;
+let activeCategory = 'all';
+let searchQuery    = '';
+let tradePrivate   = false;
+let logView        = 'public';
+let trades = [];
+let tradeRevenue = 0;
+let tradeVolume  = 0;
+
+/* ── BANK STATE (shared via localStorage) ── */
+function loadBankState() {
+  try { return JSON.parse(localStorage.getItem('dib_state')) || {accounts:{}, treasury:50000, logEntries:[]}; }
+  catch { return {accounts:{}, treasury:50000, logEntries:[]}; }
+}
+function saveBankState(state) {
+  try { localStorage.setItem('dib_state', JSON.stringify(state)); } catch{}
+}
+function loadTrades() {
+  try { const d = JSON.parse(localStorage.getItem('dib_trades')||'{}');
+    trades       = d.trades       || [];
+    tradeRevenue = d.tradeRevenue || 0;
+    tradeVolume  = d.tradeVolume  || 0;
+  } catch { trades=[]; tradeRevenue=0; tradeVolume=0; }
+}
+function saveTrades() {
+  try { localStorage.setItem('dib_trades', JSON.stringify({trades, tradeRevenue, tradeVolume})); } catch{}
+}
+
+/* ── UTILITIES ── */
+function fmt(n) {
+  if (n < 1 && n > 0) return '$' + n.toFixed(2);
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtShort(n) {
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+}
+function nowStr() {
+  return new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function getItemBasePrice(item) {
+  if (item.isMissile) {
+    const lvl = document.getElementById('explosion-select')?.value || 'medium';
+    return item.explosionPrices[lvl] || item.basePrice;
+  }
+  return item.price;
+}
+function getDubaiPrice(marketPrice) {
+  return marketPrice * (1 + markupPct / 100);
+}
+
+/* ── NOTIFICATIONS ── */
+function notify(title, msg, cls='gold') {
+  const c = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = `notif ${cls}`;
+  el.innerHTML = `<div class="notif-title">${title}</div><div>${msg}</div>`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── STATS ── */
+function updateStats() {
+  const state = loadBankState();
+  document.getElementById('stat-treasury').textContent   = fmt(state.treasury ?? 50000);
+  document.getElementById('stat-trade-rev').textContent  = fmt(tradeRevenue);
+  document.getElementById('stat-trade-count').textContent= trades.length;
+  document.getElementById('stat-volume').textContent     = fmtShort(tradeVolume);
+}
+
+/* ── NATION SELECTORS ── */
+function populateSelectors() {
+  const state   = loadBankState();
+  const buyerEl = document.getElementById('buyer-select');
+  const sellerEl= document.getElementById('seller-select');
+
+  buyerEl.innerHTML  = '<option value="">— Select buyer —</option>';
+  sellerEl.innerHTML = '<option value="external">External Source (no in-game payment)</option>';
+
+  NATION_LIST.forEach(n => {
+    const acc = state.accounts[n.id];
+    const enabled = acc ? acc.enabled !== false : true;
+    const bal = acc ? acc.balance || 0 : 0;
+    if (enabled) {
+      buyerEl.innerHTML  += `<option value="${n.id}">${n.name} (${fmt(bal)})</option>`;
+      sellerEl.innerHTML += `<option value="${n.id}">${n.name}</option>`;
+    }
+  });
+}
+
+/* ── CATEGORY TABS ── */
+function renderCatTabs() {
+  document.getElementById('cat-tabs').innerHTML = CATEGORIES.map(c =>
+    `<button class="cat-tab${activeCategory===c.id?' active':''}" onclick="setCategory('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+function setCategory(id) { activeCategory = id; renderCatTabs(); renderItems(); }
+
+/* ── ITEM LIST ── */
+function filterItems() { searchQuery = document.getElementById('search-input').value.toLowerCase(); renderItems(); }
+
+function renderItems() {
+  const visible = ITEMS.filter(i => {
+    if (activeCategory !== 'all' && i.cat !== activeCategory) return false;
+    if (searchQuery && !i.name.toLowerCase().includes(searchQuery)) return false;
+    return true;
+  });
+  const el = document.getElementById('items-list');
+  if (!visible.length) { el.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:11px;letter-spacing:2px">NO ITEMS FOUND</div>'; return; }
+
+  el.innerHTML = visible.map(item => {
+    const marketPrice = item.isMissile ? (item.explosionPrices['medium'] || item.basePrice) : item.price;
+    const dubaiPrice  = getDubaiPrice(marketPrice);
+    const isSelected  = selectedItem && selectedItem.id === item.id;
+    return `
+    <div class="item-row${isSelected?' selected':''}" onclick="selectItem(${item.id})">
+      <div class="item-name-col">
+        <div class="item-name-text">${item.name}</div>
+        <div class="item-cat-badge">${CAT_LABEL[item.cat]||item.cat}${item.unit?' · '+item.unit:''}</div>
+      </div>
+      <div class="item-market-price">MKT ${fmtShort(marketPrice)}</div>
+      <div class="item-dubai-price">${fmtShort(dubaiPrice)}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectItem(id) {
+  selectedItem = ITEMS.find(i => i.id === id);
+  document.getElementById('explosion-group').style.display = selectedItem?.isMissile ? '' : 'none';
+
+  if (selectedItem) {
+    const mp = getItemBasePrice(selectedItem);
+    const dp = getDubaiPrice(mp);
+    document.getElementById('sel-item-display').innerHTML = `
+      <div>
+        <div class="sel-item-name">${selectedItem.name}</div>
+        <div class="sel-item-meta">Market: ${fmt(mp)} / ${selectedItem.unit||'un'} &nbsp;·&nbsp; Dubai: <strong style="color:var(--gold)">${fmt(dp)}</strong> / ${selectedItem.unit||'un'}</div>
+      </div>`;
+  } else {
+    document.getElementById('sel-item-display').innerHTML = '<span class="empty">← Select an item from the catalogue</span>';
+  }
+  renderItems();
+  updateBreakdown();
+}
+
+/* ── PRICE BREAKDOWN ── */
+function updateBreakdown() {
+  const bpEl = document.getElementById('price-breakdown');
+  const balEl= document.getElementById('balance-check');
+  const execBtn = document.getElementById('execute-btn');
+
+  if (!selectedItem) {
+    bpEl.innerHTML = '<div class="pb-row"><span style="color:var(--text-dim);font-size:11px;letter-spacing:1px">Select an item to see pricing</span></div>';
+    balEl.textContent = '';
+    execBtn.disabled = true;
+    return;
+  }
+
+  const qty   = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
+  const mp    = getItemBasePrice(selectedItem);
+  const dp    = getDubaiPrice(mp);
+  const mktTotal   = mp * qty;
+  const buyerTotal = dp * qty;
+  const dubaiEarns = buyerTotal - mktTotal;
+
+  const buyerId = document.getElementById('buyer-select').value;
+  const sellerId= document.getElementById('seller-select').value;
+  const state   = loadBankState();
+  const buyerAcc= buyerId ? state.accounts[buyerId] : null;
+  const sellerAcc= (sellerId && sellerId !== 'external') ? state.accounts[sellerId] : null;
+  const buyerBal = buyerAcc ? buyerAcc.balance : 0;
+  const canAfford= buyerAcc && buyerBal >= buyerTotal;
+
+  bpEl.innerHTML = `
+    <div class="pb-row"><span>Market price / unit</span><span class="pb-val">${fmt(mp)}</span></div>
+    <div class="pb-row"><span>Dubai price / unit (+${markupPct}%)</span><span class="pb-val" style="color:var(--gold)">${fmt(dp)}</span></div>
+    <div class="pb-row"><span>Quantity</span><span class="pb-val">× ${qty.toLocaleString()}</span></div>
+    <div class="pb-row total"><span>Buyer pays (total)</span><span class="pb-val">${fmt(buyerTotal)}</span></div>
+    ${sellerAcc ? `<div class="pb-row"><span>Seller receives</span><span class="pb-val" style="color:var(--green)">${fmt(mktTotal)}</span></div>` : ''}
+    <div class="pb-row earn"><span>Dubai earns (${markupPct}% fee)</span><span class="pb-val">${fmt(dubaiEarns)}</span></div>
+  `;
+
+  if (!buyerId) {
+    balEl.className = 'balance-check';
+    balEl.textContent = 'Select a buyer nation to verify balance.';
+    execBtn.disabled = true;
+  } else if (!canAfford) {
+    balEl.className = 'balance-check warn';
+    balEl.textContent = `⚠ ${NATION_LIST.find(n=>n.id===buyerId)?.name||buyerId} balance: ${fmt(buyerBal)} — insufficient funds.`;
+    execBtn.disabled = true;
+  } else {
+    balEl.className = 'balance-check ok';
+    balEl.textContent = `✓ Balance after trade: ${fmt(buyerBal - buyerTotal)}`;
+    execBtn.disabled = false;
+  }
+}
+
+/* ── PRIVACY TOGGLE ── */
+function setPrivacy(isPrivate) {
+  tradePrivate = isPrivate;
+  document.getElementById('priv-pub-btn').className   = 'priv-btn' + (!isPrivate ? ' active-pub'  : '');
+  document.getElementById('priv-priv-btn').className  = 'priv-btn' + (isPrivate  ? ' active-priv' : '');
+}
+
+/* ── LOG VIEW ── */
+function setLogView(v) {
+  logView = v;
+  document.getElementById('log-pub-btn').classList.toggle('active', v==='public');
+  document.getElementById('log-priv-btn').classList.toggle('active', v==='private');
+  renderLog();
+}
+
+/* ── RENDER LOG ── */
+function renderLog() {
+  const el = document.getElementById('trade-log');
+  const isPrivate = logView === 'private';
+  const visible = isPrivate ? trades : trades.filter(t => !t.isPrivate);
+
+  document.getElementById('log-count').textContent = visible.length + ' entr' + (visible.length===1?'y':'ies');
+
+  if (!visible.length) {
+    el.innerHTML = `<div class="log-empty">${isPrivate ? 'No trades recorded' : 'No public trades yet'}</div>`;
+    return;
+  }
+
+  el.innerHTML = [...visible].reverse().map(t => {
+    const sellerInfo = isPrivate
+      ? `<div class="log-private-row">🔒 Seller: <strong>${t.sellerName}</strong> · Market paid: ${fmt(t.mktTotal)} · Dubai earned: ${fmt(t.dubaiEarned)}${t.isPrivate?'<span class="log-priv-badge">PRIVATE</span>':''}</div>`
+      : '';
+    return `
+    <div class="log-entry">
+      <div class="log-row1">
+        <span class="log-time">${t.time}</span>
+        <span class="log-buyer">${t.buyerName}</span>
+        <span class="log-item">${t.qty > 1 ? t.qty+'× ' : ''}${t.itemName}${t.explosionLabel?' ('+t.explosionLabel+')':''}</span>
+        <span class="log-total">${fmt(t.buyerPaid)}</span>
+      </div>
+      <div class="log-row2">via Dubai Trade Desk · ${t.unit||'un'} · Mkt ref: ${fmt(t.marketUnitPrice)}/unit${t.isPrivate&&!isPrivate?'':''}</div>
+      ${sellerInfo}
+    </div>`;
+  }).join('');
+}
+
+/* ── EXECUTE TRADE ── */
+function executeTrade() {
+  if (!selectedItem) { notify('Error','Select an item first.','red'); return; }
+  const qty      = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
+  const buyerId  = document.getElementById('buyer-select').value;
+  const sellerId = document.getElementById('seller-select').value;
+  const expLevel = selectedItem.isMissile ? document.getElementById('explosion-select').value : null;
+
+  if (!buyerId) { notify('Error','Select a buyer nation.','red'); return; }
+
+  const mp        = getItemBasePrice(selectedItem);
+  const dp        = getDubaiPrice(mp);
+  const mktTotal  = mp * qty;
+  const buyerPaid = dp * qty;
+  const dubaiEarns= buyerPaid - mktTotal;
+
+  // Load & mutate bank state
+  const state = loadBankState();
+  const buyerAcc = state.accounts[buyerId];
+  if (!buyerAcc || buyerAcc.balance < buyerPaid) {
+    notify('Insufficient Funds','Buyer cannot afford this transaction.','red'); return;
+  }
+
+  const buyerName  = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
+  const sellerName = sellerId === 'external' ? 'External Source' : (NATION_LIST.find(n=>n.id===sellerId)?.name || sellerId);
+
+  // Apply changes to bank state
+  buyerAcc.balance -= buyerPaid;
+  if (sellerId !== 'external' && state.accounts[sellerId]) {
+    state.accounts[sellerId].balance += mktTotal;
+  }
+  state.treasury = (state.treasury || 50000) + dubaiEarns;
+
+  // Append to bank log
+  if (!state.logEntries) state.logEntries = [];
+  const bankLogEntry = {
+    type: 'treasury',
+    nation: 'Dubai Trade',
+    desc: `Trade: ${buyerName} bought ${qty>1?qty+'× ':''}${selectedItem.name}${expLevel?' ('+expLevel+')':''} — Dubai earned ${fmt(dubaiEarns)}`,
+    amount: dubaiEarns,
+    time: nowStr()
+  };
+  state.logEntries.unshift(bankLogEntry);
+  if (!tradePrivate) {
+    // Also add buyer loss entry
+    state.logEntries.unshift({
+      type: 'loss', nation: buyerName,
+      desc: `Dubai Trade purchase: ${qty>1?qty+'× ':''}${selectedItem.name}`,
+      amount: -buyerPaid, time: nowStr()
+    });
+    if (sellerId !== 'external' && state.accounts[sellerId]) {
+      state.logEntries.unshift({
+        type: 'gain', nation: sellerName,
+        desc: `Dubai Trade sale: ${qty>1?qty+'× ':''}${selectedItem.name}`,
+        amount: mktTotal, time: nowStr()
+      });
+    }
+  }
+  saveBankState(state);
+
+  // Record trade
+  const expLabels = {small:'Small',medium:'Medium',big:'Big',huge:'Huge',gigantic:'Gigantic'};
+  trades.unshift({
+    id: Date.now(),
+    time: nowStr(),
+    buyerId, buyerName,
+    sellerId, sellerName,
+    itemId: selectedItem.id, itemName: selectedItem.name,
+    qty, unit: selectedItem.unit,
+    explosionLabel: expLevel ? expLabels[expLevel] : null,
+    marketUnitPrice: mp,
+    dubaiUnitPrice: dp,
+    mktTotal, buyerPaid, dubaiEarned: dubaiEarns,
+    markupPct,
+    isPrivate: tradePrivate,
+  });
+  tradeRevenue += dubaiEarns;
+  tradeVolume  += buyerPaid;
+  saveTrades();
+
+  updateStats();
+  populateSelectors();
+  updateBreakdown();
+  renderLog();
+
+  const privNote = tradePrivate ? ' [Private]' : '';
+  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${privNote}`, 'gold');
+}
+
+/* ── MARKUP SLIDER ── */
+const markupSlider = document.getElementById('markup-slider');
+const markupValEl  = document.getElementById('markup-val');
+function updateMarkupGradient() {
+  const pct = (markupPct / 30) * 100;
+  markupSlider.style.setProperty('--pct', pct + '%');
+}
+markupSlider.addEventListener('input', () => {
+  markupPct = parseFloat(markupSlider.value);
+  markupValEl.textContent = markupPct % 1 === 0 ? markupPct : markupPct.toFixed(1);
+  updateMarkupGradient();
+  renderItems();
+  updateBreakdown();
+  try { localStorage.setItem('dib_trade_markup', markupPct); } catch{}
+});
+
+/* ── CLOCK ── */
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US', {
+    hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit',
+    day:'2-digit', month:'short', year:'numeric'
+  });
+}
+
+/* ── INIT ── */
+// Self-hide header when embedded in hub
+if (window.self !== window.top) {
+  const hdr = document.getElementById('header');
+  if (hdr) hdr.style.display = 'none';
+}
+
+// Restore markup pref
+try {
+  const savedMarkup = parseFloat(localStorage.getItem('dib_trade_markup'));
+  if (!isNaN(savedMarkup)) { markupPct = savedMarkup; markupSlider.value = savedMarkup; markupValEl.textContent = savedMarkup; }
+} catch{}
+
+loadTrades();
+populateSelectors();
+renderCatTabs();
+renderItems();
+renderLog();
+updateStats();
+updateMarkupGradient();
+updateClock();
+setInterval(updateClock, 1000);
+setInterval(() => { populateSelectors(); updateStats(); }, 5000); // refresh bank data every 5s
+</script>
+</body>
+</html>
