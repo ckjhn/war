@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dubai International Bank</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e0c06a;
+    --gold-dark: #9a7a2e;
+    --gold-glow: rgba(201,168,76,0.18);
+    --bg: #0a0a0a;
+    --bg2: #101010;
+    --bg3: #161616;
+    --bg4: #1e1e1e;
+    --card: #121212;
+    --card-border: rgba(201,168,76,0.18);
+    --text: #e8e0cc;
+    --text-muted: #7a7265;
+    --text-dim: #4a4540;
+    --green: #3dba74;
+    --red: #d94f4f;
+    --red-dark: #a83333;
+    --blocked: #3a1a1a;
+    --blocked-border: rgba(180,40,40,0.3);
+    --radius: 4px;
+    --radius-lg: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(201,168,76,0.025) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(201,168,76,0.025) 40px);
+  }
+
+  /* ──────────── HEADER ──────────── */
+  #header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.97);
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+    backdrop-filter: blur(12px);
+    padding: 0 32px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1600px;
+    margin: 0 auto;
+    height: 70px;
+  }
+
+  .bank-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-emblem {
+    width: 42px; height: 42px;
+    border: 1.5px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .logo-emblem::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(201,168,76,0.4);
+  }
+  .logo-emblem-inner {
+    transform: rotate(-45deg);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -1px;
+  }
+
+  .bank-name-block { line-height: 1; }
+  .bank-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .bank-sub {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .header-meta {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .header-meta .live-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ──────────── MAIN LAYOUT ──────────── */
+  .page-wrap {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ──────────── SECTION TITLE ──────────── */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+  }
+
+  /* ──────────── TREASURY PANEL ──────────── */
+  #treasury-panel {
+    background: linear-gradient(135deg, #0e0b05 0%, #131008 50%, #0e0c06 100%);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: var(--radius-lg);
+    padding: 28px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  #treasury-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(201,168,76,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #treasury-panel::after {
+    content: 'TREASURY';
+    position: absolute;
+    right: 36px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 100px;
+    font-weight: 700;
+    color: rgba(201,168,76,0.04);
+    letter-spacing: 10px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .treasury-top {
+    display: flex;
+    align-items: flex-end;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .treasury-balance-block {}
+  .treasury-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .treasury-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .treasury-amount .currency-sym {
+    font-size: 28px;
+    opacity: 0.7;
+    margin-right: 4px;
+  }
+
+  .treasury-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .treasury-stat {
+    border-left: 1px solid rgba(201,168,76,0.2);
+    padding-left: 20px;
+  }
+  .treasury-stat-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .treasury-stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .treasury-stat-val.green { color: var(--green); }
+  .treasury-stat-val.red { color: var(--red); }
+
+  /* Tax Controls Row */
+  .controls-row {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201,168,76,0.12);
+    flex-wrap: wrap;
+  }
+
+  .tax-control {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 260px;
+  }
+  .tax-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tax-rate-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    color: var(--gold);
+    min-width: 60px;
+    text-align: right;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold) var(--pct, 25%), rgba(201,168,76,0.15) var(--pct, 25%));
+    outline: none;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px rgba(201,168,76,0.5);
+  }
+
+  .btn {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: #0a0700;
+  }
+  .btn-gold:hover {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    box-shadow: 0 0 18px rgba(201,168,76,0.35);
+    transform: translateY(-1px);
+  }
+  .btn-gold:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+  }
+  .btn-outline:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  .btn-green {
+    background: rgba(61,186,116,0.15);
+    color: var(--green);
+    border: 1px solid rgba(61,186,116,0.3);
+  }
+  .btn-green:hover {
+    background: rgba(61,186,116,0.25);
+    border-color: var(--green);
+    box-shadow: 0 0 12px rgba(61,186,116,0.2);
+  }
+
+  .btn-red {
+    background: rgba(217,79,79,0.12);
+    color: var(--red);
+    border: 1px solid rgba(217,79,79,0.3);
+  }
+  .btn-red:hover {
+    background: rgba(217,79,79,0.22);
+    border-color: var(--red);
+    box-shadow: 0 0 12px rgba(217,79,79,0.2);
+  }
+
+  .btn-invest {
+    background: rgba(100,120,200,0.12);
+    color: #7a9fff;
+    border: 1px solid rgba(100,120,200,0.3);
+  }
+  .btn-invest:hover {
+    background: rgba(100,120,200,0.22);
+    border-color: #7a9fff;
+    box-shadow: 0 0 12px rgba(100,120,200,0.2);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ──────────── NATION GRID ──────────── */
+  #nations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .nation-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+  }
+  .nation-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .nation-card.enabled:hover {
+    border-color: rgba(201,168,76,0.35);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.08);
+  }
+  .nation-card.enabled:hover::before { opacity: 1; }
+
+  .nation-card.disabled {
+    border-color: rgba(201,168,76,0.06);
+    opacity: 0.65;
+    filter: saturate(0.5);
+  }
+  .nation-card.blocked {
+    background: var(--blocked);
+    border: 1px solid var(--blocked-border);
+    opacity: 0.8;
+  }
+  .nation-card.blocked::before {
+    background: linear-gradient(90deg, transparent, rgba(180,40,40,0.5), transparent);
+    opacity: 1;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .nation-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .nation-card.blocked .nation-name { color: #c05050; }
+
+  .nation-status-badge {
+    font-size: 8px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+  .badge-enabled { background: rgba(61,186,116,0.12); color: var(--green); border: 1px solid rgba(61,186,116,0.25); }
+  .badge-disabled { background: rgba(100,100,100,0.1); color: var(--text-muted); border: 1px solid rgba(100,100,100,0.2); }
+  .badge-blocked { background: rgba(180,40,40,0.15); color: #d06060; border: 1px solid rgba(180,40,40,0.3); }
+
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .toggle-switch input { display: none; }
+  .toggle-track {
+    width: 34px; height: 18px;
+    background: rgba(100,100,100,0.2);
+    border: 1px solid rgba(100,100,100,0.3);
+    border-radius: 9px;
+    position: relative;
+    transition: all 0.25s;
+  }
+  .toggle-switch input:checked ~ .toggle-track {
+    background: rgba(61,186,116,0.2);
+    border-color: rgba(61,186,116,0.5);
+  }
+  .toggle-knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: all 0.25s;
+  }
+  .toggle-switch input:checked ~ .toggle-track .toggle-knob {
+    left: 18px;
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(61,186,116,0.5);
+  }
+  .toggle-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .nation-balances {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 8px;
+    margin: 14px 0;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .bal-item { text-align: center; }
+  .bal-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .bal-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .bal-value.green { color: var(--green); }
+  .bal-value.red { color: var(--red); }
+  .bal-value.gold { color: var(--gold); }
+
+  .card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .action-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .action-input {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+  .action-input:focus {
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.04);
+  }
+  .action-input::placeholder { color: var(--text-dim); }
+  .action-input:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .blocked-notice {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(180,40,40,0.1);
+    border: 1px solid rgba(180,40,40,0.2);
+    border-radius: var(--radius);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #d06060;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ──────────── TRANSACTION LOG ──────────── */
+  #log-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #tx-log {
+    background: var(--bg2);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: var(--radius-lg);
+    height: 360px;
+    overflow-y: auto;
+    padding: 4px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,0.2) transparent;
+  }
+  #tx-log::-webkit-scrollbar { width: 4px; }
+  #tx-log::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 2px; }
+
+  .log-entry {
+    display: grid;
+    grid-template-columns: 90px 110px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.025);
+    font-size: 11px;
+    transition: background 0.15s;
+  }
+  .log-entry:hover { background: rgba(255,255,255,0.02); }
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-time { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; font-weight: 300; }
+  .log-nation { color: var(--text-muted); font-size: 11px; font-weight: 500; }
+  .log-desc { color: var(--text); }
+  .log-amount { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; text-align: right; white-space: nowrap; }
+
+  .log-entry.gain .log-amount { color: var(--green); }
+  .log-entry.gain .log-desc { color: rgba(61,186,116,0.9); }
+  .log-entry.loss .log-amount { color: var(--red); }
+  .log-entry.loss .log-desc { color: rgba(217,79,79,0.9); }
+  .log-entry.treasury .log-amount { color: var(--gold); }
+  .log-entry.treasury .log-desc { color: var(--gold-dark); }
+  .log-entry.cycle .log-amount { color: var(--gold-light); }
+
+  .log-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  /* ──────────── NOTIFICATIONS ──────────── */
+  #notif-container {
+    position: fixed;
+    top: 88px; right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .notif {
+    background: var(--bg3);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: var(--radius-lg);
+    padding: 12px 18px;
+    font-size: 11px;
+    color: var(--text);
+    min-width: 260px;
+    max-width: 340px;
+    animation: notifIn 0.3s ease, notifOut 0.4s 2.8s ease forwards;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    pointer-events: none;
+  }
+  .notif.green { border-color: rgba(61,186,116,0.4); }
+  .notif.red { border-color: rgba(217,79,79,0.4); }
+  .notif.gold { border-color: rgba(201,168,76,0.5); }
+  .notif-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .notif.green .notif-title { color: var(--green); }
+  .notif.red .notif-title { color: var(--red); }
+  .notif.gold .notif-title { color: var(--gold); }
+
+  @keyframes notifIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+  @keyframes notifOut { from { opacity:1; transform: translateX(0); } to { opacity:0; transform: translateX(20px); } }
+
+  /* ──────────── SEPARATOR ──────────── */
+  .gold-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+    margin: 4px 0;
+  }
+
+  /* ──────────── ODDS HINT ──────────── */
+  .odds-hint {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 5px 8px;
+    border-radius: 3px;
+    margin-top: 2px;
+    min-height: 0;
+    transition: all 0.2s;
+    display: none;
+  }
+  .odds-hint.visible {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(100,120,200,0.07);
+    border: 1px solid rgba(100,120,200,0.2);
+  }
+  .odds-win { color: var(--green); font-weight: 600; }
+  .odds-lose { color: var(--red); font-weight: 600; }
+  .odds-return { color: #7a9fff; font-weight: 600; }
+  .odds-sep { color: var(--text-dim); }
+
+  /* ──────────── RESPONSIVE ──────────── */
+  @media (max-width: 640px) {
+    .page-wrap { padding: 16px; gap: 20px; }
+    .treasury-top { gap: 20px; }
+    .treasury-amount { font-size: 36px; }
+    #header { padding: 0 16px; }
+    .log-entry { grid-template-columns: 80px 1fr auto; }
+    .log-nation { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-inner">
+    <div class="bank-logo">
+      <div class="logo-emblem">
+        <div class="logo-emblem-inner">DIB</div>
+      </div>
+      <div class="bank-name-block">
+        <div class="bank-name">Dubai International Bank</div>
+        <div class="bank-sub">Sovereign Financial Institution · Est. 2025</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="live-dot"></span>SYSTEM LIVE<br>
+      <span id="clock">—</span>
+    </div>
+  </div>
+</header>
+
+<!-- NOTIFICATIONS -->
+<div id="notif-container"></div>
+
+<!-- PAGE -->
+<div class="page-wrap">
+
+  <!-- TREASURY PANEL -->
+  <div class="section-label">Sovereign Treasury</div>
+  <div id="treasury-panel">
+    <div class="treasury-top">
+      <div class="treasury-balance-block">
+        <div class="treasury-label">Total Reserve</div>
+        <div class="treasury-amount"><span class="currency-sym">$</span><span id="treasury-display">50,000</span></div>
+      </div>
+      <div class="treasury-stats">
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Total Collected (Tax)</div>
+          <div class="treasury-stat-val green" id="treasury-tax-total">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Investment Gains</div>
+          <div class="treasury-stat-val green" id="treasury-invest-gain">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Investment Payouts</div>
+          <div class="treasury-stat-val red" id="treasury-invest-loss">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Cycles Advanced</div>
+          <div class="treasury-stat-val gold" id="treasury-cycles">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="controls-row">
+      <div class="tax-control">
+        <span class="tax-label">Maintenance Tax</span>
+        <div class="tax-rate-display"><span id="tax-rate-val">5</span>%</div>
+        <input type="range" id="tax-slider" min="0" max="20" value="5" step="0.5">
+      </div>
+      <button class="btn btn-gold" id="advance-btn" onclick="advanceCycle()">⟳ Advance Cycle</button>
+      <button class="btn btn-outline" onclick="openEditReserve()">✎ Edit Reserve</button>
+    </div>
+  </div>
+
+  <!-- EDIT RESERVE MODAL -->
+  <div id="reserve-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;" onclick="if(event.target===this)closeEditReserve()">
+    <div style="background:#131008;border:1px solid rgba(201,168,76,0.45);border-radius:8px;padding:32px 36px;min-width:320px;max-width:420px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,0.7);">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold-light);margin-bottom:6px;">Edit Treasury Reserve</div>
+      <div style="font-size:10px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:20px;">Set a new absolute reserve balance</div>
+      <input id="reserve-input" type="number" min="0" step="any" placeholder="Enter new reserve amount…" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:10px 14px;color:var(--text);font-family:'Montserrat',sans-serif;font-size:13px;outline:none;margin-bottom:16px;">
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="closeEditReserve()">Cancel</button>
+        <button class="btn btn-gold" onclick="applyEditReserve()">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NATIONS GRID -->
+  <div class="section-label">Active Accounts</div>
+  <div id="nations-grid"></div>
+
+  <!-- BLOCKED -->
+  <div class="section-label">Permanently Restricted Entities</div>
+  <div id="blocked-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+
+  <!-- LOG -->
+  <div id="log-section">
+    <div class="section-label">Transaction Ledger</div>
+    <div id="tx-log"><div class="log-empty">No transactions recorded</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA MODEL
+═══════════════════════════════════════════════ */
+const NATIONS = [
+  { id:'usa',    name:'USA',               enabled: true,  blocked: false },
+  { id:'russia', name:'Russia',            enabled: true,  blocked: false },
+  { id:'israel', name:'Israel',            enabled: true,  blocked: false },
+  { id:'brazil', name:'Brazil',            enabled: true,  blocked: false },
+  { id:'mexico', name:'Mexico',            enabled: true,  blocked: false },
+  { id:'iran',   name:'Iran',              enabled: true,  blocked: false },
+  { id:'iraq',   name:'Iraq',              enabled: true,  blocked: false },
+  { id:'korea',  name:'Korea',             enabled: true,  blocked: false },
+  { id:'chinajp',name:'China / Japan',     enabled: true,  blocked: false },
+  { id:'uk',     name:'UK',                enabled: true,  blocked: false },
+  { id:'germany',name:'Germany',           enabled: true,  blocked: false },
+  { id:'canada', name:'Canada',            enabled: true,  blocked: false },
+  { id:'denswiss',name:'Denmark / Switzerland', enabled: true, blocked: false },
+  { id:'sweden', name:'Sweden',            enabled: true,  blocked: false },
+  { id:'ukraine',name:'Ukraine',           enabled: true,  blocked: false },
+];
+
+const BLOCKED = [
+  { id:'pcc',    name:'PCC',               reason:'Criminal Organization' },
+  { id:'nalliance',name:'Northern Alliance',reason:'Criminal Organization' },
+  { id:'alqaeda',name:'Al-Qaeda',          reason:'Terrorist Entity' },
+  { id:'talihezbollah',name:'Taliban / Hezbollah', reason:'Terrorist Entity' },
+  { id:'maracartel',name:'Mara Cartel',    reason:'Criminal Organization' },
+];
+
+const accounts = {};
+NATIONS.forEach(n => {
+  accounts[n.id] = {
+    ...n,
+    balance: 0,
+    totalDeposited: 0,
+    totalWithdrawn: 0,
+  };
+});
+
+let treasury = 50000;
+let treasuryTaxTotal = 0;
+let treasuryInvestGain = 0;
+let treasuryInvestLoss = 0;
+let cycles = 0;
+let taxRate = 5;
+
+const TIERS = [
+  { min: 200,  max: 500,  failRisk: 0.20, returnMult: 1.20 },
+  { min: 501,  max: 1000, failRisk: 0.35, returnMult: 1.50 },
+  { min: 1001, max: 2500, failRisk: 0.55, returnMult: 2.00 },
+  { min: 2501, max: 5000, failRisk: 0.75, returnMult: 2.50 },
+  { min: 5001, max: Infinity, failRisk: 0.90, returnMult: 3.00 },
+];
+
+/* ═══════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════ */
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtShort(n) {
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
+function now() {
+  return new Date().toLocaleTimeString('en-US', { hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+function getTier(amount) {
+  return TIERS.find(t => amount >= t.min && amount <= t.max) || null;
+}
+
+/* ═══════════════════════════════════════════════
+   LOG
+═══════════════════════════════════════════════ */
+let logEntries = [];
+
+function addLog(type, nation, desc, amount) {
+  logEntries.unshift({ type, nation, desc, amount, time: now() });
+  renderLog();
+}
+
+function renderLog() {
+  const el = document.getElementById('tx-log');
+  if (!logEntries.length) {
+    el.innerHTML = '<div class="log-empty">No transactions recorded</div>';
+    return;
+  }
+  el.innerHTML = logEntries.map(e => `
+    <div class="log-entry ${e.type}">
+      <span class="log-time">${e.time}</span>
+      <span class="log-nation">${e.nation}</span>
+      <span class="log-desc">${e.desc}</span>
+      <span class="log-amount">${e.amount >= 0 ? '+' : ''}${fmt(e.amount)}</span>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATION
+═══════════════════════════════════════════════ */
+function notify(title, msg, cls='gold') {
+  const c = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = `notif ${cls}`;
+  el.innerHTML = `<div class="notif-title">${title}</div><div>${msg}</div>`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ═══════════════════════════════════════════════
+   TREASURY
+═══════════════════════════════════════════════ */
+function updateTreasury() {
+  document.getElementById('treasury-display').textContent =
+    Number(treasury).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('treasury-tax-total').textContent = fmt(treasuryTaxTotal);
+  document.getElementById('treasury-invest-gain').textContent = fmt(treasuryInvestGain);
+  document.getElementById('treasury-invest-loss').textContent = fmt(treasuryInvestLoss);
+  document.getElementById('treasury-cycles').textContent = cycles;
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER NATIONS
+═══════════════════════════════════════════════ */
+function renderNations() {
+  const grid = document.getElementById('nations-grid');
+  grid.innerHTML = NATIONS.map(n => {
+    const acc = accounts[n.id];
+    const en = acc.enabled;
+    return `
+    <div class="nation-card ${en ? 'enabled' : 'disabled'}" id="card-${n.id}">
+      <div class="card-header">
+        <div>
+          <div class="nation-name">${n.name}</div>
+          <label class="toggle-switch" title="${en ? 'Disable' : 'Enable'} account">
+            <input type="checkbox" ${en ? 'checked' : ''} onchange="toggleNation('${n.id}', this.checked)">
+            <div class="toggle-track"><div class="toggle-knob"></div></div>
+            <span class="toggle-label">${en ? 'Active' : 'Suspended'}</span>
+          </label>
+        </div>
+        <span class="nation-status-badge ${en ? 'badge-enabled' : 'badge-disabled'}">${en ? 'Enabled' : 'Disabled'}</span>
+      </div>
+      <div class="nation-balances">
+        <div class="bal-item">
+          <div class="bal-label">Balance</div>
+          <div class="bal-value gold" id="bal-${n.id}">${fmtShort(acc.balance)}</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-label">Deposited</div>
+          <div class="bal-value green" id="dep-${n.id}">${fmtShort(acc.totalDeposited)}</div>
+        </div>
+        <div class="bal-item">
+          <div class="bal-label">Withdrawn</div>
+          <div class="bal-value red" id="wit-${n.id}">${fmtShort(acc.totalWithdrawn)}</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <div class="action-row">
+          <input class="action-input" type="number" id="dep-input-${n.id}" placeholder="Deposit amount…" min="0" step="any" ${!en ? 'disabled' : ''}>
+          <button class="btn btn-green" ${!en ? 'disabled' : ''} onclick="deposit('${n.id}')">Deposit</button>
+        </div>
+        <div class="action-row">
+          <input class="action-input" type="number" id="wit-input-${n.id}" placeholder="Withdraw amount…" min="0" step="any" ${!en ? 'disabled' : ''}>
+          <button class="btn btn-red" ${!en ? 'disabled' : ''} onclick="withdraw('${n.id}')">Withdraw</button>
+        </div>
+        <div class="action-row">
+          <input class="action-input" type="number" id="inv-input-${n.id}" placeholder="Invest amount ($200+)…" min="200" step="any" ${!en ? 'disabled' : ''} oninput="updateOddsHint('${n.id}', this.value)">
+          <button class="btn btn-invest" ${!en ? 'disabled' : ''} onclick="invest('${n.id}')">Invest</button>
+        </div>
+        <div id="odds-hint-${n.id}" class="odds-hint"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBlocked() {
+  const grid = document.getElementById('blocked-grid');
+  grid.innerHTML = BLOCKED.map(b => `
+    <div class="nation-card blocked" id="card-${b.id}">
+      <div class="card-header">
+        <div>
+          <div class="nation-name">${b.name}</div>
+        </div>
+        <span class="nation-status-badge badge-blocked">BLOCKED</span>
+      </div>
+      <div class="blocked-notice">⛔ ${b.reason} — Access Permanently Denied</div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   UPDATE SINGLE CARD
+═══════════════════════════════════════════════ */
+function updateCard(id) {
+  const acc = accounts[id];
+  const en = acc.enabled;
+  const card = document.getElementById(`card-${id}`);
+  if (!card) return;
+  card.className = `nation-card ${en ? 'enabled' : 'disabled'}`;
+  document.getElementById(`bal-${id}`).textContent = fmtShort(acc.balance);
+  document.getElementById(`dep-${id}`).textContent = fmtShort(acc.totalDeposited);
+  document.getElementById(`wit-${id}`).textContent = fmtShort(acc.totalWithdrawn);
+}
+
+/* ═══════════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════════ */
+function toggleNation(id, checked) {
+  accounts[id].enabled = checked;
+  saveState();
+  renderNations();
+}
+
+function getInput(elId) {
+  const el = document.getElementById(elId);
+  const val = parseFloat(el.value);
+  el.value = '';
+  return isNaN(val) || val <= 0 ? null : val;
+}
+
+function deposit(id) {
+  const acc = accounts[id];
+  if (!acc.enabled) return;
+  const amount = getInput(`dep-input-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid deposit amount.', 'red'); return; }
+
+  acc.balance += amount;
+  acc.totalDeposited += amount;
+  updateCard(id);
+  addLog('gain', acc.name, `Deposit received`, amount);
+  notify('Deposit Confirmed', `${acc.name} deposited ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function withdraw(id) {
+  const acc = accounts[id];
+  if (!acc.enabled) return;
+  const amount = getInput(`wit-input-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid withdrawal amount.', 'red'); return; }
+  if (amount > acc.balance) {
+    notify('Insufficient Funds', `${acc.name} balance is only ${fmt(acc.balance)}`, 'red');
+    return;
+  }
+
+  acc.balance -= amount;
+  acc.totalWithdrawn += amount;
+  updateCard(id);
+  addLog('loss', acc.name, `Withdrawal processed`, -amount);
+  notify('Withdrawal Confirmed', `${acc.name} withdrew ${fmt(amount)}`, 'red');
+  saveState();
+}
+
+function invest(id) {
+  const acc = accounts[id];
+  if (!acc.enabled) return;
+  const amount = getInput(`inv-input-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid investment amount ($200 minimum).', 'red'); return; }
+  if (amount < 200) { notify('Below Minimum', 'Minimum investment is $200.', 'red'); return; }
+  if (amount > acc.balance) { notify('Insufficient Funds', `Balance: ${fmt(acc.balance)}`, 'red'); return; }
+
+  const tier = getTier(amount);
+  if (!tier) { notify('Error', 'Invalid investment amount.', 'red'); return; }
+
+  const fail = Math.random() < tier.failRisk;
+  const pct = `${Math.round(tier.failRisk*100)}% risk`;
+
+  if (fail) {
+    acc.balance -= amount;
+    treasury += amount;
+    treasuryInvestGain += amount;
+    updateCard(id);
+    updateTreasury();
+    addLog('loss', acc.name, `Investment FAILED (${pct}) — ${fmt(amount)} seized`, -amount);
+    addLog('treasury', 'Dubai Treasury', `Investment seizure from ${acc.name}`, amount);
+    notify('Investment Failed', `${acc.name} lost ${fmt(amount)} — seized by Treasury`, 'red');
+    saveState();
+  } else {
+    const payout = amount * tier.returnMult;
+    acc.balance -= amount;
+    acc.balance += payout;
+    treasury -= payout;
+    treasuryInvestLoss += payout;
+    updateCard(id);
+    updateTreasury();
+    addLog('gain', acc.name, `Investment SUCCESS (${pct}) — ${Math.round(tier.returnMult*100)}% return`, payout - amount);
+    addLog('treasury', 'Dubai Treasury', `Investment payout to ${acc.name}`, -payout);
+    notify('Investment Succeeded!', `${acc.name} earned ${fmt(payout - amount)} net profit`, 'green');
+    saveState();
+  }
+}
+
+function advanceCycle() {
+  const rate = taxRate / 100;
+  let totalCollected = 0;
+
+  NATIONS.forEach(n => {
+    const acc = accounts[n.id];
+    if (!acc.enabled) return;
+    if (acc.balance <= 0) return;
+    const tax = acc.balance * rate;
+    acc.balance -= tax;
+    totalCollected += tax;
+    addLog('loss', acc.name, `Maintenance tax (${taxRate}%)`, -tax);
+  });
+
+  treasury += totalCollected;
+  treasuryTaxTotal += totalCollected;
+  cycles++;
+  updateTreasury();
+  NATIONS.forEach(n => updateCard(n.id));
+
+  addLog('cycle', 'Dubai Treasury', `Cycle ${cycles} — Tax cycle at ${taxRate}% — Total collected`, totalCollected);
+  notify('Cycle Advanced', `Collected ${fmt(totalCollected)} in maintenance tax (${taxRate}%)`, 'gold');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
+   TAX SLIDER
+═══════════════════════════════════════════════ */
+const slider = document.getElementById('tax-slider');
+const taxVal = document.getElementById('tax-rate-val');
+
+function updateSliderGradient() {
+  const pct = ((taxRate - 0) / (20 - 0)) * 100;
+  slider.style.setProperty('--pct', pct + '%');
+}
+
+slider.addEventListener('input', () => {
+  taxRate = parseFloat(slider.value);
+  taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
+  updateSliderGradient();
+  saveState();
+});
+
+/* ═══════════════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════════════ */
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US', {
+    hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   LOCALSTORAGE PERSISTENCE
+═══════════════════════════════════════════════ */
+function saveState() {
+  try {
+    localStorage.setItem('dib_state', JSON.stringify({
+      accounts,
+      treasury,
+      treasuryTaxTotal,
+      treasuryInvestGain,
+      treasuryInvestLoss,
+      cycles,
+      taxRate,
+      logEntries
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('dib_state'));
+    if (!saved) return;
+    NATIONS.forEach(n => {
+      if (saved.accounts && saved.accounts[n.id]) {
+        const s = saved.accounts[n.id];
+        accounts[n.id].balance        = s.balance        ?? 0;
+        accounts[n.id].totalDeposited = s.totalDeposited ?? 0;
+        accounts[n.id].totalWithdrawn = s.totalWithdrawn ?? 0;
+        accounts[n.id].enabled        = s.enabled        ?? true;
+      }
+    });
+    treasury            = saved.treasury            ?? 50000;
+    treasuryTaxTotal    = saved.treasuryTaxTotal    ?? 0;
+    treasuryInvestGain  = saved.treasuryInvestGain  ?? 0;
+    treasuryInvestLoss  = saved.treasuryInvestLoss  ?? 0;
+    cycles              = saved.cycles              ?? 0;
+    taxRate             = saved.taxRate             ?? 5;
+    logEntries          = Array.isArray(saved.logEntries) ? saved.logEntries : [];
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════
+   ODDS HINT
+═══════════════════════════════════════════════ */
+function updateOddsHint(id, rawVal) {
+  const hint = document.getElementById(`odds-hint-${id}`);
+  if (!hint) return;
+  const amount = parseFloat(rawVal);
+  if (!rawVal || isNaN(amount) || amount < 200) {
+    hint.className = 'odds-hint';
+    hint.innerHTML = '';
+    return;
+  }
+  const tier = getTier(amount);
+  if (!tier) {
+    hint.className = 'odds-hint';
+    hint.innerHTML = '';
+    return;
+  }
+  const winChance = Math.round((1 - tier.failRisk) * 100);
+  const loseChance = Math.round(tier.failRisk * 100);
+  const returnPct = Math.round(tier.returnMult * 100);
+  hint.className = 'odds-hint visible';
+  hint.innerHTML = `
+    <span class="odds-win">✓ ${winChance}% win</span>
+    <span class="odds-sep">·</span>
+    <span class="odds-lose">✗ ${loseChance}% fail</span>
+    <span class="odds-sep">·</span>
+    <span class="odds-return">${returnPct}% return on win</span>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   EDIT RESERVE
+═══════════════════════════════════════════════ */
+function openEditReserve() {
+  const modal = document.getElementById('reserve-modal');
+  document.getElementById('reserve-input').value = treasury.toFixed(2);
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('reserve-input').focus(), 50);
+}
+
+function closeEditReserve() {
+  document.getElementById('reserve-modal').style.display = 'none';
+  document.getElementById('reserve-input').value = '';
+}
+
+function applyEditReserve() {
+  const val = parseFloat(document.getElementById('reserve-input').value);
+  if (isNaN(val) || val < 0) {
+    notify('Invalid Amount', 'Enter a valid non-negative reserve value.', 'red');
+    return;
+  }
+  const prev = treasury;
+  treasury = val;
+  updateTreasury();
+  closeEditReserve();
+  const diff = val - prev;
+  addLog('treasury', 'Dubai Treasury', `Reserve manually adjusted (${diff >= 0 ? '+' : ''}${fmt(diff)})`, diff);
+  notify('Reserve Updated', `Treasury set to ${fmt(val)}`, 'gold');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+renderNations();
+renderBlocked();
+loadState();
+// Sync slider UI to loaded (or default) taxRate
+slider.value = taxRate;
+taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
+renderNations();  // re-render with restored enabled states
+renderLog();
+updateTreasury();
+updateSliderGradient();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

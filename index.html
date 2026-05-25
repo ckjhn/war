@@ -383,6 +383,9 @@
         <button class="nav-btn" data-app="alliances">
           🤝 Alliances
         </button>
+        <button class="nav-btn" data-app="bank">
+          🏦 Bank
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -437,6 +440,11 @@
         name: 'Alliances',
         icon: '🤝',
         file: 'alliances.html'
+      },
+      'bank': {
+        name: 'Bank',
+        icon: '🏦',
+        file: 'bank.html'
       },
       'sync': {
         name: 'Sync',
@@ -619,7 +627,7 @@
      * Use Alt + number keys to switch between apps
      */
     document.addEventListener('keydown', (e) => {
-      if (e.altKey && e.key >= '1' && e.key <= '7') {
+      if (e.altKey && e.key >= '1' && e.key <= '9') {
         const appIds = Object.keys(apps);
         const index = parseInt(e.key) - 1;
         if (index < appIds.length) {
@@ -654,7 +662,10 @@
                      localStorage.setItem('tc_history', JSON.stringify(d.history ||[])); } },
       { name:'alliances.json', path:'assets/alliances.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('tc_alliances')||'[]');}catch{return[];} },
-        write:(d)=>localStorage.setItem('tc_alliances',JSON.stringify(Array.isArray(d)?d:[])) }
+        write:(d)=>localStorage.setItem('tc_alliances',JSON.stringify(Array.isArray(d)?d:[])) },
+      { name:'bank.json', path:'assets/bank.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('dib_state')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('dib_state',JSON.stringify(d)); } }
     ];
 
     function loadGhConfig(){
@@ -811,7 +822,7 @@
           </div>
           <div style="${card}">
             <div style="${sec}">Files Managed</div>
-            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json'].map(f=>`
+            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json'].map(f=>`
               <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
                 <span>📁</span>
                 <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>
