@@ -669,6 +669,293 @@
   .odds-return { color: #7a9fff; font-weight: 600; }
   .odds-sep { color: var(--text-dim); }
 
+  /* ──────────── BANK TABS ──────────── */
+  .bank-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+  .bank-tab {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bank-tab:hover { color: var(--text); }
+  .bank-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ──────────── CREDIT CARD VISUAL ──────────── */
+  .cc-wrap { perspective: 1000px; margin-bottom: 18px; }
+
+  .cc-card {
+    width: 100%;
+    aspect-ratio: 1.586;
+    border-radius: 14px;
+    padding: 18px 22px 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+    user-select: none;
+  }
+  .cc-card:hover {
+    transform: translateY(-3px) rotateX(2deg);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .cc-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 25% 25%, rgba(255,255,255,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 75%, rgba(255,255,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cc-card::after {
+    content: '';
+    position: absolute;
+    top: -80%; right: -30%; width: 60%; height: 260%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.025), transparent);
+    transform: rotate(20deg);
+    pointer-events: none;
+  }
+  .cc-card.cc-disabled-overlay::before {
+    background: rgba(0,0,0,0.55);
+    z-index: 10;
+    border-radius: 14px;
+  }
+
+  /* Tier gradients */
+  .cc-basic     { background: linear-gradient(135deg, #1e2226 0%, #14181b 55%, #0e1214 100%); border: 1px solid rgba(107,114,128,0.3); }
+  .cc-standard  { background: linear-gradient(135deg, #0e1a35 0%, #081020 55%, #050c18 100%); border: 1px solid rgba(74,127,193,0.35); }
+  .cc-vip       { background: linear-gradient(135deg, #1e0f3a 0%, #120820 55%, #0a0515 100%); border: 1px solid rgba(124,58,237,0.4); }
+  .cc-gold      { background: linear-gradient(135deg, #2a1c08 0%, #180e04 55%, #3a2a08 100%); border: 1px solid rgba(201,168,76,0.5); }
+  .cc-platinum  { background: linear-gradient(135deg, #1a2428 0%, #0e1518 55%, #202e34 100%); border: 1px solid rgba(160,174,192,0.4); }
+  .cc-signature { background: linear-gradient(135deg, #200606 0%, #0a0202 55%, #180404 100%); border: 1px solid rgba(220,38,38,0.45); }
+  .cc-infinity  { background: linear-gradient(135deg, #06060f 0%, #020208 55%, #090918 100%); border: 1px solid rgba(201,168,76,0.6); }
+
+  /* Shimmer for infinity */
+  .cc-infinity-shimmer {
+    position: absolute; inset: 0; z-index: 1;
+    background: repeating-linear-gradient(
+      60deg,
+      transparent,
+      transparent 20px,
+      rgba(201,168,76,0.025) 20px,
+      rgba(201,168,76,0.025) 21px
+    );
+    pointer-events: none;
+  }
+
+  .cc-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+  .cc-bank-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.4;
+  }
+  .cc-tier-pill {
+    font-size: 7.5px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid currentColor;
+  }
+
+  .cc-mid {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative; z-index: 2;
+  }
+  .cc-chip {
+    width: 34px; height: 26px;
+    background: linear-gradient(135deg, #c8922a 0%, #f0c860 40%, #b8822a 70%, #e8a830 100%);
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .cc-chip::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(160,100,10,0.6);
+    border-radius: 3px;
+  }
+  .cc-chip-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(160,100,10,0.5); transform: translateY(-50%); }
+  .cc-chip-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(160,100,10,0.5); transform: translateX(-50%); }
+
+  .cc-number {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    letter-spacing: 2.5px;
+    color: rgba(255,255,255,0.82);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    position: relative; z-index: 2;
+  }
+
+  .cc-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+  .cc-field-label {
+    font-size: 7px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .cc-holder-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.82);
+    text-transform: uppercase;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cc-expiry-val {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+  }
+  .cc-logo-mark {
+    display: flex;
+    gap: -6px;
+    align-items: center;
+  }
+  .cc-logo-circle {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    opacity: 0.55;
+  }
+  .cc-logo-circle:first-child { background: #e8b440; margin-right: -8px; }
+  .cc-logo-circle:last-child  { background: #c05020; }
+
+  /* ──────────── CARD GRID ITEM ──────────── */
+  .card-grid-item {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    transition: border-color 0.3s;
+  }
+  .card-grid-item.card-debt-warning {
+    border-color: rgba(217,79,79,0.4);
+    box-shadow: 0 0 20px rgba(217,79,79,0.08);
+  }
+  .card-grid-item.card-suspended {
+    border-color: rgba(217,79,79,0.6);
+    box-shadow: 0 0 24px rgba(217,79,79,0.15);
+  }
+
+  .card-nation-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cc-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .cc-stat { text-align: center; }
+  .cc-stat-label { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+  .cc-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 15px; }
+  .cc-stat-val.avail { color: var(--green); }
+  .cc-stat-val.debt  { color: var(--red); }
+  .cc-stat-val.limit { color: var(--gold); }
+
+  .cc-actions { display: flex; flex-direction: column; gap: 7px; }
+
+  .cc-disabled-notice {
+    margin-top: 10px;
+    padding: 9px 13px;
+    background: rgba(217,79,79,0.1);
+    border: 1px solid rgba(217,79,79,0.3);
+    border-radius: var(--radius);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--red);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .cc-upgrade-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .btn-upgrade {
+    background: rgba(201,168,76,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.3);
+    font-size: 8px;
+    letter-spacing: 2px;
+    flex: 1;
+  }
+  .btn-upgrade:hover { background: rgba(201,168,76,0.2); border-color: var(--gold); }
+  .btn-downgrade {
+    background: rgba(100,100,100,0.08);
+    color: var(--text-muted);
+    border: 1px solid rgba(100,100,100,0.2);
+    font-size: 8px;
+    letter-spacing: 2px;
+  }
+  .btn-downgrade:hover { background: rgba(100,100,100,0.15); border-color: var(--text-muted); }
+  .tier-cost-note {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    padding: 4px 0 0;
+    text-align: center;
+  }
+
   /* ──────────── RESPONSIVE ──────────── */
   @media (max-width: 640px) {
     .page-wrap { padding: 16px; gap: 20px; }
@@ -707,7 +994,14 @@
 <!-- PAGE -->
 <div class="page-wrap">
 
-  <!-- TREASURY PANEL -->
+  <!-- TAB BAR -->
+  <div class="bank-tabs">
+    <button class="bank-tab active" id="tab-btn-accounts" onclick="switchTab('accounts')">📊 Accounts</button>
+    <button class="bank-tab" id="tab-btn-cards" onclick="switchTab('cards')">💳 Credit Cards</button>
+  </div>
+
+  <!-- ══════ ACCOUNTS TAB ══════ -->
+  <div id="tab-accounts">
   <div class="section-label">Sovereign Treasury</div>
   <div id="treasury-panel">
     <div class="treasury-top">
@@ -772,12 +1066,31 @@
     <div id="tx-log"><div class="log-empty">No transactions recorded</div></div>
   </div>
 
+  </div><!-- end #tab-accounts -->
+
+  <!-- ══════ CARDS TAB ══════ -->
+  <div id="tab-cards" style="display:none">
+    <div class="section-label">Credit Card Accounts</div>
+    <div id="cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
+  </div>
+
 </div>
 
 <script>
 /* ═══════════════════════════════════════════════
    DATA MODEL
 ═══════════════════════════════════════════════ */
+const CARD_TIERS = {
+  basic:     { name:'Basic',     upgradeCost:0,       creditLimit:1000,   maintenance:0,    interest:0.08, accent:'#6b7280', textClr:'#9ca3af' },
+  standard:  { name:'Standard',  upgradeCost:1000,    creditLimit:5000,   maintenance:50,   interest:0.07, accent:'#4a7fc1', textClr:'#93c5fd' },
+  vip:       { name:'VIP',       upgradeCost:5000,    creditLimit:12000,  maintenance:100,  interest:0.06, accent:'#7c3aed', textClr:'#c4b5fd' },
+  gold:      { name:'Gold',      upgradeCost:15000,   creditLimit:30000,  maintenance:250,  interest:0.05, accent:'#c9a84c', textClr:'#e0c06a' },
+  platinum:  { name:'Platinum',  upgradeCost:30000,   creditLimit:75000,  maintenance:500,  interest:0.04, accent:'#a0aec0', textClr:'#e2e8f0' },
+  signature: { name:'Signature', upgradeCost:60000,   creditLimit:150000, maintenance:1000, interest:0.03, accent:'#dc2626', textClr:'#fca5a5' },
+  infinity:  { name:'Infinity',  upgradeCost:150000,  creditLimit:500000, maintenance:2500, interest:0.02, accent:'#c9a84c', textClr:'#fde68a' },
+};
+const TIER_ORDER = ['basic','standard','vip','gold','platinum','signature','infinity'];
+
 const NATIONS = [
   { id:'usa',    name:'USA',               enabled: true,  blocked: false },
   { id:'russia', name:'Russia',            enabled: true,  blocked: false },
@@ -804,6 +1117,10 @@ const BLOCKED = [
   { id:'maracartel',name:'Mara Cartel',    reason:'Criminal Organization' },
 ];
 
+function generateCardNumber() {
+  return Array.from({length:4}, () => String(Math.floor(1000 + Math.random() * 9000))).join(' ');
+}
+
 const accounts = {};
 NATIONS.forEach(n => {
   accounts[n.id] = {
@@ -811,6 +1128,10 @@ NATIONS.forEach(n => {
     balance: 0,
     totalDeposited: 0,
     totalWithdrawn: 0,
+    cardTier: 'basic',
+    creditDebt: 0,
+    cardDisabled: false,
+    cardNumber: generateCardNumber(),
   };
 });
 
@@ -1031,6 +1352,10 @@ function withdraw(id) {
 function invest(id) {
   const acc = accounts[id];
   if (!acc.enabled) return;
+  if (acc.cardDisabled) {
+    notify('Investment Blocked', `${acc.name} must clear credit debt before investing.`, 'red');
+    return;
+  }
   const amount = getInput(`inv-input-${id}`);
   if (!amount) { notify('Input Error', 'Enter a valid investment amount ($200 minimum).', 'red'); return; }
   if (amount < 200) { notify('Below Minimum', 'Minimum investment is $200.', 'red'); return; }
@@ -1070,25 +1395,56 @@ function invest(id) {
 function advanceCycle() {
   const rate = taxRate / 100;
   let totalCollected = 0;
+  let totalCardFees  = 0;
 
   NATIONS.forEach(n => {
     const acc = accounts[n.id];
     if (!acc.enabled) return;
-    if (acc.balance <= 0) return;
-    const tax = acc.balance * rate;
-    acc.balance -= tax;
-    totalCollected += tax;
-    addLog('loss', acc.name, `Maintenance tax (${taxRate}%)`, -tax);
+
+    // ── Account maintenance tax (existing) ──
+    if (acc.balance > 0) {
+      const tax = acc.balance * rate;
+      acc.balance -= tax;
+      totalCollected += tax;
+      addLog('loss', acc.name, `Maintenance tax (${taxRate}%)`, -tax);
+    }
+
+    // ── Card maintenance fee ──
+    const tier = CARD_TIERS[acc.cardTier];
+    if (tier.maintenance > 0) {
+      acc.balance -= tier.maintenance;
+      totalCardFees += tier.maintenance;
+      addLog('loss', acc.name, `Card fee — ${tier.name} (${fmt(tier.maintenance)}/cycle)`, -tier.maintenance);
+    }
+
+    // ── Credit interest on outstanding debt ──
+    if (acc.creditDebt > 0) {
+      const interest = acc.creditDebt * tier.interest;
+      acc.balance -= interest;
+      totalCardFees += interest;
+      addLog('loss', acc.name, `Credit interest (${Math.round(tier.interest*100)}% on ${fmt(acc.creditDebt)})`, -interest);
+    }
+
+    // ── Check negative balance threshold ──
+    if (acc.balance < -5000 && !acc.cardDisabled) {
+      acc.cardDisabled = true;
+      acc.cardTier = 'basic';
+      addLog('loss', acc.name, `⚠ Balance below −$5,000 — Card DISABLED & downgraded to Basic`, 0);
+      notify('Card Suspended', `${acc.name} exceeded −$5,000 debt — card disabled & downgraded`, 'red');
+    }
   });
 
-  treasury += totalCollected;
-  treasuryTaxTotal += totalCollected;
+  treasury += totalCollected + totalCardFees;
+  treasuryTaxTotal += totalCollected + totalCardFees;
   cycles++;
   updateTreasury();
-  NATIONS.forEach(n => updateCard(n.id));
+  NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
 
-  addLog('cycle', 'Dubai Treasury', `Cycle ${cycles} — Tax cycle at ${taxRate}% — Total collected`, totalCollected);
-  notify('Cycle Advanced', `Collected ${fmt(totalCollected)} in maintenance tax (${taxRate}%)`, 'gold');
+  addLog('cycle', 'Dubai Treasury',
+    `Cycle ${cycles} — Account tax: ${fmt(totalCollected)} · Card fees: ${fmt(totalCardFees)} · Total: ${fmt(totalCollected+totalCardFees)}`,
+    totalCollected + totalCardFees);
+  notify('Cycle Advanced',
+    `Tax ${fmt(totalCollected)} + Card fees ${fmt(totalCardFees)} = ${fmt(totalCollected+totalCardFees)}`, 'gold');
   saveState();
 }
 
@@ -1149,6 +1505,10 @@ function loadState() {
         accounts[n.id].totalDeposited = s.totalDeposited ?? 0;
         accounts[n.id].totalWithdrawn = s.totalWithdrawn ?? 0;
         accounts[n.id].enabled        = s.enabled        ?? true;
+        accounts[n.id].cardTier       = s.cardTier       ?? 'basic';
+        accounts[n.id].creditDebt     = s.creditDebt     ?? 0;
+        accounts[n.id].cardDisabled   = s.cardDisabled   ?? false;
+        accounts[n.id].cardNumber     = s.cardNumber     || generateCardNumber();
       }
     });
     treasury            = saved.treasury            ?? 50000;
@@ -1193,6 +1553,224 @@ function updateOddsHint(id, rawVal) {
 }
 
 /* ═══════════════════════════════════════════════
+   TAB SWITCHING
+═══════════════════════════════════════════════ */
+let activeTab = 'accounts';
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-accounts').style.display = tab === 'accounts' ? '' : 'none';
+  document.getElementById('tab-cards').style.display    = tab === 'cards'    ? '' : 'none';
+  document.getElementById('tab-btn-accounts').classList.toggle('active', tab === 'accounts');
+  document.getElementById('tab-btn-cards').classList.toggle('active', tab === 'cards');
+  if (tab === 'cards') renderCards();
+}
+
+/* ═══════════════════════════════════════════════
+   CREDIT CARD RENDER
+═══════════════════════════════════════════════ */
+function cardFaceHTML(acc) {
+  const tier  = CARD_TIERS[acc.cardTier];
+  const tclr  = tier.textClr;
+  const isInf = acc.cardTier === 'infinity';
+  return `
+    <div class="cc-card cc-${acc.cardTier}${acc.cardDisabled?' cc-disabled-overlay':''}">
+      ${isInf ? '<div class="cc-infinity-shimmer"></div>' : ''}
+      <div class="cc-top">
+        <div class="cc-bank-name">Dubai International Bank<br><span style="font-size:7px;letter-spacing:3px;opacity:0.5">SOVEREIGN FINANCIAL INSTITUTION</span></div>
+        <div class="cc-tier-pill" style="color:${tclr}">${tier.name.toUpperCase()}</div>
+      </div>
+      <div class="cc-mid">
+        <div class="cc-chip">
+          <div class="cc-chip-h"></div>
+          <div class="cc-chip-v"></div>
+        </div>
+        <div class="cc-number">${acc.cardNumber}</div>
+      </div>
+      <div class="cc-bottom">
+        <div>
+          <div class="cc-field-label">Cardholder Nation</div>
+          <div class="cc-holder-name">${acc.name}</div>
+        </div>
+        <div style="text-align:center">
+          <div class="cc-field-label">Valid Thru</div>
+          <div class="cc-expiry-val">12/99</div>
+        </div>
+        <div class="cc-logo-mark">
+          <div class="cc-logo-circle" style="background:${tclr};opacity:0.7"></div>
+          <div class="cc-logo-circle" style="background:rgba(255,255,255,0.15)"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = NATIONS.map(n => {
+    const acc  = accounts[n.id];
+    const tier = CARD_TIERS[acc.cardTier];
+    const tidx = TIER_ORDER.indexOf(acc.cardTier);
+    const nextTier = TIER_ORDER[tidx + 1];
+    const prevTier = TIER_ORDER[tidx - 1];
+    const availCredit = tier.creditLimit - acc.creditDebt;
+    const en = acc.enabled;
+
+    const warningClass = acc.cardDisabled ? 'card-suspended'
+      : acc.balance < -2500 ? 'card-debt-warning' : '';
+
+    return `
+    <div class="card-grid-item ${warningClass}" id="cc-item-${n.id}">
+      <div class="card-nation-name">
+        ${acc.name}
+        ${acc.cardDisabled ? '<span style="font-size:9px;letter-spacing:2px;color:var(--red);font-family:Montserrat,sans-serif;font-weight:600">⛔ SUSPENDED</span>' : ''}
+      </div>
+      <div class="cc-wrap">${cardFaceHTML(acc)}</div>
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="cc-stat-label">Available</div>
+          <div class="cc-stat-val avail" id="cc-avail-${n.id}">${fmtShort(Math.max(0,availCredit))}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-label">Debt</div>
+          <div class="cc-stat-val debt" id="cc-debt-${n.id}">${fmtShort(acc.creditDebt)}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-label">Limit</div>
+          <div class="cc-stat-val limit">${fmtShort(tier.creditLimit)}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;font-size:9px;color:var(--text-dim);letter-spacing:1.5px;flex-wrap:wrap">
+        <span>Maintenance: <span style="color:var(--text-muted)">${tier.maintenance > 0 ? fmt(tier.maintenance)+'/cycle' : 'Free'}</span></span>
+        <span style="opacity:.4">·</span>
+        <span>Interest: <span style="color:var(--text-muted)">${Math.round(tier.interest*100)}%/cycle on debt</span></span>
+      </div>
+      ${acc.cardDisabled ? `<div class="cc-disabled-notice">⚠ Card suspended — balance exceeded −$5,000<br>Clear debt to re-enable investments. Card downgraded to Basic.</div>` : ''}
+      <div class="cc-actions">
+        <div class="action-row">
+          <input class="action-input" type="number" id="cc-borrow-${n.id}" placeholder="Borrow amount…" min="1" step="any" ${!en||acc.cardDisabled?'disabled':''}>
+          <button class="btn btn-invest" ${!en||acc.cardDisabled?'disabled':''} onclick="borrow('${n.id}')">Borrow</button>
+        </div>
+        <div class="action-row">
+          <input class="action-input" type="number" id="cc-repay-${n.id}" placeholder="Repay amount…" min="1" step="any" ${!en?'disabled':''}>
+          <button class="btn btn-green" ${!en?'disabled':''} onclick="repayCredit('${n.id}')">Repay</button>
+        </div>
+      </div>
+      <div class="cc-upgrade-row">
+        ${nextTier ? `<button class="btn btn-upgrade" onclick="upgradeCard('${n.id}')" ${!en||acc.cardDisabled?'disabled':''}>
+          ↑ Upgrade to ${CARD_TIERS[nextTier].name}
+        </button>` : `<span style="font-size:9px;color:var(--gold);letter-spacing:2px;flex:1;text-align:center">✦ MAX TIER REACHED</span>`}
+        ${prevTier ? `<button class="btn btn-downgrade btn" onclick="downgradeCard('${n.id}')" ${!en?'disabled':''}>↓ Downgrade</button>` : ''}
+      </div>
+      ${nextTier ? `<div class="tier-cost-note">Upgrade cost: ${fmt(CARD_TIERS[nextTier].upgradeCost)} → paid to Dubai Treasury</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function updateCreditCardDisplay(id) {
+  const item = document.getElementById(`cc-item-${id}`);
+  if (!item) return; // cards tab not rendered yet
+  const acc  = accounts[id];
+  const tier = CARD_TIERS[acc.cardTier];
+  const avail = Math.max(0, tier.creditLimit - acc.creditDebt);
+  const dEl = document.getElementById(`cc-avail-${id}`);
+  const bEl = document.getElementById(`cc-debt-${id}`);
+  if (dEl) dEl.textContent = fmtShort(avail);
+  if (bEl) bEl.textContent = fmtShort(acc.creditDebt);
+  // Full re-render of the card item for tier/disabled changes
+  renderCards();
+}
+
+/* ═══════════════════════════════════════════════
+   CREDIT ACTIONS
+═══════════════════════════════════════════════ */
+function borrow(id) {
+  const acc  = accounts[id];
+  const tier = CARD_TIERS[acc.cardTier];
+  if (!acc.enabled || acc.cardDisabled) return;
+  const amount = getInput(`cc-borrow-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid borrow amount.', 'red'); return; }
+  const available = tier.creditLimit - acc.creditDebt;
+  if (amount > available) {
+    notify('Credit Limit Exceeded', `Available credit: ${fmt(available)}`, 'red'); return;
+  }
+  acc.creditDebt += amount;
+  acc.balance    += amount;
+  updateCard(id);
+  updateCreditCardDisplay(id);
+  addLog('gain', acc.name, `Credit borrowed — ${fmt(amount)} (debt now ${fmt(acc.creditDebt)})`, amount);
+  notify('Credit Approved', `${acc.name} borrowed ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function repayCredit(id) {
+  const acc = accounts[id];
+  if (!acc.enabled) return;
+  const amount = getInput(`cc-repay-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid repayment amount.', 'red'); return; }
+  if (amount > acc.balance) {
+    notify('Insufficient Balance', `Balance: ${fmt(acc.balance)}`, 'red'); return;
+  }
+  if (amount > acc.creditDebt) {
+    notify('Overpayment', `Outstanding debt is only ${fmt(acc.creditDebt)}`, 'red'); return;
+  }
+  acc.creditDebt -= amount;
+  acc.balance    -= amount;
+  // Re-enable card if balance recovers above -5000 and debt fully cleared
+  if (acc.cardDisabled && acc.balance >= -5000 && acc.creditDebt <= 0) {
+    acc.cardDisabled = false;
+    addLog('gain', acc.name, `Card re-enabled — debt cleared, balance restored`, 0);
+    notify('Card Re-enabled', `${acc.name} cleared all debt — investments unblocked`, 'green');
+  }
+  updateCard(id);
+  updateCreditCardDisplay(id);
+  addLog('loss', acc.name, `Credit repaid — ${fmt(amount)} (debt now ${fmt(acc.creditDebt)})`, -amount);
+  notify('Repayment Confirmed', `${acc.name} repaid ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function upgradeCard(id) {
+  const acc  = accounts[id];
+  if (!acc.enabled || acc.cardDisabled) return;
+  const tidx    = TIER_ORDER.indexOf(acc.cardTier);
+  const nextKey = TIER_ORDER[tidx + 1];
+  if (!nextKey) { notify('Max Tier', 'Already at Infinity tier.', 'gold'); return; }
+  const cost = CARD_TIERS[nextKey].upgradeCost;
+  if (acc.balance < cost) {
+    notify('Insufficient Funds', `Need ${fmt(cost)} to upgrade to ${CARD_TIERS[nextKey].name}.`, 'red'); return;
+  }
+  acc.balance  -= cost;
+  acc.cardTier  = nextKey;
+  treasury     += cost;
+  treasuryTaxTotal += cost;
+  updateCard(id);
+  updateTreasury();
+  updateCreditCardDisplay(id);
+  addLog('loss', acc.name, `Card upgraded → ${CARD_TIERS[nextKey].name} (paid ${fmt(cost)} to Treasury)`, -cost);
+  addLog('treasury', 'Dubai Treasury', `Card upgrade fee from ${acc.name}`, cost);
+  notify('Card Upgraded', `${acc.name} upgraded to ${CARD_TIERS[nextKey].name}`, 'gold');
+  saveState();
+}
+
+function downgradeCard(id) {
+  const acc  = accounts[id];
+  if (!acc.enabled) return;
+  const tidx    = TIER_ORDER.indexOf(acc.cardTier);
+  const prevKey = TIER_ORDER[tidx - 1];
+  if (!prevKey) { notify('Min Tier', 'Already at Basic tier.', 'red'); return; }
+  const prevTier = CARD_TIERS[prevKey];
+  // If current debt exceeds new tier's credit limit, block downgrade
+  if (acc.creditDebt > prevTier.creditLimit) {
+    notify('Cannot Downgrade', `Outstanding debt (${fmt(acc.creditDebt)}) exceeds ${prevTier.name} limit (${fmt(prevTier.creditLimit)}). Repay first.`, 'red');
+    return;
+  }
+  const oldTier = acc.cardTier;
+  acc.cardTier = prevKey;
+  updateCreditCardDisplay(id);
+  addLog('loss', acc.name, `Card downgraded from ${CARD_TIERS[oldTier].name} → ${prevTier.name} (re-upgrade costs full price)`, 0);
+  notify('Card Downgraded', `${acc.name} downgraded to ${prevTier.name}. Re-upgrade costs full price.`, 'red');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
    EDIT RESERVE
 ═══════════════════════════════════════════════ */
 function openEditReserve() {
@@ -1233,6 +1811,7 @@ loadState();
 slider.value = taxRate;
 taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
 renderNations();  // re-render with restored enabled states
+renderCards();
 renderLog();
 updateTreasury();
 updateSliderGradient();
