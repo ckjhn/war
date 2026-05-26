@@ -386,7 +386,7 @@ input[type=range]::-webkit-slider-thumb {
       <div class="stat-val" id="stat-treasury">$50,000.00</div>
     </div>
     <div class="stat-item">
-      <div class="stat-label">Trade Revenue</div>
+      <div class="stat-label">Fees Earned (Session)</div>
       <div class="stat-val green" id="stat-trade-rev">$0.00</div>
     </div>
     <div class="stat-item">
@@ -844,6 +844,7 @@ function executeTrade() {
     state.accounts[sellerId].balance += mktTotal;
   }
   state.treasury = (state.treasury || 50000) + dubaiEarns;
+  state.treasuryTradeFees = (state.treasuryTradeFees || 0) + dubaiEarns;
 
   // Append to bank log
   if (!state.logEntries) state.logEntries = [];
@@ -947,7 +948,17 @@ updateStats();
 updateMarkupGradient();
 updateClock();
 setInterval(updateClock, 1000);
-setInterval(() => { populateSelectors(); updateStats(); }, 5000); // refresh bank data every 5s
+// Refresh bank data periodically — preserve dropdown selections to avoid deselection bug
+setInterval(() => {
+  const buyerVal  = document.getElementById('buyer-select').value;
+  const sellerVal = document.getElementById('seller-select').value;
+  populateSelectors();
+  // Restore previous selections
+  if (buyerVal)  document.getElementById('buyer-select').value  = buyerVal;
+  if (sellerVal) document.getElementById('seller-select').value = sellerVal;
+  updateStats();
+  updateBreakdown(); // refresh balance check with restored selection
+}, 8000);
 </script>
 </body>
 </html>

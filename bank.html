@@ -1023,6 +1023,10 @@
           <div class="treasury-stat-val red" id="treasury-invest-loss">$0</div>
         </div>
         <div class="treasury-stat">
+          <div class="treasury-stat-label">Trade Brokerage Fees</div>
+          <div class="treasury-stat-val green" id="treasury-trade-fees">$0</div>
+        </div>
+        <div class="treasury-stat">
           <div class="treasury-stat-label">Cycles Advanced</div>
           <div class="treasury-stat-val gold" id="treasury-cycles">0</div>
         </div>
@@ -1140,6 +1144,7 @@ let treasury = 50000;
 let treasuryTaxTotal = 0;
 let treasuryInvestGain = 0;
 let treasuryInvestLoss = 0;
+let treasuryTradeFees = 0;
 let cycles = 0;
 let taxRate = 5;
 
@@ -1212,11 +1217,21 @@ function notify(title, msg, cls='gold') {
    TREASURY
 ═══════════════════════════════════════════════ */
 function updateTreasury() {
+  // Also pull treasuryTradeFees from dib_state in case dubai_trade updated it
+  try {
+    const ext = JSON.parse(localStorage.getItem('dib_state') || '{}');
+    if (ext.treasuryTradeFees !== undefined && ext.treasuryTradeFees !== treasuryTradeFees) {
+      treasuryTradeFees = ext.treasuryTradeFees;
+      // Sync treasury total too if dubai_trade changed it
+      if (ext.treasury !== undefined) treasury = ext.treasury;
+    }
+  } catch {}
   document.getElementById('treasury-display').textContent =
     Number(treasury).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   document.getElementById('treasury-tax-total').textContent = fmt(treasuryTaxTotal);
   document.getElementById('treasury-invest-gain').textContent = fmt(treasuryInvestGain);
   document.getElementById('treasury-invest-loss').textContent = fmt(treasuryInvestLoss);
+  document.getElementById('treasury-trade-fees').textContent = fmt(treasuryTradeFees);
   document.getElementById('treasury-cycles').textContent = cycles;
 }
 
@@ -1488,6 +1503,7 @@ function saveState() {
       treasuryTaxTotal,
       treasuryInvestGain,
       treasuryInvestLoss,
+      treasuryTradeFees,
       cycles,
       taxRate,
       logEntries
@@ -1517,6 +1533,7 @@ function loadState() {
     treasuryTaxTotal    = saved.treasuryTaxTotal    ?? 0;
     treasuryInvestGain  = saved.treasuryInvestGain  ?? 0;
     treasuryInvestLoss  = saved.treasuryInvestLoss  ?? 0;
+    treasuryTradeFees   = saved.treasuryTradeFees   ?? 0;
     cycles              = saved.cycles              ?? 0;
     taxRate             = saved.taxRate             ?? 5;
     logEntries          = Array.isArray(saved.logEntries) ? saved.logEntries : [];
@@ -1842,6 +1859,8 @@ updateTreasury();
 updateSliderGradient();
 updateClock();
 setInterval(updateClock, 1000);
+// Periodically sync treasury from dib_state (catches updates from dubai_trade)
+setInterval(updateTreasury, 6000);
 </script>
 </body>
 </html>
