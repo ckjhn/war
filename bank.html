@@ -324,6 +324,27 @@
     border-color: var(--gold);
     background: rgba(201,168,76,0.08);
   }
+  .btn-undo {
+    background: rgba(120,100,60,0.1);
+    color: var(--text-muted);
+    border: 1px solid rgba(120,100,60,0.25);
+    position: relative;
+  }
+  .btn-undo:not(:disabled):hover {
+    background: rgba(201,168,76,0.1);
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.4);
+  }
+  .btn-undo:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .undo-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(201,168,76,0.25); color: var(--gold);
+    font-size: 9px; font-weight: 700; margin-left: 5px; line-height: 1;
+  }
 
   .btn-green {
     background: rgba(61,186,116,0.15);
@@ -1081,6 +1102,7 @@
       </div>
       <button class="btn btn-gold" id="advance-btn" onclick="advanceCycle()">⟳ Advance Cycle</button>
       <button class="btn btn-outline" onclick="openEditReserve()">✎ Edit Reserve</button>
+      <button class="btn btn-undo" id="undo-btn" onclick="undo()" disabled title="Undo last action (up to 10)">↩ Undo</button>
     </div>
   </div>
 
@@ -1221,6 +1243,74 @@ const TIERS = [
   { min: 2501, max: 5000, failRisk: 0.75, returnMult: 2.50 },
   { min: 5001, max: Infinity, failRisk: 0.90, returnMult: 3.00 },
 ];
+
+/* ═══════════════════════════════════════════════
+   UNDO SYSTEM (up to 10 snapshots, session-only)
+═══════════════════════════════════════════════ */
+const MAX_UNDO = 10;
+let undoStack = [];
+
+function pushUndo() {
+  undoStack.push(JSON.parse(JSON.stringify({
+    accounts,
+    treasury,
+    treasuryTaxTotal,
+    treasuryInvestGain,
+    treasuryInvestLoss,
+    treasuryTradeFees,
+    cycles,
+    taxRate,
+    logEntries,
+  })));
+  if (undoStack.length > MAX_UNDO) undoStack.shift(); // drop oldest if over limit
+  updateUndoBtn();
+}
+
+function undo() {
+  if (!undoStack.length) return;
+  const snap = undoStack.pop();
+
+  // Restore accounts
+  NATIONS.forEach(n => {
+    if (snap.accounts && snap.accounts[n.id]) {
+      Object.assign(accounts[n.id], snap.accounts[n.id]);
+    }
+  });
+  treasury          = snap.treasury          ?? 50000;
+  treasuryTaxTotal  = snap.treasuryTaxTotal  ?? 0;
+  treasuryInvestGain= snap.treasuryInvestGain?? 0;
+  treasuryInvestLoss= snap.treasuryInvestLoss?? 0;
+  treasuryTradeFees = snap.treasuryTradeFees ?? 0;
+  cycles            = snap.cycles            ?? 0;
+  taxRate           = snap.taxRate           ?? 5;
+  logEntries        = Array.isArray(snap.logEntries) ? snap.logEntries : [];
+
+  // Re-sync slider UI
+  slider.value = taxRate;
+  taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
+  updateSliderGradient();
+
+  // Re-render everything
+  renderNations();
+  if (activeTab === 'cards') renderCards();
+  renderLog();
+  updateTreasury();
+  updateUndoBtn();
+  saveState();
+
+  const left = undoStack.length;
+  notify('Action Undone', `State restored — ${left} undo${left !== 1 ? 's' : ''} remaining`, 'gold');
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undo-btn');
+  if (!btn) return;
+  const n = undoStack.length;
+  btn.disabled = n === 0;
+  btn.innerHTML = n > 0
+    ? `↩ Undo <span class="undo-count">${n}</span>`
+    : `↩ Undo`;
+}
 
 /* ═══════════════════════════════════════════════
    UTILITIES
@@ -1387,6 +1477,7 @@ function updateCard(id) {
    ACTIONS
 ═══════════════════════════════════════════════ */
 function toggleNation(id, checked) {
+  pushUndo();
   accounts[id].enabled = checked;
   saveState();
   renderNations();
@@ -1404,6 +1495,7 @@ function deposit(id) {
   if (!acc.enabled) return;
   const amount = getInput(`dep-input-${id}`);
   if (!amount) { notify('Input Error', 'Enter a valid deposit amount.', 'red'); return; }
+  pushUndo();
 
   acc.balance += amount;
   acc.totalDeposited += amount;
@@ -1422,6 +1514,7 @@ function withdraw(id) {
     notify('Insufficient Funds', `${acc.name} balance is only ${fmt(acc.balance)}`, 'red');
     return;
   }
+  pushUndo();
 
   acc.balance -= amount;
   acc.totalWithdrawn += amount;
@@ -1445,6 +1538,7 @@ function invest(id) {
 
   const tier = getTier(amount);
   if (!tier) { notify('Error', 'Invalid investment amount.', 'red'); return; }
+  pushUndo();
 
   const fail = Math.random() < tier.failRisk;
   const pct = `${Math.round(tier.failRisk*100)}% risk`;
@@ -1475,6 +1569,7 @@ function invest(id) {
 }
 
 function advanceCycle() {
+  pushUndo();
   const rate = taxRate / 100;
   let totalCollected = 0;
   let totalCardFees  = 0;
@@ -1874,6 +1969,7 @@ function borrow(id) {
   if (amount > available) {
     notify('Credit Limit Exceeded', `Available credit: ${fmt(available)}`, 'red'); return;
   }
+  pushUndo();
   acc.creditDebt += amount;
   acc.balance    += amount;
   updateCard(id);
@@ -1894,6 +1990,7 @@ function repayCredit(id) {
   if (amount > acc.creditDebt) {
     notify('Overpayment', `Outstanding debt is only ${fmt(acc.creditDebt)}`, 'red'); return;
   }
+  pushUndo();
   acc.creditDebt -= amount;
   acc.balance    -= amount;
   // Re-enable card if balance recovers above -5000 and debt fully cleared
@@ -1925,6 +2022,7 @@ function upgradeCard(id) {
   if (acc.balance < cost) {
     notify('Insufficient Funds', `Need ${fmt(cost)} to upgrade to ${CARD_TIERS[nextKey].name}${isReupgrade?' (25% loyalty discount applied)':''}.`, 'red'); return;
   }
+  pushUndo();
   acc.balance  -= cost;
   acc.cardTier  = nextKey;
   if (nextIdx > highestIdx) acc.highestCardTier = nextKey;
@@ -1952,6 +2050,7 @@ function downgradeCard(id) {
     notify('Cannot Downgrade', `Outstanding debt (${fmt(acc.creditDebt)}) exceeds ${prevTier.name} limit (${fmt(prevTier.creditLimit)}). Repay first.`, 'red');
     return;
   }
+  pushUndo();
   const oldTier = acc.cardTier;
   acc.cardTier = prevKey;
   updateCreditCardDisplay(id);
@@ -1982,6 +2081,7 @@ function applyEditReserve() {
     return;
   }
   const prev = treasury;
+  pushUndo();
   treasury = val;
   updateTreasury();
   closeEditReserve();
@@ -2009,6 +2109,7 @@ renderNations();  // re-render with restored enabled states
 renderCards();
 renderLog();
 updateTreasury();
+updateUndoBtn();
 updateSliderGradient();
 updateClock();
 setInterval(updateClock, 1000);
