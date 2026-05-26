@@ -335,15 +335,39 @@
     color: var(--gold);
     border-color: rgba(201,168,76,0.4);
   }
-  .btn-undo:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
+  .btn-undo:disabled { opacity: 0.3; cursor: not-allowed; }
   .undo-count {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%;
     background: rgba(201,168,76,0.25); color: var(--gold);
     font-size: 9px; font-weight: 700; margin-left: 5px; line-height: 1;
+  }
+  .btn-yearly {
+    background: rgba(61,186,116,0.1);
+    color: var(--green);
+    border: 1px solid rgba(61,186,116,0.3);
+  }
+  .btn-yearly:hover {
+    background: rgba(61,186,116,0.2);
+    border-color: var(--green);
+    box-shadow: 0 0 14px rgba(61,186,116,0.2);
+  }
+  .btn-data {
+    background: rgba(100,100,120,0.08);
+    color: var(--text-muted);
+    border: 1px solid rgba(100,100,120,0.2);
+    font-size: 9px; letter-spacing: 2px;
+  }
+  .btn-data:hover {
+    background: rgba(201,168,76,0.08);
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.3);
+  }
+  .ctrl-sep {
+    width: 1px; height: 28px;
+    background: rgba(201,168,76,0.15);
+    align-self: center;
+    margin: 0 4px;
   }
 
   .btn-green {
@@ -1072,7 +1096,7 @@
       </div>
       <div class="treasury-stats">
         <div class="treasury-stat">
-          <div class="treasury-stat-label">Total Collected (Tax)</div>
+          <div class="treasury-stat-label">Card Fees & Interest</div>
           <div class="treasury-stat-val green" id="treasury-tax-total">$0</div>
         </div>
         <div class="treasury-stat">
@@ -1094,15 +1118,13 @@
       </div>
     </div>
     <div class="controls-row">
-      <div class="tax-control">
-        <span class="tax-label">Maintenance Tax</span>
-        <div class="tax-rate-display"><span id="tax-rate-val">5</span>%</div>
-        <input type="range" id="tax-slider" min="0" max="20" value="5" step="0.5">
-        <span id="tax-saved-badge" style="font-size:8px;letter-spacing:2px;color:var(--green);text-transform:uppercase;opacity:0;transition:opacity 0.3s;white-space:nowrap">✓ Saved</span>
-      </div>
       <button class="btn btn-gold" id="advance-btn" onclick="advanceCycle()">⟳ Advance Cycle</button>
+      <button class="btn btn-yearly" onclick="yearlyFeeTax()">📅 Yearly Fee Tax</button>
       <button class="btn btn-outline" onclick="openEditReserve()">✎ Edit Reserve</button>
       <button class="btn btn-undo" id="undo-btn" onclick="undo()" disabled title="Undo last action (up to 10)">↩ Undo</button>
+      <div class="ctrl-sep"></div>
+      <button class="btn btn-data" onclick="exportBankJSON()" title="Export bank state as JSON">↓ Export</button>
+      <button class="btn btn-data" onclick="importBankJSON()" title="Import bank state from JSON">↑ Import</button>
     </div>
   </div>
 
@@ -1149,16 +1171,16 @@
       display:grid; grid-template-columns:repeat(3,1fr); gap:16px; font-size:10px; letter-spacing:1px;
     ">
       <div>
-        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Card Maintenance Fee</div>
-        <div style="color:var(--text)">Fixed $ amount charged <strong>every cycle</strong> just for holding the card — regardless of balance or usage. Basic is always free.</div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Yearly Card Fee</div>
+        <div style="color:var(--text)">Fixed $ amount charged via the <strong>Yearly Fee Tax</strong> button — regardless of balance or usage. Basic tier is always free.</div>
       </div>
       <div>
         <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Credit Interest</div>
-        <div style="color:var(--text)">% charged on outstanding <strong>debt only</strong> — nations with $0 debt pay nothing in interest, only the card fee.</div>
+        <div style="color:var(--text)">% charged on outstanding <strong>debt only</strong> — collected each <strong>Advance Cycle</strong>. Nations with $0 debt pay nothing.</div>
       </div>
       <div>
-        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Withdrawals</div>
-        <div style="color:var(--green);font-weight:600">FREE — No fee, no percentage. Nations withdraw any amount from their balance at any time at no cost.</div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Deposits & Withdrawals</div>
+        <div style="color:var(--green);font-weight:600">FREE — No fee, no tax. Nations deposit and withdraw any amount at any time at zero cost.</div>
       </div>
     </div>
 
@@ -1570,36 +1592,20 @@ function invest(id) {
 
 function advanceCycle() {
   pushUndo();
-  const rate = taxRate / 100;
-  let totalCollected = 0;
-  let totalCardFees  = 0;
+  let totalInterest = 0;
 
   NATIONS.forEach(n => {
-    const acc = accounts[n.id];
+    const acc  = accounts[n.id];
     if (!acc.enabled) return;
 
-    // ── Account maintenance tax (existing) ──
-    if (acc.balance > 0) {
-      const tax = acc.balance * rate;
-      acc.balance -= tax;
-      totalCollected += tax;
-      addLog('loss', acc.name, `Maintenance tax (${taxRate}%)`, -tax);
-    }
-
-    // ── Card maintenance fee ──
-    const tier = CARD_TIERS[acc.cardTier];
-    if (tier.maintenance > 0) {
-      acc.balance -= tier.maintenance;
-      totalCardFees += tier.maintenance;
-      addLog('loss', acc.name, `Card fee — ${tier.name} (${fmt(tier.maintenance)}/cycle)`, -tier.maintenance);
-    }
-
-    // ── Credit interest on outstanding debt ──
+    // ── Credit interest on outstanding debt only ──
     if (acc.creditDebt > 0) {
+      const tier     = CARD_TIERS[acc.cardTier];
       const interest = acc.creditDebt * tier.interest;
-      acc.balance -= interest;
-      totalCardFees += interest;
-      addLog('loss', acc.name, `Credit interest (${Math.round(tier.interest*100)}% on ${fmt(acc.creditDebt)})`, -interest);
+      acc.balance   -= interest;
+      totalInterest += interest;
+      addLog('loss', acc.name,
+        `Credit interest (${Math.round(tier.interest*100)}% on ${fmt(acc.creditDebt)})`, -interest);
     }
 
     // ── Check negative balance threshold ──
@@ -1607,42 +1613,115 @@ function advanceCycle() {
       acc.cardDisabled = true;
       acc.cardTier = 'basic';
       addLog('loss', acc.name, `⚠ Balance below −$5,000 — Card DISABLED & downgraded to Basic`, 0);
-      notify('Card Suspended', `${acc.name} exceeded −$5,000 debt — card disabled & downgraded`, 'red');
+      notify('Card Suspended', `${acc.name} exceeded −$5,000 — card disabled & downgraded`, 'red');
     }
   });
 
-  treasury += totalCollected + totalCardFees;
-  treasuryTaxTotal += totalCollected + totalCardFees;
+  treasury      += totalInterest;
+  treasuryTaxTotal += totalInterest;
   cycles++;
   updateTreasury();
   NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
 
-  addLog('cycle', 'Dubai Treasury',
-    `Cycle ${cycles} — Account tax: ${fmt(totalCollected)} · Card fees: ${fmt(totalCardFees)} · Total: ${fmt(totalCollected+totalCardFees)}`,
-    totalCollected + totalCardFees);
-  notify('Cycle Advanced',
-    `Tax ${fmt(totalCollected)} + Card fees ${fmt(totalCardFees)} = ${fmt(totalCollected+totalCardFees)}`, 'gold');
+  const interestLine = totalInterest > 0
+    ? `Credit interest collected: ${fmt(totalInterest)}`
+    : `No interest charged (no active debt)`;
+  addLog('cycle', 'Dubai Treasury', `Cycle ${cycles} advanced — ${interestLine}`, totalInterest);
+  notify('Cycle Advanced', interestLine, 'gold');
+  saveState();
+}
+
+function yearlyFeeTax() {
+  pushUndo();
+  let totalFees = 0;
+  let nationsCharged = 0;
+
+  NATIONS.forEach(n => {
+    const acc  = accounts[n.id];
+    if (!acc.enabled) return;
+    const tier = CARD_TIERS[acc.cardTier];
+    if (tier.maintenance <= 0) return; // Basic is free
+
+    acc.balance -= tier.maintenance;
+    totalFees   += tier.maintenance;
+    nationsCharged++;
+    addLog('loss', acc.name,
+      `Yearly card fee — ${tier.name} tier (${fmt(tier.maintenance)})`, -tier.maintenance);
+
+    // ── Check negative balance threshold ──
+    if (acc.balance < -5000 && !acc.cardDisabled) {
+      acc.cardDisabled = true;
+      acc.cardTier = 'basic';
+      addLog('loss', acc.name, `⚠ Balance below −$5,000 — Card DISABLED & downgraded to Basic`, 0);
+      notify('Card Suspended', `${acc.name} exceeded −$5,000 — card disabled & downgraded`, 'red');
+    }
+  });
+
+  treasury      += totalFees;
+  treasuryTaxTotal += totalFees;
+  updateTreasury();
+  NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
+
+  if (nationsCharged === 0) {
+    notify('Yearly Fee Tax', 'No nations have paid cards — nothing to charge.', 'gold');
+    return;
+  }
+  addLog('treasury', 'Dubai Treasury',
+    `Yearly Fee Tax — ${nationsCharged} nation${nationsCharged!==1?'s':''} charged`, totalFees);
+  notify('Yearly Fee Tax', `${nationsCharged} nation${nationsCharged!==1?'s':''} charged — ${fmt(totalFees)} collected`, 'gold');
   saveState();
 }
 
 /* ═══════════════════════════════════════════════
-   TAX SLIDER
+   EXPORT / IMPORT
 ═══════════════════════════════════════════════ */
-const slider = document.getElementById('tax-slider');
-const taxVal = document.getElementById('tax-rate-val');
-
-function updateSliderGradient() {
-  const pct = ((taxRate - 0) / (20 - 0)) * 100;
-  slider.style.setProperty('--pct', pct + '%');
+function exportBankJSON() {
+  const data = {
+    accounts, treasury, treasuryTaxTotal,
+    treasuryInvestGain, treasuryInvestLoss, treasuryTradeFees,
+    cycles, logEntries,
+    _exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `bank_state_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  notify('Export Complete', 'Bank state saved as JSON file.', 'gold');
 }
 
-slider.addEventListener('input', () => {
-  taxRate = parseFloat(slider.value);
-  taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
-  updateSliderGradient();
-  saveState();
-  flashSaved('tax-saved-badge');
-});
+function importBankJSON() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        pushUndo(); // allow undo of the import
+        NATIONS.forEach(n => {
+          if (d.accounts && d.accounts[n.id]) Object.assign(accounts[n.id], d.accounts[n.id]);
+        });
+        treasury           = d.treasury           ?? 50000;
+        treasuryTaxTotal   = d.treasuryTaxTotal   ?? 0;
+        treasuryInvestGain = d.treasuryInvestGain ?? 0;
+        treasuryInvestLoss = d.treasuryInvestLoss ?? 0;
+        treasuryTradeFees  = d.treasuryTradeFees  ?? 0;
+        cycles             = d.cycles             ?? 0;
+        logEntries         = Array.isArray(d.logEntries) ? d.logEntries : [];
+        renderNations(); renderCards(); renderLog(); updateTreasury(); updateUndoBtn();
+        saveState();
+        notify('Import Successful', 'Bank state loaded from file.', 'green');
+      } catch { notify('Import Failed', 'Invalid or corrupted JSON file.', 'red'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function updateSliderGradient() {} // kept for compat — slider removed
 
 function flashSaved(id) {
   const el = document.getElementById(id);
@@ -2102,15 +2181,11 @@ if (window.self !== window.top) {
   const hdr = document.getElementById('header');
   if (hdr) hdr.style.display = 'none';
 }
-// Sync slider UI to loaded (or default) taxRate
-slider.value = taxRate;
-taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
 renderNations();  // re-render with restored enabled states
 renderCards();
 renderLog();
 updateTreasury();
 updateUndoBtn();
-updateSliderGradient();
 updateClock();
 setInterval(updateClock, 1000);
 // Periodically sync treasury from dib_state (catches updates from dubai_trade)
