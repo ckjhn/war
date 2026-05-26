@@ -956,6 +956,46 @@
     text-align: center;
   }
 
+  /* ──────────── EXPOSURE TABLE ──────────── */
+  .exposure-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg); overflow: hidden;
+    font-size: 12px;
+  }
+  .exposure-table th {
+    font-size: 8px; letter-spacing: 3px; color: var(--text-dim);
+    text-transform: uppercase; padding: 10px 14px; text-align: left;
+    background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-weight: 500; font-family: 'Montserrat', sans-serif;
+  }
+  .exposure-table td {
+    padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text); vertical-align: middle;
+  }
+  .exposure-table tr:last-child td { border-bottom: none; }
+  .exposure-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .exposure-table tfoot td {
+    background: rgba(201,168,76,0.06); border-top: 1px solid rgba(201,168,76,0.2);
+    font-weight: 600; color: var(--gold-light); font-size: 11px; border-bottom: none;
+  }
+  .exposure-table tfoot tr:hover td { background: rgba(201,168,76,0.09); }
+  .exp-nation { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--text); }
+  .exp-tier-pill {
+    font-size: 8px; letter-spacing: 2px; font-weight: 600; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 2px; border: 1px solid currentColor; white-space: nowrap;
+  }
+  .exp-val { font-family: 'Cormorant Garamond', serif; font-size: 14px; }
+  .exp-borrowed { color: var(--red); }
+  .exp-avail    { color: var(--green); }
+  .exp-limit    { color: var(--gold); }
+  .exp-zero     { color: var(--text-dim); }
+  .exp-bar-wrap { width: 80px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; display: inline-block; vertical-align: middle; }
+  .exp-bar      { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .exp-pct      { font-size: 10px; color: var(--text-muted); margin-left: 6px; vertical-align: middle; }
+  .exp-total-label { font-family: 'Cormorant Garamond', serif; font-size: 16px; letter-spacing: 1px; }
+  .no-exposure { padding: 20px; text-align: center; color: var(--text-dim); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
+
   /* ──────────── RESPONSIVE ──────────── */
   @media (max-width: 640px) {
     .page-wrap { padding: 16px; gap: 20px; }
@@ -1037,6 +1077,7 @@
         <span class="tax-label">Maintenance Tax</span>
         <div class="tax-rate-display"><span id="tax-rate-val">5</span>%</div>
         <input type="range" id="tax-slider" min="0" max="20" value="5" step="0.5">
+        <span id="tax-saved-badge" style="font-size:8px;letter-spacing:2px;color:var(--green);text-transform:uppercase;opacity:0;transition:opacity 0.3s;white-space:nowrap">✓ Saved</span>
       </div>
       <button class="btn btn-gold" id="advance-btn" onclick="advanceCycle()">⟳ Advance Cycle</button>
       <button class="btn btn-outline" onclick="openEditReserve()">✎ Edit Reserve</button>
@@ -1074,6 +1115,31 @@
 
   <!-- ══════ CARDS TAB ══════ -->
   <div id="tab-cards" style="display:none">
+
+    <!-- CREDIT EXPOSURE OVERVIEW -->
+    <div class="section-label">Credit Exposure Overview</div>
+    <div id="exposure-panel" style="margin-bottom:24px;"></div>
+
+    <!-- FEE CLARIFICATION -->
+    <div id="fee-info-box" style="
+      background:rgba(201,168,76,0.04); border:1px solid rgba(201,168,76,0.15);
+      border-radius:6px; padding:12px 18px; margin-bottom:20px;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px; font-size:10px; letter-spacing:1px;
+    ">
+      <div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Card Maintenance Fee</div>
+        <div style="color:var(--text)">Fixed $ amount charged <strong>every cycle</strong> just for holding the card — regardless of balance or usage. Basic is always free.</div>
+      </div>
+      <div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Credit Interest</div>
+        <div style="color:var(--text)">% charged on outstanding <strong>debt only</strong> — nations with $0 debt pay nothing in interest, only the card fee.</div>
+      </div>
+      <div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Withdrawals</div>
+        <div style="color:var(--green);font-weight:600">FREE — No fee, no percentage. Nations withdraw any amount from their balance at any time at no cost.</div>
+      </div>
+    </div>
+
     <div class="section-label">Credit Card Accounts</div>
     <div id="cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
   </div>
@@ -1480,7 +1546,93 @@ slider.addEventListener('input', () => {
   taxVal.textContent = taxRate % 1 === 0 ? taxRate : taxRate.toFixed(1);
   updateSliderGradient();
   saveState();
+  flashSaved('tax-saved-badge');
 });
+
+function flashSaved(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+/* ═══════════════════════════════════════════════
+   CREDIT EXPOSURE PANEL
+═══════════════════════════════════════════════ */
+function renderExposurePanel() {
+  const el = document.getElementById('exposure-panel');
+  if (!el) return;
+
+  const rows = NATIONS.map(n => {
+    const acc  = accounts[n.id];
+    const tier = CARD_TIERS[acc.cardTier];
+    const debt = acc.creditDebt;
+    const lim  = tier.creditLimit;
+    const avail = Math.max(0, lim - debt);
+    const pct  = lim > 0 ? Math.round((debt / lim) * 100) : 0;
+    return { acc, tier, debt, lim, avail, pct };
+  });
+
+  const totalDebt  = rows.reduce((s, r) => s + r.debt, 0);
+  const totalLim   = rows.reduce((s, r) => s + r.lim, 0);
+  const totalAvail = rows.reduce((s, r) => s + r.avail, 0);
+  const totalPct   = totalLim > 0 ? Math.round((totalDebt / totalLim) * 100) : 0;
+
+  const activeRows = rows.filter(r => r.debt > 0 || r.acc.cardTier !== 'basic');
+
+  if (!activeRows.length) {
+    el.innerHTML = `<div class="no-exposure">No active credit — all nations on Basic tier with $0 debt</div>`;
+    return;
+  }
+
+  const tierColors = {
+    basic:'#6b7280', standard:'#4a7fc1', vip:'#7c3aed',
+    gold:'#c9a84c', platinum:'#a0aec0', signature:'#dc2626', infinity:'#c9a84c'
+  };
+
+  const barColor = (pct) => pct < 40 ? '#3dba74' : pct < 75 ? '#c9a84c' : '#d94f4f';
+
+  el.innerHTML = `
+    <table class="exposure-table">
+      <thead>
+        <tr>
+          <th>Nation</th>
+          <th>Card Tier</th>
+          <th>Credit Limit</th>
+          <th>Borrowed (Debt)</th>
+          <th>Available</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${activeRows.map(r => `
+        <tr>
+          <td><span class="exp-nation">${r.acc.name}</span>${r.acc.cardDisabled?' <span style="font-size:8px;color:var(--red);letter-spacing:1px">⛔ SUSPENDED</span>':''}</td>
+          <td><span class="exp-tier-pill" style="color:${tierColors[r.acc.cardTier]}">${r.tier.name}</span></td>
+          <td><span class="exp-val exp-limit">${fmtShort(r.lim)}</span></td>
+          <td><span class="exp-val ${r.debt > 0 ? 'exp-borrowed' : 'exp-zero'}">${r.debt > 0 ? fmtShort(r.debt) : '—'}</span></td>
+          <td><span class="exp-val ${r.avail < r.lim * 0.25 ? 'exp-borrowed' : 'exp-avail'}">${fmtShort(r.avail)}</span></td>
+          <td>
+            <span class="exp-bar-wrap"><span class="exp-bar" style="width:${r.pct}%;background:${barColor(r.pct)}"></span></span>
+            <span class="exp-pct">${r.pct}%</span>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><span class="exp-total-label">TOTAL EXPOSURE</span></td>
+          <td><span class="exp-val">${fmtShort(totalLim)}</span></td>
+          <td><span class="exp-val" style="color:${totalDebt > 0 ? 'var(--red)' : 'var(--text-dim)'}">${totalDebt > 0 ? fmtShort(totalDebt) : '—'}</span></td>
+          <td><span class="exp-val" style="color:var(--green)">${fmtShort(totalAvail)}</span></td>
+          <td>
+            <span class="exp-bar-wrap"><span class="exp-bar" style="width:${totalPct}%;background:${barColor(totalPct)}"></span></span>
+            <span class="exp-pct">${totalPct}%</span>
+          </td>
+        </tr>
+      </tfoot>
+    </table>`;
+}
 
 /* ═══════════════════════════════════════════════
    CLOCK
@@ -1581,7 +1733,7 @@ function switchTab(tab) {
   document.getElementById('tab-cards').style.display    = tab === 'cards'    ? '' : 'none';
   document.getElementById('tab-btn-accounts').classList.toggle('active', tab === 'accounts');
   document.getElementById('tab-btn-cards').classList.toggle('active', tab === 'cards');
-  if (tab === 'cards') renderCards();
+  if (tab === 'cards') { renderExposurePanel(); renderCards(); }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1623,6 +1775,7 @@ function cardFaceHTML(acc) {
 }
 
 function renderCards() {
+  renderExposurePanel();
   const grid = document.getElementById('cards-grid');
   grid.innerHTML = NATIONS.map(n => {
     const acc  = accounts[n.id];

@@ -402,6 +402,7 @@ input[type=range]::-webkit-slider-thumb {
         <span class="markup-label">Dubai Service Fee</span>
         <div class="markup-val"><span id="markup-val">15</span>%</div>
         <input type="range" id="markup-slider" min="0" max="30" value="15" step="0.5" style="flex:1">
+        <span id="markup-saved-badge" style="font-size:8px;letter-spacing:2px;color:#3dba74;text-transform:uppercase;opacity:0;transition:opacity 0.3s;white-space:nowrap">✓ Saved</span>
       </div>
     </div>
   </div>
@@ -916,6 +917,13 @@ markupSlider.addEventListener('input', () => {
   renderItems();
   updateBreakdown();
   try { localStorage.setItem('dib_trade_markup', markupPct); } catch{}
+  // Flash saved badge
+  const badge = document.getElementById('markup-saved-badge');
+  if (badge) {
+    badge.style.opacity = '1';
+    clearTimeout(badge._t);
+    badge._t = setTimeout(() => { badge.style.opacity = '0'; }, 1800);
+  }
 });
 
 /* ── CLOCK ── */
