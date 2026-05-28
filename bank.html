@@ -2176,11 +2176,8 @@ function applyEditReserve() {
 renderNations();
 renderBlocked();
 loadState();
-// Self-hide header when embedded inside the hub iframe
-if (window.self !== window.top) {
-  const hdr = document.getElementById('header');
-  if (hdr) hdr.style.display = 'none';
-}
+// Header stays visible when embedded in the hub (the hub is now a side
+// drawer, so the app's own header no longer collides with a hub top bar).
 renderNations();  // re-render with restored enabled states
 renderCards();
 renderLog();

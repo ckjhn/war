@@ -979,11 +979,8 @@ function importTradeJSON() {
 }
 
 /* ── INIT ── */
-// Self-hide header when embedded in hub
-if (window.self !== window.top) {
-  const hdr = document.getElementById('header');
-  if (hdr) hdr.style.display = 'none';
-}
+// Header stays visible when embedded in the hub (the hub is now a side
+// drawer, so the app's own header no longer collides with a hub top bar).
 
 // Restore markup pref
 try {
