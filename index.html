@@ -197,7 +197,7 @@
     .nav-btn {
       background: transparent;
       border: 1px solid var(--hub-border);
-      color: var(--hub-text-light);
+      color: #1f1f1f;
       font-family: 'Exo 2', sans-serif;
       font-size: 11px;
       font-weight: 500;
@@ -678,12 +678,12 @@
     }
 
     /**
-     * Keyboard shortcut: Ctrl+A (or Cmd+A) hides/shows the floating ☰ opener.
+     * Keyboard shortcut: Ctrl+B (or Cmd+B) hides the floating ☰ menu button.
+     * Pressing it again shows the button once more.
      * Useful for a fully clean, unobstructed view of the app.
-     * To use a different key, change 'a' below (e.g. 'b' for Ctrl+B).
      */
     document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         drawerToggle.classList.toggle('force-hidden');
       }
