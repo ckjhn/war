@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СССР — Strategic Resource Silo Command</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:       #cc1a1a;
+  --red-dark:  #8b0000;
+  --red-deep:  #3a0000;
+  --red-glow:  rgba(204,26,26,0.35);
+  --gold:      #d4a017;
+  --gold-light:#f0c040;
+  --cream:     #f0e8d0;
+  --cream-dim: #b0a080;
+  --bg:        #0d0505;
+  --bg2:       #130808;
+  --bg3:       #1a0b0b;
+  --bg4:       #240e0e;
+  --border:    #3a1515;
+  --border-red:#5a2020;
+  --green:     #2e8b2e;
+  --green-bright:#39d439;
+  --text:      #e8dcc8;
+  --text-dim:  #7a6a5a;
+  --blocked-bg:#1a0505;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Courier Prime',monospace;
+  display:flex;
+  flex-direction:column;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(204,26,26,0.04) 40px),
+    repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(204,26,26,0.04) 40px);
+}
+
+/* ══════════ HEADER ══════════ */
+header{
+  flex-shrink:0;
+  background:var(--red-dark);
+  border-bottom:3px solid var(--gold);
+  padding:0;
+  position:relative;
+  overflow:hidden;
+}
+header::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    -45deg,
+    transparent,transparent 12px,
+    rgba(0,0,0,0.15) 12px,rgba(0,0,0,0.15) 24px
+  );
+  pointer-events:none;
+}
+.header-inner{
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  position:relative;
+  z-index:1;
+}
+.header-logo{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:14px 28px;
+  background:rgba(0,0,0,0.3);
+  border-right:2px solid var(--gold);
+}
+.hammer-sickle{
+  font-size:40px;
+  line-height:1;
+  filter:drop-shadow(0 0 12px rgba(212,160,23,0.7));
+  animation:glowPulse 3s infinite;
+}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 12px rgba(212,160,23,0.7))} 50%{filter:drop-shadow(0 0 24px rgba(212,160,23,1));}}
+.logo-text{}
+.logo-main{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  letter-spacing:8px;
+  color:var(--gold-light);
+  line-height:1;
+  text-shadow:0 0 20px rgba(212,160,23,0.4);
+}
+.logo-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:rgba(240,200,64,0.6);
+  text-transform:uppercase;
+  margin-top:2px;
+}
+.header-center{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:2px;
+}
+.header-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:10px;
+  color:var(--cream);
+  text-shadow:0 2px 8px rgba(0,0,0,0.6);
+}
+.header-subtitle{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:5px;
+  color:rgba(240,220,200,0.5);
+  text-transform:uppercase;
+}
+.header-meta{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  padding:14px 28px;
+  gap:4px;
+  border-left:2px solid var(--gold);
+  background:rgba(0,0,0,0.3);
+}
+.live-indicator{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--green-bright);
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green-bright);
+  box-shadow:0 0 8px var(--green-bright);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.clock{
+  font-family:'Courier Prime',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+}
+
+/* ══════════ LAYOUT ══════════ */
+.app{
+  flex:1;
+  display:grid;
+  grid-template-columns:300px 1fr;
+  overflow:hidden;
+}
+
+/* ══════════ SIDEBAR ══════════ */
+.sidebar{
+  background:var(--bg2);
+  border-right:2px solid var(--border-red);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.sidebar-top{
+  flex-shrink:0;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border-red);
+}
+.sidebar-label{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;
+  letter-spacing:4px;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.search-box{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  color:var(--text);
+  font-family:'Courier Prime',monospace;
+  font-size:12px;
+  padding:8px 12px;
+  outline:none;
+  letter-spacing:1px;
+}
+.search-box:focus{border-color:var(--red);}
+.search-box::placeholder{color:var(--text-dim);}
+
+.country-list{flex:1;overflow-y:auto;padding:8px;}
+.country-list::-webkit-scrollbar{width:4px;}
+.country-list::-webkit-scrollbar-thumb{background:var(--border-red);}
+
+.country-item{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  padding:12px 14px;
+  margin-bottom:6px;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.country-item:hover{border-color:var(--red);}
+.country-item.active{border-color:var(--gold);background:rgba(212,160,23,0.05);}
+.country-item.blocked{
+  background:var(--blocked-bg);
+  border-color:rgba(255,0,0,0.2);
+  opacity:0.65;
+}
+.country-item.blocked .ci-name{color:var(--text-dim);}
+.ci-flag{font-size:18px;margin-bottom:3px;}
+.ci-name{
+  font-family:'Oswald',sans-serif;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--text);
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.ci-stats{
+  font-size:10px;
+  color:var(--text-dim);
+  letter-spacing:1px;
+}
+.ci-stats span{color:var(--gold-light);}
+.ci-blocked-badge{
+  position:absolute;
+  top:8px;right:8px;
+  background:var(--red-dark);
+  border:1px solid var(--red);
+  color:var(--red);
+  font-family:'Oswald',sans-serif;
+  font-size:8px;
+  letter-spacing:2px;
+  padding:2px 6px;
+}
+
+.sidebar-footer{
+  flex-shrink:0;
+  padding:12px 16px;
+  border-top:2px solid var(--border-red);
+  background:var(--bg);
+}
+.sidebar-footer-label{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  margin-bottom:8px;
+}
+.treasury-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 0;
+  border-bottom:1px solid var(--border);
+}
+.treasury-row:last-child{border-bottom:none;}
+.t-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);}
+.t-value{font-family:'Courier Prime',monospace;font-size:11px;color:var(--gold-light);font-weight:700;}
+
+/* ══════════ MAIN PANEL ══════════ */
+.main{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:var(--bg);
+}
+.no-selection{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+}
+.no-sel-icon{font-size:64px;opacity:0.2;}
+.no-sel-text{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px;
+  letter-spacing:6px;
+  color:var(--text-dim);
+}
+.no-sel-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  opacity:0.5;
+}
+
+.silo-editor{
+  flex:1;
+  overflow-y:auto;
+  padding:24px;
+}
+.silo-editor::-webkit-scrollbar{width:6px;}
+.silo-editor::-webkit-scrollbar-thumb{background:var(--border-red);}
+
+/* ══════════ SILO HEADER ══════════ */
+.silo-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:24px;
+  padding-bottom:18px;
+  border-bottom:2px solid var(--border-red);
+  flex-wrap:wrap;
+  gap:16px;
+}
+.sh-left{display:flex;align-items:center;gap:16px;}
+.sh-flag{font-size:44px;line-height:1;}
+.sh-info{}
+.sh-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  letter-spacing:4px;
+  color:var(--cream);
+  line-height:1;
+}
+.sh-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:var(--text-dim);
+  margin-top:3px;
+}
+.sh-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+}
+.status-badge{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  padding:4px 12px;
+  border:1px solid;
+  text-transform:uppercase;
+}
+.status-badge.active{border-color:var(--green-bright);color:var(--green-bright);background:rgba(57,212,57,0.06);}
+.status-badge.blocked{border-color:var(--red);color:var(--red);background:rgba(204,26,26,0.1);}
+
+.sh-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+
+/* ══════════ CAPACITY OVERVIEW ══════════ */
+.capacity-panel{
+  background:var(--bg3);
+  border:1px solid var(--border-red);
+  padding:20px 24px;
+  margin-bottom:18px;
+  position:relative;
+  overflow:hidden;
+}
+.capacity-panel::before{
+  content:'SILO';
+  position:absolute;
+  right:16px;top:50%;
+  transform:translateY(-50%);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:90px;
+  letter-spacing:8px;
+  color:rgba(204,26,26,0.05);
+  pointer-events:none;
+}
+.cp-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-bottom:14px;
+}
+.cp-stats{
+  display:flex;
+  gap:32px;
+  flex-wrap:wrap;
+}
+.cp-stat{}
+.cp-stat-label{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  margin-bottom:3px;
+}
+.cp-stat-val{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;
+  letter-spacing:2px;
+  line-height:1;
+}
+.cp-stat-val.used{color:var(--gold-light);}
+.cp-stat-val.cap{color:var(--cream);}
+.cp-stat-val.free{color:var(--green-bright);}
+.cp-stat-val.cost{color:var(--red);}
+.cp-bar-wrap{
+  width:100%;
+  height:8px;
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  position:relative;
+  overflow:hidden;
+}
+.cp-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--red-dark),var(--red));
+  transition:width .5s ease;
+}
+.cp-bar-fill.warning{background:linear-gradient(90deg,#b87700,var(--gold));}
+.cp-bar-fill.full{background:linear-gradient(90deg,var(--red-dark),#ff0000);}
+.cp-bar-label{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  margin-top:5px;
+}
+
+/* ══════════ CAPACITY PURCHASE ══════════ */
+.section{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin-bottom:12px;
+  overflow:hidden;
+}
+.section.collapsed .section-body{display:none;}
+.section.collapsed .section-toggle{transform:rotate(-90deg);}
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:13px 18px;
+  cursor:pointer;
+  user-select:none;
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
+.section-head:hover{background:rgba(204,26,26,0.05);}
+.section-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;
+  letter-spacing:4px;
+  color:var(--red);
+  text-transform:uppercase;
+}
+.section-toggle{
+  color:var(--text-dim);
+  font-size:11px;
+  transition:transform .2s;
+}
+.section-body{padding:16px 18px;}
+
+/* ══════════ PURCHASE CONTROLS ══════════ */
+.purchase-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:16px;
+}
+.purchase-info{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  padding:14px;
+}
+.pi-header{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+.pi-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:4px 0;
+  border-bottom:1px solid rgba(58,21,21,0.4);
+  font-family:'Courier Prime',monospace;
+  font-size:11px;
+}
+.pi-row:last-child{border-bottom:none;}
+.pi-label{color:var(--text-dim);}
+.pi-val{color:var(--gold-light);font-weight:700;}
+.pi-val.green{color:var(--green-bright);}
+.pi-val.red{color:#ff6060;}
+
+.purchase-form{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  padding:14px;
+}
+.pf-label{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.pf-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:10px;
+}
+.pf-input{
+  flex:1;
+  background:var(--bg2);
+  border:1px solid var(--border-red);
+  color:var(--cream);
+  font-family:'Courier Prime',monospace;
+  font-size:13px;
+  padding:8px 12px;
+  outline:none;
+  text-align:center;
+}
+.pf-input:focus{border-color:var(--red);}
+.pf-hint{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--text-dim);
+  line-height:1.6;
+}
+.pf-hint span{color:var(--gold-light);}
+
+/* ══════════ RESOURCE ROWS ══════════ */
+.res-category{
+  margin-bottom:6px;
+}
+.res-cat-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 12px;
+  background:var(--bg4);
+  border:1px solid var(--border-red);
+  cursor:pointer;
+  user-select:none;
+  margin-bottom:4px;
+}
+.res-cat-header:hover{background:rgba(204,26,26,0.08);}
+.res-cat-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:12px;
+  letter-spacing:3px;
+  color:var(--gold);
+}
+.res-cat-toggle{font-size:10px;color:var(--text-dim);transition:transform .2s;}
+.res-cat-body{display:block;}
+.res-cat-body.hidden{display:none;}
+.res-cat-header.collapsed .res-cat-toggle{transform:rotate(-90deg);}
+
+.res-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:9px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-top:none;
+  transition:all .15s;
+}
+.res-row:hover{background:var(--bg3);border-color:var(--border-red);}
+.res-row.blocked-row{opacity:0.5;pointer-events:none;}
+.rr-name{
+  font-family:'Oswald',sans-serif;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--text);
+  min-width:150px;
+  flex:1;
+}
+.rr-stored{
+  font-family:'Courier Prime',monospace;
+  font-size:13px;
+  font-weight:700;
+  color:var(--gold-light);
+  min-width:80px;
+  text-align:right;
+  padding-right:16px;
+}
+.rr-stored.zero{color:var(--text-dim);}
+.rr-controls{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.rr-select{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  color:var(--text-dim);
+  font-family:'Courier Prime',monospace;
+  font-size:10px;
+  padding:4px 6px;
+  outline:none;
+  height:28px;
+  cursor:pointer;
+  width:70px;
+  text-align:center;
+}
+.rr-select:focus{border-color:var(--red);}
+.rr-input{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  color:var(--gold-light);
+  font-family:'Courier Prime',monospace;
+  font-size:12px;
+  padding:4px 8px;
+  outline:none;
+  height:28px;
+  width:80px;
+  text-align:center;
+}
+.rr-input:focus{border-color:var(--gold);}
+.rr-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+
+/* ══════════ BILLING PANEL ══════════ */
+.billing-panel{
+  background:var(--bg3);
+  border:1px solid var(--border-red);
+  margin-bottom:18px;
+}
+.billing-table{width:100%;border-collapse:collapse;}
+.billing-table th{
+  padding:10px 16px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  text-align:left;
+  border-bottom:1px solid var(--border-red);
+  background:var(--bg4);
+}
+.billing-table td{
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  font-family:'Courier Prime',monospace;
+  font-size:11px;
+}
+.billing-table tr:last-child td{border-bottom:none;}
+.billing-table tr:hover td{background:rgba(204,26,26,0.04);}
+.bt-name{
+  font-family:'Oswald',sans-serif;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--text);
+}
+.bt-cap{color:var(--cream);}
+.bt-free{color:var(--green-bright);}
+.bt-paid{color:var(--gold-light);font-weight:700;}
+.bt-cost{color:var(--red);font-weight:700;}
+.bt-blocked{color:var(--red);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;}
+.bt-total-row td{
+  background:var(--red-deep);
+  border-top:2px solid var(--red);
+  font-weight:700;
+}
+
+/* ══════════ BUTTONS ══════════ */
+.btn{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:3px;
+  padding:8px 18px;
+  border:1px solid;
+  background:transparent;
+  cursor:pointer;
+  text-transform:uppercase;
+  transition:all .2s;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-red{border-color:var(--red);color:var(--red);}
+.btn-red:hover:not(:disabled){background:var(--red);color:#fff;}
+.btn-gold{border-color:var(--gold);color:var(--gold);}
+.btn-gold:hover:not(:disabled){background:var(--gold);color:var(--bg);}
+.btn-green{border-color:var(--green-bright);color:var(--green-bright);}
+.btn-green:hover:not(:disabled){background:var(--green-bright);color:var(--bg);}
+.btn-sm{padding:5px 12px;font-size:9px;letter-spacing:2px;}
+.btn-full{width:100%;justify-content:center;margin-bottom:6px;}
+
+/* ══════════ MODAL ══════════ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--bg2);
+  border:2px solid var(--red);
+  padding:28px 32px;
+  min-width:360px;
+  max-width:500px;
+  width:90%;
+  position:relative;
+}
+.modal::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red-dark),var(--red),var(--gold),var(--red),var(--red-dark));
+}
+.modal-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:5px;
+  color:var(--red);
+  text-transform:uppercase;
+  margin-bottom:20px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border-red);
+}
+.modal-label{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.modal-input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  color:var(--cream);
+  font-family:'Courier Prime',monospace;
+  font-size:14px;
+  padding:10px 14px;
+  outline:none;
+  margin-bottom:14px;
+}
+.modal-input:focus{border-color:var(--red);}
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.modal-info{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;
+  letter-spacing:1px;
+  color:var(--text-dim);
+  line-height:1.7;
+  padding:10px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  margin-bottom:14px;
+}
+.modal-info span{color:var(--gold-light);}
+
+/* ══════════ TOAST ══════════ */
+.toast{
+  position:fixed;
+  bottom:24px;right:24px;
+  background:var(--bg2);
+  border:1px solid var(--red);
+  color:var(--cream);
+  font-family:'Oswald',sans-serif;
+  font-size:11px;
+  letter-spacing:2px;
+  padding:10px 20px;
+  z-index:300;
+  transform:translateY(60px);
+  opacity:0;
+  transition:all .3s;
+  max-width:360px;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:var(--green-bright);color:var(--green-bright);}
+.toast.error{border-color:var(--red);color:#ff8080;}
+
+/* ══════════ BLOCKED OVERLAY ══════════ */
+.blocked-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(13,5,5,0.85);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  z-index:10;
+}
+.blocked-icon{font-size:50px;opacity:0.6;}
+.blocked-text{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:6px;
+  color:var(--red);
+}
+.blocked-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+}
+
+/* ══════════ PROPAGANDA STRIPE ══════════ */
+.propaganda-stripe{
+  background:repeating-linear-gradient(
+    45deg,
+    var(--red-dark) 0px,var(--red-dark) 10px,
+    var(--red) 10px,var(--red) 20px
+  );
+  height:3px;
+  margin:16px 0;
+  opacity:0.4;
+}
+
+/* decorative star */
+.star-deco{
+  color:var(--gold);
+  opacity:0.6;
+  font-size:10px;
+  letter-spacing:4px;
+  font-family:'Courier Prime',monospace;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="hammer-sickle">☭</div>
+      <div class="logo-text">
+        <div class="logo-main">СССР</div>
+        <div class="logo-sub">Strategic Reserve Authority</div>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="header-title">STRATEGIC RESOURCE SILO COMMAND</div>
+      <div class="header-subtitle">// Союз Советских Социалистических Республик //</div>
+    </div>
+    <div class="header-meta">
+      <div class="live-indicator"><span class="live-dot"></span>SYSTEM ONLINE</div>
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="star-deco">★ ★ ★ ★ ★</div>
+    </div>
+  </div>
+</header>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-label">☭ MEMBER NATIONS</div>
+      <input class="search-box" id="search-box" type="text" placeholder="Search nation…" oninput="renderList()">
+    </div>
+    <div class="country-list" id="country-list"></div>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label">// BILLING SUMMARY //</div>
+      <div class="treasury-row">
+        <span class="t-label">NATIONS ENROLLED</span>
+        <span class="t-value" id="sf-count">0</span>
+      </div>
+      <div class="treasury-row">
+        <span class="t-label">TOTAL CAPACITY SOLD</span>
+        <span class="t-value" id="sf-total-cap">0</span>
+      </div>
+      <div class="treasury-row">
+        <span class="t-label">TOTAL REVENUE / CYCLE</span>
+        <span class="t-value" id="sf-revenue">$0</span>
+      </div>
+      <div class="treasury-row">
+        <span class="t-label">BLOCKED SILOS</span>
+        <span class="t-value" id="sf-blocked" style="color:var(--red);">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="main" id="main-panel">
+    <div class="no-selection" id="no-selection">
+      <div class="no-sel-icon">⛭</div>
+      <div class="no-sel-text">SELECT A NATION</div>
+      <div class="no-sel-sub">// Choose a member nation to manage its silo //</div>
+    </div>
+    <div class="silo-editor" id="silo-editor" style="display:none;"></div>
+  </div>
+
+</div>
+
+<!-- BILLING MODAL -->
+<div class="modal-overlay" id="billing-modal">
+  <div class="modal" style="max-width:700px;width:95%;">
+    <div class="modal-title">★ BILLING — ALL NATIONS</div>
+    <div style="overflow-x:auto;">
+      <table class="billing-table" id="billing-table-content"></table>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-red" onclick="closeModal('billing-modal')">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- PURCHASE MODAL -->
+<div class="modal-overlay" id="purchase-modal">
+  <div class="modal">
+    <div class="modal-title">★ EXPAND SILO CAPACITY</div>
+    <div class="modal-info">
+      Minimum purchase: <span>100 units</span> of storage<br>
+      Price: <span>$200 per 100 units</span><br>
+      The USSR provides <span>50 units FREE</span> to every nation.
+    </div>
+    <div class="modal-label">Amount to Add (multiples of 100)</div>
+    <input class="modal-input" id="purchase-input" type="number" min="100" step="100" placeholder="e.g. 100, 200, 500…">
+    <div id="purchase-cost-preview" style="font-family:'Courier Prime',monospace;font-size:13px;color:var(--gold-light);margin-bottom:10px;min-height:20px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="confirmPurchase()">★ CONFIRM PURCHASE</button>
+      <button class="btn btn-red" onclick="closeModal('purchase-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- RELEASE MODAL -->
+<div class="modal-overlay" id="release-modal">
+  <div class="modal">
+    <div class="modal-title">⚠ RELEASE CAPACITY</div>
+    <div class="modal-info">
+      Release purchased storage capacity.<br>
+      The <span>50 free units</span> from the USSR cannot be released.<br>
+      Resources must fit within remaining capacity.
+    </div>
+    <div class="modal-label">Amount to Release (multiples of 100)</div>
+    <input class="modal-input" id="release-input" type="number" min="100" step="100" placeholder="e.g. 100, 200…">
+    <div id="release-preview" style="font-family:'Courier Prime',monospace;font-size:13px;color:#ff8080;margin-bottom:10px;min-height:20px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-red" onclick="confirmRelease()">⚠ CONFIRM RELEASE</button>
+      <button class="btn btn-gold" onclick="closeModal('release-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════
+const FREE_CAPACITY    = 50;   // Given to every nation by USSR for free
+const COST_PER_100     = 200;  // $200 per 100 units of storage
+const MIN_PURCHASE     = 100;  // Minimum purchase block
+
+const BRUTE_RESOURCES = [
+  {k:'iron',         l:'Iron'},
+  {k:'coal',         l:'Coal'},
+  {k:'gold',         l:'Gold'},
+  {k:'diamond',      l:'Diamond'},
+  {k:'gravel',       l:'Gravel'},
+  {k:'latex',        l:'Latex'},
+  {k:'silicon',      l:'Silicon'},
+  {k:'oil',          l:'Oil (L)'},
+  {k:'gas',          l:'Gas (L)'},
+  {k:'uranium',      l:'Uranium'},
+];
+
+const REFINED_RESOURCES = [
+  {k:'refined_iron',    l:'Refined Iron'},
+  {k:'electronics',     l:'Electronics'},
+  {k:'chips',           l:'Chips'},
+  {k:'gunpowder',       l:'Gunpowder'},
+  {k:'tires',           l:'Tires'},
+  {k:'fuel',            l:'Fuel (L)'},
+  {k:'refined_uranium', l:'Refined Uranium'},
+];
+
+const ALL_RESOURCES = [
+  ...BRUTE_RESOURCES.map(r=>({...r, cat:'brute'})),
+  ...REFINED_RESOURCES.map(r=>({...r, cat:'refined'})),
+];
+
+const CAT_LABELS = {
+  brute:   '🪨 BRUTE RESOURCES',
+  refined: '⚗️ REFINED RESOURCES',
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+// silos: { [countryId]: { purchased: number, blocked: boolean, stored: {[resourceKey]: number} } }
+let silos   = {};
+let countries = [];
+let selectedId = null;
+let collapsedCats = new Set();
+
+const SILO_KEY     = 'ussr_silos';
+const COUNTRY_KEY  = 'tc_countries';
+
+function loadSilos(){
+  try{ silos = JSON.parse(localStorage.getItem(SILO_KEY)||'{}'); }
+  catch(e){ silos={}; }
+}
+function saveSilos(){
+  localStorage.setItem(SILO_KEY, JSON.stringify(silos));
+}
+function loadCountries(){
+  try{ countries = JSON.parse(localStorage.getItem(COUNTRY_KEY)||'[]'); }
+  catch(e){ countries=[]; }
+}
+
+function getSilo(cid){
+  if(!silos[cid]){
+    silos[cid] = {purchased:0, blocked:false, stored:{}};
+    ALL_RESOURCES.forEach(r=>{ silos[cid].stored[r.k]=0; });
+  } else {
+    // Ensure all resource keys exist
+    ALL_RESOURCES.forEach(r=>{ if(silos[cid].stored[r.k]===undefined) silos[cid].stored[r.k]=0; });
+  }
+  return silos[cid];
+}
+
+function totalCapacity(cid){
+  const s = getSilo(cid);
+  return FREE_CAPACITY + s.purchased;
+}
+function totalUsed(cid){
+  const s = getSilo(cid);
+  return ALL_RESOURCES.reduce((sum,r)=> sum + (s.stored[r.k]||0), 0);
+}
+function freeSpace(cid){
+  return totalCapacity(cid) - totalUsed(cid);
+}
+function costForCountry(cid){
+  const s = getSilo(cid);
+  return (s.purchased / 100) * COST_PER_100;
+}
+
+// ══════════════════════════════════════════════
+// LIST
+// ══════════════════════════════════════════════
+function renderList(){
+  const q    = (document.getElementById('search-box').value||'').toLowerCase();
+  const el   = document.getElementById('country-list');
+  const list = countries.filter(c=> c.type !== 'organization' && c.name.toLowerCase().includes(q));
+
+  if(list.length === 0){
+    el.innerHTML = `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:30px;">NO NATIONS FOUND</div>`;
+    updateSummary();
+    return;
+  }
+
+  el.innerHTML = list.map(c => {
+    const s    = getSilo(c.id);
+    const used = totalUsed(c.id);
+    const cap  = totalCapacity(c.id);
+    const isBlocked = s.blocked;
+    return `
+    <div class="country-item ${selectedId===c.id?'active':''} ${isBlocked?'blocked':''}" onclick="selectCountry('${c.id}')">
+      ${isBlocked ? `<div class="ci-blocked-badge">BLOCKED</div>` : ''}
+      <div class="ci-flag">${c.flag||'🏴'}</div>
+      <div class="ci-name">${esc(c.name)}</div>
+      <div class="ci-stats">
+        USED: <span>${used}</span> / <span>${cap}</span>
+        &nbsp;·&nbsp; COST: <span>$${costForCountry(c.id)}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateSummary();
+}
+
+function updateSummary(){
+  const list = countries.filter(c=>c.type!=='organization');
+  let totalCap=0, totalRev=0, blockedCount=0;
+  list.forEach(c=>{
+    const s=getSilo(c.id);
+    totalCap += totalCapacity(c.id);
+    totalRev += costForCountry(c.id);
+    if(s.blocked) blockedCount++;
+  });
+  document.getElementById('sf-count').textContent   = list.length;
+  document.getElementById('sf-total-cap').textContent = totalCap;
+  document.getElementById('sf-revenue').textContent = '$'+totalRev;
+  document.getElementById('sf-blocked').textContent = blockedCount;
+}
+
+function selectCountry(id){
+  selectedId = id;
+  renderList();
+  renderEditor();
+}
+
+// ══════════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════════
+function renderEditor(){
+  const c = countries.find(x=>x.id===selectedId);
+  if(!c){
+    document.getElementById('no-selection').style.display='flex';
+    document.getElementById('silo-editor').style.display='none';
+    return;
+  }
+  document.getElementById('no-selection').style.display='none';
+  const el = document.getElementById('silo-editor');
+  el.style.display='block';
+
+  const s    = getSilo(c.id);
+  const used = totalUsed(c.id);
+  const cap  = totalCapacity(c.id);
+  const pct  = cap>0 ? Math.min(100, (used/cap)*100) : 0;
+  const barClass = pct>=100?'full':pct>=80?'warning':'';
+
+  let html = `
+  <!-- SILO HEADER -->
+  <div class="silo-header">
+    <div class="sh-left">
+      <div class="sh-flag">${c.flag||'🏴'}</div>
+      <div class="sh-info">
+        <div class="sh-name">${esc(c.name)}</div>
+        <div class="sh-sub">// STRATEGIC RESOURCE SILO //</div>
+        <div class="sh-status">
+          <div class="status-badge ${s.blocked?'blocked':'active'}">${s.blocked?'⛔ SILO BLOCKED':'★ SILO ACTIVE'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="sh-right">
+      <button class="btn btn-sm ${s.blocked?'btn-green':'btn-red'}" onclick="toggleBlock('${c.id}')">
+        ${s.blocked ? '★ UNLOCK SILO' : '⛔ BLOCK SILO'}
+      </button>
+      <button class="btn btn-sm btn-gold" onclick="openBilling()">★ VIEW ALL BILLING</button>
+    </div>
+  </div>
+
+  <!-- CAPACITY OVERVIEW -->
+  <div class="capacity-panel">
+    <div class="cp-top">
+      <div class="cp-stats">
+        <div class="cp-stat">
+          <div class="cp-stat-label">Used Storage</div>
+          <div class="cp-stat-val used">${used}</div>
+        </div>
+        <div class="cp-stat">
+          <div class="cp-stat-label">Total Capacity</div>
+          <div class="cp-stat-val cap">${cap}</div>
+        </div>
+        <div class="cp-stat">
+          <div class="cp-stat-label">Free Space</div>
+          <div class="cp-stat-val free">${Math.max(0, cap-used)}</div>
+        </div>
+        <div class="cp-stat">
+          <div class="cp-stat-label">Monthly Cost</div>
+          <div class="cp-stat-val cost">$${costForCountry(c.id)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="cp-bar-wrap">
+      <div class="cp-bar-fill ${barClass}" style="width:${pct}%"></div>
+    </div>
+    <div class="cp-bar-label">
+      ${used} / ${cap} units used &nbsp;·&nbsp; ${Math.round(pct)}% capacity &nbsp;·&nbsp; ${FREE_CAPACITY} free from USSR + ${s.purchased} purchased
+    </div>
+  </div>
+
+  <!-- CAPACITY MANAGEMENT -->
+  <div class="section" id="sec-capacity">
+    <div class="section-head" onclick="toggleSection('sec-capacity')">
+      <div class="section-title">★ CAPACITY MANAGEMENT</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-body">
+      <div class="purchase-grid">
+        <div class="purchase-info">
+          <div class="pi-header">// PRICING //</div>
+          <div class="pi-row"><span class="pi-label">FREE (USSR Gift)</span><span class="pi-val green">${FREE_CAPACITY} units</span></div>
+          <div class="pi-row"><span class="pi-label">Purchased Capacity</span><span class="pi-val">${s.purchased} units</span></div>
+          <div class="pi-row"><span class="pi-label">Total Capacity</span><span class="pi-val">${cap} units</span></div>
+          <div class="pi-row"><span class="pi-label">Rate</span><span class="pi-val">$${COST_PER_100} / 100 units</span></div>
+          <div class="pi-row"><span class="pi-label">Min. Purchase</span><span class="pi-val">${MIN_PURCHASE} units</span></div>
+          <div class="pi-row"><span class="pi-label">Current Cost/Cycle</span><span class="pi-val red">$${costForCountry(c.id)}</span></div>
+        </div>
+        <div class="purchase-form">
+          <div class="pf-label">// EXPAND CAPACITY //</div>
+          <div class="pf-row">
+            <button class="btn btn-gold btn-sm" onclick="openPurchaseModal('${c.id}')" ${s.blocked?'disabled':''}>★ BUY MORE STORAGE</button>
+          </div>
+          <div class="pf-row">
+            <button class="btn btn-red btn-sm" onclick="openReleaseModal('${c.id}')" ${s.blocked||s.purchased===0?'disabled':''}>⬇ RELEASE CAPACITY</button>
+          </div>
+          <div class="pf-hint">
+            Each <span>100 units</span> costs <span>$${COST_PER_100}/cycle</span>.<br>
+            The USSR provides <span>${FREE_CAPACITY} units free forever</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESOURCES SECTION -->
+  <div class="section" id="sec-resources">
+    <div class="section-head" onclick="toggleSection('sec-resources')">
+      <div class="section-title">☭ STORED RESOURCES</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-body" style="padding:8px 12px;">
+      ${s.blocked ? `<div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;color:var(--red);padding:16px;text-align:center;border:1px solid var(--red);background:rgba(204,26,26,0.06);">⛔ THIS SILO IS BLOCKED — MANAGEMENT SUSPENDED</div>` : renderResourceCategories(c.id)}
+    </div>
+  </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+function renderResourceCategories(cid){
+  let html = '';
+  const cats = ['brute','refined'];
+  cats.forEach(cat=>{
+    const resources = ALL_RESOURCES.filter(r=>r.cat===cat);
+    const isCollapsed = collapsedCats.has(cat);
+    html += `
+    <div class="res-category">
+      <div class="res-cat-header ${isCollapsed?'collapsed':''}" onclick="toggleCat('${cat}')">
+        <div class="res-cat-name">${CAT_LABELS[cat]}</div>
+        <div class="res-cat-toggle">▼</div>
+      </div>
+      <div class="res-cat-body ${isCollapsed?'hidden':''}">
+        ${resources.map(r=>renderResRow(cid,r)).join('')}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+function renderResRow(cid, r){
+  const s   = getSilo(cid);
+  const val = s.stored[r.k]||0;
+  return `
+  <div class="res-row">
+    <div class="rr-name">${r.l}</div>
+    <div class="rr-stored ${val===0?'zero':''}">${val}</div>
+    <div class="rr-controls">
+      <select class="rr-select" id="dir-${cid}-${r.k}">
+        <option value="add">+</option>
+        <option value="sub">−</option>
+      </select>
+      <input class="rr-input" id="inp-${cid}-${r.k}" type="number" min="0" placeholder="amt"
+        onkeydown="if(event.key==='Enter') applyResource('${cid}','${r.k}')">
+      <button class="btn btn-gold btn-sm" onclick="applyResource('${cid}','${r.k}')">APPLY</button>
+    </div>
+  </div>`;
+}
+
+function applyResource(cid, rk){
+  const s   = getSilo(cid);
+  if(s.blocked){ toast('error','⛔ Silo is blocked.'); return; }
+
+  const dirEl = document.getElementById(`dir-${cid}-${rk}`);
+  const inpEl = document.getElementById(`inp-${cid}-${rk}`);
+  if(!dirEl||!inpEl) return;
+
+  const dir = dirEl.value;
+  const amt = parseInt(inpEl.value,10);
+
+  if(isNaN(amt)||amt<=0){ toast('error','Enter a valid positive amount.'); return; }
+
+  const cap  = totalCapacity(cid);
+  const used = totalUsed(cid);
+
+  if(dir === 'add'){
+    if(used + amt > cap){
+      toast('error',`⛔ Not enough space. Free: ${cap-used}, Requested: ${amt}`);
+      return;
+    }
+    s.stored[rk] = (s.stored[rk]||0) + amt;
+    toast('success',`★ Added ${amt} ${rk} to silo.`);
+  } else {
+    const cur = s.stored[rk]||0;
+    if(amt > cur){
+      toast('error',`⛔ Only ${cur} in storage. Cannot remove ${amt}.`);
+      return;
+    }
+    s.stored[rk] = cur - amt;
+    toast('success',`★ Removed ${amt} ${rk} from silo.`);
+  }
+
+  inpEl.value='';
+  saveSilos();
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════
+// BLOCK / UNBLOCK
+// ══════════════════════════════════════════════
+function toggleBlock(cid){
+  const s = getSilo(cid);
+  s.blocked = !s.blocked;
+  saveSilos();
+  const c = countries.find(x=>x.id===cid);
+  const cName = c ? c.name : cid;
+  toast(s.blocked?'error':'success', s.blocked ? `⛔ ${cName} silo BLOCKED.` : `★ ${cName} silo UNLOCKED.`);
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════
+// PURCHASE / RELEASE
+// ══════════════════════════════════════════════
+let _activePurchaseCid = null;
+
+function openPurchaseModal(cid){
+  _activePurchaseCid = cid;
+  document.getElementById('purchase-input').value='';
+  document.getElementById('purchase-cost-preview').textContent='';
+  document.getElementById('purchase-modal').classList.add('open');
+  const inp=document.getElementById('purchase-input');
+  inp.oninput=()=>{
+    const v=parseInt(inp.value,10);
+    if(!isNaN(v)&&v>0){
+      const cost=(Math.floor(v/100)*100/100)*COST_PER_100;
+      document.getElementById('purchase-cost-preview').textContent=`Cost: $${(Math.floor(v/100)*100/100)*COST_PER_100} / cycle`;
+    } else {
+      document.getElementById('purchase-cost-preview').textContent='';
+    }
+  };
+  setTimeout(()=>inp.focus(),60);
+}
+
+function confirmPurchase(){
+  const inp=document.getElementById('purchase-input');
+  let amt=parseInt(inp.value,10);
+  if(isNaN(amt)||amt<MIN_PURCHASE){
+    toast('error',`Minimum purchase is ${MIN_PURCHASE} units.`); return;
+  }
+  // Round down to nearest 100
+  amt=Math.floor(amt/100)*100;
+  if(amt<MIN_PURCHASE){ toast('error','Amount must be at least 100 units.'); return; }
+
+  const s=getSilo(_activePurchaseCid);
+  s.purchased+=amt;
+  saveSilos();
+  const cost=(amt/100)*COST_PER_100;
+  closeModal('purchase-modal');
+  toast('success',`★ Purchased ${amt} units of storage for $${cost}/cycle.`);
+  renderEditor();
+  renderList();
+}
+
+let _activeReleaseCid = null;
+
+function openReleaseModal(cid){
+  _activeReleaseCid=cid;
+  document.getElementById('release-input').value='';
+  document.getElementById('release-preview').textContent='';
+  document.getElementById('release-modal').classList.add('open');
+  const inp=document.getElementById('release-input');
+  inp.oninput=()=>{
+    const v=parseInt(inp.value,10);
+    const s=getSilo(_activeReleaseCid);
+    if(!isNaN(v)&&v>0){
+      const release=Math.floor(v/100)*100;
+      const newPurchased=s.purchased-release;
+      if(newPurchased<0){
+        document.getElementById('release-preview').textContent='Cannot release more than purchased.';
+      } else {
+        const newCap=FREE_CAPACITY+newPurchased;
+        const used=totalUsed(_activeReleaseCid);
+        if(used>newCap){
+          document.getElementById('release-preview').textContent=`⛔ Stored resources (${used}) exceed new cap (${newCap}). Remove resources first.`;
+        } else {
+          document.getElementById('release-preview').textContent=`New capacity: ${newCap} — Save: $${(release/100)*COST_PER_100}/cycle`;
+        }
+      }
+    }
+  };
+  setTimeout(()=>inp.focus(),60);
+}
+
+function confirmRelease(){
+  const inp=document.getElementById('release-input');
+  let amt=parseInt(inp.value,10);
+  if(isNaN(amt)||amt<=0){ toast('error','Enter a valid amount.'); return; }
+  amt=Math.floor(amt/100)*100;
+  if(amt<=0){ toast('error','Amount must be at least 100.'); return; }
+
+  const s=getSilo(_activeReleaseCid);
+  if(amt>s.purchased){ toast('error','Cannot release more than purchased.'); return; }
+  const newPurchased=s.purchased-amt;
+  const newCap=FREE_CAPACITY+newPurchased;
+  const used=totalUsed(_activeReleaseCid);
+  if(used>newCap){
+    toast('error',`⛔ Remove stored resources first. Used: ${used}, New Cap: ${newCap}`);
+    return;
+  }
+  s.purchased=newPurchased;
+  saveSilos();
+  closeModal('release-modal');
+  toast('success',`★ Released ${amt} units. Saved $${(amt/100)*COST_PER_100}/cycle.`);
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════
+// BILLING
+// ══════════════════════════════════════════════
+function openBilling(){
+  const list=countries.filter(c=>c.type!=='organization');
+  let totalRev=0;
+  let rows=list.map(c=>{
+    const s=getSilo(c.id);
+    const cap=totalCapacity(c.id);
+    const cost=costForCountry(c.id);
+    totalRev+=cost;
+    return `<tr>
+      <td><span style="font-size:16px;margin-right:8px;">${c.flag||'🏴'}</span><span class="bt-name">${esc(c.name)}</span></td>
+      <td class="bt-free">${FREE_CAPACITY}</td>
+      <td class="bt-cap">${s.purchased}</td>
+      <td class="bt-cap">${cap}</td>
+      <td class="bt-cost">${cost>0?'$'+cost:'FREE'}</td>
+      <td>${s.blocked?'<span class="bt-blocked">⛔ BLOCKED</span>':'<span style="color:var(--green-bright);font-family:Oswald,sans-serif;font-size:9px;letter-spacing:2px;">★ ACTIVE</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  rows+=`<tr class="bt-total-row">
+    <td style="font-family:'Bebas Neue',sans-serif;letter-spacing:3px;font-size:13px;">★ TOTAL (${list.length} nations)</td>
+    <td>—</td><td>—</td><td>—</td>
+    <td style="color:var(--gold-light);font-size:13px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;">$${totalRev}/CYCLE</td>
+    <td>—</td>
+  </tr>`;
+
+  document.getElementById('billing-table-content').innerHTML=`
+    <thead>
+      <tr>
+        <th>NATION</th>
+        <th>FREE UNITS</th>
+        <th>PURCHASED</th>
+        <th>TOTAL CAP.</th>
+        <th>COST / CYCLE</th>
+        <th>STATUS</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  `;
+  document.getElementById('billing-modal').classList.add('open');
+}
+
+// ══════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════
+function toggleSection(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('collapsed');
+}
+
+function toggleCat(cat){
+  if(collapsedCats.has(cat)) collapsedCats.delete(cat);
+  else collapsedCats.add(cat);
+  // re-render just the resources section without re-rendering full editor
+  if(!selectedId) return;
+  const c=countries.find(x=>x.id===selectedId);
+  if(!c) return;
+  const s=getSilo(c.id);
+  if(s.blocked) return;
+  const body=document.querySelector('#sec-resources .section-body');
+  if(body) body.innerHTML=renderResourceCategories(selectedId);
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+
+let _toastTimer=null;
+function toast(type, msg){
+  const el=document.getElementById('toast');
+  el.className='toast';
+  el.textContent=msg;
+  if(type==='success') el.classList.add('success');
+  if(type==='error') el.classList.add('error');
+  void el.offsetWidth;
+  el.classList.add('show');
+  if(_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=
+    now.toLocaleTimeString('en-GB',{hour12:false})+' // '+now.toLocaleDateString('en-GB');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════
+// SYNC — Poll localStorage for country changes
+// ══════════════════════════════════════════════
+function syncAndRefresh(){
+  const prev=countries.length;
+  loadCountries();
+  if(countries.length!==prev){
+    renderList();
+    if(selectedId && !countries.find(c=>c.id===selectedId)){
+      selectedId=null;
+      document.getElementById('no-selection').style.display='flex';
+      document.getElementById('silo-editor').style.display='none';
+    }
+  }
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadSilos();
+loadCountries();
+renderList();
+updateClock();
+setInterval(updateClock,1000);
+setInterval(syncAndRefresh, 5000); // Sync countries every 5s
+
+// Also listen for storage events from other tabs
+window.addEventListener('storage', e=>{
+  if(e.key===COUNTRY_KEY){ loadCountries(); renderList(); if(selectedId) renderEditor(); }
+  if(e.key===SILO_KEY){ loadSilos(); renderList(); if(selectedId) renderEditor(); }
+});
+
+// Self-hide header when embedded in iframe (consistent with bank.html behavior)
+if(window.self!==window.top){
+  const hdr=document.querySelector('header');
+  if(hdr) hdr.style.display='none';
+}
+</script>
+</body>
+</html>

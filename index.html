@@ -389,6 +389,9 @@
         <button class="nav-btn" data-app="dubai_trade">
           🏛 Dubai Trade
         </button>
+        <button class="nav-btn" data-app="ussr_silo">
+          ☭ USSR Silo
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -453,6 +456,11 @@
         name: 'Dubai Trade',
         icon: '🏛',
         file: 'dubai_trade.html'
+      },
+      'ussr_silo': {
+        name: 'USSR Silo',
+        icon: '☭',
+        file: 'ussr_silo.html'
       },
       'sync': {
         name: 'Sync',
@@ -676,7 +684,10 @@
         write:(d)=>{ if(d) localStorage.setItem('dib_state',JSON.stringify(d)); } },
       { name:'trades.json', path:'assets/trades.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('dib_trades')||'null');}catch{return null;} },
-        write:(d)=>{ if(d) localStorage.setItem('dib_trades',JSON.stringify(d)); } }
+        write:(d)=>{ if(d) localStorage.setItem('dib_trades',JSON.stringify(d)); } },
+      { name:'ussr_silos.json', path:'assets/ussr_silos.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('ussr_silos')||'{}');}catch{return{};} },
+        write:(d)=>{ if(d) localStorage.setItem('ussr_silos',JSON.stringify(d)); } }
     ];
 
     function loadGhConfig(){
@@ -833,7 +844,7 @@
           </div>
           <div style="${card}">
             <div style="${sec}">Files Managed</div>
-            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json'].map(f=>`
+            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json','ussr_silos.json'].map(f=>`
               <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
                 <span>📁</span>
                 <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>
