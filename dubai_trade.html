@@ -674,7 +674,6 @@ const DIB_TIER_DISCOUNT = {
 /* ── PAYMENT METHOD ── */
 function setPayment(method) {
   paymentMethod = method;
-  // Update button classes
   ['cash','swe-debit','swe-credit','dib-debit','dib-credit'].forEach(m => {
     const btn = document.getElementById('pay-' + m);
     if (!btn) return;
@@ -685,6 +684,7 @@ function setPayment(method) {
       else                          btn.className += ' active-dib';
     }
   });
+  populateSelectors(); // refresh buyer dropdown to show correct wallet balance
   updateBreakdown();
 }
 
@@ -711,8 +711,8 @@ function checkPaymentFunds(buyerId, method, amount) {
   }
   if (method === 'dib-credit') {
     if (!dAcc || dAcc.cardDisabled) return {ok:false, bal:null, msg:'Dubai card is disabled'};
-    const tier = (window.DIB_CARD_TIERS || {})[dAcc.cardTier] || {creditLimit:1000};
-    const avail = Math.max(0, tier.creditLimit - (dAcc.creditDebt||0));
+    const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+    const avail = Math.max(0, (DIB_LIMITS[dAcc.cardTier||'basic']||1000) - (dAcc.creditDebt||0));
     return {ok: avail >= amount, bal: avail, isCredit:true};
   }
   if (method === 'swe-debit') {
@@ -771,22 +771,51 @@ function updateStats() {
 
 /* ── NATION SELECTORS ── */
 function populateSelectors() {
-  const state   = loadBankState();
-  const buyerEl = document.getElementById('buyer-select');
-  const sellerEl= document.getElementById('seller-select');
+  const dibState = loadBankState();
+  const sweState = loadSweBank();
+  const buyerEl  = document.getElementById('buyer-select');
+  const sellerEl = document.getElementById('seller-select');
+
+  const prevBuyer  = buyerEl.value;
+  const prevSeller = sellerEl.value;
 
   buyerEl.innerHTML  = '<option value="">— Select buyer —</option>';
   sellerEl.innerHTML = '<option value="external">External Source (no in-game payment)</option>';
 
+  // Show balance from whichever wallet matches the current payment method
+  const useSweBal  = paymentMethod === 'swe-debit' || paymentMethod === 'swe-credit';
+  const isCash     = paymentMethod === 'cash';
+
   NATION_LIST.forEach(n => {
-    const acc = state.accounts[n.id];
-    const enabled = acc ? acc.enabled !== false : true;
-    const bal = acc ? acc.balance || 0 : 0;
-    if (enabled) {
-      buyerEl.innerHTML  += `<option value="${n.id}">${n.name} (${fmt(bal)})</option>`;
+    const dibAcc = dibState.accounts[n.id];
+    const sweAcc = sweState.accounts && sweState.accounts[n.id];
+    const dibEnabled = dibAcc ? dibAcc.enabled !== false : true;
+    const sweEnabled = sweAcc ? sweAcc.enabled !== false : false;
+
+    // Buyer must have an account in the selected payment wallet (or cash = always available)
+    const buyerEligible = isCash || (useSweBal ? sweEnabled : dibEnabled);
+    if (buyerEligible) {
+      let balLabel = '';
+      if (isCash) {
+        balLabel = 'cash';
+      } else if (useSweBal) {
+        const bal = sweAcc ? sweAcc.balance || 0 : 0;
+        balLabel = 'Swe: ' + fmtShort(bal);
+      } else {
+        const bal = dibAcc ? dibAcc.balance || 0 : 0;
+        balLabel = 'Dib: ' + fmtShort(bal);
+      }
+      buyerEl.innerHTML += `<option value="${n.id}">${n.name} (${balLabel})</option>`;
+    }
+
+    // Seller list — always from Dubai bank (seller receives into Dubai bank or Swe bank based on payment method)
+    if (dibEnabled) {
       sellerEl.innerHTML += `<option value="${n.id}">${n.name}</option>`;
     }
   });
+
+  if (prevBuyer)  buyerEl.value  = prevBuyer;
+  if (prevSeller) sellerEl.value = prevSeller;
 }
 
 /* ── CATEGORY TABS ── */
@@ -868,9 +897,11 @@ function updateBreakdown() {
 
   const buyerId  = document.getElementById('buyer-select').value;
   const sellerId = document.getElementById('seller-select').value;
-  const state    = loadBankState();
-  const buyerAcc = buyerId ? state.accounts[buyerId] : null;
-  const sellerAcc= (sellerId && sellerId !== 'external') ? state.accounts[sellerId] : null;
+  const dibState = loadBankState();
+  const sweState = loadSweBank();
+  const buyerDibAcc = buyerId ? dibState.accounts[buyerId] : null;
+  const buyerSweAcc = buyerId ? (sweState.accounts && sweState.accounts[buyerId]) : null;
+  const sellerAcc   = (sellerId && sellerId !== 'external') ? dibState.accounts[sellerId] : null;
 
   // Discount: only dib-credit gives discount on Dubai market
   const {discount, tierName} = getDubaiDiscount(buyerId, paymentMethod);
@@ -920,7 +951,9 @@ function updateBreakdown() {
     execBtn.disabled=true;
   } else {
     const label = funds.isCredit ? 'credit remaining' : 'balance after trade';
-    const after  = funds.isCredit ? funds.bal - buyerPaid : (buyerAcc ? buyerAcc.balance - buyerPaid : 0);
+    const useSweBal = paymentMethod === 'swe-debit' || paymentMethod === 'swe-credit';
+    const refAcc = useSweBal ? buyerSweAcc : buyerDibAcc;
+    const after  = funds.isCredit ? funds.bal - buyerPaid : (refAcc ? refAcc.balance - buyerPaid : 0);
     balEl.className='balance-check ok';
     balEl.textContent=`✓ ${label.charAt(0).toUpperCase()+label.slice(1)}: ${fmt(after)}`;
     execBtn.disabled=false;
@@ -1002,77 +1035,114 @@ function executeTrade() {
   const buyerPaid   = fullTotal - discAmount;
   const dubaiEarns  = buyerPaid - mktTotal;
 
-  const state     = loadBankState();
+  const dibState  = loadBankState();
   const sweState  = loadSweBank();
-  const buyerAcc  = state.accounts[buyerId];
   const buyerName = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
   const sellerName= sellerId === 'external' ? 'External Source' : (NATION_LIST.find(n=>n.id===sellerId)?.name || sellerId);
 
-  // ── Deduct from correct source ──
+  const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+  const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+
+  // ─── STEP 1: Deduct buyer payment from the correct wallet ───
   if (paymentMethod === 'cash') {
-    // Manual — nothing to deduct from any account
+    // Nothing automatic — host collects cash manually
   } else if (paymentMethod === 'dib-debit') {
-    if (!buyerAcc || buyerAcc.balance < buyerPaid) { notify('Insufficient Funds','Dubai balance too low.','red'); return; }
-    buyerAcc.balance -= buyerPaid;
+    const acc = dibState.accounts[buyerId];
+    if (!acc || acc.balance < buyerPaid) { notify('Insufficient Funds', 'Dubai bank balance too low.', 'red'); return; }
+    acc.balance -= buyerPaid;
   } else if (paymentMethod === 'dib-credit') {
-    if (!buyerAcc || buyerAcc.cardDisabled) { notify('Card Disabled','Dubai card is disabled.','red'); return; }
-    const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
-    const limit = DIB_LIMITS[buyerAcc.cardTier||'basic'] || 1000;
-    const avail = Math.max(0, limit - (buyerAcc.creditDebt||0));
-    if (avail < buyerPaid) { notify('Credit Limit','Available Dubai credit: '+fmt(avail),'red'); return; }
-    buyerAcc.creditDebt = (buyerAcc.creditDebt||0) + buyerPaid;
-    // Check suspension
-    if (buyerAcc.balance < -5000 && !buyerAcc.cardDisabled) {
-      buyerAcc.cardDisabled = true; buyerAcc.cardTier = 'basic';
-    }
+    const acc = dibState.accounts[buyerId];
+    if (!acc || acc.cardDisabled) { notify('Card Disabled', 'Dubai credit card is disabled.', 'red'); return; }
+    const avail = Math.max(0, (DIB_LIMITS[acc.cardTier||'basic']||1000) - (acc.creditDebt||0));
+    if (avail < buyerPaid) { notify('Credit Limit', 'Available Dubai credit: '+fmt(avail), 'red'); return; }
+    acc.creditDebt = (acc.creditDebt||0) + buyerPaid;
+    if (acc.balance < -5000 && !acc.cardDisabled) { acc.cardDisabled = true; acc.cardTier = 'basic'; }
+    dibState.treasuryCardCharges = (dibState.treasuryCardCharges||0) + buyerPaid;
   } else if (paymentMethod === 'swe-debit') {
-    const sAcc = sweState.accounts && sweState.accounts[buyerId];
-    if (!sAcc || !sAcc.enabled || sAcc.balance < buyerPaid) { notify('Insufficient Funds','Swedbank balance too low.','red'); return; }
-    sAcc.balance -= buyerPaid; sAcc.totalWithdrawn = (sAcc.totalWithdrawn||0) + buyerPaid;
-    saveSweBank(sweState);
+    const acc = sweState.accounts && sweState.accounts[buyerId];
+    if (!acc || !acc.enabled || acc.balance < buyerPaid) { notify('Insufficient Funds', 'Swedbank balance too low.', 'red'); return; }
+    acc.balance -= buyerPaid;
+    acc.totalWithdrawn = (acc.totalWithdrawn||0) + buyerPaid;
   } else if (paymentMethod === 'swe-credit') {
-    const sAcc = sweState.accounts && sweState.accounts[buyerId];
-    const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
-    if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) { notify('Card Disabled','Swedbank card disabled.','red'); return; }
-    const avail = Math.max(0, (SWE_LIMITS[sAcc.cardTier||'entry']||800) - (sAcc.creditDebt||0));
-    if (avail < buyerPaid) { notify('Credit Limit','Available Swedbank credit: '+fmt(avail),'red'); return; }
-    sAcc.creditDebt = (sAcc.creditDebt||0) + buyerPaid;
-    sweState.treasuryCardCharges = (sweState.treasuryCardCharges || 0) + buyerPaid;
-    saveSweBank(sweState);
+    const acc = sweState.accounts && sweState.accounts[buyerId];
+    if (!acc || !acc.enabled || acc.cardDisabled) { notify('Card Disabled', 'Swedbank card disabled.', 'red'); return; }
+    const avail = Math.max(0, (SWE_LIMITS[acc.cardTier||'entry']||800) - (acc.creditDebt||0));
+    if (avail < buyerPaid) { notify('Credit Limit', 'Available Swedbank credit: '+fmt(avail), 'red'); return; }
+    acc.creditDebt = (acc.creditDebt||0) + buyerPaid;
+    sweState.treasuryCardCharges = (sweState.treasuryCardCharges||0) + buyerPaid;
   }
 
-  // Pay seller (market price) from Dubai bank
-  if (sellerId !== 'external' && state.accounts[sellerId]) {
-    state.accounts[sellerId].balance += mktTotal;
+  // ─── STEP 2: Pay seller their cut (market price) via the SAME wallet as buyer ───
+  // Dubai Trade fee (dubaiEarns) always goes to Dubai treasury
+  // Seller's cut (mktTotal) goes to seller's account in the same bank as the payment
+  if (sellerId !== 'external') {
+    if (paymentMethod === 'dib-debit' || paymentMethod === 'dib-credit') {
+      if (dibState.accounts[sellerId]) dibState.accounts[sellerId].balance += mktTotal;
+    } else if (paymentMethod === 'swe-debit' || paymentMethod === 'swe-credit') {
+      if (sweState.accounts && sweState.accounts[sellerId]) {
+        sweState.accounts[sellerId].balance += mktTotal;
+        sweState.accounts[sellerId].totalDeposited = (sweState.accounts[sellerId].totalDeposited||0) + mktTotal;
+      }
+    }
+    // Cash: seller receives cash manually — no automatic credit
   }
 
-  // Dubai treasury earns
-  state.treasury = (state.treasury || 50000) + dubaiEarns;
-  state.treasuryTradeFees = (state.treasuryTradeFees || 0) + dubaiEarns;
-  // Track card charges separately for bank notification system
-  if (paymentMethod === 'dib-credit' || paymentMethod === 'swe-credit') {
-    state.treasuryCardCharges = (state.treasuryCardCharges || 0) + buyerPaid;
-  }
+  // ─── STEP 3: Dubai Trade fee always goes to Dubai bank treasury ───
+  dibState.treasury = (dibState.treasury||50000) + dubaiEarns;
+  dibState.treasuryTradeFees = (dibState.treasuryTradeFees||0) + dubaiEarns;
 
-  // Bank log
-  if (!state.logEntries) state.logEntries = [];
-  const payLabel = {cash:'Cash',
-    'swe-debit':'Swe Debit','swe-credit':'Swe Credit ('+tierName+')',
-    'dib-debit':'Dubai Debit','dib-credit':'Dubai Credit ('+tierName+', −'+Math.round(discount*100)+'%)'}[paymentMethod] || paymentMethod;
+  // ─── STEP 4: Write log entries to the relevant bank(s) ───
+  const payLabel = {
+    cash: 'Cash',
+    'swe-debit':  'Swe Debit',
+    'swe-credit': 'Swe Credit ('+tierName+', −'+Math.round(discount*100)+'%)',
+    'dib-debit':  'Dubai Debit',
+    'dib-credit': 'Dubai Credit ('+tierName+', −'+Math.round(discount*100)+'%)',
+  }[paymentMethod] || paymentMethod;
   const discNote = discount > 0 ? ` [${Math.round(discount*100)}% discount]` : '';
-  state.logEntries.unshift({
+
+  // Dubai bank log always gets the treasury earn entry
+  if (!dibState.logEntries) dibState.logEntries = [];
+  dibState.logEntries.unshift({
     type:'treasury', nation:'Dubai Trade',
     desc:`Trade: ${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name}${expLevel?' ('+expLevel+')':''} via ${payLabel} — Dubai earned ${fmt(dubaiEarns)}`,
     amount:dubaiEarns, time:nowStr()
   });
-  if (!tradePrivate) {
-    state.logEntries.unshift({type:'loss', nation:buyerName, desc:`Dubai Trade: ${qty>1?qty+'× ':''}${selectedItem.name} [${payLabel}]${discNote}`, amount:-buyerPaid, time:nowStr()});
-    if (sellerId!=='external'&&state.accounts[sellerId])
-      state.logEntries.unshift({type:'gain', nation:sellerName, desc:`Dubai Trade sale: ${qty>1?qty+'× ':''}${selectedItem.name}`, amount:mktTotal, time:nowStr()});
-  }
-  saveBankState(state);
 
-  // Record trade
+  if (!tradePrivate) {
+    // Buyer loss entry — goes to whichever bank the buyer paid from
+    const buyerLossEntry = {
+      type:'loss', nation:buyerName,
+      desc:`Dubai Trade: ${qty>1?qty+'× ':''}${selectedItem.name} [${payLabel}]${discNote}`,
+      amount:-buyerPaid, time:nowStr()
+    };
+    if (paymentMethod === 'swe-debit' || paymentMethod === 'swe-credit') {
+      if (!sweState.logEntries) sweState.logEntries = [];
+      sweState.logEntries.unshift(buyerLossEntry);
+    } else if (paymentMethod !== 'cash') {
+      dibState.logEntries.unshift(buyerLossEntry);
+    }
+
+    // Seller gain entry — goes to the bank that received the payment
+    if (sellerId !== 'external') {
+      const sellerGainEntry = {
+        type:'gain', nation:sellerName,
+        desc:`Dubai Trade sale: ${qty>1?qty+'× ':''}${selectedItem.name} to ${buyerName}`,
+        amount:mktTotal, time:nowStr()
+      };
+      if (paymentMethod === 'swe-debit' || paymentMethod === 'swe-credit') {
+        if (!sweState.logEntries) sweState.logEntries = [];
+        sweState.logEntries.unshift(sellerGainEntry);
+      } else if (paymentMethod !== 'cash') {
+        dibState.logEntries.unshift(sellerGainEntry);
+      }
+    }
+  }
+
+  saveBankState(dibState);
+  saveSweBank(sweState);
+
+  // ─── STEP 5: Record trade ───
   const expLabels = {small:'Small',medium:'Medium',big:'Big',huge:'Huge',gigantic:'Gigantic'};
   trades.unshift({
     id:Date.now(), time:nowStr(), buyerId, buyerName, sellerId, sellerName,
@@ -1086,6 +1156,12 @@ function executeTrade() {
   tradeRevenue += dubaiEarns;
   tradeVolume  += buyerPaid;
   saveTrades();
+
+  updateStats(); populateSelectors(); updateBreakdown(); renderLog();
+  const privNote = tradePrivate ? ' [Private]' : '';
+  const cashNote = paymentMethod === 'cash' ? ` 💵 Collect ${fmt(buyerPaid)} in cash` : '';
+  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${discNote}${privNote}${cashNote}`, 'gold');
+}
 
   updateStats(); populateSelectors(); updateBreakdown(); renderLog();
   const privNote = tradePrivate ? ' [Private]' : '';
