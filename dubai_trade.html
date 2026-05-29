@@ -1163,11 +1163,6 @@ function executeTrade() {
   notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${discNote}${privNote}${cashNote}`, 'gold');
 }
 
-  updateStats(); populateSelectors(); updateBreakdown(); renderLog();
-  const privNote = tradePrivate ? ' [Private]' : '';
-  const cashNote = paymentMethod === 'cash' ? ` 💵 Collect ${fmt(buyerPaid)} in cash` : '';
-  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${discNote}${privNote}${cashNote}`, 'gold');
-}
 /* ── MARKUP SLIDER ── */
 const markupSlider = document.getElementById('markup-slider');
 const markupValEl  = document.getElementById('markup-val');

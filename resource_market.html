@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Resource Exchange</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg:       #0c0f14;
+  --bg2:      #111620;
+  --bg3:      #161d2a;
+  --bg4:      #1c2535;
+  --card:     #131926;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --text:     #dde6f2;
+  --text-mid: #7a90b0;
+  --text-dim: #3a4d66;
+  --accent:   #38bdf8;
+  --accent2:  #818cf8;
+  --green:    #34d399;
+  --red:      #f87171;
+  --amber:    #fbbf24;
+  --purple:   #a78bfa;
+  --orange:   #fb923c;
+  --brute:    #22d3ee;   /* cyan for raw resources */
+  --refined:  #818cf8;   /* violet for refined */
+  --radius:   5px;
+  --radius-lg:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  min-height:100vh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 100% 50% at 50% -10%,rgba(56,189,248,.06) 0%,transparent 70%),
+    repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(56,189,248,.015) 60px),
+    repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(56,189,248,.015) 60px);
+}
+
+/* ─── HEADER ─── */
+#header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(12,15,20,.97);
+  border-bottom:1px solid rgba(56,189,248,.2);
+  backdrop-filter:blur(14px);
+  padding:0 32px;
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:1800px;margin:0 auto;height:64px;
+}
+.logo-wrap{display:flex;align-items:center;gap:14px;}
+.logo-icon{
+  width:38px;height:38px;background:linear-gradient(135deg,#0ea5e9,#6366f1);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-family:'Space Mono',monospace;font-weight:700;color:#fff;
+  letter-spacing:-1px;flex-shrink:0;
+}
+.logo-name{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:1px;}
+.logo-sub{font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:20px;}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:6px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.header-clock{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:1px;}
+
+/* ─── TABS ─── */
+.main-tabs{
+  display:flex;gap:6px;padding:16px 32px 0;
+  max-width:1800px;margin:0 auto;
+}
+.tab-btn{
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;font-weight:700;
+  text-transform:uppercase;padding:9px 18px;border-radius:var(--radius);
+  cursor:pointer;transition:all .2s;border:1px solid var(--border);
+  background:transparent;color:var(--text-mid);
+}
+.tab-btn:hover{color:var(--text);border-color:var(--border2);}
+.tab-btn.active{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.4);color:var(--accent);}
+
+/* ─── PAGE WRAP ─── */
+.page-wrap{
+  max-width:1800px;margin:0 auto;
+  padding:20px 32px 48px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.tab-content{display:none;}
+.tab-content.active{display:flex;flex-direction:column;gap:18px;}
+
+/* ─── SECTION LABEL ─── */
+.sec-label{
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;
+  color:var(--text-dim);text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(56,189,248,.2),transparent);}
+
+/* ─── CARDS ─── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;}
+
+/* ─── FORM CONTROLS ─── */
+.form-row{display:grid;gap:12px;margin-bottom:14px;}
+.form-row.cols2{grid-template-columns:1fr 1fr;}
+.form-row.cols3{grid-template-columns:1fr 1fr 1fr;}
+.form-row.cols4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-group{}
+.form-label{font-size:9px;letter-spacing:2px;color:var(--text-mid);text-transform:uppercase;margin-bottom:6px;display:block;}
+.form-input,.form-select{
+  width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:var(--radius);padding:9px 11px;color:var(--text);
+  font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;transition:border-color .2s;
+}
+.form-input:focus,.form-select:focus{border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.04);}
+.form-select option{background:#1a2535;}
+.form-input[type=number]{font-family:'Space Mono',monospace;}
+
+/* ─── BANK DESTINATION SELECTOR ─── */
+.bank-dest-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}
+.bank-dest-btn{
+  font-size:9px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;
+  padding:9px 8px;border-radius:var(--radius);cursor:pointer;transition:all .2s;
+  border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text-mid);
+  text-align:center;line-height:1.4;font-family:'Space Grotesk',sans-serif;
+}
+.bank-dest-btn:hover{border-color:var(--border2);color:var(--text);}
+.bank-dest-btn.active-cash{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--amber);}
+.bank-dest-btn.active-swe{background:rgba(224,90,0,.12);border-color:rgba(224,90,0,.45);color:#f07030;}
+.bank-dest-btn.active-dib{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.35);color:var(--accent);}
+
+/* ─── RESOURCE ENTRY ROWS ─── */
+.resource-entries{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.resource-entry{
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;
+  display:grid;grid-template-columns:200px 100px 130px 130px 1fr 32px;
+  align-items:center;gap:10px;
+}
+.resource-entry-type{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;color:var(--text);
+}
+.res-badge{
+  font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;
+  padding:2px 6px;border-radius:2px;text-transform:uppercase;
+}
+.res-badge.brute{background:rgba(34,211,238,.12);color:var(--brute);border:1px solid rgba(34,211,238,.25);}
+.res-badge.refined{background:rgba(129,140,248,.12);color:var(--refined);border:1px solid rgba(129,140,248,.25);}
+.mkt-ref{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);}
+.del-btn{
+  background:transparent;border:1px solid rgba(248,113,113,.2);color:rgba(248,113,113,.5);
+  border-radius:3px;width:28px;height:28px;cursor:pointer;font-size:12px;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.del-btn:hover{background:rgba(248,113,113,.1);color:var(--red);border-color:rgba(248,113,113,.4);}
+
+/* ─── PRICE SIGNAL ─── */
+.price-signal{
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;
+  padding:2px 7px;border-radius:2px;font-weight:700;text-transform:uppercase;
+}
+.sig-cheap{background:rgba(56,189,248,.1);color:var(--accent);border:1px solid rgba(56,189,248,.25);}
+.sig-low{background:rgba(52,211,153,.08);color:var(--green);border:1px solid rgba(52,211,153,.2);}
+.sig-ideal{background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.35);}
+.sig-avg{background:rgba(251,191,36,.08);color:var(--amber);border:1px solid rgba(251,191,36,.2);}
+.sig-high{background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.25);}
+.sig-exp{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.25);}
+
+/* ─── BUTTONS ─── */
+.btn{
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;font-weight:700;
+  text-transform:uppercase;padding:10px 20px;border:none;cursor:pointer;
+  border-radius:var(--radius);transition:all .2s;
+}
+.btn-primary{background:linear-gradient(135deg,#0284c7,#4f46e5);color:#fff;}
+.btn-primary:hover{background:linear-gradient(135deg,#0ea5e9,#6366f1);box-shadow:0 0 20px rgba(56,189,248,.25);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-mid);}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn-add{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--accent);}
+.btn-add:hover{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.4);}
+.btn-sm{padding:6px 14px;font-size:8px;}
+
+/* ─── LISTINGS ─── */
+.listings-grid{
+  display:flex;flex-direction:column;gap:8px;
+}
+.listing-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 18px;
+  display:grid;grid-template-columns:160px 80px 130px 130px 130px 1fr;
+  gap:12px;align-items:center;
+  transition:border-color .15s;
+}
+.listing-card:hover{border-color:var(--border2);}
+.listing-country{font-size:13px;font-weight:600;color:var(--text);}
+.listing-type{font-size:10px;color:var(--text-mid);margin-top:2px;}
+.listing-qty{font-family:'Space Mono',monospace;font-size:14px;color:var(--text);font-weight:700;}
+.listing-unit{font-size:9px;color:var(--text-dim);}
+.listing-unit-price{font-family:'Space Mono',monospace;font-size:15px;color:var(--accent);font-weight:700;}
+.listing-mkt{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);}
+.listing-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;}
+.listing-header{
+  display:grid;grid-template-columns:160px 80px 130px 130px 130px 1fr;
+  gap:12px;align-items:center;
+  padding:8px 18px;
+  font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;
+  color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);
+  margin-bottom:4px;
+}
+.listing-dest{font-size:9px;color:var(--text-dim);letter-spacing:1px;}
+
+/* ─── SEARCH / FILTER ─── */
+.filter-bar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;
+}
+.search-input{
+  flex:1;min-width:200px;background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:var(--radius);padding:9px 12px;color:var(--text);
+  font-family:'Space Grotesk',sans-serif;font-size:12px;outline:none;
+  transition:border-color .2s;
+}
+.search-input:focus{border-color:rgba(56,189,248,.35);}
+.search-input::placeholder{color:var(--text-dim);}
+.filter-cat{display:flex;gap:4px;flex-wrap:wrap;}
+.fcat-btn{
+  font-size:8px;letter-spacing:2px;font-weight:600;text-transform:uppercase;
+  padding:5px 10px;border-radius:2px;cursor:pointer;transition:all .2s;
+  background:transparent;border:1px solid var(--border);color:var(--text-mid);
+  font-family:'Space Grotesk',sans-serif;
+}
+.fcat-btn:hover{color:var(--text);border-color:var(--border2);}
+.fcat-btn.active{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.35);color:var(--accent);}
+
+/* ─── HISTORY ─── */
+.history-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.history-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:10px;
+}
+.hist-count{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:2px;}
+#history-log{max-height:340px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(56,189,248,.2) transparent;}
+#history-log::-webkit-scrollbar{width:4px;}
+#history-log::-webkit-scrollbar-thumb{background:rgba(56,189,248,.2);border-radius:2px;}
+.hist-entry{
+  padding:10px 18px;border-bottom:1px solid var(--border);transition:background .15s;
+}
+.hist-entry:hover{background:rgba(56,189,248,.02);}
+.hist-row1{
+  display:grid;grid-template-columns:90px 110px 130px 1fr auto;
+  gap:10px;align-items:baseline;font-size:11px;margin-bottom:3px;
+}
+.hist-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-dim);}
+.hist-country{color:var(--text-mid);font-weight:600;}
+.hist-resource{color:var(--text);font-weight:500;}
+.hist-total{font-family:'Space Mono',monospace;font-size:14px;color:var(--green);text-align:right;}
+.hist-row2{font-size:9px;color:var(--text-dim);letter-spacing:.3px;}
+.hist-empty{display:flex;align-items:center;justify-content:center;height:100px;color:var(--text-dim);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;}
+
+/* ─── PAYMENT METHOD ─── */
+.pay-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.pay-btn{
+  font-size:8px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;
+  padding:8px 6px;border-radius:var(--radius);cursor:pointer;transition:all .2s;
+  border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text-mid);
+  text-align:center;line-height:1.4;font-family:'Space Grotesk',sans-serif;
+}
+.pay-btn:hover{border-color:var(--border2);color:var(--text);}
+.pay-btn.pay-cash{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4);color:var(--amber);}
+.pay-btn.pay-swe{background:rgba(224,90,0,.12);border-color:rgba(224,90,0,.45);color:#f07030;}
+.pay-btn.pay-dib{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.35);color:var(--accent);}
+
+/* ─── PURCHASE MODAL ─── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;
+  align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);
+  padding:28px;min-width:420px;max-width:520px;width:90%;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);
+}
+.modal-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:18px;}
+.modal-close{
+  float:right;background:transparent;border:none;color:var(--text-mid);font-size:18px;cursor:pointer;
+  margin-top:-4px;margin-right:-4px;transition:color .2s;
+}
+.modal-close:hover{color:var(--red);}
+.pb-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--text-mid);margin-bottom:7px;}
+.pb-val{font-family:'Space Mono',monospace;font-size:14px;color:var(--text);}
+.pb-total{border-top:1px solid var(--border);padding-top:10px;margin-top:4px;font-size:13px;font-weight:600;color:var(--text);}
+.pb-total .pb-val{font-size:18px;color:var(--accent);}
+.cash-note{
+  background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);
+  border-radius:var(--radius);padding:10px 14px;font-size:10px;color:var(--amber);
+  font-family:'Space Mono',monospace;text-align:center;margin:10px 0;
+}
+
+/* ─── NOTIF ─── */
+#notif-container{position:fixed;top:80px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:999;pointer-events:none;}
+.notif{
+  background:var(--bg3);border:1px solid rgba(56,189,248,.3);
+  border-radius:var(--radius-lg);padding:12px 18px;
+  font-size:11px;color:var(--text);min-width:260px;max-width:340px;
+  animation:notifIn .3s ease,notifOut .4s 2.8s ease forwards;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;
+}
+.notif.green{border-color:rgba(52,211,153,.4);}
+.notif.red{border-color:rgba(248,113,113,.4);}
+.notif-title{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+.notif.green .notif-title{color:var(--green);}
+.notif.red .notif-title{color:var(--red);}
+@keyframes notifIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes notifOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(20px)}}
+
+/* ─── EMPTY STATE ─── */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 24px;gap:12px;color:var(--text-dim);
+  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+}
+.empty-state .empty-icon{font-size:32px;opacity:.3;}
+
+/* ─── SELLER STATS ─── */
+.country-listing{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;
+}
+.country-listing-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);
+}
+.country-listing-name{font-size:14px;font-weight:700;color:var(--text);}
+.country-listing-sub{font-size:9px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.country-resources-list{padding:12px;}
+.res-listing-row{
+  display:grid;grid-template-columns:160px 80px 130px 130px 130px 1fr;
+  gap:10px;align-items:center;padding:9px 10px;border-radius:var(--radius);
+  border:1px solid transparent;transition:all .15s;cursor:pointer;
+}
+.res-listing-row:hover{background:rgba(56,189,248,.04);border-color:rgba(56,189,248,.15);}
+
+@media(max-width:1100px){
+  .listing-card,.listing-header{grid-template-columns:130px 70px 110px 110px 110px 1fr;}
+  .resource-entry{grid-template-columns:150px 90px 120px 120px 1fr 32px;}
+}
+@media(max-width:768px){
+  .listing-card{grid-template-columns:1fr 1fr;gap:8px;}
+  .listing-header{display:none;}
+  .resource-entry{grid-template-columns:1fr 1fr;gap:8px;}
+  .main-tabs{padding:14px 16px 0;}
+  .page-wrap{padding:14px 16px 40px;}
+  #header{padding:0 16px;}
+  .form-row.cols2,.form-row.cols3,.form-row.cols4{grid-template-columns:1fr 1fr;}
+  .modal{min-width:auto;}
+}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <div class="logo-icon">GRX</div>
+      <div>
+        <div class="logo-name">Global Resource Exchange</div>
+        <div class="logo-sub">International Commodity Market</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span style="font-size:10px;letter-spacing:2px;color:var(--text-mid)"><span class="live-dot"></span>MARKET OPEN</span>
+      <div class="header-clock" id="clock">—</div>
+    </div>
+  </div>
+</header>
+
+<div id="notif-container"></div>
+
+<div style="max-width:1800px;margin:0 auto;padding:0 32px;">
+  <div class="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('sell')">📦 Sell Resources</button>
+    <button class="tab-btn" onclick="switchTab('browse')">🔍 Browse &amp; Buy</button>
+    <button class="tab-btn" onclick="switchTab('history')">📋 Transaction History</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ═══════════════ TAB: SELL ═══════════════ -->
+  <div class="tab-content active" id="tab-sell">
+    <div class="card">
+      <div class="sec-label">Register as Seller</div>
+      <div class="form-row cols3">
+        <div class="form-group">
+          <label class="form-label">Country Name</label>
+          <select class="form-select" id="sell-country">
+            <option value="">— Select your country —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Destination</label>
+          <div style="margin-top:4px;">
+            <div class="bank-dest-grid" id="dest-grid">
+              <button class="bank-dest-btn active-cash" onclick="setDest('cash')" id="dest-cash">💵 Cash</button>
+              <button class="bank-dest-btn" onclick="setDest('swe')" id="dest-swe">🏧 Swedbank</button>
+              <button class="bank-dest-btn" onclick="setDest('dib')" id="dest-dib">🏦 Dubai Bank</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <div style="width:100%">
+            <label class="form-label">Market Reference Prices</label>
+            <div style="font-size:10px;color:var(--text-mid);line-height:1.6;">
+              Prices below are the <strong style="color:var(--accent)">global market baseline</strong>. Set your ask price above or below to signal value. The exchange will rate your pricing automatically.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-label" style="margin-top:8px;">Resources for Sale</div>
+      <div class="resource-entries" id="resource-entries"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-add btn-sm" onclick="addResourceEntry('brute')">+ Raw Resource</button>
+        <button class="btn btn-add btn-sm" onclick="addResourceEntry('refined')">+ Refined Resource</button>
+        <button class="btn btn-primary btn-sm" onclick="publishListing()" style="margin-left:auto;">📤 Publish Listing</button>
+      </div>
+    </div>
+
+    <!-- My Active Listings -->
+    <div class="card">
+      <div class="sec-label">My Active Listings</div>
+      <div id="my-listings-wrap">
+        <div class="empty-state"><div class="empty-icon">📦</div><div>No active listings. Publish resources above.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: BROWSE ═══════════════ -->
+  <div class="tab-content" id="tab-browse">
+    <div class="card" style="padding:16px 22px;">
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="browse-search" placeholder="Search resource by name…" oninput="renderBrowse()">
+        <div class="filter-cat" id="browse-cats"></div>
+      </div>
+    </div>
+    <div id="browse-listings-wrap">
+      <div class="empty-state"><div class="empty-icon">🔍</div><div>No listings available. Countries must publish resources first.</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: HISTORY ═══════════════ -->
+  <div class="tab-content" id="tab-history">
+    <div class="history-wrap">
+      <div class="history-toolbar">
+        <div class="sec-label" style="margin:0;flex:1">Transaction History</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-ghost btn-sm" onclick="exportHistory()">↓ Export</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearHistory()" style="color:var(--red);border-color:rgba(248,113,113,.3)">🗑 Clear</button>
+        </div>
+        <div class="hist-count" id="hist-count">0 entries</div>
+      </div>
+      <div id="history-log"><div class="hist-empty">No transactions yet</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ PURCHASE MODAL ═══════════════ -->
+<div class="modal-overlay" id="purchase-modal">
+  <div class="modal">
+    <div class="modal-title">
+      Purchase Resource
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════ */
+const NATION_LIST = [
+  {id:'usa',name:'USA'},{id:'russia',name:'Russia'},{id:'israel',name:'Israel'},
+  {id:'brazil',name:'Brazil'},{id:'mexico',name:'Mexico'},{id:'iran',name:'Iran'},
+  {id:'iraq',name:'Iraq'},{id:'korea',name:'Korea'},{id:'chinajp',name:'China / Japan'},
+  {id:'uk',name:'UK'},{id:'germany',name:'Germany'},{id:'canada',name:'Canada'},
+  {id:'denswiss',name:'Denmark / Switzerland'},{id:'sweden',name:'Sweden'},
+  {id:'ukraine',name:'Ukraine'},{id:'dubai',name:'Dubai'},
+];
+
+const BRUTE_RESOURCES = [
+  {id:'iron',name:'Iron',price:2,unit:'un'},
+  {id:'coal',name:'Coal',price:1,unit:'un'},
+  {id:'gravel',name:'Gravel',price:0.5,unit:'un'},
+  {id:'latex',name:'Latex',price:4,unit:'un'},
+  {id:'silicon',name:'Silicon',price:8,unit:'un'},
+  {id:'gold',name:'Gold',price:45,unit:'un'},
+  {id:'diamond',name:'Diamond',price:180,unit:'un'},
+  {id:'oil',name:'Oil',price:3,unit:'L'},
+  {id:'gas',name:'Gas',price:2,unit:'L'},
+  {id:'uranium',name:'Uranium',price:800,unit:'un'},
+];
+const REFINED_RESOURCES = [
+  {id:'ref_iron',name:'Refined Iron',price:22,unit:'un'},
+  {id:'gunpowder',name:'Gunpowder',price:1.80,unit:'un'},
+  {id:'tires',name:'Tires',price:60,unit:'un'},
+  {id:'fuel',name:'Fuel',price:3,unit:'L'},
+  {id:'electronics',name:'Electronics',price:250,unit:'un'},
+  {id:'chips',name:'Chips',price:700,unit:'un'},
+  {id:'ref_uranium',name:'Refined Uranium',price:55000,unit:'un'},
+];
+const ALL_RESOURCES = [...BRUTE_RESOURCES, ...REFINED_RESOURCES];
+const RES_MAP = {};
+ALL_RESOURCES.forEach(r => RES_MAP[r.id] = r);
+
+const STORAGE_LISTINGS = 'grx_listings_v1';
+const STORAGE_HISTORY  = 'grx_history_v1';
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let currentDest  = 'cash';
+let entryCount   = 0;
+let pendingPurchase = null;
+let purchasePayMethod = 'cash';
+let browseCat    = 'all';
+let browseSearch = '';
+
+/* ═══════════════════════════════════════════
+   PERSISTENCE
+═══════════════════════════════════════════ */
+function loadListings() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_LISTINGS)||'[]'); } catch { return []; }
+}
+function saveListings(arr) {
+  try { localStorage.setItem(STORAGE_LISTINGS, JSON.stringify(arr)); } catch {}
+}
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_HISTORY)||'[]'); } catch { return []; }
+}
+function saveHistory(arr) {
+  try { localStorage.setItem(STORAGE_HISTORY, JSON.stringify(arr)); } catch {}
+}
+function loadDubaiBank() {
+  try { return JSON.parse(localStorage.getItem('dib_state')) || {accounts:{}, treasury:50000, logEntries:[]}; }
+  catch { return {accounts:{}, treasury:50000, logEntries:[]}; }
+}
+function saveDubaiBank(s) { try { localStorage.setItem('dib_state', JSON.stringify(s)); } catch {} }
+function loadSweBank() {
+  try { return JSON.parse(localStorage.getItem('swe_bank_v1')) || {accounts:{}, logEntries:[]}; }
+  catch { return {accounts:{}, logEntries:[]}; }
+}
+function saveSweBank(s) { try { localStorage.setItem('swe_bank_v1', JSON.stringify(s)); } catch {} }
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+function fmt(n) {
+  if (n < 1 && n > 0) return '$' + n.toFixed(2);
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtShort(n) {
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+}
+function nowStr() {
+  return new Date().toLocaleTimeString('en-US', {hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+function nowFull() {
+  return new Date().toLocaleString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'short'});
+}
+function notify(title, msg, cls='') {
+  const c = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = 'notif ' + cls;
+  el.innerHTML = `<div class="notif-title">${title}</div><div>${msg}</div>`;
+  c.appendChild(el);
+  setTimeout(()=>el.remove(), 3500);
+}
+
+/* Price signal compared to market */
+function priceSignal(askPrice, mktPrice) {
+  if (!mktPrice || mktPrice === 0) return '';
+  const ratio = askPrice / mktPrice;
+  if (ratio < 0.70) return '<span class="price-signal sig-cheap">▼▼ Too Cheap</span>';
+  if (ratio < 0.92) return '<span class="price-signal sig-low">▼ Low</span>';
+  if (ratio >= 0.92 && ratio <= 1.05) return '<span class="price-signal sig-ideal">✓ Ideal</span>';
+  if (ratio <= 1.15) return '<span class="price-signal sig-avg">~ Average</span>';
+  if (ratio <= 1.35) return '<span class="price-signal sig-high">▲ High</span>';
+  return '<span class="price-signal sig-exp">▲▲ Too Expensive</span>';
+}
+function priceSignalText(askPrice, mktPrice) {
+  if (!mktPrice || mktPrice === 0) return 'unknown';
+  const ratio = askPrice / mktPrice;
+  if (ratio < 0.70) return 'too cheap';
+  if (ratio < 0.92) return 'low';
+  if (ratio >= 0.92 && ratio <= 1.05) return 'ideal';
+  if (ratio <= 1.15) return 'average';
+  if (ratio <= 1.35) return 'high';
+  return 'too expensive';
+}
+
+/* ═══════════════════════════════════════════
+   TAB SWITCHING
+═══════════════════════════════════════════ */
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const tabs = ['sell','browse','history'];
+  document.querySelectorAll('.tab-btn')[tabs.indexOf(id)].classList.add('active');
+  if (id === 'browse')  renderBrowse();
+  if (id === 'history') renderHistory();
+  if (id === 'sell')    renderMyListings();
+}
+
+/* ═══════════════════════════════════════════
+   SELL TAB
+═══════════════════════════════════════════ */
+/* Populate country selector */
+function initSelectors() {
+  const sel = document.getElementById('sell-country');
+  sel.innerHTML = '<option value="">— Select your country —</option>';
+  NATION_LIST.forEach(n => {
+    sel.innerHTML += `<option value="${n.id}">${n.name}</option>`;
+  });
+}
+
+/* Payment destination */
+function setDest(d) {
+  currentDest = d;
+  ['cash','swe','dib'].forEach(k => {
+    const btn = document.getElementById('dest-'+k);
+    btn.className = 'bank-dest-btn';
+    if (k === d) {
+      if (d === 'cash') btn.className += ' active-cash';
+      else if (d === 'swe') btn.className += ' active-swe';
+      else btn.className += ' active-dib';
+    }
+  });
+}
+
+/* Add a resource entry row */
+function addResourceEntry(type) {
+  const id = 'entry-' + (++entryCount);
+  const resources = type === 'brute' ? BRUTE_RESOURCES : REFINED_RESOURCES;
+  const resOptions = resources.map(r => `<option value="${r.id}">${r.name} (mkt ${fmtShort(r.price)}/${r.unit})</option>`).join('');
+  const wrap = document.getElementById('resource-entries');
+  const div = document.createElement('div');
+  div.className = 'resource-entry';
+  div.id = id;
+  div.innerHTML = `
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span class="res-badge ${type}">${type === 'brute' ? 'Raw' : 'Refined'}</span>
+      </div>
+      <select class="form-select" id="${id}-res" onchange="updateEntryMkt('${id}')" style="padding:7px 9px;font-size:11px;">
+        ${resOptions}
+      </select>
+    </div>
+    <div>
+      <div class="form-label">Quantity</div>
+      <input class="form-input" type="number" id="${id}-qty" value="100" min="1" step="1" style="padding:7px 9px;font-size:11px;" onchange="updateEntryMkt('${id}')">
+    </div>
+    <div>
+      <div class="form-label">Unit Price</div>
+      <input class="form-input" type="number" id="${id}-price" value="" min="0.01" step="0.01" placeholder="Ask price / unit" style="padding:7px 9px;font-size:11px;" oninput="updateEntryMkt('${id}')">
+    </div>
+    <div>
+      <div class="form-label">Market Price</div>
+      <div class="mkt-ref" id="${id}-mkt">—</div>
+    </div>
+    <div id="${id}-signal" style="display:flex;align-items:center;"></div>
+    <button class="del-btn" onclick="removeEntry('${id}')">✕</button>
+  `;
+  wrap.appendChild(div);
+  updateEntryMkt(id);
+}
+
+function updateEntryMkt(id) {
+  const resId = document.getElementById(id+'-res').value;
+  const res   = RES_MAP[resId];
+  const mktEl = document.getElementById(id+'-mkt');
+  const sigEl = document.getElementById(id+'-signal');
+  if (!res) { mktEl.textContent = '—'; sigEl.innerHTML = ''; return; }
+  mktEl.textContent = `${fmt(res.price)} / ${res.unit}`;
+  const askVal = parseFloat(document.getElementById(id+'-price').value);
+  if (!isNaN(askVal) && askVal > 0) {
+    sigEl.innerHTML = priceSignal(askVal, res.price);
+  } else {
+    sigEl.innerHTML = '';
+  }
+}
+
+function removeEntry(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function publishListing() {
+  const countryId = document.getElementById('sell-country').value;
+  if (!countryId) { notify('Error', 'Select your country first.', 'red'); return; }
+  const countryName = NATION_LIST.find(n=>n.id===countryId)?.name || countryId;
+  const entries = document.querySelectorAll('#resource-entries .resource-entry');
+  if (!entries.length) { notify('Error', 'Add at least one resource to sell.', 'red'); return; }
+
+  const resources = [];
+  let valid = true;
+  entries.forEach(entry => {
+    const id = entry.id;
+    const resId = document.getElementById(id+'-res').value;
+    const qty   = parseInt(document.getElementById(id+'-qty').value) || 0;
+    const price = parseFloat(document.getElementById(id+'-price').value);
+    if (!resId || qty <= 0 || isNaN(price) || price <= 0) { valid = false; return; }
+    const res = RES_MAP[resId];
+    resources.push({ resId, resName: res.name, cat: BRUTE_RESOURCES.find(r=>r.id===resId)?'brute':'refined', qty, price, unit: res.unit, mktPrice: res.price });
+  });
+  if (!valid) { notify('Error', 'All resources must have a valid quantity and price.', 'red'); return; }
+
+  const listings = loadListings();
+  // Remove existing listing from same country
+  const existing = listings.findIndex(l => l.countryId === countryId);
+  if (existing >= 0) listings.splice(existing, 1);
+
+  const listing = {
+    id: Date.now(),
+    countryId, countryName,
+    dest: currentDest,
+    resources,
+    publishedAt: nowFull(),
+  };
+  listings.push(listing);
+  saveListings(listings);
+
+  // Clear form
+  document.getElementById('resource-entries').innerHTML = '';
+  entryCount = 0;
+
+  notify('Published!', `${countryName} is now selling ${resources.length} resource(s) on the exchange.`, 'green');
+  renderMyListings();
+  renderBrowse();
+}
+
+function renderMyListings() {
+  const countryId = document.getElementById('sell-country').value;
+  const wrap = document.getElementById('my-listings-wrap');
+  const listings = loadListings();
+  const mine = countryId ? listings.filter(l => l.countryId === countryId) : listings;
+
+  if (!mine.length) {
+    wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><div>No active listings' + (countryId ? ' for this country' : '') + '.</div></div>';
+    return;
+  }
+
+  wrap.innerHTML = mine.map(l => {
+    const destLabel = {cash:'💵 Cash',swe:'🏧 Swedbank',dib:'🏦 Dubai Bank'}[l.dest] || l.dest;
+    return `<div class="country-listing">
+      <div class="country-listing-header">
+        <div>
+          <div class="country-listing-name">${l.countryName}</div>
+          <div class="country-listing-sub">Published ${l.publishedAt} · Receive via ${destLabel}</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="removeListing('${l.id}')" style="color:var(--red);border-color:rgba(248,113,113,.3);">Remove Listing</button>
+      </div>
+      <div class="country-resources-list">
+        <div style="display:grid;grid-template-columns:160px 80px 130px 130px 130px 1fr;gap:10px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);margin-bottom:6px;">
+          <div>Resource</div><div>Type</div><div>Qty Available</div><div>Ask / Unit</div><div>Market Ref</div><div>Signal</div>
+        </div>
+        ${l.resources.map(r => `
+        <div class="res-listing-row">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${r.resName}</div>
+          <div><span class="res-badge ${r.cat}">${r.cat === 'brute' ? 'Raw' : 'Refined'}</span></div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--text)">${Number(r.qty).toLocaleString()} <span style="font-size:9px;color:var(--text-dim)">${r.unit}</span></div>
+          <div style="font-family:'Space Mono',monospace;font-size:14px;color:var(--accent)">${fmt(r.price)}<span style="font-size:9px;color:var(--text-dim)">/${r.unit}</span></div>
+          <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim)">${fmt(r.mktPrice)}/${r.unit}</div>
+          <div>${priceSignal(r.price, r.mktPrice)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeListing(id) {
+  const listings = loadListings();
+  const idx = listings.findIndex(l => String(l.id) === String(id));
+  if (idx >= 0) { listings.splice(idx, 1); saveListings(listings); }
+  renderMyListings();
+  renderBrowse();
+  notify('Removed', 'Listing removed from the exchange.', '');
+}
+
+/* ═══════════════════════════════════════════
+   BROWSE TAB
+═══════════════════════════════════════════ */
+const BROWSE_CATS = [
+  {id:'all',label:'All'},
+  {id:'brute',label:'Raw Resources'},
+  {id:'refined',label:'Refined'},
+];
+
+function initBrowseCats() {
+  const wrap = document.getElementById('browse-cats');
+  wrap.innerHTML = BROWSE_CATS.map(c =>
+    `<button class="fcat-btn${c.id==='all'?' active':''}" onclick="setBrowseCat('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+function setBrowseCat(id) {
+  browseCat = id;
+  document.querySelectorAll('#browse-cats .fcat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`#browse-cats .fcat-btn[onclick="setBrowseCat('${id}')"]`)?.classList.add('active');
+  renderBrowse();
+}
+
+function renderBrowse() {
+  browseSearch = document.getElementById('browse-search')?.value.toLowerCase() || '';
+  const listings = loadListings();
+  const wrap = document.getElementById('browse-listings-wrap');
+
+  // Flatten all resources across all sellers, filtered
+  const flatItems = [];
+  listings.forEach(l => {
+    l.resources.forEach(r => {
+      if (browseCat !== 'all' && r.cat !== browseCat) return;
+      if (browseSearch && !r.resName.toLowerCase().includes(browseSearch)) return;
+      flatItems.push({...r, countryId:l.countryId, countryName:l.countryName, dest:l.dest, listingId:l.id});
+    });
+  });
+
+  if (!flatItems.length) {
+    wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div>No matching listings found.</div></div>';
+    return;
+  }
+
+  // Group by resource name
+  const grouped = {};
+  flatItems.forEach(item => {
+    if (!grouped[item.resName]) grouped[item.resName] = [];
+    grouped[item.resName].push(item);
+  });
+
+  wrap.innerHTML = Object.entries(grouped).map(([resName, items]) => {
+    const mktPrice = items[0].mktPrice;
+    const sortedItems = [...items].sort((a,b) => a.price - b.price);
+    const rows = sortedItems.map(item => {
+      const destLabel = {cash:'💵 Cash',swe:'🏧 Swedbank',dib:'🏦 Dubai Bank'}[item.dest] || item.dest;
+      const totalVal = item.price * item.qty;
+      return `<div class="listing-card">
+        <div>
+          <div class="listing-country">${item.countryName}</div>
+          <div class="listing-dest">${destLabel}</div>
+        </div>
+        <div><span class="res-badge ${item.cat}">${item.cat === 'brute' ? 'Raw' : 'Refined'}</span></div>
+        <div>
+          <div class="listing-qty">${Number(item.qty).toLocaleString()}</div>
+          <div class="listing-unit">${item.unit} available</div>
+        </div>
+        <div>
+          <div class="listing-unit-price">${fmt(item.price)}<span style="font-size:9px;color:var(--text-dim)">/${item.unit}</span></div>
+          <div class="listing-mkt">Mkt ref: ${fmt(mktPrice)}</div>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--text-mid)">Total: ${fmtShort(totalVal)}</div>
+          <div style="margin-top:4px;">${priceSignal(item.price, mktPrice)}</div>
+        </div>
+        <div class="listing-actions">
+          <button class="btn btn-primary btn-sm" onclick='openPurchase(${JSON.stringify(item)})'>Buy →</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="card" style="padding:16px 18px;">
+      <div class="sec-label">${resName} <span style="font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:none;">&nbsp;·&nbsp; ${items.length} seller${items.length!==1?'s':''} &nbsp;·&nbsp; Mkt ref: ${fmt(mktPrice)}/${items[0].unit}</span></div>
+      <div class="listing-header">
+        <div>Country</div><div>Type</div><div>Available</div><div>Unit Price</div><div>Total Value</div><div></div>
+      </div>
+      <div class="listings-grid">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   PURCHASE MODAL
+═══════════════════════════════════════════ */
+function openPurchase(item) {
+  pendingPurchase = item;
+  purchasePayMethod = 'cash';
+  renderModal();
+  document.getElementById('purchase-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('purchase-modal').classList.remove('open');
+  pendingPurchase = null;
+}
+document.getElementById('purchase-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function setPurchasePayment(m) {
+  purchasePayMethod = m;
+  renderModal();
+}
+
+function renderModal() {
+  if (!pendingPurchase) return;
+  const item = pendingPurchase;
+  const destLabel = {cash:'💵 Cash',swe:'🏧 Swedbank',dib:'🏦 Dubai Bank'}[item.dest] || item.dest;
+
+  const modal = document.getElementById('modal-body');
+
+  // Payment source buttons
+  const payButtons = `
+    <div style="margin-bottom:16px;">
+      <div class="form-label">Payment Source</div>
+      <div class="pay-grid">
+        <button class="pay-btn${purchasePayMethod==='cash'?' pay-cash':''}" onclick="setPurchasePayment('cash')">💵 Cash</button>
+        <button class="pay-btn${purchasePayMethod==='swe-debit'?' pay-swe':''}" onclick="setPurchasePayment('swe-debit')">🏧 Swe Debit</button>
+        <button class="pay-btn${purchasePayMethod==='swe-credit'?' pay-swe':''}" onclick="setPurchasePayment('swe-credit')">💳 Swe Credit</button>
+        <button class="pay-btn${purchasePayMethod==='dib-debit'?' pay-dib':''}" onclick="setPurchasePayment('dib-debit')">🏧 Dubai Debit</button>
+        <button class="pay-btn${purchasePayMethod==='dib-credit'?' pay-dib':''}" onclick="setPurchasePayment('dib-credit')">💳 Dubai Credit</button>
+      </div>
+    </div>`;
+
+  const qtyInput = `
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Quantity to Buy (max: ${Number(item.qty).toLocaleString()} ${item.unit})</label>
+      <input class="form-input" type="number" id="modal-qty" value="${item.qty}" min="1" max="${item.qty}" step="1" oninput="renderModalBreakdown()">
+    </div>`;
+
+  const buyerSel = `
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Buying Country</label>
+      <select class="form-select" id="modal-buyer" onchange="renderModalBreakdown()">
+        <option value="">— Select buyer —</option>
+        ${NATION_LIST.map(n=>`<option value="${n.id}">${n.name}</option>`).join('')}
+      </select>
+    </div>`;
+
+  modal.innerHTML = `
+    <div class="pb-row"><span>Resource</span><span class="pb-val" style="font-size:13px;color:var(--text)">${item.resName}</span></div>
+    <div class="pb-row"><span>Seller</span><span class="pb-val" style="font-size:13px;color:var(--text)">${item.countryName}</span></div>
+    <div class="pb-row"><span>Seller receives payment via</span><span class="pb-val" style="font-size:12px;color:var(--text-mid)">${destLabel}</span></div>
+    <div class="pb-row"><span>Market Reference</span><span class="pb-val" style="color:var(--text-mid)">${fmt(item.mktPrice)}/${item.unit}</span></div>
+    <div class="pb-row"><span>Ask Price / Unit</span><span class="pb-val" style="color:var(--accent)">${fmt(item.price)}/${item.unit}</span></div>
+    <div style="margin:10px 0 14px 0;">${priceSignal(item.price,item.mktPrice)}</div>
+    ${buyerSel}
+    ${payButtons}
+    ${qtyInput}
+    <div id="modal-breakdown"></div>
+    <button class="btn btn-primary" onclick="executePurchase()" id="modal-exec-btn" style="width:100%;margin-top:10px;" disabled>Confirm Purchase</button>
+  `;
+  renderModalBreakdown();
+}
+
+function renderModalBreakdown() {
+  if (!pendingPurchase) return;
+  const item = pendingPurchase;
+  const qty = Math.min(parseInt(document.getElementById('modal-qty')?.value)||1, item.qty);
+  const buyerId = document.getElementById('modal-buyer')?.value || '';
+  const buyerName = NATION_LIST.find(n=>n.id===buyerId)?.name || '';
+  const total = item.price * qty;
+  const execBtn = document.getElementById('modal-exec-btn');
+
+  const bk = document.getElementById('modal-breakdown');
+  if (!bk) return;
+
+  // Cash note
+  let cashNote = '';
+  if (purchasePayMethod === 'cash') {
+    cashNote = `<div class="cash-note">💵 Player must pay ${fmt(total)} in cash manually.<br>No balance will be deducted.</div>`;
+  }
+
+  // Balance check
+  let balNote = '';
+  let canExecute = !!buyerId;
+  if (purchasePayMethod !== 'cash' && buyerId) {
+    const dib = loadDubaiBank();
+    const swe = loadSweBank();
+    const dAcc = dib.accounts && dib.accounts[buyerId];
+    const sAcc = swe.accounts && swe.accounts[buyerId];
+    const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+    const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+    if (purchasePayMethod === 'dib-debit') {
+      const bal = dAcc ? dAcc.balance||0 : 0;
+      canExecute = dAcc && dAcc.enabled !== false && bal >= total;
+      balNote = `<div class="balance-check${canExecute?' ok':' warn'}" style="font-size:10px;margin-bottom:10px;">${canExecute ? '✓ Dubai balance: '+fmt(bal) : '⚠ Insufficient Dubai balance: '+fmt(bal)}</div>`;
+    } else if (purchasePayMethod === 'dib-credit') {
+      if (!dAcc || dAcc.cardDisabled) { balNote = '<div style="font-size:10px;color:var(--red);margin-bottom:10px;">⚠ Dubai credit card disabled</div>'; canExecute=false; }
+      else { const avail = Math.max(0,(DIB_LIMITS[dAcc.cardTier||'basic']||1000)-(dAcc.creditDebt||0)); canExecute=avail>=total; balNote=`<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Dubai credit available: ${fmt(avail)}</div>`; }
+    } else if (purchasePayMethod === 'swe-debit') {
+      const bal = sAcc ? sAcc.balance||0 : 0;
+      canExecute = sAcc && sAcc.enabled && bal >= total;
+      balNote = `<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Swedbank balance: ${fmt(bal)}</div>`;
+    } else if (purchasePayMethod === 'swe-credit') {
+      if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) { balNote='<div style="font-size:10px;color:var(--red);margin-bottom:10px;">⚠ Swedbank card disabled</div>'; canExecute=false; }
+      else { const avail = Math.max(0,(SWE_LIMITS[sAcc.cardTier||'entry']||800)-(sAcc.creditDebt||0)); canExecute=avail>=total; balNote=`<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Swedbank credit available: ${fmt(avail)}</div>`; }
+    }
+  }
+
+  bk.innerHTML = `
+    <div style="background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;">
+      <div class="pb-row"><span>Quantity</span><span class="pb-val" style="font-size:14px;">× ${qty.toLocaleString()}</span></div>
+      <div class="pb-row"><span>Unit Price</span><span class="pb-val" style="font-size:14px;">${fmt(item.price)}</span></div>
+      <div class="pb-row pb-total"><span>Total</span><span class="pb-val">${fmt(total)}</span></div>
+    </div>
+    ${cashNote}${balNote}
+  `;
+
+  if (execBtn) execBtn.disabled = !canExecute || !buyerId;
+}
+
+/* ═══════════════════════════════════════════
+   EXECUTE PURCHASE
+═══════════════════════════════════════════ */
+function executePurchase() {
+  if (!pendingPurchase) return;
+  const item = pendingPurchase;
+  const qty = Math.min(parseInt(document.getElementById('modal-qty')?.value)||1, item.qty);
+  const buyerId = document.getElementById('modal-buyer')?.value || '';
+  if (!buyerId) { notify('Error','Select a buyer.',  'red'); return; }
+  const buyerName = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
+  const total = item.price * qty;
+  const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+  const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+
+  const dib = loadDubaiBank();
+  const swe = loadSweBank();
+  const dAcc = dib.accounts && dib.accounts[buyerId];
+  const sAcc = swe.accounts && swe.accounts[buyerId];
+
+  // ─── Deduct from buyer ───
+  if (purchasePayMethod === 'cash') {
+    // manual
+  } else if (purchasePayMethod === 'dib-debit') {
+    if (!dAcc || dAcc.balance < total) { notify('Insufficient Funds','Dubai debit balance too low.','red'); return; }
+    dAcc.balance -= total;
+  } else if (purchasePayMethod === 'dib-credit') {
+    if (!dAcc||dAcc.cardDisabled) { notify('Card Disabled','Dubai card disabled.','red'); return; }
+    const avail = Math.max(0,(DIB_LIMITS[dAcc.cardTier||'basic']||1000)-(dAcc.creditDebt||0));
+    if (avail < total) { notify('Credit Limit','Dubai credit limit reached.','red'); return; }
+    dAcc.creditDebt = (dAcc.creditDebt||0) + total;
+  } else if (purchasePayMethod === 'swe-debit') {
+    if (!sAcc||!sAcc.enabled||sAcc.balance<total) { notify('Insufficient Funds','Swedbank balance too low.','red'); return; }
+    sAcc.balance -= total;
+    sAcc.totalWithdrawn = (sAcc.totalWithdrawn||0) + total;
+  } else if (purchasePayMethod === 'swe-credit') {
+    if (!sAcc||!sAcc.enabled||sAcc.cardDisabled) { notify('Card Disabled','Swedbank card disabled.','red'); return; }
+    const avail = Math.max(0,(SWE_LIMITS[sAcc.cardTier||'entry']||800)-(sAcc.creditDebt||0));
+    if (avail < total) { notify('Credit Limit','Swedbank credit limit reached.','red'); return; }
+    sAcc.creditDebt = (sAcc.creditDebt||0) + total;
+  }
+
+  // ─── Credit seller if bank destination ───
+  const sellerCountry = NATION_LIST.find(n=>n.id===item.countryId);
+  const sellerName = sellerCountry?.name || item.countryName;
+  if (item.dest === 'dib' && purchasePayMethod !== 'cash') {
+    // Seller receives in Dubai bank
+    if (!dib.accounts) dib.accounts = {};
+    if (!dib.accounts[item.countryId]) dib.accounts[item.countryId] = {balance:0,enabled:true};
+    dib.accounts[item.countryId].balance = (dib.accounts[item.countryId].balance||0) + total;
+    // Log
+    if (!dib.logEntries) dib.logEntries = [];
+    dib.logEntries.unshift({type:'gain',nation:sellerName,desc:`GRX Sale: ${qty}× ${item.resName} to ${buyerName}`,amount:total,time:nowStr()});
+  } else if (item.dest === 'swe' && purchasePayMethod !== 'cash') {
+    // Seller receives in Swedbank
+    if (!swe.accounts) swe.accounts = {};
+    if (!swe.accounts[item.countryId]) swe.accounts[item.countryId] = {balance:0,enabled:true};
+    swe.accounts[item.countryId].balance = (swe.accounts[item.countryId].balance||0) + total;
+    swe.accounts[item.countryId].totalDeposited = (swe.accounts[item.countryId].totalDeposited||0) + total;
+    if (!swe.logEntries) swe.logEntries = [];
+    swe.logEntries.unshift({type:'gain',nation:sellerName,desc:`GRX Sale: ${qty}× ${item.resName} to ${buyerName}`,amount:total,time:nowStr()});
+  }
+
+  // ─── Log buyer entry ───
+  const payLabel = {cash:'Cash','swe-debit':'Swe Debit','swe-credit':'Swe Credit','dib-debit':'Dubai Debit','dib-credit':'Dubai Credit'}[purchasePayMethod]||purchasePayMethod;
+  if (purchasePayMethod === 'swe-debit'||purchasePayMethod === 'swe-credit') {
+    if (!swe.logEntries) swe.logEntries = [];
+    swe.logEntries.unshift({type:'loss',nation:buyerName,desc:`GRX Purchase: ${qty}× ${item.resName} from ${sellerName} [${payLabel}]`,amount:-total,time:nowStr()});
+  } else if (purchasePayMethod !== 'cash') {
+    if (!dib.logEntries) dib.logEntries = [];
+    dib.logEntries.unshift({type:'loss',nation:buyerName,desc:`GRX Purchase: ${qty}× ${item.resName} from ${sellerName} [${payLabel}]`,amount:-total,time:nowStr()});
+  }
+
+  saveDubaiBank(dib);
+  saveSweBank(swe);
+
+  // ─── Reduce quantity in listing ───
+  const listings = loadListings();
+  const lstIdx = listings.findIndex(l => String(l.id) === String(item.listingId));
+  if (lstIdx >= 0) {
+    const res = listings[lstIdx].resources.find(r => r.resId === item.resId);
+    if (res) {
+      res.qty -= qty;
+      if (res.qty <= 0) {
+        listings[lstIdx].resources = listings[lstIdx].resources.filter(r => r.resId !== item.resId);
+        if (!listings[lstIdx].resources.length) listings.splice(lstIdx, 1);
+      }
+    }
+    saveListings(listings);
+  }
+
+  // ─── History ───
+  const history = loadHistory();
+  history.unshift({
+    id: Date.now(), time: nowStr(), date: nowFull(),
+    buyerId, buyerName, sellerId: item.countryId, sellerName,
+    resId: item.resId, resName: item.resName, cat: item.cat,
+    qty, unit: item.unit, unitPrice: item.price, mktPrice: item.mktPrice,
+    total, paymentMethod: purchasePayMethod, sellerDest: item.dest,
+    priceSigText: priceSignalText(item.price, item.mktPrice),
+  });
+  saveHistory(history);
+
+  closeModal();
+  renderBrowse();
+  renderMyListings();
+
+  const cashNote = purchasePayMethod === 'cash' ? ` 💵 Collect ${fmt(total)} in cash from ${buyerName}` : '';
+  notify('Purchase Complete', `${buyerName} bought ${qty}× ${item.resName} from ${sellerName} for ${fmt(total)}.${cashNote}`, 'green');
+}
+
+/* ═══════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════ */
+function renderHistory() {
+  const history = loadHistory();
+  const el = document.getElementById('history-log');
+  document.getElementById('hist-count').textContent = history.length + ' entr' + (history.length===1?'y':'ies');
+
+  if (!history.length) { el.innerHTML = '<div class="hist-empty">No transactions yet</div>'; return; }
+
+  const payIcons = {cash:'💵','swe-debit':'🏧','swe-credit':'💳','dib-debit':'🏧','dib-credit':'💳'};
+  const destLabel = {cash:'Cash',swe:'Swedbank',dib:'Dubai Bank'};
+
+  el.innerHTML = history.map(t => `
+    <div class="hist-entry">
+      <div class="hist-row1">
+        <span class="hist-time">${t.time}</span>
+        <span class="hist-country">${t.buyerName}</span>
+        <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--text-dim)">${t.qty.toLocaleString()}× ${t.unit}</span>
+        <span class="hist-resource">${t.resName} <span class="res-badge ${t.cat}" style="font-size:6px">${t.cat==='brute'?'Raw':'Refined'}</span></span>
+        <span class="hist-total">${fmt(t.total)}</span>
+      </div>
+      <div class="hist-row2">
+        Buyer: <strong>${t.buyerName}</strong> &nbsp;·&nbsp;
+        Seller: <strong>${t.sellerName}</strong> &nbsp;·&nbsp;
+        ${payIcons[t.paymentMethod]||''} ${({cash:'Cash','swe-debit':'Swe Debit','swe-credit':'Swe Credit','dib-debit':'Dubai Debit','dib-credit':'Dubai Credit'}[t.paymentMethod]||t.paymentMethod)} &nbsp;·&nbsp;
+        Seller receives: ${destLabel[t.sellerDest]||t.sellerDest} &nbsp;·&nbsp;
+        ${fmt(t.unitPrice)}/unit &nbsp;·&nbsp;
+        Mkt ref: ${fmt(t.mktPrice)}/unit &nbsp;·&nbsp;
+        Valuation: <strong>${t.priceSigText}</strong> &nbsp;·&nbsp;
+        ${t.date}
+      </div>
+    </div>
+  `).join('');
+}
+
+function exportHistory() {
+  const h = loadHistory();
+  const blob = new Blob([JSON.stringify(h,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `grx_history_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  notify('Exported','Transaction history saved.','');
+}
+function clearHistory() {
+  if (!confirm('Clear all transaction history? This cannot be undone.')) return;
+  saveHistory([]);
+  renderHistory();
+  notify('Cleared','History cleared.','');
+}
+
+/* ═══════════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════════ */
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US',{
+    hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit',
+    day:'2-digit',month:'short',year:'numeric'
+  });
+}
+
+/* ═══════════════════════════════════════════
+   SELL-TAB LIVE REFRESH
+═══════════════════════════════════════════ */
+document.getElementById('sell-country').addEventListener('change', () => {
+  renderMyListings();
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+initSelectors();
+initBrowseCats();
+renderMyListings();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

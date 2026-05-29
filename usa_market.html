@@ -354,8 +354,8 @@ input[type=range]::-webkit-slider-thumb {
   <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stat-item">
-      <div class="stat-label">USA Treasury</div>
-      <div class="stat-val" id="stat-treasury">$50,000.00</div>
+      <div class="stat-label">USA Treasury (Swedbank)</div>
+      <div class="stat-val" id="stat-treasury">$30,000.00</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Fees Earned (Session)</div>
@@ -716,8 +716,8 @@ function notify(title, msg, cls='blue') {
    STATS
 ══════════════════════════════════════════ */
 function updateStats() {
-  const dubai = loadDubaiBank();
-  document.getElementById('stat-treasury').textContent    = fmt(dubai.treasury ?? 50000);
+  const swe = loadSweBank();
+  document.getElementById('stat-treasury').textContent    = fmt(swe.treasury ?? 30000);
   document.getElementById('stat-trade-rev').textContent   = fmt(tradeRevenue);
   document.getElementById('stat-trade-count').textContent = trades.length;
   document.getElementById('stat-volume').textContent      = fmtShort(tradeVolume);
