@@ -759,7 +759,14 @@
         write:(d)=>{ if(d) localStorage.setItem('ussr_silos',JSON.stringify(d)); } },
       { name:'diplomacy.json', path:'assets/diplomacy.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('tc_diplomacy')||'{}');}catch{return{};} },
-        write:(d)=>{ if(d) localStorage.setItem('tc_diplomacy',JSON.stringify(d)); } }
+        write:(d)=>{
+          if(!d || Object.keys(d).length === 0) return;
+          // Merge: local data wins; GitHub only fills in entities not present locally
+          let local={};
+          try{ local=JSON.parse(localStorage.getItem('tc_diplomacy')||'{}'); }catch{}
+          const merged=Object.assign({}, d, local);
+          localStorage.setItem('tc_diplomacy', JSON.stringify(merged));
+        } }
     ];
 
     function loadGhConfig(){
