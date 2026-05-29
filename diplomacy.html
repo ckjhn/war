@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Total Conquest — Diplomacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #080b12;
+  --bg2:        #0c1020;
+  --bg3:        #101526;
+  --bg4:        #141b2e;
+  --border:     #1e2a42;
+  --border-b:   #2a3a5a;
+  --gold:       #c4a44a;
+  --gold-light: #e0c070;
+  --gold-dim:   #7a6228;
+  --steel:      #4a7ab5;
+  --steel-dim:  #2a4a70;
+  --cream:      #e8e0cc;
+  --cream-dim:  #9a8e78;
+  --red:        #c0392b;
+  --red-dim:    #5a1a14;
+  --green:      #27875a;
+  --green-bright:#2ec47a;
+  --orange:     #c47a2a;
+  --purple:     #7a54b5;
+  --text:       #d8d0bc;
+  --text-dim:   #6a6254;
+  --glow-gold:  0 0 20px rgba(196,164,74,0.25);
+  --glow-steel: 0 0 16px rgba(74,122,181,0.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Crimson Pro',serif;
+  display:flex;
+  flex-direction:column;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(74,122,181,0.04) 0%, transparent 70%),
+    repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(30,42,66,0.3) 60px),
+    repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(30,42,66,0.3) 60px);
+}
+
+/* ══════════ HEADER ══════════ */
+header{
+  flex-shrink:0;
+  background:linear-gradient(180deg,var(--bg3) 0%,var(--bg2) 100%);
+  border-bottom:1px solid var(--border-b);
+  padding:0 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  box-shadow:0 2px 20px rgba(0,0,0,0.5);
+}
+header::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),var(--gold),var(--gold-dim),transparent);
+}
+.hdr-left{display:flex;align-items:center;gap:20px;padding:14px 0;}
+.hdr-seal{
+  width:44px;height:44px;
+  border:1.5px solid var(--gold-dim);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  background:radial-gradient(circle,rgba(196,164,74,0.08),transparent);
+  box-shadow:var(--glow-gold);
+  flex-shrink:0;
+}
+.hdr-title-block{}
+.hdr-title{
+  font-family:'Cinzel',serif;
+  font-size:17px;
+  font-weight:600;
+  letter-spacing:4px;
+  color:var(--gold-light);
+  line-height:1;
+  text-shadow:0 0 30px rgba(196,164,74,0.3);
+}
+.hdr-subtitle{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:4px;
+  color:var(--text-dim);
+  margin-top:3px;
+  text-transform:uppercase;
+}
+.hdr-right{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.hdr-stat{text-align:right;}
+.hdr-stat-val{
+  font-family:'Cinzel',serif;
+  font-size:18px;
+  color:var(--gold);
+  line-height:1;
+}
+.hdr-stat-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+.hdr-divider{width:1px;height:32px;background:var(--border-b);}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green-bright);
+  box-shadow:0 0 8px var(--green-bright);
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+
+/* ══════════ LAYOUT ══════════ */
+.app{
+  flex:1;
+  display:grid;
+  grid-template-columns:290px 1fr;
+  overflow:hidden;
+}
+
+/* ══════════ SIDEBAR ══════════ */
+.sidebar{
+  background:var(--bg2);
+  border-right:1px solid var(--border-b);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.sb-head{
+  flex-shrink:0;
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--border);
+}
+.sb-label{
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  letter-spacing:4px;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.sb-search{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Crimson Pro',serif;
+  font-size:13px;
+  padding:8px 12px;
+  outline:none;
+  letter-spacing:0.3px;
+  transition:border-color .2s;
+}
+.sb-search:focus{border-color:var(--gold-dim);}
+.sb-search::placeholder{color:var(--text-dim);}
+.sb-filters{
+  display:flex;gap:6px;margin-top:8px;
+}
+.sb-filter{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  padding:4px 10px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+.sb-filter.active{border-color:var(--gold-dim);color:var(--gold);background:rgba(196,164,74,0.06);}
+.sb-filter:hover:not(.active){border-color:var(--border-b);color:var(--text);}
+
+.entity-list{flex:1;overflow-y:auto;padding:8px 10px;}
+.entity-list::-webkit-scrollbar{width:4px;}
+.entity-list::-webkit-scrollbar-thumb{background:var(--border);}
+
+.entity-card{
+  padding:11px 14px;
+  margin-bottom:5px;
+  border:1px solid var(--border);
+  background:var(--bg3);
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.entity-card:hover{border-color:var(--border-b);background:var(--bg4);}
+.entity-card.active{
+  border-color:var(--gold-dim);
+  background:rgba(196,164,74,0.05);
+}
+.entity-card.active::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;width:2px;
+  background:var(--gold);
+}
+.ec-row1{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
+.ec-flag{font-size:18px;line-height:1;flex-shrink:0;}
+.ec-name{
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:var(--cream);
+  text-transform:uppercase;
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.ec-type{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;
+  letter-spacing:2px;
+  padding:2px 6px;
+  border:1px solid;
+  flex-shrink:0;
+  text-transform:uppercase;
+}
+.ec-type.country{border-color:rgba(74,122,181,0.5);color:var(--steel);}
+.ec-type.org{border-color:rgba(122,84,181,0.5);color:var(--purple);}
+.ec-stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.ec-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:1px;
+  padding:2px 6px;
+  border:1px solid var(--border);
+  color:var(--text-dim);
+  white-space:nowrap;
+}
+.ec-badge.has{border-color:rgba(196,164,74,0.3);color:var(--gold-dim);}
+
+/* ══════════ MAIN ══════════ */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+.no-sel{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+}
+.no-sel-emblem{
+  width:100px;height:100px;
+  border:1px solid var(--border-b);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+  background:radial-gradient(circle,rgba(74,122,181,0.05),transparent);
+  opacity:0.35;
+}
+.no-sel-text{
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  letter-spacing:4px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+.no-sel-sub{
+  font-family:'Crimson Pro',serif;
+  font-size:14px;
+  font-style:italic;
+  color:var(--text-dim);
+  opacity:0.5;
+}
+
+.dip-editor{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 28px;
+}
+.dip-editor::-webkit-scrollbar{width:6px;}
+.dip-editor::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ══════════ ENTITY HEADER ══════════ */
+.ent-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:22px;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--border-b);
+  gap:16px;
+  flex-wrap:wrap;
+}
+.eh-left{display:flex;align-items:center;gap:18px;}
+.eh-flag{font-size:50px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));}
+.eh-info{}
+.eh-name{
+  font-family:'Cinzel',serif;
+  font-size:22px;
+  font-weight:600;
+  letter-spacing:3px;
+  color:var(--cream);
+  line-height:1;
+  text-shadow:var(--glow-gold);
+}
+.eh-type{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:4px;
+  color:var(--text-dim);
+  margin-top:5px;
+  text-transform:uppercase;
+}
+.eh-summary{
+  display:flex;
+  gap:24px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.eh-sum-item{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.eh-sum-val{
+  font-family:'Cinzel',serif;
+  font-size:16px;
+  color:var(--gold);
+  line-height:1;
+}
+.eh-sum-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+.eh-right{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+
+/* ══════════ SECTIONS ══════════ */
+.dip-section{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.dip-section.collapsed .ds-body{display:none;}
+.dip-section.collapsed .ds-toggle{transform:rotate(-90deg);}
+.ds-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  cursor:pointer;
+  user-select:none;
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
+.ds-head:hover{background:rgba(196,164,74,0.03);}
+.ds-head-left{display:flex;align-items:center;gap:12px;}
+.ds-icon{font-size:15px;line-height:1;}
+.ds-title{
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--gold);
+  text-transform:uppercase;
+}
+.ds-count{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  padding:2px 8px;
+  border:1px solid var(--gold-dim);
+  color:var(--gold-dim);
+  letter-spacing:1px;
+}
+.ds-toggle{
+  font-size:11px;
+  color:var(--text-dim);
+  transition:transform .2s;
+}
+.ds-body{padding:18px 20px;}
+
+/* ══════════ ECONOMIC RULES ══════════ */
+.rule-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin-bottom:10px;
+  overflow:hidden;
+  transition:border-color .2s;
+}
+.rule-card:hover{border-color:var(--border-b);}
+.rule-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+}
+.rule-cat-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  padding:2px 8px;
+  border:1px solid;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.rule-title-text{
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--cream);
+  flex:1;
+  padding:0 12px;
+}
+.rule-actions{display:flex;gap:4px;}
+.rule-body{
+  padding:12px 16px;
+  font-family:'Crimson Pro',serif;
+  font-size:14px;
+  line-height:1.65;
+  color:var(--text);
+  white-space:pre-wrap;
+}
+.rule-body.empty{
+  color:var(--text-dim);
+  font-style:italic;
+  font-size:13px;
+}
+.rule-date{
+  padding:6px 16px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  border-top:1px solid var(--border);
+}
+
+/* ══════════ INVESTMENTS ══════════ */
+.inv-card{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  padding:14px 16px;
+  margin-bottom:8px;
+  transition:border-color .2s;
+}
+.inv-card:hover{border-color:var(--border-b);}
+.inv-status-bar{
+  width:3px;
+  align-self:stretch;
+  flex-shrink:0;
+  border-radius:1px;
+}
+.inv-main{flex:1;min-width:0;}
+.inv-top{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+  flex-wrap:wrap;
+}
+.inv-title{
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:1.5px;
+  color:var(--cream);
+}
+.inv-status-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;
+  letter-spacing:2px;
+  padding:2px 7px;
+  border:1px solid;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.inv-target{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--steel);
+  margin-bottom:6px;
+}
+.inv-desc{
+  font-family:'Crimson Pro',serif;
+  font-size:13px;
+  line-height:1.55;
+  color:var(--text-dim);
+  white-space:pre-wrap;
+}
+.inv-meta{
+  display:flex;
+  gap:14px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.inv-meta-item{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+  color:var(--text-dim);
+}
+.inv-meta-item span{color:var(--gold-dim);}
+.inv-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+
+/* ══════════ RELATIONS ══════════ */
+.rel-filter-bar{
+  display:flex;
+  gap:6px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.rel-filter-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  margin-right:4px;
+}
+.rel-filter-btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:1px;
+  padding:3px 10px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s;
+}
+.rel-filter-btn.on{border-color:var(--steel-dim);color:var(--steel);}
+.rel-filter-btn:hover:not(.on){border-color:var(--border-b);color:var(--text);}
+
+.rel-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:8px;
+}
+.rel-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  padding:12px 14px;
+  transition:border-color .2s;
+  position:relative;
+}
+.rel-card:hover{border-color:var(--border-b);}
+.rel-card-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+.rel-flag{font-size:18px;line-height:1;}
+.rel-name{
+  font-family:'Cinzel',serif;
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:var(--cream);
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.rel-type-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;
+  letter-spacing:1px;
+  padding:1px 5px;
+  border:1px solid;
+  flex-shrink:0;
+}
+.rel-select{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  padding:5px 8px;
+  outline:none;
+  cursor:pointer;
+  margin-bottom:6px;
+  letter-spacing:1px;
+  transition:border-color .2s;
+}
+.rel-select:focus{border-color:var(--gold-dim);}
+.rel-notes{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Crimson Pro',serif;
+  font-size:12px;
+  padding:6px 8px;
+  outline:none;
+  resize:none;
+  height:52px;
+  line-height:1.5;
+  transition:border-color .2s;
+}
+.rel-notes:focus{border-color:var(--gold-dim);}
+.rel-notes::placeholder{color:var(--text-dim);font-style:italic;}
+.rel-save-btn{
+  width:100%;
+  margin-top:5px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  padding:5px;
+  border:1px solid var(--gold-dim);
+  background:transparent;
+  color:var(--gold-dim);
+  cursor:pointer;
+  transition:all .2s;
+}
+.rel-save-btn:hover{background:rgba(196,164,74,0.08);color:var(--gold);}
+.rel-status-strip{
+  position:absolute;
+  top:0;left:0;bottom:0;width:2px;
+}
+
+/* ══════════ DEALS ══════════ */
+.deal-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin-bottom:10px;
+  overflow:hidden;
+  transition:border-color .2s;
+}
+.deal-card:hover{border-color:var(--border-b);}
+.deal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  gap:10px;
+  flex-wrap:wrap;
+}
+.deal-title{
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--cream);
+  flex:1;
+}
+.deal-status-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;
+  letter-spacing:2px;
+  padding:3px 9px;
+  border:1px solid;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.deal-body{padding:14px 16px;}
+.deal-parties{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.deal-party-tag{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  padding:3px 8px;
+  border:1px solid var(--border-b);
+  color:var(--text-dim);
+}
+.deal-party-tag .p-flag{font-size:12px;}
+.deal-terms{
+  font-family:'Crimson Pro',serif;
+  font-size:14px;
+  line-height:1.65;
+  color:var(--text);
+  white-space:pre-wrap;
+  margin-bottom:10px;
+}
+.deal-terms.empty{color:var(--text-dim);font-style:italic;font-size:13px;}
+.deal-meta{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.deal-meta-item{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+  color:var(--text-dim);
+}
+.deal-meta-item span{color:var(--gold-dim);}
+.deal-actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap;}
+
+/* ══════════ BUTTONS ══════════ */
+.btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  padding:7px 16px;
+  border:1px solid;
+  background:transparent;
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  text-transform:uppercase;
+}
+.btn:disabled{opacity:0.35;cursor:not-allowed;}
+.btn-gold{border-color:var(--gold-dim);color:var(--gold);}
+.btn-gold:hover:not(:disabled){background:rgba(196,164,74,0.1);border-color:var(--gold);}
+.btn-steel{border-color:var(--steel-dim);color:var(--steel);}
+.btn-steel:hover:not(:disabled){background:rgba(74,122,181,0.1);border-color:var(--steel);}
+.btn-red{border-color:rgba(192,57,43,0.4);color:#c06050;}
+.btn-red:hover:not(:disabled){background:rgba(192,57,43,0.1);border-color:var(--red);}
+.btn-green{border-color:rgba(39,135,90,0.5);color:var(--green-bright);}
+.btn-green:hover:not(:disabled){background:rgba(46,196,122,0.08);}
+.btn-sm{padding:4px 10px;font-size:8px;letter-spacing:1px;}
+.btn-xs{padding:3px 7px;font-size:7px;letter-spacing:1px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* ══════════ ADD FORM (inline) ══════════ */
+.add-form{
+  background:var(--bg);
+  border:1px solid var(--border-b);
+  padding:16px 18px;
+  margin-top:12px;
+}
+.add-form-title{
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  letter-spacing:3px;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+.form-row{
+  display:grid;
+  gap:12px;
+  margin-bottom:12px;
+}
+.form-row.cols2{grid-template-columns:1fr 1fr;}
+.form-row.cols3{grid-template-columns:1fr 1fr 1fr;}
+.form-field{}
+.fl{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  margin-bottom:5px;
+  display:block;
+}
+.fi{
+  width:100%;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--cream);
+  font-family:'Crimson Pro',serif;
+  font-size:13px;
+  padding:8px 12px;
+  outline:none;
+  transition:border-color .2s;
+  letter-spacing:0.3px;
+}
+.fi:focus{border-color:var(--gold-dim);}
+.fi::placeholder{color:var(--text-dim);font-style:italic;}
+.fi-ta{
+  resize:vertical;
+  min-height:80px;
+  line-height:1.55;
+}
+.fi-sel{
+  cursor:pointer;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  letter-spacing:1px;
+}
+.form-actions{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+}
+
+/* ══════════ PARTIES PICKER ══════════ */
+.parties-picker{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  max-height:120px;
+  overflow-y:auto;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:8px;
+}
+.parties-picker::-webkit-scrollbar{width:3px;}
+.parties-picker::-webkit-scrollbar-thumb{background:var(--border);}
+.party-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;
+  letter-spacing:1px;
+  padding:3px 8px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text-dim);
+  cursor:pointer;
+  transition:all .15s;
+  user-select:none;
+}
+.party-chip.selected{
+  border-color:var(--steel-dim);
+  color:var(--steel);
+  background:rgba(74,122,181,0.08);
+}
+.party-chip:hover:not(.selected){border-color:var(--border-b);color:var(--text);}
+
+/* ══════════ EMPTY STATES ══════════ */
+.empty-state{
+  text-align:center;
+  padding:28px;
+  border:1px dashed var(--border);
+  background:rgba(0,0,0,0.1);
+  margin-bottom:12px;
+}
+.empty-icon{font-size:28px;opacity:0.25;margin-bottom:8px;}
+.empty-text{
+  font-family:'Crimson Pro',serif;
+  font-style:italic;
+  font-size:14px;
+  color:var(--text-dim);
+}
+
+/* ══════════ MODAL ══════════ */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.8);
+  z-index:300;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--bg2);
+  border:1px solid var(--border-b);
+  padding:28px 30px;
+  min-width:380px;
+  max-width:560px;
+  width:92%;
+  max-height:90vh;
+  overflow-y:auto;
+  position:relative;
+  box-shadow:0 8px 40px rgba(0,0,0,0.7);
+}
+.modal::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+}
+.modal-title{
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  letter-spacing:4px;
+  color:var(--gold);
+  text-transform:uppercase;
+  margin-bottom:20px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+
+/* ══════════ TOAST ══════════ */
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--bg2);
+  border:1px solid var(--border-b);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  padding:10px 18px;
+  z-index:400;
+  transform:translateY(50px);
+  opacity:0;
+  transition:all .3s;
+  max-width:340px;
+  pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{border-color:rgba(46,196,122,0.4);color:var(--green-bright);}
+.toast.err{border-color:rgba(192,57,43,0.4);color:#d08070;}
+
+/* ══════════ STATUS COLOR MAPS ══════════ */
+/* Relation status colors applied via JS */
+
+/* ══════════ ORNAMENTAL DIVIDER ══════════ */
+.ornament{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:12px 0;
+  opacity:0.3;
+}
+.ornament::before,.ornament::after{content:'';flex:1;height:1px;background:var(--gold-dim);}
+.ornament-glyph{font-size:9px;color:var(--gold-dim);letter-spacing:3px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <div class="hdr-seal">⚖</div>
+    <div class="hdr-title-block">
+      <div class="hdr-title">DIPLOMACY</div>
+      <div class="hdr-subtitle">// Total Conquest · Foreign Affairs Bureau //</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="stat-entities">0</div>
+      <div class="hdr-stat-label">Entities</div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="stat-deals">0</div>
+      <div class="hdr-stat-label">Active Deals</div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-val" id="stat-rules">0</div>
+      <div class="hdr-stat-label">Economic Rules</div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="live-dot" title="Synced with database"></div>
+  </div>
+</header>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-head">
+      <div class="sb-label">Member Entities</div>
+      <input class="sb-search" id="sb-search" type="text" placeholder="Search…" oninput="renderList()">
+      <div class="sb-filters">
+        <button class="sb-filter active" data-filter="all" onclick="setFilter('all')">All</button>
+        <button class="sb-filter" data-filter="country" onclick="setFilter('country')">Nations</button>
+        <button class="sb-filter" data-filter="organization" onclick="setFilter('organization')">Orgs</button>
+      </div>
+    </div>
+    <div class="entity-list" id="entity-list"></div>
+  </div>
+
+  <div class="main">
+    <div class="no-sel" id="no-sel">
+      <div class="no-sel-emblem">⚖</div>
+      <div class="no-sel-text">Select an Entity</div>
+      <div class="no-sel-sub">Choose a nation or organisation to manage its diplomacy</div>
+    </div>
+    <div class="dip-editor" id="dip-editor" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- EDIT RULE MODAL -->
+<div class="modal-overlay" id="rule-modal">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-title" id="rule-modal-title">Economic Rule</div>
+    <div class="form-row cols2">
+      <div class="form-field">
+        <label class="fl">Category</label>
+        <select class="fi fi-sel" id="rm-cat">
+          <option value="trade">Trade Policy</option>
+          <option value="tax">Tax &amp; Fiscal</option>
+          <option value="monetary">Monetary Policy</option>
+          <option value="labor">Labor &amp; Employment</option>
+          <option value="industry">Industry &amp; Production</option>
+          <option value="agriculture">Agriculture</option>
+          <option value="energy">Energy</option>
+          <option value="foreign">Foreign Economic</option>
+          <option value="sanctions">Sanctions &amp; Embargo</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="fl">Rule Title</label>
+        <input class="fi" id="rm-title" type="text" placeholder="e.g. Export tariff on iron…">
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="fl">Description / Full Text</label>
+      <textarea class="fi fi-ta" id="rm-desc" placeholder="Describe this economic rule or policy in full…" style="min-height:120px;"></textarea>
+    </div>
+    <input type="hidden" id="rm-id">
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="saveRule()">✦ Save Rule</button>
+      <button class="btn btn-red" onclick="closeModal('rule-modal')">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT INVESTMENT MODAL -->
+<div class="modal-overlay" id="inv-modal">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-title" id="inv-modal-title">Investment</div>
+    <div class="form-row cols2">
+      <div class="form-field">
+        <label class="fl">Investment Title</label>
+        <input class="fi" id="im-title" type="text" placeholder="e.g. Northern Rail Corridor…">
+      </div>
+      <div class="form-field">
+        <label class="fl">Status</label>
+        <select class="fi fi-sel" id="im-status">
+          <option value="planning">Planning</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+          <option value="suspended">Suspended</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row cols2">
+      <div class="form-field">
+        <label class="fl">Target / Recipient</label>
+        <select class="fi fi-sel" id="im-target-type" onchange="toggleInvTarget()">
+          <option value="internal">Internal (self)</option>
+          <option value="country">Another Entity</option>
+          <option value="custom">Custom / Sector</option>
+        </select>
+      </div>
+      <div class="form-field" id="im-target-country-wrap">
+        <label class="fl">Entity</label>
+        <select class="fi fi-sel" id="im-target-country"></select>
+      </div>
+      <div class="form-field" id="im-target-custom-wrap" style="display:none;">
+        <label class="fl">Custom Target</label>
+        <input class="fi" id="im-target-custom" type="text" placeholder="e.g. Tech Sector, Mining…">
+      </div>
+    </div>
+    <div class="form-row cols2">
+      <div class="form-field">
+        <label class="fl">Capital Amount ($)</label>
+        <input class="fi" id="im-amount" type="number" min="0" step="1" placeholder="0">
+      </div>
+      <div class="form-field">
+        <label class="fl">Category</label>
+        <select class="fi fi-sel" id="im-cat">
+          <option value="infrastructure">Infrastructure</option>
+          <option value="military">Military</option>
+          <option value="technology">Technology</option>
+          <option value="energy">Energy</option>
+          <option value="agriculture">Agriculture</option>
+          <option value="industry">Industry</option>
+          <option value="finance">Finance</option>
+          <option value="humanitarian">Humanitarian</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="fl">Description / Terms</label>
+      <textarea class="fi fi-ta" id="im-desc" placeholder="Describe the investment, goals, expected returns…" style="min-height:100px;"></textarea>
+    </div>
+    <input type="hidden" id="im-id">
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="saveInvestment()">✦ Save Investment</button>
+      <button class="btn btn-red" onclick="closeModal('inv-modal')">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT DEAL MODAL -->
+<div class="modal-overlay" id="deal-modal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-title" id="deal-modal-title">Diplomatic Deal</div>
+    <div class="form-row cols2">
+      <div class="form-field">
+        <label class="fl">Deal Title</label>
+        <input class="fi" id="dm-title" type="text" placeholder="e.g. Mutual Defense Pact…">
+      </div>
+      <div class="form-field">
+        <label class="fl">Deal Type</label>
+        <select class="fi fi-sel" id="dm-type">
+          <option value="trade">Trade Agreement</option>
+          <option value="defense">Defense Pact</option>
+          <option value="non_aggression">Non-Aggression Pact</option>
+          <option value="alliance">Alliance Treaty</option>
+          <option value="resource">Resource Sharing</option>
+          <option value="ceasefire">Ceasefire / Peace</option>
+          <option value="sanctions">Sanctions / Embargo</option>
+          <option value="research">Research Cooperation</option>
+          <option value="financial">Financial Agreement</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label class="fl">Status</label>
+      <select class="fi fi-sel" id="dm-status">
+        <option value="negotiating">Negotiating</option>
+        <option value="active">Active</option>
+        <option value="suspended">Suspended</option>
+        <option value="expired">Expired</option>
+        <option value="broken">Broken / Violated</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label class="fl">Parties Involved (select all that apply)</label>
+      <div class="parties-picker" id="dm-parties"></div>
+    </div>
+    <div class="form-field">
+      <label class="fl">Terms &amp; Conditions</label>
+      <textarea class="fi fi-ta" id="dm-terms" placeholder="Describe the deal terms, obligations, duration…" style="min-height:120px;"></textarea>
+    </div>
+    <input type="hidden" id="dm-id">
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="saveDeal()">✦ Save Deal</button>
+      <button class="btn btn-red" onclick="closeModal('deal-modal')">✕ Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTS & CONFIG
+// ══════════════════════════════════════════════════════
+const DIP_KEY     = 'tc_diplomacy';
+const COUNTRY_KEY = 'tc_countries';
+
+const RELATION_STATUSES = [
+  { v:'unset',           l:'— Undefined —',           color:'#3a3a4a' },
+  { v:'allied',          l:'Allied',                   color:'#2a7a4a' },
+  { v:'friendly',        l:'Friendly',                 color:'#3a7a3a' },
+  { v:'cooperative',     l:'Cooperative',              color:'#4a7a5a' },
+  { v:'trade_partner',   l:'Trade Partner',            color:'#3a6a7a' },
+  { v:'neutral',         l:'Neutral',                  color:'#4a4a5a' },
+  { v:'cold',            l:'Cold Relations',           color:'#5a5a3a' },
+  { v:'non_aggression',  l:'Non-Aggression Pact',      color:'#4a6a3a' },
+  { v:'tense',           l:'Tense',                    color:'#7a6a2a' },
+  { v:'hostile',         l:'Hostile',                  color:'#7a3a2a' },
+  { v:'at_war',          l:'At War',                   color:'#8a1a1a' },
+  { v:'sanctioned',      l:'Sanctioned',               color:'#6a3a1a' },
+  { v:'puppet',          l:'Puppet State',             color:'#4a3a6a' },
+  { v:'vassal',          l:'Vassal',                   color:'#5a3a6a' },
+];
+
+const RULE_CATS = {
+  trade:'Trade Policy', tax:'Tax & Fiscal', monetary:'Monetary Policy',
+  labor:'Labor & Employment', industry:'Industry & Production',
+  agriculture:'Agriculture', energy:'Energy', foreign:'Foreign Economic',
+  sanctions:'Sanctions & Embargo', other:'Other'
+};
+const RULE_CAT_COLORS = {
+  trade:'#4a7ab5', tax:'#c4a44a', monetary:'#7a54b5', labor:'#3a8a5a',
+  industry:'#c47a2a', agriculture:'#4a8a3a', energy:'#c4c43a',
+  foreign:'#3a7a9a', sanctions:'#c03a2a', other:'#6a6a7a'
+};
+
+const INV_STATUSES = {
+  planning:  { l:'Planning',   c:'#4a7ab5' },
+  active:    { l:'Active',     c:'#2e8b5a' },
+  completed: { l:'Completed',  c:'#c4a44a' },
+  suspended: { l:'Suspended',  c:'#c47a2a' },
+  cancelled: { l:'Cancelled',  c:'#8a5a5a' },
+};
+
+const DEAL_STATUSES = {
+  negotiating:{ l:'Negotiating', c:'#4a7ab5' },
+  active:     { l:'Active',      c:'#2e8b5a' },
+  suspended:  { l:'Suspended',   c:'#c47a2a' },
+  expired:    { l:'Expired',     c:'#6a6a5a' },
+  broken:     { l:'Broken',      c:'#c03a2a' },
+  cancelled:  { l:'Cancelled',   c:'#8a5a5a' },
+};
+
+const DEAL_TYPES = {
+  trade:'Trade Agr.', defense:'Defense Pact', non_aggression:'Non-Aggression',
+  alliance:'Alliance', resource:'Resource Sharing', ceasefire:'Ceasefire',
+  sanctions:'Sanctions', research:'Research Coop.', financial:'Financial Agr.',
+  other:'Other'
+};
+
+const INV_CATS = {
+  infrastructure:'Infrastructure', military:'Military', technology:'Technology',
+  energy:'Energy', agriculture:'Agriculture', industry:'Industry',
+  finance:'Finance', humanitarian:'Humanitarian', other:'Other'
+};
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let entities    = [];   // countries + orgs from tc_countries
+let diplomacy   = {};   // tc_diplomacy store
+let selectedId  = null;
+let listFilter  = 'all';
+let relFilter   = 'all';
+
+function loadEntities(){
+  try{ entities = JSON.parse(localStorage.getItem(COUNTRY_KEY)||'[]'); }
+  catch{ entities=[]; }
+  entities.forEach(e=>{ if(!e.type) e.type='country'; });
+}
+
+function loadDiplomacy(){
+  try{ diplomacy = JSON.parse(localStorage.getItem(DIP_KEY)||'{}'); }
+  catch{ diplomacy={}; }
+}
+
+function saveDiplomacy(){
+  localStorage.setItem(DIP_KEY, JSON.stringify(diplomacy));
+}
+
+function getDip(id){
+  if(!diplomacy[id]) diplomacy[id]={economic_rules:[],investments:[],relations:{},deals:[]};
+  const d=diplomacy[id];
+  if(!d.economic_rules) d.economic_rules=[];
+  if(!d.investments)    d.investments=[];
+  if(!d.relations)      d.relations={};
+  if(!d.deals)          d.deals=[];
+  return d;
+}
+
+function uuid(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d=new Date(ts);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function fmtMoney(n){
+  if(!n||isNaN(n)) return '—';
+  const v=Number(n);
+  if(v>=1e9) return '$'+(v/1e9).toFixed(1)+'B';
+  if(v>=1e6) return '$'+(v/1e6).toFixed(1)+'M';
+  if(v>=1e3) return '$'+(v/1e3).toFixed(1)+'K';
+  return '$'+v.toFixed(0);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function getEntity(id){ return entities.find(e=>e.id===id)||null; }
+
+// ══════════════════════════════════════════════════════
+// HEADER STATS
+// ══════════════════════════════════════════════════════
+function updateHeaderStats(){
+  document.getElementById('stat-entities').textContent = entities.length;
+  let totalDeals=0, totalRules=0;
+  Object.values(diplomacy).forEach(d=>{
+    totalDeals += (d.deals||[]).filter(x=>x.status==='active').length;
+    totalRules += (d.economic_rules||[]).length;
+  });
+  document.getElementById('stat-deals').textContent   = totalDeals;
+  document.getElementById('stat-rules').textContent   = totalRules;
+}
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR LIST
+// ══════════════════════════════════════════════════════
+function setFilter(f){
+  listFilter=f;
+  document.querySelectorAll('.sb-filter').forEach(b=>{
+    b.classList.toggle('active', b.dataset.filter===f);
+  });
+  renderList();
+}
+
+function renderList(){
+  const q   = (document.getElementById('sb-search').value||'').toLowerCase();
+  const el  = document.getElementById('entity-list');
+  const list= entities.filter(e=>{
+    if(listFilter!=='all' && e.type!==listFilter) return false;
+    return e.name.toLowerCase().includes(q);
+  });
+
+  if(list.length===0){
+    el.innerHTML=`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:32px 16px;">NO ENTITIES FOUND</div>`;
+    updateHeaderStats();
+    return;
+  }
+
+  el.innerHTML=list.map(e=>{
+    const d=getDip(e.id);
+    const ruleCount=d.economic_rules.length;
+    const dealCount=d.deals.length;
+    const invCount =d.investments.length;
+    const relCount =Object.values(d.relations).filter(r=>r.status&&r.status!=='unset').length;
+    const isOrg=e.type==='organization';
+    return `
+    <div class="entity-card ${selectedId===e.id?'active':''}" onclick="selectEntity('${e.id}')">
+      <div class="ec-row1">
+        <div class="ec-flag">${e.flag||'🏴'}</div>
+        <div class="ec-name">${esc(e.name)}</div>
+        <div class="ec-type ${isOrg?'org':'country'}">${isOrg?'ORG':'CTR'}</div>
+      </div>
+      <div class="ec-stats">
+        <div class="ec-badge ${ruleCount?'has':''}">📜 ${ruleCount} rule${ruleCount!==1?'s':''}</div>
+        <div class="ec-badge ${invCount?'has':''}">💰 ${invCount} inv.</div>
+        <div class="ec-badge ${dealCount?'has':''}">🤝 ${dealCount} deal${dealCount!==1?'s':''}</div>
+        <div class="ec-badge ${relCount?'has':''}">🌐 ${relCount} rel.</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateHeaderStats();
+}
+
+function selectEntity(id){
+  selectedId=id;
+  renderList();
+  renderEditor();
+}
+
+// ══════════════════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════════════════
+function renderEditor(){
+  const entity=getEntity(selectedId);
+  if(!entity){
+    document.getElementById('no-sel').style.display='flex';
+    document.getElementById('dip-editor').style.display='none';
+    return;
+  }
+  document.getElementById('no-sel').style.display='none';
+  const el=document.getElementById('dip-editor');
+  el.style.display='block';
+
+  const d=getDip(selectedId);
+  const isOrg=entity.type==='organization';
+  const otherEntities=entities.filter(e=>e.id!==selectedId);
+
+  // summary counts
+  const activeDeals=d.deals.filter(x=>x.status==='active').length;
+  const activeInv  =d.investments.filter(x=>x.status==='active').length;
+  const relSet     =Object.values(d.relations).filter(r=>r.status&&r.status!=='unset').length;
+
+  el.innerHTML=`
+  <!-- ENTITY HEADER -->
+  <div class="ent-header">
+    <div class="eh-left">
+      <div class="eh-flag">${entity.flag||'🏴'}</div>
+      <div class="eh-info">
+        <div class="eh-name">${esc(entity.name)}</div>
+        <div class="eh-type">${isOrg?'◆ Organisation':'◈ Nation'} · Diplomatic Record</div>
+        <div class="eh-summary">
+          <div class="eh-sum-item"><div class="eh-sum-val">${d.economic_rules.length}</div><div class="eh-sum-label">Econ. Rules</div></div>
+          <div class="eh-sum-item"><div class="eh-sum-val">${activeInv}</div><div class="eh-sum-label">Active Inv.</div></div>
+          <div class="eh-sum-item"><div class="eh-sum-val">${relSet}</div><div class="eh-sum-label">Relations Set</div></div>
+          <div class="eh-sum-item"><div class="eh-sum-val">${activeDeals}</div><div class="eh-sum-label">Active Deals</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. ECONOMIC MODEL -->
+  <div class="dip-section" id="sec-econ">
+    <div class="ds-head" onclick="toggleSec('sec-econ')">
+      <div class="ds-head-left">
+        <div class="ds-icon">📜</div>
+        <div class="ds-title">Economic Model</div>
+        <div class="ds-count">${d.economic_rules.length}</div>
+      </div>
+      <div class="ds-toggle">▼</div>
+    </div>
+    <div class="ds-body">
+      ${renderEconRules(selectedId)}
+      <button class="btn btn-gold" onclick="openRuleModal('${selectedId}', null)" style="margin-top:10px;">+ Add Rule</button>
+    </div>
+  </div>
+
+  <!-- 2. LONG TERM INVESTMENTS -->
+  <div class="dip-section" id="sec-inv">
+    <div class="ds-head" onclick="toggleSec('sec-inv')">
+      <div class="ds-head-left">
+        <div class="ds-icon">💰</div>
+        <div class="ds-title">Long-Term Investments</div>
+        <div class="ds-count">${d.investments.length}</div>
+      </div>
+      <div class="ds-toggle">▼</div>
+    </div>
+    <div class="ds-body">
+      ${renderInvestments(selectedId)}
+      <button class="btn btn-gold" onclick="openInvModal('${selectedId}', null)" style="margin-top:10px;">+ Add Investment</button>
+    </div>
+  </div>
+
+  <!-- 3. RELATIONS -->
+  <div class="dip-section" id="sec-rel">
+    <div class="ds-head" onclick="toggleSec('sec-rel')">
+      <div class="ds-head-left">
+        <div class="ds-icon">🌐</div>
+        <div class="ds-title">Relations with Other Entities</div>
+        <div class="ds-count">${otherEntities.length}</div>
+      </div>
+      <div class="ds-toggle">▼</div>
+    </div>
+    <div class="ds-body">
+      ${renderRelations(selectedId)}
+    </div>
+  </div>
+
+  <!-- 4. DEALS -->
+  <div class="dip-section" id="sec-deals">
+    <div class="ds-head" onclick="toggleSec('sec-deals')">
+      <div class="ds-head-left">
+        <div class="ds-icon">🤝</div>
+        <div class="ds-title">Diplomatic Deals &amp; Agreements</div>
+        <div class="ds-count">${d.deals.length}</div>
+      </div>
+      <div class="ds-toggle">▼</div>
+    </div>
+    <div class="ds-body">
+      ${renderDeals(selectedId)}
+      <button class="btn btn-gold" onclick="openDealModal('${selectedId}', null)" style="margin-top:10px;">+ New Deal</button>
+    </div>
+  </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER — ECONOMIC RULES
+// ══════════════════════════════════════════════════════
+function renderEconRules(cid){
+  const d=getDip(cid);
+  if(!d.economic_rules.length)
+    return `<div class="empty-state"><div class="empty-icon">📜</div><div class="empty-text">No economic rules defined yet. Add policies, tariffs, monetary directives…</div></div>`;
+
+  return d.economic_rules.map(r=>{
+    const catColor=RULE_CAT_COLORS[r.category]||'#6a6a7a';
+    const catLabel=RULE_CATS[r.category]||r.category;
+    return `
+    <div class="rule-card">
+      <div class="rule-head">
+        <div class="rule-cat-badge" style="border-color:${catColor}44;color:${catColor};">${esc(catLabel)}</div>
+        <div class="rule-title-text">${esc(r.title||'Untitled Rule')}</div>
+        <div class="rule-actions">
+          <button class="btn btn-xs btn-steel" onclick="openRuleModal('${cid}','${r.id}')">Edit</button>
+          <button class="btn btn-xs btn-red" onclick="deleteRule('${cid}','${r.id}')">✕</button>
+        </div>
+      </div>
+      <div class="rule-body ${r.description?'':'empty'}">${r.description ? esc(r.description) : 'No description provided.'}</div>
+      <div class="rule-date">Added ${fmtDate(r.createdAt)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER — INVESTMENTS
+// ══════════════════════════════════════════════════════
+function renderInvestments(cid){
+  const d=getDip(cid);
+  if(!d.investments.length)
+    return `<div class="empty-state"><div class="empty-icon">💰</div><div class="empty-text">No investments recorded. Track long-term capital commitments, partnerships, and development projects.</div></div>`;
+
+  return d.investments.map(inv=>{
+    const st=INV_STATUSES[inv.status]||INV_STATUSES.active;
+    let targetLabel='Internal';
+    if(inv.target_type==='country'){
+      const te=getEntity(inv.target_id);
+      targetLabel=te?`${te.flag||''} ${te.name}`:(inv.target_id||'Unknown');
+    } else if(inv.target_type==='custom'){
+      targetLabel=inv.target_custom||'Custom';
+    }
+    const catLabel=INV_CATS[inv.category]||'Other';
+    return `
+    <div class="inv-card">
+      <div class="inv-status-bar" style="background:${st.c};"></div>
+      <div class="inv-main">
+        <div class="inv-top">
+          <div class="inv-title">${esc(inv.title||'Untitled')}</div>
+          <div class="inv-status-badge" style="border-color:${st.c}44;color:${st.c};">${st.l}</div>
+          <div class="inv-status-badge" style="border-color:#4a4a6a44;color:#8a8aaa;">${esc(catLabel)}</div>
+        </div>
+        <div class="inv-target">▸ ${esc(targetLabel)}</div>
+        <div class="inv-desc ${inv.description?'':'empty'}">${inv.description?esc(inv.description):'No description.'}</div>
+        <div class="inv-meta">
+          ${inv.amount?`<div class="inv-meta-item">Capital: <span>${fmtMoney(inv.amount)}</span></div>`:''}
+          <div class="inv-meta-item">Created: <span>${fmtDate(inv.createdAt)}</span></div>
+        </div>
+      </div>
+      <div class="inv-actions">
+        <button class="btn btn-xs btn-steel" onclick="openInvModal('${cid}','${inv.id}')">Edit</button>
+        <button class="btn btn-xs btn-red" onclick="deleteInvestment('${cid}','${inv.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER — RELATIONS
+// ══════════════════════════════════════════════════════
+function renderRelations(cid){
+  const d=getDip(cid);
+  const others=entities.filter(e=>e.id!==cid);
+
+  if(!others.length)
+    return `<div class="empty-state"><div class="empty-icon">🌐</div><div class="empty-text">No other entities exist in the database.</div></div>`;
+
+  // filter bar
+  const statusOptions=['all',...RELATION_STATUSES.filter(s=>s.v!=='unset').map(s=>s.v)];
+  const filterBar=`<div class="rel-filter-bar">
+    <span class="rel-filter-label">FILTER:</span>
+    ${RELATION_STATUSES.filter(s=>s.v!=='unset').slice(0,8).map(s=>`
+      <button class="rel-filter-btn ${relFilter===s.v?'on':''}" onclick="setRelFilter('${s.v}')">${s.l}</button>
+    `).join('')}
+    <button class="rel-filter-btn ${relFilter==='all'?'on':''}" onclick="setRelFilter('all')">All</button>
+  </div>`;
+
+  const filtered=others.filter(e=>{
+    if(relFilter==='all') return true;
+    const r=d.relations[e.id];
+    return r&&r.status===relFilter;
+  });
+
+  const grid=filtered.length?`<div class="rel-grid">${filtered.map(e=>renderRelCard(cid,e)).join('')}</div>`:
+    `<div class="empty-state"><div class="empty-icon">🌐</div><div class="empty-text">No entities match this filter.</div></div>`;
+
+  return filterBar+grid;
+}
+
+function renderRelCard(cid, entity){
+  const d=getDip(cid);
+  const rel=d.relations[entity.id]||{status:'unset',notes:''};
+  const statusObj=RELATION_STATUSES.find(s=>s.v===rel.status)||RELATION_STATUSES[0];
+  const isOrg=entity.type==='organization';
+  const opts=RELATION_STATUSES.map(s=>`<option value="${s.v}" ${rel.status===s.v?'selected':''}>${s.l}</option>`).join('');
+
+  return `
+  <div class="rel-card">
+    <div class="rel-status-strip" style="background:${statusObj.color};"></div>
+    <div class="rel-card-head">
+      <div class="rel-flag">${entity.flag||'🏴'}</div>
+      <div class="rel-name" title="${esc(entity.name)}">${esc(entity.name)}</div>
+      <div class="rel-type-tag" style="${isOrg?'border-color:#7a54b544;color:#9a74d5;':'border-color:#4a7ab544;color:#6a9ad5;'}">${isOrg?'ORG':'CTR'}</div>
+    </div>
+    <select class="rel-select" id="rel-sel-${cid}-${entity.id}" onchange="updateRelStrip('${cid}','${entity.id}',this)">${opts}</select>
+    <textarea class="rel-notes" id="rel-notes-${cid}-${entity.id}" placeholder="Diplomatic notes, context…">${esc(rel.notes||'')}</textarea>
+    <button class="rel-save-btn" onclick="saveRelation('${cid}','${entity.id}')">✦ Save Relation</button>
+  </div>`;
+}
+
+function updateRelStrip(cid, eid, sel){
+  const card=sel.closest('.rel-card');
+  const strip=card.querySelector('.rel-status-strip');
+  const statusObj=RELATION_STATUSES.find(s=>s.v===sel.value)||RELATION_STATUSES[0];
+  strip.style.background=statusObj.color;
+}
+
+function setRelFilter(f){
+  relFilter=f;
+  // re-render only the relations body
+  const entity=getEntity(selectedId);
+  if(!entity) return;
+  const body=document.querySelector('#sec-rel .ds-body');
+  if(body) body.innerHTML=renderRelations(selectedId);
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER — DEALS
+// ══════════════════════════════════════════════════════
+function renderDeals(cid){
+  const d=getDip(cid);
+  if(!d.deals.length)
+    return `<div class="empty-state"><div class="empty-icon">🤝</div><div class="empty-text">No deals or agreements recorded. Create treaties, trade agreements, military pacts…</div></div>`;
+
+  return d.deals.map(deal=>{
+    const st=DEAL_STATUSES[deal.status]||DEAL_STATUSES.active;
+    const typeLabel=DEAL_TYPES[deal.type]||'Agreement';
+    const partiesHTML=(deal.parties||[]).map(pid=>{
+      const pe=getEntity(pid);
+      if(!pe) return '';
+      return `<div class="deal-party-tag"><span class="p-flag">${pe.flag||'🏴'}</span>${esc(pe.name)}</div>`;
+    }).join('');
+    return `
+    <div class="deal-card">
+      <div class="deal-head">
+        <div class="deal-title">${esc(deal.title||'Untitled Deal')}</div>
+        <div class="deal-status-badge" style="border-color:${st.c}44;color:${st.c};">${esc(typeLabel)}</div>
+        <div class="deal-status-badge" style="border-color:${st.c}66;color:${st.c};">${st.l}</div>
+      </div>
+      <div class="deal-body">
+        ${partiesHTML?`<div class="deal-parties">${partiesHTML}</div>`:''}
+        <div class="deal-terms ${deal.terms?'':'empty'}">${deal.terms?esc(deal.terms):'No terms defined.'}</div>
+        <div class="deal-meta">
+          <div class="deal-meta-item">Created: <span>${fmtDate(deal.createdAt)}</span></div>
+          ${deal.updatedAt?`<div class="deal-meta-item">Updated: <span>${fmtDate(deal.updatedAt)}</span></div>`:''}
+        </div>
+        <div class="deal-actions">
+          <button class="btn btn-xs btn-steel" onclick="openDealModal('${cid}','${deal.id}')">Edit</button>
+          <button class="btn btn-xs btn-red" onclick="deleteDeal('${cid}','${deal.id}')">✕ Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// SECTION TOGGLE
+// ══════════════════════════════════════════════════════
+function toggleSec(id){
+  document.getElementById(id)?.classList.toggle('collapsed');
+}
+
+// ══════════════════════════════════════════════════════
+// RULE MODAL
+// ══════════════════════════════════════════════════════
+let _ruleCid=null;
+
+function openRuleModal(cid, ruleId){
+  _ruleCid=cid;
+  const d=getDip(cid);
+  const rule=ruleId?d.economic_rules.find(r=>r.id===ruleId):null;
+  document.getElementById('rule-modal-title').textContent=rule?'Edit Economic Rule':'New Economic Rule';
+  document.getElementById('rm-id').value=ruleId||'';
+  document.getElementById('rm-cat').value=rule?.category||'trade';
+  document.getElementById('rm-title').value=rule?.title||'';
+  document.getElementById('rm-desc').value=rule?.description||'';
+  document.getElementById('rule-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('rm-title').focus(),60);
+}
+
+function saveRule(){
+  const cid=_ruleCid;
+  const d=getDip(cid);
+  const ruleId=document.getElementById('rm-id').value;
+  const title=document.getElementById('rm-title').value.trim();
+  if(!title){ toast('err','Rule title is required.'); return; }
+  const cat=document.getElementById('rm-cat').value;
+  const desc=document.getElementById('rm-desc').value.trim();
+
+  if(ruleId){
+    const r=d.economic_rules.find(x=>x.id===ruleId);
+    if(r){ r.title=title; r.category=cat; r.description=desc; r.updatedAt=Date.now(); }
+  } else {
+    d.economic_rules.push({id:uuid(),title,category:cat,description:desc,createdAt:Date.now()});
+  }
+  saveDiplomacy();
+  closeModal('rule-modal');
+  toast('ok','Economic rule saved.');
+  renderEditor();
+  renderList();
+}
+
+function deleteRule(cid, ruleId){
+  if(!confirm('Delete this economic rule?')) return;
+  const d=getDip(cid);
+  d.economic_rules=d.economic_rules.filter(r=>r.id!==ruleId);
+  saveDiplomacy();
+  toast('ok','Rule deleted.');
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════════════
+// INVESTMENT MODAL
+// ══════════════════════════════════════════════════════
+let _invCid=null;
+
+function openInvModal(cid, invId){
+  _invCid=cid;
+  const d=getDip(cid);
+  const inv=invId?d.investments.find(i=>i.id===invId):null;
+
+  // populate entity list
+  const entityOpts=entities.filter(e=>e.id!==cid)
+    .map(e=>`<option value="${e.id}" ${inv?.target_id===e.id?'selected':''}>${e.flag||''} ${esc(e.name)}</option>`).join('');
+  document.getElementById('im-target-country').innerHTML=entityOpts;
+
+  document.getElementById('inv-modal-title').textContent=inv?'Edit Investment':'New Investment';
+  document.getElementById('im-id').value=invId||'';
+  document.getElementById('im-title').value=inv?.title||'';
+  document.getElementById('im-status').value=inv?.status||'planning';
+  document.getElementById('im-target-type').value=inv?.target_type||'internal';
+  document.getElementById('im-target-custom').value=inv?.target_custom||'';
+  document.getElementById('im-amount').value=inv?.amount||'';
+  document.getElementById('im-cat').value=inv?.category||'infrastructure';
+  document.getElementById('im-desc').value=inv?.description||'';
+  toggleInvTarget();
+  document.getElementById('inv-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('im-title').focus(),60);
+}
+
+function toggleInvTarget(){
+  const t=document.getElementById('im-target-type').value;
+  document.getElementById('im-target-country-wrap').style.display=t==='country'?'block':'none';
+  document.getElementById('im-target-custom-wrap').style.display=t==='custom'?'block':'none';
+}
+
+function saveInvestment(){
+  const cid=_invCid;
+  const d=getDip(cid);
+  const invId=document.getElementById('im-id').value;
+  const title=document.getElementById('im-title').value.trim();
+  if(!title){ toast('err','Investment title is required.'); return; }
+
+  const targetType=document.getElementById('im-target-type').value;
+  const inv={
+    id:invId||uuid(),
+    title,
+    status:document.getElementById('im-status').value,
+    target_type:targetType,
+    target_id:targetType==='country'?document.getElementById('im-target-country').value:'',
+    target_custom:targetType==='custom'?document.getElementById('im-target-custom').value.trim():'',
+    amount:parseFloat(document.getElementById('im-amount').value)||0,
+    category:document.getElementById('im-cat').value,
+    description:document.getElementById('im-desc').value.trim(),
+    createdAt:Date.now(),
+    updatedAt:Date.now(),
+  };
+
+  if(invId){
+    const idx=d.investments.findIndex(i=>i.id===invId);
+    if(idx>=0){ inv.createdAt=d.investments[idx].createdAt; d.investments[idx]=inv; }
+    else d.investments.push(inv);
+  } else {
+    d.investments.push(inv);
+  }
+
+  saveDiplomacy();
+  closeModal('inv-modal');
+  toast('ok','Investment saved.');
+  renderEditor();
+  renderList();
+}
+
+function deleteInvestment(cid, invId){
+  if(!confirm('Delete this investment?')) return;
+  const d=getDip(cid);
+  d.investments=d.investments.filter(i=>i.id!==invId);
+  saveDiplomacy();
+  toast('ok','Investment deleted.');
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════════════
+// RELATIONS
+// ══════════════════════════════════════════════════════
+function saveRelation(cid, eid){
+  const d=getDip(cid);
+  const sel=document.getElementById(`rel-sel-${cid}-${eid}`);
+  const notes=document.getElementById(`rel-notes-${cid}-${eid}`);
+  if(!sel||!notes) return;
+  if(!d.relations[eid]) d.relations[eid]={};
+  d.relations[eid].status=sel.value;
+  d.relations[eid].notes=notes.value.trim();
+  d.relations[eid].updatedAt=Date.now();
+  saveDiplomacy();
+  toast('ok','Relation updated.');
+  renderList();
+  // update just the header summary without full re-render
+  const entity=getEntity(cid);
+  if(entity){
+    const relSet=Object.values(d.relations).filter(r=>r.status&&r.status!=='unset').length;
+    const sumEl=document.querySelectorAll('.eh-sum-val');
+    if(sumEl[2]) sumEl[2].textContent=relSet;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// DEAL MODAL
+// ══════════════════════════════════════════════════════
+let _dealCid=null;
+
+function openDealModal(cid, dealId){
+  _dealCid=cid;
+  const d=getDip(cid);
+  const deal=dealId?d.deals.find(x=>x.id===dealId):null;
+
+  document.getElementById('deal-modal-title').textContent=deal?'Edit Deal':'New Diplomatic Deal';
+  document.getElementById('dm-id').value=dealId||'';
+  document.getElementById('dm-title').value=deal?.title||'';
+  document.getElementById('dm-type').value=deal?.type||'trade';
+  document.getElementById('dm-status').value=deal?.status||'negotiating';
+  document.getElementById('dm-terms').value=deal?.terms||'';
+
+  // Parties picker — all entities except current
+  const others=entities.filter(e=>e.id!==cid);
+  const selectedParties=new Set(deal?.parties||[]);
+  document.getElementById('dm-parties').innerHTML=others.map(e=>`
+    <div class="party-chip ${selectedParties.has(e.id)?'selected':''}"
+         onclick="togglePartyChip(this,'${e.id}')" data-id="${e.id}">
+      ${e.flag||'🏴'} ${esc(e.name)}
+    </div>`).join('');
+
+  document.getElementById('deal-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('dm-title').focus(),60);
+}
+
+function togglePartyChip(el, id){
+  el.classList.toggle('selected');
+}
+
+function saveDeal(){
+  const cid=_dealCid;
+  const d=getDip(cid);
+  const dealId=document.getElementById('dm-id').value;
+  const title=document.getElementById('dm-title').value.trim();
+  if(!title){ toast('err','Deal title is required.'); return; }
+
+  const parties=[...document.querySelectorAll('#dm-parties .party-chip.selected')].map(c=>c.dataset.id);
+
+  const deal={
+    id:dealId||uuid(),
+    title,
+    type:document.getElementById('dm-type').value,
+    status:document.getElementById('dm-status').value,
+    parties,
+    terms:document.getElementById('dm-terms').value.trim(),
+    createdAt:Date.now(),
+    updatedAt:Date.now(),
+  };
+
+  if(dealId){
+    const idx=d.deals.findIndex(x=>x.id===dealId);
+    if(idx>=0){ deal.createdAt=d.deals[idx].createdAt; d.deals[idx]=deal; }
+    else d.deals.push(deal);
+  } else {
+    d.deals.push(deal);
+  }
+
+  saveDiplomacy();
+  closeModal('deal-modal');
+  toast('ok','Deal saved.');
+  renderEditor();
+  renderList();
+}
+
+function deleteDeal(cid, dealId){
+  if(!confirm('Delete this deal?')) return;
+  const d=getDip(cid);
+  d.deals=d.deals.filter(x=>x.id!==dealId);
+  saveDiplomacy();
+  toast('ok','Deal deleted.');
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════════════
+function closeModal(id){
+  document.getElementById(id)?.classList.remove('open');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
+let _toastT=null;
+function toast(type,msg){
+  const el=document.getElementById('toast');
+  el.className='toast';
+  el.textContent=msg;
+  el.classList.add(type==='ok'?'ok':'err');
+  void el.offsetWidth;
+  el.classList.add('show');
+  if(_toastT) clearTimeout(_toastT);
+  _toastT=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+// ══════════════════════════════════════════════════════
+// SYNC — WATCH FOR COUNTRY CHANGES
+// ══════════════════════════════════════════════════════
+function syncEntities(){
+  const prev=entities.length;
+  loadEntities();
+  if(entities.length!==prev){
+    renderList();
+    if(selectedId&&!entities.find(e=>e.id===selectedId)){
+      selectedId=null;
+      document.getElementById('no-sel').style.display='flex';
+      document.getElementById('dip-editor').style.display='none';
+    } else if(selectedId) {
+      renderEditor();
+    }
+  }
+}
+
+window.addEventListener('storage',e=>{
+  if(e.key===COUNTRY_KEY){ loadEntities(); renderList(); if(selectedId) renderEditor(); }
+  if(e.key===DIP_KEY){ loadDiplomacy(); renderList(); if(selectedId) renderEditor(); }
+});
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+loadEntities();
+loadDiplomacy();
+renderList();
+updateHeaderStats();
+setInterval(syncEntities, 6000);
+
+// Hide header when embedded in hub iframe
+if(window.self!==window.top){
+  const hdr=document.querySelector('header');
+  if(hdr) hdr.style.display='none';
+}
+</script>
+</body>
+</html>
