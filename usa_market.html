@@ -495,18 +495,15 @@ input[type=range]::-webkit-slider-thumb {
 
 <script>
 /* ══════════════════════════════════════════
-   SHARED DATA
+   SHARED DATA — nations loaded from database (countries only, no orgs)
 ══════════════════════════════════════════ */
-const NATION_LIST = [
-  {id:'usa',    name:'USA'},            {id:'russia', name:'Russia'},
-  {id:'israel', name:'Israel'},         {id:'brazil', name:'Brazil'},
-  {id:'mexico', name:'Mexico'},         {id:'iran',   name:'Iran'},
-  {id:'iraq',   name:'Iraq'},           {id:'korea',  name:'Korea'},
-  {id:'chinajp',name:'China / Japan'},  {id:'uk',     name:'UK'},
-  {id:'germany',name:'Germany'},        {id:'canada', name:'Canada'},
-  {id:'denswiss',name:'Denmark / Switzerland'},{id:'sweden', name:'Sweden'},
-  {id:'ukraine',name:'Ukraine'},        {id:'dubai',  name:'Dubai'},
-];
+function loadNationList() {
+  try {
+    const all = JSON.parse(localStorage.getItem('tc_countries') || '[]');
+    return all.filter(c => c.type === 'country').map(c => ({id: c.id, name: c.name}));
+  } catch { return []; }
+}
+let NATION_LIST = loadNationList();
 
 /* Swedbank card tier → discount on USA market trades */
 const SWE_TIER_DISCOUNT = {
@@ -1176,6 +1173,7 @@ updateClock();
 setInterval(updateClock, 1000);
 // Periodic refresh of selectors and stats
 setInterval(() => {
+  NATION_LIST = loadNationList();
   const bv = document.getElementById('buyer-select').value;
   const sv = document.getElementById('seller-select').value;
   populateSelectors();

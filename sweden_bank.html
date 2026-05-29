@@ -899,24 +899,42 @@ const CARD_TIERS = {
 };
 const TIER_ORDER = ['entry','privat','foretag','guld','premium','elit','riksbank'];
 
-const NATIONS = [
-  { id:'usa',    name:'USA',               enabled: true, blocked: false },
-  { id:'russia', name:'Russia',            enabled: true, blocked: false },
-  { id:'israel', name:'Israel',            enabled: true, blocked: false },
-  { id:'brazil', name:'Brazil',            enabled: true, blocked: false },
-  { id:'mexico', name:'Mexico',            enabled: true, blocked: false },
-  { id:'iran',   name:'Iran',              enabled: true, blocked: false },
-  { id:'iraq',   name:'Iraq',              enabled: true, blocked: false },
-  { id:'korea',  name:'Korea',             enabled: true, blocked: false },
-  { id:'chinajp',name:'China / Japan',     enabled: true, blocked: false },
-  { id:'uk',     name:'UK',                enabled: true, blocked: false },
-  { id:'germany',name:'Germany',           enabled: true, blocked: false },
-  { id:'canada', name:'Canada',            enabled: true, blocked: false },
-  { id:'denswiss',name:'Denmark / Switzerland', enabled: true, blocked: false },
-  { id:'sweden', name:'Sweden',            enabled: true, blocked: false },
-  { id:'ukraine',name:'Ukraine',           enabled: true, blocked: false },
-  { id:'dubai',  name:'Dubai',             enabled: true, blocked: false },
-];
+/* ═══════════════════════════════════════════════
+   DYNAMIC NATIONS — loaded from tc_countries database
+   Only 'country' type; organizations are permanently banned
+═══════════════════════════════════════════════ */
+function getNationsFromDB() {
+  try {
+    const all = JSON.parse(localStorage.getItem('tc_countries') || '[]');
+    return all
+      .filter(c => c.type === 'country')
+      .map(c => ({ id: c.id, name: c.name, enabled: true, blocked: false }));
+  } catch { return []; }
+}
+
+let NATIONS = getNationsFromDB();
+
+function refreshNations() {
+  const fresh = getNationsFromDB();
+  fresh.forEach(n => {
+    if (!accounts[n.id]) {
+      accounts[n.id] = {
+        ...n,
+        balance: 0,
+        totalDeposited: 0,
+        totalWithdrawn: 0,
+        cardTier: 'entry',
+        creditDebt: 0,
+        cardDisabled: false,
+        cardNumber: generateCardNumber(),
+        highestCardTier: 'entry',
+      };
+    } else {
+      accounts[n.id].name = n.name;
+    }
+  });
+  NATIONS = fresh;
+}
 
 const BLOCKED = [
   { id:'pcc',    name:'PCC',               reason:'Criminal Organization' },
@@ -968,7 +986,11 @@ function pushUndo() {
 function undo() {
   if (!undoStack.length) return;
   const snap = undoStack.pop();
-  NATIONS.forEach(n => { if (snap.accounts && snap.accounts[n.id]) Object.assign(accounts[n.id], snap.accounts[n.id]); });
+  if (snap.accounts) {
+    Object.keys(snap.accounts).forEach(id => {
+      if (accounts[id]) Object.assign(accounts[id], snap.accounts[id]);
+    });
+  }
   treasury            = snap.treasury            ?? 30000;
   treasuryUpgradeFees = snap.treasuryUpgradeFees ?? 0;
   treasuryInterest    = snap.treasuryInterest    ?? 0;
@@ -1487,20 +1509,33 @@ function saveState() {
 function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem('swe_bank_v1')); if (!s) return;
-    NATIONS.forEach(n => {
-      if (s.accounts && s.accounts[n.id]) {
-        const a = s.accounts[n.id];
-        accounts[n.id].balance        = a.balance        ?? 0;
-        accounts[n.id].totalDeposited = a.totalDeposited ?? 0;
-        accounts[n.id].totalWithdrawn = a.totalWithdrawn ?? 0;
-        accounts[n.id].enabled        = a.enabled        ?? true;
-        accounts[n.id].cardTier       = a.cardTier       ?? 'entry';
-        accounts[n.id].creditDebt     = a.creditDebt     ?? 0;
-        accounts[n.id].cardDisabled   = a.cardDisabled   ?? false;
-        accounts[n.id].cardNumber     = a.cardNumber     || generateCardNumber();
-        accounts[n.id].highestCardTier= a.highestCardTier ?? a.cardTier ?? 'entry';
-      }
-    });
+    // Ensure all DB countries have slots
+    refreshNations();
+    // Apply saved data for every account in swe_bank_v1
+    if (s.accounts) {
+      Object.keys(s.accounts).forEach(id => {
+        const a = s.accounts[id];
+        if (!accounts[id]) {
+          const nationEntry = NATIONS.find(n => n.id === id);
+          if (!nationEntry) return;
+          accounts[id] = {
+            id, name: a.name || nationEntry.name, enabled: true, blocked: false,
+            balance: 0, totalDeposited: 0, totalWithdrawn: 0,
+            cardTier: 'entry', creditDebt: 0, cardDisabled: false,
+            cardNumber: generateCardNumber(), highestCardTier: 'entry',
+          };
+        }
+        accounts[id].balance        = a.balance        ?? 0;
+        accounts[id].totalDeposited = a.totalDeposited ?? 0;
+        accounts[id].totalWithdrawn = a.totalWithdrawn ?? 0;
+        accounts[id].enabled        = a.enabled        ?? true;
+        accounts[id].cardTier       = a.cardTier       ?? 'entry';
+        accounts[id].creditDebt     = a.creditDebt     ?? 0;
+        accounts[id].cardDisabled   = a.cardDisabled   ?? false;
+        accounts[id].cardNumber     = a.cardNumber     || generateCardNumber();
+        accounts[id].highestCardTier= a.highestCardTier ?? a.cardTier ?? 'entry';
+      });
+    }
     treasury            = s.treasury            ?? 30000;
     treasuryUpgradeFees = s.treasuryUpgradeFees ?? 0;
     treasuryInterest    = s.treasuryInterest    ?? 0;
@@ -1655,6 +1690,61 @@ updateClock();
 setInterval(updateClock, 1000);
 setInterval(updateTreasury, 6000);
 setInterval(pollCardChargeNotifications, 5000);
+
+/* ═══════════════════════════════════════════════
+   EXTERNAL SYNC POLL
+   Detects balance changes written by markets/trades
+   and applies them to the in-memory accounts object
+═══════════════════════════════════════════════ */
+let _lastSweHash = '';
+function pollExternalChanges() {
+  try {
+    // Refresh nation list from database (picks up newly added countries)
+    refreshNations();
+
+    const raw = localStorage.getItem('swe_bank_v1') || '{}';
+    if (raw === _lastSweHash) return; // no change
+    _lastSweHash = raw;
+
+    const ext = JSON.parse(raw);
+    if (!ext.accounts) return;
+
+    let changed = false;
+    Object.keys(ext.accounts).forEach(id => {
+      const s = ext.accounts[id];
+      if (!accounts[id]) {
+        const nationEntry = NATIONS.find(n => n.id === id);
+        if (!nationEntry) return;
+        accounts[id] = {
+          id, name: s.name || nationEntry.name, enabled: true, blocked: false,
+          balance: 0, totalDeposited: 0, totalWithdrawn: 0,
+          cardTier: 'entry', creditDebt: 0, cardDisabled: false,
+          cardNumber: generateCardNumber(), highestCardTier: 'entry',
+        };
+      }
+      const acc = accounts[id];
+      const fields = ['balance','totalDeposited','totalWithdrawn','creditDebt','cardTier','cardDisabled','enabled','cardNumber','highestCardTier'];
+      fields.forEach(f => {
+        if (s[f] !== undefined && acc[f] !== s[f]) { acc[f] = s[f]; changed = true; }
+      });
+    });
+
+    if (ext.treasury !== undefined && ext.treasury !== treasury) {
+      treasury = ext.treasury; changed = true;
+    }
+    if (ext.treasuryCardCharges !== undefined) treasuryCardCharges = ext.treasuryCardCharges;
+    if (ext.logEntries && ext.logEntries.length !== logEntries.length) {
+      logEntries = ext.logEntries; renderLog();
+    }
+
+    if (changed) {
+      renderNations();
+      updateTreasury();
+      if (activeTab === 'cards') renderCards();
+    }
+  } catch(e) {}
+}
+setInterval(pollExternalChanges, 3000);
 </script>
 </body>
 </html>
