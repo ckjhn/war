@@ -1567,8 +1567,8 @@ function renderRelCard(cid, entity){
       <div class="rel-name" title="${esc(entity.name)}">${esc(entity.name)}</div>
       <div class="rel-type-tag" style="${isOrg?'border-color:#7a54b544;color:#9a74d5;':'border-color:#4a7ab544;color:#6a9ad5;'}">${isOrg?'ORG':'CTR'}</div>
     </div>
-    <select class="rel-select" id="rel-sel-${cid}-${entity.id}" onchange="updateRelStrip('${cid}','${entity.id}',this)">${opts}</select>
-    <textarea class="rel-notes" id="rel-notes-${cid}-${entity.id}" placeholder="Diplomatic notes, context…">${esc(rel.notes||'')}</textarea>
+    <select class="rel-select" id="rel-sel-${cid}-${entity.id}" onchange="updateRelStrip('${cid}','${entity.id}',this);saveRelation('${cid}','${entity.id}')">${opts}</select>
+    <textarea class="rel-notes" id="rel-notes-${cid}-${entity.id}" placeholder="Diplomatic notes, context…" oninput="debounceSaveRelation('${cid}','${entity.id}')">${esc(rel.notes||'')}</textarea>
     <button class="rel-save-btn" onclick="saveRelation('${cid}','${entity.id}')">✦ Save Relation</button>
   </div>`;
 }
@@ -1578,6 +1578,13 @@ function updateRelStrip(cid, eid, sel){
   const strip=card.querySelector('.rel-status-strip');
   const statusObj=RELATION_STATUSES.find(s=>s.v===sel.value)||RELATION_STATUSES[0];
   strip.style.background=statusObj.color;
+}
+
+const _relDebounceTimers={};
+function debounceSaveRelation(cid, eid){
+  const key=cid+'|'+eid;
+  clearTimeout(_relDebounceTimers[key]);
+  _relDebounceTimers[key]=setTimeout(()=>saveRelation(cid,eid,true),600);
 }
 
 function setRelFilter(f){
@@ -1770,7 +1777,7 @@ function deleteInvestment(cid, invId){
 // ══════════════════════════════════════════════════════
 // RELATIONS
 // ══════════════════════════════════════════════════════
-function saveRelation(cid, eid){
+function saveRelation(cid, eid, silent){
   const d=getDip(cid);
   const sel=document.getElementById(`rel-sel-${cid}-${eid}`);
   const notes=document.getElementById(`rel-notes-${cid}-${eid}`);
@@ -1780,7 +1787,7 @@ function saveRelation(cid, eid){
   d.relations[eid].notes=notes.value.trim();
   d.relations[eid].updatedAt=Date.now();
   saveDiplomacy();
-  toast('ok','Relation updated.');
+  if(!silent) toast('ok','Relation updated.');
   renderList();
   // update just the header summary without full re-render
   const entity=getEntity(cid);
