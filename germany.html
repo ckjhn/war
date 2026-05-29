@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bundesministerium für Industrieproduktion | German Industrial Command</title>
+  <link href="https://fonts.googleapis.com/css2?family=BundesSans:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --de-black:   #1a1a1a;
+      --de-red:     #DD0000;
+      --de-gold:    #FFCE00;
+      --de-red-mid: rgba(221,0,0,0.10);
+      --de-gold-mid:rgba(255,206,0,0.15);
+      --bg:         #f2f3f5;
+      --surface:    #ffffff;
+      --surface2:   #f8f9fb;
+      --border:     #d4d7dc;
+      --border-strong:#9ba3af;
+      --text:       #1a1a1a;
+      --text-sec:   #4b5563;
+      --text-muted: #9ca3af;
+      --link:       #1d4ed8;
+      --success:    #166534;
+      --success-bg: #dcfce7;
+      --danger:     #991b1b;
+      --danger-bg:  #fee2e2;
+      --warn-bg:    #fef9c3;
+      --warn-border:#ca8a04;
+      --info-bg:    #eff6ff;
+      --info-border:#3b82f6;
+      --pending-bg: #f3f4f6;
+      --font:       'Source Sans 3', 'Arial', sans-serif;
+      --font-serif: 'Source Serif 4', 'Georgia', serif;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.6;}
+
+    /* ── GERMAN FLAG STRIPE ── */
+    .flag-bar {
+      height: 12px;
+      background: linear-gradient(180deg,
+        var(--de-black) 0%, var(--de-black) 33.3%,
+        var(--de-red)   33.3%, var(--de-red)   66.6%,
+        var(--de-gold)  66.6%, var(--de-gold)  100%
+      );
+    }
+
+    /* ── GOV NOTICE ── */
+    .gov-notice {
+      background: var(--de-black);
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      padding: 4px 0;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .gov-notice-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .gov-notice .de { color: var(--de-gold); font-weight: 700; }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 16px 24px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    }
+    .header-brand { display: flex; align-items: center; gap: 16px; }
+    .header-eagle {
+      width: 56px; height: 56px;
+      background: var(--de-black);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; flex-shrink: 0;
+      color: var(--de-gold);
+    }
+    .agency-name {
+      font-family: var(--font-serif);
+      font-size: 20px; font-weight: 700;
+      color: var(--de-black); line-height: 1.2;
+    }
+    .agency-name .de-script {
+      font-size: 11px; font-weight: 400;
+      color: var(--text-muted); display: block;
+      margin-top: 2px; letter-spacing: 0.3px;
+    }
+    .header-meta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    }
+    .factory-count-badge {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--de-black);
+      color: #fff; padding: 6px 14px; border-radius: 2px;
+    }
+    .factory-count-badge .lbl { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 0.5px; text-transform: uppercase; }
+    .factory-count-badge .val { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--de-gold); }
+
+    /* ── RED LINE NAV ── */
+    .site-nav {
+      background: var(--de-black);
+      border-bottom: 3px solid var(--de-gold);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 24px; display: flex;
+    }
+    .nav-link {
+      color: rgba(255,255,255,0.75);
+      font-size: 13px; font-weight: 600;
+      padding: 12px 18px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      transition: all 0.15s;
+      background: none; border-top:none; border-left:none; border-right:none;
+      border-bottom: 3px solid transparent;
+      font-family: var(--font); letter-spacing: 0.2px;
+    }
+    .nav-link:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.3); }
+    .nav-link.active { color: var(--de-gold); border-bottom-color: var(--de-gold); }
+
+    /* ── PAGE ── */
+    .page { max-width: 1280px; margin: 0 auto; padding: 28px 24px 80px; }
+
+    .page-top { margin-bottom: 28px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .breadcrumb a { color: var(--link); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb .sep { margin: 0 6px; }
+    .page-h1 {
+      font-family: var(--font-serif);
+      font-size: 26px; font-weight: 700;
+      color: var(--de-black); margin-bottom: 4px;
+    }
+    .page-lead { font-size: 14px; color: var(--text-sec); max-width: 720px; }
+
+    /* ── STATS ── */
+    .stat-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-top: 3px solid var(--de-black); padding: 14px 16px;
+    }
+    .stat-card.red   { border-top-color: var(--de-red); }
+    .stat-card.gold  { border-top-color: var(--de-gold); }
+    .stat-card.green { border-top-color: var(--success); }
+    .stat-lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+    .stat-val { font-family: var(--font-serif); font-size: 26px; font-weight: 700; color: var(--de-black); line-height: 1; }
+    .stat-val.red   { color: var(--de-red); }
+    .stat-val.gold  { color: #7a5f00; }
+    .stat-val.green { color: var(--success); }
+
+    /* ── TABS ── */
+    .tab-list { display: flex; border-bottom: 2px solid var(--de-black); margin-bottom: 24px; }
+    .tab-btn {
+      background: var(--surface2); border: 1px solid var(--border); border-bottom: none;
+      color: var(--text-muted); font-family: var(--font);
+      font-size: 13px; font-weight: 600; padding: 9px 20px;
+      cursor: pointer; margin-right: 3px; border-radius: 3px 3px 0 0;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { background: var(--surface); color: var(--text); }
+    .tab-btn.active { background: var(--de-black); color: var(--de-gold); border-color: var(--de-black); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SECTION HEADING ── */
+    .sec-h2 { font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: var(--de-black); margin-bottom: 4px; }
+    .sec-desc { font-size: 13px; color: var(--text-sec); margin-bottom: 18px; }
+    .rule { height: 1px; background: var(--border); margin: 22px 0; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 22px; margin-bottom: 22px;
+      border-left: 4px solid var(--de-black);
+    }
+    .form-card-title {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--de-black);
+      padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+    }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: end; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: end; }
+    .form-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 14px; align-items: end; }
+    @media(max-width:800px){.form-grid-3,.form-grid-4{grid-template-columns:1fr 1fr;}.form-grid-2{grid-template-columns:1fr;}}
+    @media(max-width:500px){.form-grid-3,.form-grid-4,.form-grid-2{grid-template-columns:1fr;}}
+
+    .de-field { display: flex; flex-direction: column; gap: 4px; }
+    .de-label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .de-label .req { color: var(--de-red); margin-left: 2px; }
+    .de-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .de-input, .de-select, .de-textarea {
+      background: var(--surface); border: 1px solid var(--border-strong);
+      color: var(--text); font-family: var(--font); font-size: 14px;
+      padding: 8px 11px; border-radius: 2px; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .de-input:focus, .de-select:focus, .de-textarea:focus {
+      border-color: var(--de-black);
+      box-shadow: 0 0 0 3px rgba(26,26,26,0.12);
+    }
+    .de-input::placeholder, .de-textarea::placeholder { color: var(--text-muted); }
+    .de-textarea { resize: vertical; min-height: 70px; }
+    .de-select option { background: #fff; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font); font-size: 13px; font-weight: 700;
+      padding: 8px 18px; border: 2px solid transparent;
+      cursor: pointer; border-radius: 2px; transition: all 0.15s;
+      white-space: nowrap; letter-spacing: 0.2px;
+    }
+    .btn-de     { background: var(--de-black); color: var(--de-gold); border-color: var(--de-black); }
+    .btn-de:hover { background: #2d2d2d; }
+    .btn-red    { background: var(--de-red); color: #fff; border-color: var(--de-red); }
+    .btn-red:hover { filter: brightness(0.9); }
+    .btn-outline{ background: transparent; color: var(--de-black); border-color: var(--de-black); }
+    .btn-outline:hover { background: var(--pending-bg); }
+    .btn-ghost  { background: transparent; color: var(--text-sec); border-color: var(--border); }
+    .btn-ghost:hover { border-color: var(--de-black); color: var(--de-black); }
+    .btn-success{ background: var(--success); color: #fff; border-color: var(--success); }
+    .btn-success:hover { filter: brightness(0.9); }
+    .btn-gold   { background: var(--de-gold); color: var(--de-black); border-color: var(--de-gold); }
+    .btn-gold:hover { filter: brightness(0.95); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
+
+    /* ── ALERTS ── */
+    .alert { padding: 10px 14px; border-left: 4px solid; font-size: 13px; margin-bottom: 14px; }
+    .alert-info { background: var(--info-bg); border-color: var(--info-border); color: #1e40af; }
+    .alert-warn { background: var(--warn-bg); border-color: var(--warn-border); color: #854d0e; }
+    .alert-success { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+    .alert strong { font-weight: 700; }
+
+    /* ── FACTORY CARDS ── */
+    .factory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 14px; margin-bottom: 24px; }
+    .factory-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-top: 3px solid var(--de-black); overflow: hidden;
+      animation: fadein 0.2s ease; transition: box-shadow 0.15s;
+    }
+    .factory-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .factory-card.exclusive { border-top-color: var(--de-gold); }
+    @keyframes fadein { from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);} }
+
+    .fc-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; background: var(--surface2); border-bottom: 1px solid var(--border);
+    }
+    .fc-name { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--de-black); }
+    .fc-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    }
+    .fc-badge.free     { background: var(--success-bg); color: var(--success); border: 1px solid rgba(22,101,52,0.3); }
+    .fc-badge.busy     { background: var(--warn-bg);    color: #854d0e;        border: 1px solid rgba(202,138,4,0.3); }
+    .fc-badge.exclusive{ background: var(--de-gold-mid); color: #7a5f00;       border: 1px solid rgba(255,206,0,0.4); }
+
+    .fc-body { padding: 12px 14px; }
+    .fc-info-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .fc-info-row:last-child { border-bottom: none; }
+    .fc-info-row .k { color: var(--text-muted); }
+    .fc-info-row .v { font-weight: 700; }
+    .fc-info-row .v.gold { color: #7a5f00; }
+    .fc-queue-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted);
+      margin: 10px 0 6px;
+    }
+    .fc-queue-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 5px 8px; background: var(--surface2);
+      border: 1px solid var(--border); font-size: 12px; margin-bottom: 4px;
+    }
+    .fc-queue-item .pos { font-weight: 700; color: var(--de-black); margin-right: 8px; font-size: 11px; }
+    .fc-queue-item .country-name { color: var(--de-black); font-weight: 600; }
+    .fc-queue-item .item-name { color: var(--text-sec); }
+    .fc-queue-item .queue-active { color: var(--success); font-size: 10px; font-weight: 700; }
+
+    .fc-foot {
+      padding: 10px 14px; border-top: 1px solid var(--border);
+      background: var(--surface2); display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    /* ── ORDER FORM — item list builder ── */
+    .order-item-row {
+      display: grid; grid-template-columns: 3fr 2fr 60px 40px;
+      gap: 10px; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-name { font-size: 13px; font-weight: 600; color: var(--de-black); }
+    .order-item-workers { font-size: 12px; color: var(--text-sec); }
+    .order-item-turns { font-size: 12px; color: var(--text-muted); text-align: center; }
+    .order-item-del { background: none; border: none; color: var(--de-red); cursor: pointer; font-size: 16px; text-align: center; }
+
+    /* ── PRODUCTION CATALOGUE — item picker ── */
+    .cat-section { margin-bottom: 20px; }
+    .cat-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text-muted);
+      padding: 6px 0; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+    }
+    .prod-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 6px; }
+    .prod-pick-btn {
+      background: var(--surface2); border: 1px solid var(--border);
+      text-align: left; padding: 8px 10px; cursor: pointer;
+      transition: all 0.15s; border-radius: 2px;
+      font-family: var(--font); font-size: 12px; color: var(--text);
+    }
+    .prod-pick-btn:hover { border-color: var(--de-black); background: var(--surface); }
+    .prod-pick-btn .icon { margin-right: 4px; }
+    .prod-pick-btn .mp-tag { font-size: 10px; color: var(--text-muted); display: block; margin-top: 2px; }
+
+    /* ── ORDER CARDS ── */
+    .orders-list { display: flex; flex-direction: column; gap: 16px; }
+    .order-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--de-black); overflow: hidden;
+      animation: fadein 0.2s ease;
+    }
+    .order-card.complete { border-left-color: var(--success); }
+    .order-card.sent     { border-left-color: var(--text-muted); opacity: 0.7; }
+
+    .oc-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: var(--surface2); border-bottom: 1px solid var(--border);
+      cursor: pointer; user-select: none;
+    }
+    .oc-head:hover { background: #eef0f3; }
+    .oc-country { font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--de-black); }
+    .oc-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .oc-status {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 3px 10px; border-radius: 2px;
+    }
+    .oc-status.active   { background: var(--info-bg);    color: var(--link); border: 1px solid rgba(59,130,246,0.3); }
+    .oc-status.complete { background: var(--success-bg); color: var(--success); border: 1px solid rgba(22,101,52,0.3); }
+    .oc-status.sent     { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .oc-body { padding: 14px 16px; display: none; }
+    .oc-body.open { display: block; }
+
+    .oc-item-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px;
+      flex-wrap: wrap;
+    }
+    .oc-item-row:last-child { border-bottom: none; }
+    .oc-item-name { font-weight: 600; font-size: 13px; flex: 1; }
+    .oc-item-workers { font-size: 12px; color: var(--text-sec); }
+    .oc-item-turns { font-size: 12px; color: var(--text-muted); }
+    .oc-item-cost { font-size: 13px; font-weight: 700; color: #7a5f00; }
+    .confirm-btn {
+      background: none; border: 1px solid var(--success); color: var(--success);
+      font-size: 11px; font-weight: 700; padding: 3px 10px; cursor: pointer;
+      border-radius: 2px; transition: all 0.15s; white-space: nowrap;
+    }
+    .confirm-btn:hover { background: var(--success); color: #fff; }
+    .confirm-btn.done {
+      background: var(--success-bg); border-color: var(--success);
+      color: var(--success); cursor: default;
+    }
+    .confirm-btn.done::before { content: '✓ '; }
+
+    .oc-resources-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 12px; margin-top: 12px; font-size: 12px;
+    }
+    .oc-resources-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px;
+    }
+    .oc-resource-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .oc-resource-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 3px 10px; font-size: 12px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .oc-resource-chip strong { color: var(--de-black); }
+
+    .oc-foot {
+      padding: 12px 16px; border-top: 1px solid var(--border);
+      background: var(--surface2); display: flex; gap: 8px;
+      justify-content: space-between; align-items: center; flex-wrap: wrap;
+    }
+    .oc-total-cost { font-weight: 700; color: #7a5f00; font-size: 14px; }
+
+    /* ── BLOCKED ── */
+    .blocked-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .blocked-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--danger-bg); border: 1px solid rgba(153,27,27,0.25);
+      color: var(--danger); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 2px;
+    }
+    .blocked-chip button { background: none; border: none; color: inherit; cursor: pointer; font-size: 14px; padding: 0; opacity: 0.7; }
+    .blocked-chip button:hover { opacity: 1; }
+    .block-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .block-row .de-field { flex: 1; min-width: 200px; }
+
+    /* ── ARCHIVE ── */
+    .archive-list { display: flex; flex-direction: column; gap: 10px; }
+    .archive-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--text-muted); overflow: hidden;
+    }
+    .archive-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: var(--surface2); border-bottom: 1px solid var(--border);
+      cursor: pointer; user-select: none;
+    }
+    .archive-head:hover { background: #eef0f3; }
+    .archive-country { font-weight: 700; font-size: 14px; color: var(--text-sec); }
+    .archive-date { font-size: 11px; color: var(--text-muted); }
+    .archive-body { padding: 12px 14px; display: none; font-size: 12px; color: var(--text-sec); }
+    .archive-body.open { display: block; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 900; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border-top: 4px solid var(--de-black);
+      width: 90%; max-width: 560px; max-height: 88vh; overflow-y: auto;
+      transform: translateY(12px); transition: transform 0.2s;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-head {
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--de-black);
+    }
+    .modal-title { font-family: var(--font-serif); font-size: 18px; font-weight: 700; color: var(--de-gold); }
+    .modal-close { background: none; border: none; font-size: 18px; color: rgba(255,255,255,0.6); cursor: pointer; }
+    .modal-close:hover { color: #fff; }
+    .modal-body { padding: 20px 22px; }
+    .modal-foot {
+      padding: 14px 22px; border-top: 1px solid var(--border);
+      background: var(--surface2); display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 44px; display: block; margin-bottom: 10px; opacity: 0.3; }
+    .empty-text { font-size: 14px; }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--de-black); color: rgba(255,255,255,0.6);
+      font-size: 12px; padding: 20px 0; margin-top: 40px;
+    }
+    .footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-brand { font-family: var(--font-serif); font-size: 15px; font-weight: 700; color: var(--de-gold); }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); }
+  </style>
+</head>
+<body>
+
+  <div class="flag-bar"></div>
+  <div class="gov-notice">
+    <div class="gov-notice-inner">
+      <span class="de">⚙️ Bundesrepublik Deutschland</span>
+      &nbsp;·&nbsp; Bundesministerium für Industrieproduktion &nbsp;·&nbsp;
+      Offizielle Betriebsplattform &nbsp;·&nbsp;
+      <span class="de">German Industrial Command Portal</span>
+    </div>
+  </div>
+
+  <div class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-eagle">⚙️</div>
+        <div>
+          <div class="agency-name">
+            German Industrial Command
+            <span class="de-script">Bundesministerium für Industrieproduktion · Fabrikkommando</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="factory-count-badge">
+          <div>
+            <div class="lbl">Active Factories</div>
+            <div class="val" id="headerFactoryCount">—</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">$200/cycle per factory · $1,000/cycle exclusive</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <button class="nav-link active" onclick="switchTab('factories',this)">🏭 Factories</button>
+      <button class="nav-link" onclick="switchTab('orders',this)">📦 Orders</button>
+      <button class="nav-link" onclick="switchTab('new-order',this)">➕ New Order</button>
+      <button class="nav-link" onclick="switchTab('archive',this)">🗂 Archive</button>
+      <button class="nav-link" onclick="switchTab('blocked',this)">🚫 Blocked</button>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <div class="page-top">
+      <div class="breadcrumb"><a href="#">Home</a><span class="sep">/</span><a href="#">Industry</a><span class="sep">/</span><span id="breadcrumbCurrent">Factory Management</span></div>
+      <h1 class="page-h1" id="pageH1">Factory Management</h1>
+      <p class="page-lead" id="pageLead">Manage Germany's industrial facilities. Each factory costs $200 per cycle. Exclusive contracts cost $1,000 per cycle.</p>
+    </div>
+
+    <div class="stat-row" id="statsRow"></div>
+
+    <!-- ── TAB: FACTORIES ── -->
+    <div class="tab-panel active" id="tab-factories">
+      <div class="form-card">
+        <div class="form-card-title">Add New Factory</div>
+        <div class="form-grid-2" style="max-width:600px;">
+          <div class="de-field">
+            <label class="de-label">Factory Name <span class="req">*</span></label>
+            <input class="de-input" type="text" id="factoryName" placeholder="e.g. Rheinwerk Factory 1" maxlength="60">
+          </div>
+          <div>
+            <button class="btn btn-de" onclick="addFactory()" style="margin-top:18px;">+ Add Factory</button>
+          </div>
+        </div>
+      </div>
+      <div class="factory-grid" id="factoryGrid"></div>
+    </div>
+
+    <!-- ── TAB: ORDERS ── -->
+    <div class="tab-panel" id="tab-orders">
+      <h2 class="sec-h2">Active Orders</h2>
+      <p class="sec-desc">Each order is a package from a country. Confirm each item as it is produced. When all items in a package are confirmed, you can send the package and it moves to the archive.</p>
+      <div class="orders-list" id="ordersList"></div>
+    </div>
+
+    <!-- ── TAB: NEW ORDER ── -->
+    <div class="tab-panel" id="tab-new-order">
+      <h2 class="sec-h2">Create New Production Order</h2>
+      <p class="sec-desc">Select the requesting country, assign a factory (or queue position), then build the item list. Germany provides manpower, fuel, and factories — the country sends raw resources.</p>
+
+      <div class="form-card">
+        <div class="form-card-title">Order Details</div>
+        <div class="form-grid-3" style="margin-bottom:14px;">
+          <div class="de-field">
+            <label class="de-label">Requesting Country <span class="req">*</span></label>
+            <select class="de-select" id="orderCountry">
+              <option value="">— Select a country —</option>
+            </select>
+          </div>
+          <div class="de-field">
+            <label class="de-label">Assign Factory <span class="req">*</span></label>
+            <select class="de-select" id="orderFactory">
+              <option value="">— Select a factory —</option>
+            </select>
+          </div>
+          <div class="de-field">
+            <label class="de-label">Contract Type</label>
+            <select class="de-select" id="orderContractType">
+              <option value="shared">Shared ($50/turn · $200/cycle)</option>
+              <option value="exclusive">Exclusive ($250/turn · $1,000/cycle)</option>
+            </select>
+          </div>
+        </div>
+        <div id="orderFactoryStatus"></div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">Build Item List</div>
+        <div class="form-grid-4" style="margin-bottom:14px;">
+          <div class="de-field">
+            <label class="de-label">Item</label>
+            <select class="de-select" id="orderItemSelect">
+              <option value="">— Pick an item —</option>
+            </select>
+          </div>
+          <div class="de-field">
+            <label class="de-label">Quantity</label>
+            <input class="de-input" type="number" id="orderItemQty" value="1" min="1" step="1">
+          </div>
+          <div class="de-field">
+            <label class="de-label">Workers</label>
+            <input class="de-input" type="number" id="orderItemWorkers" value="25" min="1" step="1">
+            <span class="de-hint">1 worker = 1 MP/turn</span>
+          </div>
+          <div>
+            <button class="btn btn-outline" onclick="addItemToOrder()" style="margin-top:18px;">+ Add Item</button>
+          </div>
+        </div>
+
+        <div id="missilesSizeRow" style="display:none;margin-bottom:14px;">
+          <div class="alert alert-warn" style="margin-bottom:10px;">
+            <strong>Missile selected.</strong> Choose the explosion size — this scales <strong>Gunpowder</strong> and <strong>Silicon</strong> requirements.
+          </div>
+          <div class="de-field" style="max-width:320px;">
+            <label class="de-label">Explosion Size</label>
+            <select class="de-select" id="orderMissileSize">
+              <option value="small">Small &nbsp;(Gunpowder ×0.5 · Silicon ×0.6)</option>
+              <option value="medium" selected>Medium &nbsp;(Gunpowder ×1.0 · Silicon ×1.0) — default</option>
+              <option value="big">Big &nbsp;(Gunpowder ×1.8 · Silicon ×1.3)</option>
+              <option value="huge">Huge &nbsp;(Gunpowder ×3.0 · Silicon ×1.7)</option>
+              <option value="gigantic">Gigantic &nbsp;(Gunpowder ×4.5 · Silicon ×2.0)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="orderItemsPreview" style="margin-bottom:14px;"></div>
+
+        <div id="orderResourceSummary"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-de" onclick="submitOrder()">Submit Order</button>
+        <button class="btn btn-ghost" onclick="clearOrderForm()">Clear</button>
+      </div>
+    </div>
+
+    <!-- ── TAB: ARCHIVE ── -->
+    <div class="tab-panel" id="tab-archive">
+      <h2 class="sec-h2">Sent Packages — Archive</h2>
+      <p class="sec-desc">Historical record of all completed and sent production packages.</p>
+      <div class="archive-list" id="archiveList"></div>
+    </div>
+
+    <!-- ── TAB: BLOCKED ── -->
+    <div class="tab-panel" id="tab-blocked">
+      <h2 class="sec-h2">Blocked Countries</h2>
+      <p class="sec-desc">Blocked countries cannot place new production orders.</p>
+      <div class="form-card">
+        <div class="form-card-title">Add Restriction · Zugangsverbot</div>
+        <div class="block-row">
+          <div class="de-field">
+            <label class="de-label">Country</label>
+            <select class="de-select" id="blockSelect"><option value="">— Select a country —</option></select>
+          </div>
+          <button class="btn btn-red" onclick="blockCountry()">Block</button>
+        </div>
+      </div>
+      <div class="blocked-chips" id="blockedList"></div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">⚙️ Bundesministerium für Industrieproduktion</div>
+      <div style="color:rgba(255,255,255,0.4);">Offizielle Betriebsplattform · German Industrial Command · Unauthorized access prohibited</div>
+    </div>
+  </footer>
+
+  <!-- ── FACTORY HIRE MODAL ── -->
+  <div class="modal-overlay" id="hireModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title" id="hireModalTitle">Assign Exclusive Contract</div>
+        <button class="modal-close" onclick="closeModal('hireModal')">✕</button>
+      </div>
+      <div class="modal-body" id="hireModalBody"></div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeModal('hireModal')">Cancel</button>
+        <button class="btn btn-gold" onclick="confirmExclusive()">Confirm Exclusive</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RELEASE EXCLUSIVE MODAL ── -->
+  <div class="modal-overlay" id="releaseModal">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">Release Factory</div>
+        <button class="modal-close" onclick="closeModal('releaseModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--text-sec);line-height:1.7;" id="releaseDetails"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" onclick="closeModal('releaseModal')">Cancel</button>
+        <button class="btn btn-red" onclick="confirmRelease()">Release Factory</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ═══════════════════════════════════════════
+   PRODUCTION DATA (from construct.html)
+═══════════════════════════════════════════ */
+const BRUTE = new Set(['gold','iron','coal','diamond','gravel','latex','silicon','oil','gas','uranium','fuel']);
+const RECIPES = {
+  electronics:     {name:'Electronics',    icon:'💡',output:1,  inputs:{gold:1,silicon:2,refined_iron:5}},
+  refined_iron:    {name:'Refined Iron',   icon:'🔩',output:5,  inputs:{iron:5,coal:3}},
+  chips:           {name:'Chips',          icon:'🔬',output:1,  inputs:{diamond:3,silicon:10}},
+  gunpowder:       {name:'Gunpowder',      icon:'💥',output:10, inputs:{coal:10,gravel:5}},
+  tires:           {name:'Tires',          icon:'🔄',output:1,  inputs:{latex:10}},
+  fuel_oil:        {name:'Fuel (Oil)',      icon:'🛢️',output:100,outputUnit:'L',inputs:{oil:50}},
+  fuel_gas:        {name:'Fuel (Gas)',      icon:'💨',output:100,outputUnit:'L',inputs:{gas:100}},
+  refined_uranium: {name:'Refined Uranium',icon:'☢️',output:1,  inputs:{uranium:10,fuel:1000,coal:500,diamond:120,gold:200}},
+};
+const R_BY_ID = {};
+for(const[k,r]of Object.entries(RECIPES)){R_BY_ID[k]=k;R_BY_ID[r.name.toLowerCase()]=k;R_BY_ID[r.name.toLowerCase().replace(/\s+/g,'_')]=k;}
+
+const PRODUCTION = {
+  'Man-Handled Weapons':[
+    {id:'knife',       name:'Knife',                        icon:'🔪',inputs:{refined_iron:2},manpower:1},
+    {id:'pistol',      name:'Pistol',                       icon:'🔫',inputs:{refined_iron:8},manpower:3},
+    {id:'smg',         name:'SMG',                          icon:'🔫',inputs:{refined_iron:18,electronics:1},manpower:8},
+    {id:'rifle',       name:'Rifle',                        icon:'🔫',inputs:{refined_iron:25,electronics:1},manpower:8},
+    {id:'sniper',      name:'Sniper Rifle',                 icon:'🎯',inputs:{refined_iron:40,electronics:2},manpower:12},
+    {id:'heavywpn',    name:'Heavy Weapon',                 icon:'💣',inputs:{refined_iron:60,electronics:3},manpower:15},
+    {id:'atm',         name:'Hand Anti-Tank Missile',       icon:'🚀',inputs:{refined_iron:80,electronics:5,chips:3},manpower:20},
+    {id:'mortar',      name:'Old Mortar',                   icon:'🎯',inputs:{refined_iron:120,electronics:5,chips:2},manpower:25},
+    {id:'lightvest',   name:'Light Military Vest',          icon:'🦺',inputs:{refined_iron:15,latex:5},manpower:5},
+    {id:'heavyvest',   name:'Heavy Military Vest',          icon:'🦺',inputs:{refined_iron:30,latex:10},manpower:10},
+  ],
+  'Air Vehicles':[
+    {id:'lightjet',    name:'Light Fighter Jet',            icon:'✈️',inputs:{refined_iron:800,electronics:30,chips:12},manpower:140},
+    {id:'medjet',      name:'Medium Fighter Jet',           icon:'✈️',inputs:{refined_iron:1400,electronics:70,chips:35},manpower:260},
+    {id:'heavyjet',    name:'Heavy Fighter Jet',            icon:'✈️',inputs:{refined_iron:1900,electronics:100,chips:55},manpower:340},
+    {id:'bomber',      name:'Bomber Jet',                   icon:'💥',inputs:{refined_iron:2400,electronics:120,chips:70},manpower:400},
+    {id:'heli',        name:'Helicopter',                   icon:'🚁',inputs:{refined_iron:600,electronics:20,chips:12},manpower:150},
+    {id:'airplane',    name:'Airplane (transport/military)',icon:'🛫',inputs:{refined_iron:2000,electronics:90,chips:60},manpower:300},
+  ],
+  'Land Vehicles':[
+    {id:'lighttank',   name:'Light Tank',                   icon:'🪖',inputs:{refined_iron:600,electronics:35,chips:10,tires:8},manpower:130},
+    {id:'medtank',     name:'Medium Tank',                  icon:'🪖',inputs:{refined_iron:950,electronics:50,chips:18,tires:10},manpower:190},
+    {id:'heavytank',   name:'Heavy Tank',                   icon:'🪖',inputs:{refined_iron:1450,electronics:75,chips:30,tires:12},manpower:260},
+    {id:'motorbike',   name:'Motorbike',                    icon:'🏍️',inputs:{refined_iron:35,electronics:2,chips:1,tires:2},manpower:10},
+    {id:'car',         name:'Car',                          icon:'🚗',inputs:{refined_iron:80,electronics:4,chips:2,tires:4},manpower:16},
+    {id:'truck',       name:'Truck',                        icon:'🚛',inputs:{refined_iron:220,electronics:10,chips:4,tires:6},manpower:40},
+  ],
+  'Water Vehicles':[
+    {id:'sub',         name:'Submarine',                    icon:'🤿',inputs:{refined_iron:2600,electronics:100,chips:55},manpower:420},
+    {id:'warship',     name:'Warship',                      icon:'⚓',inputs:{refined_iron:3200,electronics:110,chips:60},manpower:500},
+    {id:'boat',        name:'Boat',                         icon:'⛵',inputs:{refined_iron:70},manpower:12},
+    {id:'ship',        name:'Ship',                         icon:'🚢',inputs:{refined_iron:1200,electronics:60,chips:20},manpower:180},
+    {id:'carrier',     name:'Carrier',                      icon:'🛳️',inputs:{refined_iron:7000,electronics:280,chips:180},manpower:1000},
+    {id:'supercarrier',name:'Supercarrier',                 icon:'🛳️',inputs:{refined_iron:12000,electronics:500,chips:320},manpower:1800},
+  ],
+  'Ammunition':[
+    {id:'ammo50',      name:'.50 Ammo (100 bullets)',       icon:'🔴',inputs:{refined_iron:10,gunpowder:10},manpower:3},
+    {id:'ammo22mm',    name:'22mm Autocannon (25 bullets)', icon:'🔴',inputs:{refined_iron:20,gunpowder:15},manpower:5},
+    {id:'ammopistol',  name:'Pistol Ammo (100 bullets)',    icon:'🔵',inputs:{refined_iron:4,gunpowder:3},manpower:1},
+    {id:'ammosmg',     name:'SMG Ammo (100 bullets)',       icon:'🔵',inputs:{refined_iron:4,gunpowder:6},manpower:2},
+    {id:'ammorifle',   name:'Rifle Ammo (50 bullets)',      icon:'🟡',inputs:{refined_iron:4,gunpowder:6},manpower:2},
+    {id:'ammosniper',  name:'Sniper Ammo (50 bullets)',     icon:'🎯',inputs:{refined_iron:8,gunpowder:10},manpower:3},
+    {id:'ammoheavy',   name:'Heavy Ammo (50 bullets)',      icon:'🟠',inputs:{refined_iron:10,gunpowder:12},manpower:4},
+    {id:'ammoatm',     name:'Anti-Tank Missile (1 piece)',  icon:'🚀',inputs:{refined_iron:25,electronics:2,chips:1,gunpowder:12},manpower:8},
+    {id:'ammomortar',  name:'Mortar Ammo (4 rounds)',       icon:'💣',inputs:{refined_iron:15,gunpowder:20},manpower:6},
+  ],
+  'Missiles & Torpedoes':[
+    {id:'torpedo',     name:'Submarine Torpedo',            icon:'💦',inputs:{refined_iron:300,fuel:80,gunpowder:180,silicon:40},manpower:15},
+    {id:'cruise',      name:'Cruise Missile',               icon:'🏹',inputs:{refined_iron:400,fuel:150,gunpowder:200,silicon:50},manpower:35},
+    {id:'guided',      name:'Guided Missile',               icon:'🎯',inputs:{refined_iron:500,electronics:40,chips:15,fuel:150,gunpowder:250,silicon:60},manpower:25},
+    {id:'hypersonic',  name:'Hypersonic Missile',           icon:'⚡',inputs:{refined_iron:600,electronics:50,chips:20,fuel:200,gunpowder:300,silicon:70},manpower:60},
+    {id:'icbm',        name:'Ballistic Missile (ICBM)',     icon:'☄️',inputs:{refined_iron:800,electronics:60,chips:25,fuel:300,gunpowder:400,silicon:90},manpower:120},
+    {id:'nuclear',     name:'Nuclear Missile',              icon:'☢️',inputs:{refined_iron:1000,fuel:400,gunpowder:500,silicon:100},manpower:150},
+  ],
+  'Others':[
+    {id:'grenade',     name:'Grenade',                      icon:'💣',inputs:{refined_iron:1,gunpowder:2},manpower:1},
+    {id:'landbomb',    name:'Land Bomb (Anti-Tank)',        icon:'💥',inputs:{refined_iron:8,gunpowder:8},manpower:3},
+    {id:'drone',       name:'Drone',                        icon:'🛸',inputs:{refined_iron:20,electronics:5,chips:4,fuel:15},manpower:12},
+    {id:'barricade',   name:'Barricade',                    icon:'🚧',inputs:{refined_iron:10},manpower:5},
+    {id:'barrier',     name:'Barrier',                      icon:'🚧',inputs:{refined_iron:25},manpower:10},
+  ],
+};
+
+// Flat item lookup
+const ALL_ITEMS = {};
+for(const items of Object.values(PRODUCTION)) for(const it of items) ALL_ITEMS[it.id] = it;
+
+// Missile explosion size multipliers (apply to gunpowder and silicon only)
+const EXPLOSION_MULTIPLIERS = {
+  small:    { gunpowder: 0.5,  silicon: 0.6  },
+  medium:   { gunpowder: 1.0,  silicon: 1.0  },
+  big:      { gunpowder: 1.8,  silicon: 1.3  },
+  huge:     { gunpowder: 3.0,  silicon: 1.7  },
+  gigantic: { gunpowder: 4.5,  silicon: 2.0  },
+};
+
+function resolveToRaw(inputs, multiplier) {
+  const raw = {};
+  for(const[mat,amtEach] of Object.entries(inputs)){
+    const total = amtEach * multiplier;
+    if(BRUTE.has(mat)){raw[mat]=(raw[mat]||0)+total;continue;}
+    const rKey = R_BY_ID[mat]||R_BY_ID[mat.replace(/_/g,' ')];
+    if(rKey&&RECIPES[rKey]){
+      const r=RECIPES[rKey];
+      const sub=resolveToRaw(r.inputs,total/r.output);
+      for(const[rm,rv]of Object.entries(sub))raw[rm]=(raw[rm]||0)+rv;
+    }else{raw[mat]=(raw[mat]||0)+total;}
+  }
+  return raw;
+}
+
+const MAT_LABELS = {gold:'Gold',iron:'Iron',coal:'Coal',diamond:'Diamond',gravel:'Gravel',latex:'Latex',silicon:'Silicon',oil:'Oil (L)',gas:'Gas (L)',uranium:'Uranium',fuel:'Fuel (L)',refined_iron:'Refined Iron',electronics:'Electronics',chips:'Chips',gunpowder:'Gunpowder',tires:'Tires',refined_uranium:'Refined Uranium'};
+const MAT_UNITS  = {oil:'L',gas:'L',fuel:'L'};
+function mLabel(k){ return MAT_LABELS[k]||k; }
+function mUnit(k)  { return MAT_UNITS[k]||''; }
+function fmt(n,d=0){ if(n===undefined||n===null)return'—'; return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const STORE_KEY    = 'de_industry_v1';
+const TC_COUNTRIES = 'tc_countries';
+
+function defaultState() {
+  return { factories: [], orders: [], archive: [], blocked: [] };
+}
+function loadState() {
+  try { const r = localStorage.getItem(STORE_KEY); if(r) return JSON.parse(r); } catch(e) {}
+  return defaultState();
+}
+function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+function getCountries() {
+  try { return (JSON.parse(localStorage.getItem(TC_COUNTRIES)||'[]')).filter(c=>c.type==='country'||!c.type); } catch(e) { return []; }
+}
+
+let state = loadState();
+
+// Pending new order form state
+let orderItems = []; // [{itemId, qty, workers, turns, futureFuel, resources}]
+
+// Pending exclusive assign
+let pendingExclusiveFactoryId = null;
+let pendingReleaseFactoryId   = null;
+
+/* ═══════════════════════════════════════════
+   PAGE META
+═══════════════════════════════════════════ */
+const PAGE_META = {
+  factories:  { h1:'Factory Management', lead:'Manage Germany\'s industrial facilities. Each factory costs $200 per cycle. Exclusive contracts cost $1,000 per cycle.', bc:'Factory Management' },
+  orders:     { h1:'Active Production Orders', lead:'Track production packages by country. Confirm items as they are completed, then send the full package.', bc:'Orders' },
+  'new-order':{ h1:'New Production Order', lead:'Create a production order for a country. Build the item list, assign a factory, and submit.', bc:'New Order' },
+  archive:    { h1:'Archive — Sent Packages', lead:'Historical record of all completed and dispatched production packages.', bc:'Archive' },
+  blocked:    { h1:'Blocked Countries', lead:'Countries on this list cannot place new production orders with German factories.', bc:'Blocked Countries' },
+};
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(btn) btn.classList.add('active');
+  const m = PAGE_META[tab];
+  if(m){
+    document.getElementById('pageH1').textContent = m.h1;
+    document.getElementById('pageLead').textContent = m.lead;
+    document.getElementById('breadcrumbCurrent').textContent = m.bc;
+  }
+  if(tab==='new-order'){ populateOrderSelects(); renderOrderItemsPreview(); }
+  if(tab==='factories'){ renderFactoryGrid(); }
+  if(tab==='orders')   { renderOrdersList(); }
+  if(tab==='archive')  { renderArchive(); }
+  if(tab==='blocked')  { renderBlockedList(); }
+  renderStats();
+}
+
+/* ═══════════════════════════════════════════
+   FACTORIES
+═══════════════════════════════════════════ */
+function addFactory() {
+  const name = document.getElementById('factoryName').value.trim();
+  if(!name){ alert('Please enter a factory name.'); return; }
+  state.factories.push({ id: Date.now().toString(), name, exclusive: false, exclusiveFor: null, queue: [] });
+  saveState();
+  document.getElementById('factoryName').value = '';
+  renderFactoryGrid();
+  renderStats();
+}
+
+function deleteFactory(id) {
+  const f = state.factories.find(x=>x.id===id);
+  if(!f) return;
+  if((f.queue&&f.queue.length>0) && !confirm(`"${f.name}" has active queue entries. Delete anyway?`)) return;
+  state.factories = state.factories.filter(x=>x.id!==id);
+  saveState(); renderFactoryGrid(); renderStats();
+}
+
+function openExclusiveModal(id) {
+  const f = state.factories.find(x=>x.id===id); if(!f) return;
+  pendingExclusiveFactoryId = id;
+  document.getElementById('hireModalTitle').textContent = `Assign Exclusive — ${f.name}`;
+  document.getElementById('hireModalBody').innerHTML = `
+    <div class="alert alert-info" style="margin-bottom:14px;">
+      <strong>Exclusive contract:</strong> This factory is reserved for one country only. Cost: <strong>$1,000/cycle</strong>. The factory will show as Exclusive and no other country can queue into it.
+    </div>
+    <div class="de-field">
+      <label class="de-label">Country</label>
+      <select class="de-select" id="exclusiveCountryPick" style="width:100%;">
+        <option value="">— Select a country —</option>
+        ${getCountries().filter(c=>!state.blocked.map(b=>b.toLowerCase()).includes(c.name.toLowerCase())).map(c=>`<option value="${escH(c.name)}">${c.flag||''} ${escH(c.name)}</option>`).join('')}
+      </select>
+    </div>`;
+  openModal('hireModal');
+}
+
+function confirmExclusive() {
+  const country = document.getElementById('exclusiveCountryPick').value;
+  if(!country){ alert('Please select a country.'); return; }
+  const f = state.factories.find(x=>x.id===pendingExclusiveFactoryId); if(!f) return;
+  f.exclusive = true; f.exclusiveFor = country;
+  saveState(); closeModal('hireModal'); renderFactoryGrid(); renderStats();
+}
+
+function openReleaseModal(id) {
+  const f = state.factories.find(x=>x.id===id); if(!f) return;
+  pendingReleaseFactoryId = id;
+  document.getElementById('releaseDetails').textContent = `Release "${f.name}" from exclusive contract with ${f.exclusiveFor}? The factory will return to shared availability.`;
+  openModal('releaseModal');
+}
+
+function confirmRelease() {
+  const f = state.factories.find(x=>x.id===pendingReleaseFactoryId); if(!f) return;
+  f.exclusive = false; f.exclusiveFor = null;
+  saveState(); closeModal('releaseModal'); renderFactoryGrid(); renderStats();
+}
+
+function renderFactoryGrid() {
+  const grid = document.getElementById('factoryGrid');
+  if(state.factories.length === 0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="empty-icon">🏭</span><div class="empty-text">No factories registered. Add your first factory above.</div></div>`;
+    return;
+  }
+  grid.innerHTML = state.factories.map(f => {
+    const queueCount = (f.queue||[]).length;
+    let badgeClass, badgeText;
+    if(f.exclusive){ badgeClass='exclusive'; badgeText='Exclusive'; }
+    else if(queueCount>0){ badgeClass='busy'; badgeText=`Queue: ${queueCount}`; }
+    else{ badgeClass='free'; badgeText='Available'; }
+
+    const queueHtml = (f.queue||[]).length > 0
+      ? `<div class="fc-queue-title">Production Queue</div>
+         ${f.queue.map((q,i)=>`
+           <div class="fc-queue-item">
+             <span class="pos">#${i+1}</span>
+             <span class="country-name">${escH(q.country)}</span>
+             <span class="item-name">&nbsp;· ${escH(q.label)}</span>
+             ${i===0?'<span class="queue-active">● ACTIVE</span>':''}
+           </div>`).join('')}`
+      : '';
+
+    const cycleCharge = f.exclusive ? '$1,000' : '$200';
+
+    return `<div class="factory-card ${f.exclusive?'exclusive':''}">
+      <div class="fc-head">
+        <div class="fc-name">🏭 ${escH(f.name)}</div>
+        <span class="fc-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-info-row"><span class="k">Cost per Cycle</span><span class="v gold">${cycleCharge}</span></div>
+        ${f.exclusive ? `<div class="fc-info-row"><span class="k">Exclusive For</span><span class="v">${escH(f.exclusiveFor)}</span></div>` : ''}
+        <div class="fc-info-row"><span class="k">Queue Length</span><span class="v">${queueCount} order(s)</span></div>
+        ${queueHtml}
+      </div>
+      <div class="fc-foot">
+        ${!f.exclusive ? `<button class="btn btn-gold btn-sm" onclick="openExclusiveModal('${f.id}')">★ Set Exclusive</button>` : `<button class="btn btn-outline btn-sm" onclick="openReleaseModal('${f.id}')">Release Exclusive</button>`}
+        <button class="btn btn-red btn-sm" onclick="deleteFactory('${f.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   NEW ORDER — FORM
+═══════════════════════════════════════════ */
+function populateOrderSelects() {
+  const countries = getCountries();
+  const blocked = state.blocked.map(b=>b.toLowerCase());
+
+  // Country select
+  const cSel = document.getElementById('orderCountry');
+  const cVal = cSel.value;
+  cSel.innerHTML = '<option value="">— Select a country —</option>';
+  countries.forEach(c=>{
+    if(blocked.includes(c.name.toLowerCase())) return;
+    const o = document.createElement('option');
+    o.value = c.name; o.textContent = (c.flag?c.flag+' ':'')+c.name;
+    cSel.appendChild(o);
+  });
+  if(cVal) cSel.value = cVal;
+
+  // Factory select
+  const fSel = document.getElementById('orderFactory');
+  const fVal = fSel.value;
+  fSel.innerHTML = '<option value="">— Select a factory —</option>';
+  state.factories.forEach(f=>{
+    const o = document.createElement('option');
+    const qLen = (f.queue||[]).length;
+    const suffix = f.exclusive ? ` [EXCLUSIVE — ${f.exclusiveFor}]` : qLen > 0 ? ` [Queue: ${qLen}]` : ' [Available]';
+    o.value = f.id; o.textContent = f.name + suffix;
+    fSel.appendChild(o);
+  });
+  if(fVal) fSel.value = fVal;
+
+  // Item select
+  const iSel = document.getElementById('orderItemSelect');
+  const iVal = iSel.value;
+  iSel.innerHTML = '<option value="">— Pick an item —</option>';
+  for(const[cat, items] of Object.entries(PRODUCTION)){
+    const grp = document.createElement('optgroup');
+    grp.label = cat;
+    items.forEach(it=>{
+      const o = document.createElement('option');
+      o.value = it.id; o.textContent = it.icon+' '+it.name+' ('+it.manpower+' MP/unit)';
+      grp.appendChild(o);
+    });
+    iSel.appendChild(grp);
+  }
+  if(iVal) iSel.value = iVal;
+  updateFactoryStatus();
+}
+
+function updateFactoryStatus() {
+  const fId = document.getElementById('orderFactory').value;
+  const el = document.getElementById('orderFactoryStatus');
+  if(!fId){ el.innerHTML=''; return; }
+  const f = state.factories.find(x=>x.id===fId);
+  if(!f){ el.innerHTML=''; return; }
+  const qLen = (f.queue||[]).length;
+  if(f.exclusive){
+    const country = document.getElementById('orderCountry').value;
+    if(country && f.exclusiveFor.toLowerCase() !== country.toLowerCase()){
+      el.innerHTML = `<div class="alert alert-warn"><strong>Warning:</strong> This factory is exclusive to <strong>${escH(f.exclusiveFor)}</strong>. A different country cannot be queued here.</div>`;
+    } else {
+      el.innerHTML = `<div class="alert alert-info"><strong>Exclusive Factory</strong> reserved for <strong>${escH(f.exclusiveFor)}</strong>. Cost: $1,000/cycle.</div>`;
+    }
+  } else if(qLen > 0){
+    el.innerHTML = `<div class="alert alert-warn"><strong>Factory is busy</strong> — ${qLen} order(s) in queue. This order will be placed at position #${qLen+1}.</div>`;
+  } else {
+    el.innerHTML = `<div class="alert alert-success"><strong>Factory is available</strong> — this order will start immediately.</div>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('orderFactory').addEventListener('change', updateFactoryStatus);
+  document.getElementById('orderCountry').addEventListener('change', updateFactoryStatus);
+  document.getElementById('orderItemSelect').addEventListener('change', function() {
+    const item = ALL_ITEMS[this.value];
+    const row = document.getElementById('missilesSizeRow');
+    if(item && item.isMissile) {
+      row.style.display = 'block';
+    } else {
+      row.style.display = 'none';
+      document.getElementById('orderMissileSize').value = 'medium';
+    }
+  });
+});
+
+function addItemToOrder() {
+  const itemId  = document.getElementById('orderItemSelect').value;
+  const qty     = parseInt(document.getElementById('orderItemQty').value) || 1;
+  const workers = parseInt(document.getElementById('orderItemWorkers').value) || 25;
+  if(!itemId){ alert('Please select an item.'); return; }
+
+  const item = ALL_ITEMS[itemId]; if(!item) return;
+
+  // Apply explosion multiplier if missile
+  let scaledInputs = {...item.inputs};
+  let sizeLabel = '';
+  if(item.isMissile) {
+    const sizeKey = document.getElementById('orderMissileSize').value || 'medium';
+    const mult = EXPLOSION_MULTIPLIERS[sizeKey];
+    if(mult) {
+      if(scaledInputs.gunpowder != null) scaledInputs.gunpowder = scaledInputs.gunpowder * mult.gunpowder;
+      if(scaledInputs.silicon   != null) scaledInputs.silicon   = scaledInputs.silicon   * mult.silicon;
+    }
+    sizeLabel = ` [${sizeKey.charAt(0).toUpperCase() + sizeKey.slice(1)}]`;
+  }
+
+  const totalMp   = item.manpower * qty;
+  const turns     = Math.ceil(totalMp / workers);
+  const futureFuel = turns * 25;
+  const resources = resolveToRaw(scaledInputs, qty);
+
+  orderItems.push({ itemId, item, qty, workers, turns, futureFuel, resources,
+                    label: `${qty}× ${item.icon} ${item.name}${sizeLabel}` });
+  renderOrderItemsPreview();
+}
+
+function removeOrderItem(idx) {
+  orderItems.splice(idx, 1);
+  renderOrderItemsPreview();
+}
+
+function renderOrderItemsPreview() {
+  const el = document.getElementById('orderItemsPreview');
+  if(orderItems.length === 0){
+    el.innerHTML = `<div style="color:var(--text-muted);font-size:13px;padding:12px 0;">No items added yet. Select an item above and click Add Item.</div>`;
+    document.getElementById('orderResourceSummary').innerHTML = '';
+    return;
+  }
+
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:4px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Item</th>
+          <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Qty</th>
+          <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Workers</th>
+          <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Turns</th>
+          <th style="text-align:right;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Cost</th>
+          <th style="padding:4px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${orderItems.map((it,idx) => {
+          const turnCost = it.turns * 50;
+          const cycleCost = Math.ceil(it.turns/4) * 200;
+          return `<tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px;font-weight:600;">${it.label}</td>
+            <td style="padding:8px;text-align:center;">${it.qty}</td>
+            <td style="padding:8px;text-align:center;">${it.workers}</td>
+            <td style="padding:8px;text-align:center;">${it.turns} turn(s)</td>
+            <td style="padding:8px;text-align:right;color:#7a5f00;font-weight:700;">$${fmt(turnCost)}</td>
+            <td style="padding:4px;text-align:center;"><button onclick="removeOrderItem(${idx})" style="background:none;border:none;color:var(--de-red);cursor:pointer;font-size:16px;">×</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+
+  // Resource summary — aggregate all items
+  const totalRes = {};
+  let totalTurns = 0, totalFuel = 0;
+  for(const it of orderItems){
+    for(const[m,a] of Object.entries(it.resources)) totalRes[m]=(totalRes[m]||0)+a;
+    totalTurns += it.turns;
+    totalFuel  += it.futureFuel;
+  }
+  const totalCost  = totalTurns * 50;
+
+  let resHtml = Object.entries(totalRes).filter(([,a])=>a>0).map(([m,a])=>`
+    <div class="oc-resource-chip"><span>${mLabel(m)}</span> <strong>${fmt(a,a%1?2:0)}${mUnit(m)?'&nbsp;'+mUnit(m):''}</strong></div>`).join('');
+
+  document.getElementById('orderResourceSummary').innerHTML = `
+    <div class="oc-resources-box">
+      <div class="oc-resources-title">📦 Resources the country must send to Germany</div>
+      <div class="oc-resource-chips" style="margin-bottom:12px;">${resHtml||'<span style="color:var(--text-muted)">No resources required.</span>'}</div>
+      <div style="font-size:12px;color:var(--text-sec);border-top:1px solid var(--border);padding-top:10px;">
+        <strong>Total turns:</strong> ${totalTurns} &nbsp;·&nbsp;
+        <strong>Factory fuel (Germany provides):</strong> ${fmt(totalFuel)} L &nbsp;·&nbsp;
+        <strong>Total cost:</strong> <span style="color:#7a5f00;font-weight:700;">$${fmt(totalCost)}</span>
+        <span style="color:var(--text-muted)">&nbsp;($50/turn)</span>
+      </div>
+    </div>`;
+}
+
+function submitOrder() {
+  const country   = document.getElementById('orderCountry').value.trim();
+  const factoryId = document.getElementById('orderFactory').value;
+  const contract  = document.getElementById('orderContractType').value;
+
+  if(!country){ alert('Please select a requesting country.'); return; }
+  if(!factoryId){ alert('Please select a factory.'); return; }
+  if(orderItems.length === 0){ alert('Please add at least one item to the order.'); return; }
+
+  const factory = state.factories.find(x=>x.id===factoryId);
+  if(!factory){ alert('Factory not found.'); return; }
+
+  // Block check
+  if(state.blocked.map(b=>b.toLowerCase()).includes(country.toLowerCase())){
+    alert(`⛔ "${country}" is blocked from placing orders.`); return;
+  }
+
+  // Exclusive conflict check
+  if(factory.exclusive && factory.exclusiveFor.toLowerCase() !== country.toLowerCase()){
+    alert(`⛔ "${factory.name}" is exclusive to ${factory.exclusiveFor}. This country cannot be queued there.`); return;
+  }
+
+  const totalRes = {};
+  let totalTurns = 0, totalFuel = 0;
+  for(const it of orderItems){
+    for(const[m,a] of Object.entries(it.resources)) totalRes[m]=(totalRes[m]||0)+a;
+    totalTurns += it.turns;
+    totalFuel  += it.futureFuel;
+  }
+
+  const queuePos = (factory.queue||[]).length + 1;
+
+  const order = {
+    id: Date.now().toString(),
+    country,
+    factoryId,
+    factoryName: factory.name,
+    contract,
+    items: orderItems.map(it=>({ itemId: it.itemId, label: it.label, qty: it.qty, workers: it.workers, turns: it.turns, futureFuel: it.futureFuel, resources: {...it.resources}, confirmed: false })),
+    totalResources: totalRes,
+    totalTurns,
+    totalFuel,
+    totalCost: totalTurns * 50,
+    queuePosition: queuePos,
+    status: 'active',
+    createdAt: new Date().toISOString(),
+  };
+
+  // Add to factory queue
+  if(!factory.queue) factory.queue = [];
+  factory.queue.push({ orderId: order.id, country, label: `${orderItems.length} item(s)` });
+
+  state.orders.push(order);
+  saveState();
+  clearOrderForm();
+  renderStats();
+  // Switch to orders tab
+  document.querySelector('[onclick*="orders"]')?.click();
+}
+
+function clearOrderForm() {
+  orderItems = [];
+  document.getElementById('orderCountry').value = '';
+  document.getElementById('orderFactory').value = '';
+  document.getElementById('orderContractType').value = 'shared';
+  document.getElementById('orderItemSelect').value = '';
+  document.getElementById('orderItemQty').value = '1';
+  document.getElementById('orderItemWorkers').value = '25';
+  document.getElementById('orderMissileSize').value = 'medium';
+  document.getElementById('missilesSizeRow').style.display = 'none';
+  document.getElementById('orderFactoryStatus').innerHTML = '';
+  renderOrderItemsPreview();
+}
+
+/* ═══════════════════════════════════════════
+   ORDERS — CONFIRM ITEMS & SEND
+═══════════════════════════════════════════ */
+function confirmItem(orderId, itemIdx) {
+  const order = state.orders.find(x=>x.id===orderId); if(!order) return;
+  order.items[itemIdx].confirmed = true;
+  // Check if all confirmed
+  if(order.items.every(it=>it.confirmed)) order.status = 'complete';
+  saveState(); renderOrdersList(); renderStats();
+}
+
+function sendPackage(orderId) {
+  const order = state.orders.find(x=>x.id===orderId); if(!order) return;
+  if(!order.items.every(it=>it.confirmed)){
+    alert('All items must be confirmed (produced) before sending the package.'); return;
+  }
+  // Archive it
+  order.status = 'sent';
+  order.sentAt = new Date().toISOString();
+  state.archive.push({...order});
+  state.orders = state.orders.filter(x=>x.id!==orderId);
+  // Remove from factory queue
+  const factory = state.factories.find(x=>x.id===order.factoryId);
+  if(factory && factory.queue) factory.queue = factory.queue.filter(q=>q.orderId!==orderId);
+  saveState(); renderOrdersList(); renderArchive(); renderStats();
+}
+
+function deleteOrder(orderId) {
+  if(!confirm('Delete this order from the active list?')) return;
+  const order = state.orders.find(x=>x.id===orderId);
+  if(order){
+    const factory = state.factories.find(x=>x.id===order.factoryId);
+    if(factory&&factory.queue) factory.queue = factory.queue.filter(q=>q.orderId!==orderId);
+  }
+  state.orders = state.orders.filter(x=>x.id!==orderId);
+  saveState(); renderOrdersList(); renderStats();
+}
+
+function renderOrdersList() {
+  const el = document.getElementById('ordersList');
+  if(state.orders.length === 0){
+    el.innerHTML = `<div class="empty-state"><span class="empty-icon">📦</span><div class="empty-text">No active orders. Create one using the New Order tab.</div></div>`;
+    return;
+  }
+  el.innerHTML = state.orders.map(order => {
+    const allConfirmed = order.items.every(it=>it.confirmed);
+    const confirmedCount = order.items.filter(it=>it.confirmed).length;
+    let statusClass, statusText;
+    if(order.status==='complete'){ statusClass='complete'; statusText='Ready to Send'; }
+    else { statusClass='active'; statusText=`${confirmedCount}/${order.items.length} produced`; }
+
+    const itemsHtml = order.items.map((it,idx)=>`
+      <div class="oc-item-row">
+        <div class="oc-item-name">${escH(it.label)}</div>
+        <div class="oc-item-workers">${it.workers} workers</div>
+        <div class="oc-item-turns">${it.turns} turn(s)</div>
+        <div class="oc-item-cost">$${fmt(it.turns*50)}</div>
+        ${!it.confirmed
+          ? `<button class="confirm-btn" onclick="confirmItem('${order.id}',${idx})">Mark Produced</button>`
+          : `<button class="confirm-btn done" disabled>Ready</button>`}
+      </div>`).join('');
+
+    let resHtml = Object.entries(order.totalResources).filter(([,a])=>a>0).map(([m,a])=>`
+      <div class="oc-resource-chip"><span>${mLabel(m)}</span> <strong>${fmt(a,a%1?2:0)}${mUnit(m)?'&nbsp;'+mUnit(m):''}</strong></div>`).join('');
+
+    const contractLabel = order.contract === 'exclusive' ? 'Exclusive' : 'Shared';
+    const fmt_date = iso => new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+    return `<div class="order-card ${order.status}">
+      <div class="oc-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div>
+          <div class="oc-country">🌐 ${escH(order.country)}</div>
+          <div class="oc-meta">📍 ${escH(order.factoryName)} · ${contractLabel} · ${order.items.length} item(s) · Created ${fmt_date(order.createdAt)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="oc-status ${statusClass}">${statusText}</span>
+          <span style="color:var(--text-muted);">▾</span>
+        </div>
+      </div>
+      <div class="oc-body">
+        ${itemsHtml}
+        <div class="oc-resources-box" style="margin-top:12px;">
+          <div class="oc-resources-title">Resources sent by ${escH(order.country)}</div>
+          <div class="oc-resource-chips">${resHtml||'<span style="color:var(--text-muted)">None required</span>'}</div>
+        </div>
+      </div>
+      <div class="oc-foot">
+        <div>
+          <div class="oc-total-cost">$${fmt(order.totalCost)} total</div>
+          <div style="font-size:11px;color:var(--text-muted);">${order.totalTurns} turns · ${fmt(order.totalFuel)} L factory fuel</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="deleteOrder('${order.id}')">Delete</button>
+          ${allConfirmed
+            ? `<button class="btn btn-success btn-sm" onclick="sendPackage('${order.id}')">📨 Send Package</button>`
+            : `<button class="btn btn-ghost btn-sm" disabled style="opacity:0.4;cursor:not-allowed;">Waiting for production…</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   ARCHIVE
+═══════════════════════════════════════════ */
+function renderArchive() {
+  const el = document.getElementById('archiveList');
+  if(state.archive.length === 0){
+    el.innerHTML = `<div class="empty-state"><span class="empty-icon">🗂</span><div class="empty-text">No packages sent yet. Completed orders will appear here after being dispatched.</div></div>`;
+    return;
+  }
+  const fmt_date = iso => new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  el.innerHTML = state.archive.slice().reverse().map(order => {
+    let resHtml = Object.entries(order.totalResources).filter(([,a])=>a>0).map(([m,a])=>`<div class="oc-resource-chip"><span>${mLabel(m)}</span> <strong>${fmt(a,a%1?2:0)}${mUnit(m)?'&nbsp;'+mUnit(m):''}</strong></div>`).join('');
+    const itemsHtml = order.items.map(it=>`<div style="padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;">✓ ${escH(it.label)} — ${it.turns} turn(s) — $${fmt(it.turns*50)}</div>`).join('');
+
+    return `<div class="archive-card">
+      <div class="archive-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div>
+          <div class="archive-country">🌐 ${escH(order.country)}</div>
+          <div class="archive-date">${escH(order.factoryName)} · Sent ${fmt_date(order.sentAt||order.createdAt)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:13px;font-weight:700;color:var(--success);">$${fmt(order.totalCost)}</span>
+          <span style="color:var(--text-muted);">▾</span>
+        </div>
+      </div>
+      <div class="archive-body">
+        <div style="margin-bottom:10px;">${itemsHtml}</div>
+        <div class="oc-resources-title">Resources received from ${escH(order.country)}</div>
+        <div class="oc-resource-chips" style="margin-bottom:10px;">${resHtml||'None'}</div>
+        <div style="font-size:11px;color:var(--text-muted);">${order.totalTurns} turns · ${fmt(order.totalFuel)} L fuel · $${fmt(order.totalCost)} total</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   BLOCKING
+═══════════════════════════════════════════ */
+function blockCountry() {
+  const name = document.getElementById('blockSelect').value.trim(); if(!name) return;
+  if(state.blocked.map(b=>b.toLowerCase()).includes(name.toLowerCase())){ alert('Already blocked.'); return; }
+  state.blocked.push(name);
+  saveState(); populateBlockSelect(); renderBlockedList();
+}
+function unblockCountry(name) {
+  state.blocked = state.blocked.filter(b=>b.toLowerCase()!==name.toLowerCase());
+  saveState(); populateBlockSelect(); renderBlockedList();
+}
+function populateBlockSelect() {
+  const countries = getCountries();
+  const blocked = state.blocked.map(b=>b.toLowerCase());
+  const sel = document.getElementById('blockSelect');
+  sel.innerHTML = '<option value="">— Select a country —</option>';
+  countries.forEach(c=>{
+    if(!blocked.includes(c.name.toLowerCase())){
+      const o = document.createElement('option');
+      o.value = c.name; o.textContent = (c.flag?c.flag+' ':'')+c.name;
+      sel.appendChild(o);
+    }
+  });
+}
+function renderBlockedList() {
+  const el = document.getElementById('blockedList');
+  if(state.blocked.length===0){ el.innerHTML=`<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">No countries are currently blocked.</p>`; return; }
+  el.innerHTML = state.blocked.map(name=>`
+    <div class="blocked-chip">${escH(name)}
+      <button onclick="unblockCountry('${escH(name).replace(/'/g,"\\'")}')" title="Remove restriction">✕</button>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════ */
+function renderStats() {
+  const factoryCount   = state.factories.length;
+  const exclusiveCount = state.factories.filter(f=>f.exclusive).length;
+  const activeOrders   = state.orders.length;
+  const readyOrders    = state.orders.filter(o=>o.status==='complete').length;
+  const totalRevenue   = state.archive.reduce((s,o)=>s+o.totalCost,0);
+  const activeRevenue  = state.orders.reduce((s,o)=>s+o.totalCost,0);
+  const cycleCost      = (factoryCount - exclusiveCount)*200 + exclusiveCount*1000;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-lbl">Factories</div><div class="stat-val">${factoryCount}</div></div>
+    <div class="stat-card gold"><div class="stat-lbl">Exclusive</div><div class="stat-val gold">${exclusiveCount}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Active Orders</div><div class="stat-val">${activeOrders}</div></div>
+    <div class="stat-card green"><div class="stat-lbl">Ready to Send</div><div class="stat-val green">${readyOrders}</div></div>
+    <div class="stat-card red"><div class="stat-lbl">Cost/Cycle</div><div class="stat-val red" style="font-size:20px;">$${fmt(cycleCost)}</div></div>
+    <div class="stat-card gold"><div class="stat-lbl">Total Revenue</div><div class="stat-val gold" style="font-size:20px;">$${fmt(totalRevenue)}</div></div>
+  `;
+  document.getElementById('headerFactoryCount').textContent = factoryCount;
+}
+
+/* ═══════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.getElementById('hireModal').addEventListener('click',    e=>{ if(e.target===document.getElementById('hireModal'))    closeModal('hireModal'); });
+document.getElementById('releaseModal').addEventListener('click', e=>{ if(e.target===document.getElementById('releaseModal')) closeModal('releaseModal'); });
+
+/* ═══════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════ */
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+populateBlockSelect();
+renderFactoryGrid();
+renderOrdersList();
+renderArchive();
+renderBlockedList();
+renderStats();
+</script>
+</body>
+</html>
