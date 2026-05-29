@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swedbank — Private Banking</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --swe-orange: #e05a00;
+  --swe-orange-light: #f07030;
+  --swe-orange-dark: #b04000;
+  --swe-orange-glow: rgba(224,90,0,0.14);
+  --bg: #f5f2ee;
+  --bg2: #ede9e3;
+  --bg3: #e4dfd8;
+  --card: #faf8f5;
+  --card-border: rgba(224,90,0,0.15);
+  --dark: #1a1410;
+  --dark2: #2e2520;
+  --text: #2e2520;
+  --text-muted: #8a7e74;
+  --text-dim: #b0a89e;
+  --green: #2a7a4b;
+  --green-bg: rgba(42,122,75,0.08);
+  --red: #c03020;
+  --red-bg: rgba(192,48,32,0.08);
+  --blue: #1e4a9e;
+  --radius: 3px;
+  --radius-lg: 8px;
+  --shadow: 0 2px 12px rgba(46,37,32,0.08), 0 1px 3px rgba(46,37,32,0.06);
+  --shadow-lg: 0 8px 32px rgba(46,37,32,0.12), 0 2px 8px rgba(46,37,32,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ──────────── HEADER ──────────── */
+#header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--dark);
+  padding: 0 36px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1600px; margin: 0 auto; height: 66px;
+}
+.bank-logo { display: flex; align-items: center; gap: 14px; }
+.logo-mark {
+  width: 38px; height: 38px;
+  background: var(--swe-orange);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.logo-mark::before {
+  content: '';
+  position: absolute;
+  width: 20px; height: 3px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 2px;
+}
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  width: 3px; height: 20px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 2px;
+}
+.bank-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 21px;
+  color: #f5f2ee;
+  letter-spacing: 0.3px;
+}
+.bank-sub {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(245,242,238,0.45);
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.header-right {
+  font-size: 10px; letter-spacing: 2px;
+  color: rgba(245,242,238,0.45);
+  text-transform: uppercase; text-align: right;
+}
+.live-dot {
+  display: inline-block; width: 6px; height: 6px;
+  border-radius: 50%; background: #4aaa6a;
+  margin-right: 6px; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ──────────── LAYOUT ──────────── */
+.page-wrap {
+  max-width: 1600px; margin: 0 auto;
+  padding: 28px 36px 60px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+/* ──────────── SECTION LABEL ──────────── */
+.section-label {
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--swe-orange-dark); text-transform: uppercase;
+  margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(224,90,0,0.25), transparent);
+}
+
+/* ──────────── RESERVE PANEL ──────────── */
+#reserve-panel {
+  background: var(--dark);
+  border-radius: var(--radius-lg);
+  padding: 28px 36px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+#reserve-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 50% 80% at 90% 50%, rgba(224,90,0,0.09) 0%, transparent 70%);
+  pointer-events: none;
+}
+#reserve-panel::after {
+  content: 'RESERVE';
+  position: absolute; right: 36px; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'DM Serif Display', serif;
+  font-size: 96px; font-weight: 400;
+  color: rgba(224,90,0,0.05); letter-spacing: 8px;
+  pointer-events: none; white-space: nowrap;
+}
+.reserve-top { display: flex; align-items: flex-end; gap: 48px; flex-wrap: wrap; }
+.reserve-label {
+  font-size: 9px; letter-spacing: 3px;
+  color: rgba(245,242,238,0.4); text-transform: uppercase; margin-bottom: 6px;
+}
+.reserve-amount {
+  font-family: 'DM Serif Display', serif;
+  font-size: 54px; color: #f5f2ee;
+  line-height: 1; letter-spacing: -1px; font-weight: 400;
+}
+.reserve-amount .currency-sym { font-size: 28px; opacity: 0.6; margin-right: 4px; }
+.reserve-stats { display: flex; gap: 28px; flex-wrap: wrap; }
+.reserve-stat { border-left: 1px solid rgba(245,242,238,0.1); padding-left: 20px; }
+.reserve-stat-label {
+  font-size: 9px; letter-spacing: 2px;
+  color: rgba(245,242,238,0.35); text-transform: uppercase; margin-bottom: 4px;
+}
+.reserve-stat-val { font-family: 'DM Serif Display', serif; font-size: 22px; color: #f5f2ee; }
+.reserve-stat-val.green { color: #4aaa6a; }
+.reserve-stat-val.red   { color: #d06050; }
+.reserve-controls {
+  display: flex; align-items: center; gap: 16px;
+  margin-top: 22px; padding-top: 18px;
+  border-top: 1px solid rgba(245,242,238,0.06);
+  flex-wrap: wrap;
+}
+
+/* ──────────── BUTTONS ──────────── */
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 2.5px; font-weight: 600;
+  text-transform: uppercase; padding: 10px 22px;
+  border: none; cursor: pointer;
+  border-radius: var(--radius); transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--swe-orange);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--swe-orange-light);
+  box-shadow: 0 0 20px rgba(224,90,0,0.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-outline {
+  background: transparent;
+  color: rgba(245,242,238,0.65);
+  border: 1px solid rgba(245,242,238,0.18);
+}
+.btn-outline:hover {
+  border-color: var(--swe-orange);
+  color: var(--swe-orange-light);
+}
+.btn-undo {
+  background: rgba(245,242,238,0.05);
+  color: rgba(245,242,238,0.4);
+  border: 1px solid rgba(245,242,238,0.1);
+}
+.btn-undo:not(:disabled):hover {
+  background: rgba(224,90,0,0.1);
+  color: var(--swe-orange-light);
+  border-color: rgba(224,90,0,0.3);
+}
+.btn-undo:disabled { opacity: 0.3; cursor: not-allowed; }
+.undo-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: rgba(224,90,0,0.25); color: var(--swe-orange-light);
+  font-size: 9px; font-weight: 700; margin-left: 4px;
+}
+.btn-data {
+  background: rgba(245,242,238,0.05);
+  color: rgba(245,242,238,0.35);
+  border: 1px solid rgba(245,242,238,0.08);
+  font-size: 9px; letter-spacing: 2px;
+}
+.btn-data:hover {
+  background: rgba(224,90,0,0.08);
+  color: var(--swe-orange-light);
+  border-color: rgba(224,90,0,0.25);
+}
+.ctrl-sep {
+  width: 1px; height: 24px;
+  background: rgba(245,242,238,0.08);
+  margin: 0 2px;
+}
+.btn-green {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid rgba(42,122,75,0.25);
+}
+.btn-green:hover {
+  background: rgba(42,122,75,0.15);
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(42,122,75,0.15);
+}
+.btn-red {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid rgba(192,48,32,0.25);
+}
+.btn-red:hover {
+  background: rgba(192,48,32,0.15);
+  border-color: var(--red);
+  box-shadow: 0 0 12px rgba(192,48,32,0.15);
+}
+.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* ──────────── ACCOUNT GRID ──────────── */
+#nations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 14px;
+}
+.nation-card {
+  background: var(--card);
+  border: 1px solid rgba(46,37,32,0.1);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  overflow: hidden;
+}
+.nation-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--swe-orange), transparent);
+  opacity: 0; transition: opacity 0.25s;
+}
+.nation-card.enabled:hover {
+  border-color: rgba(224,90,0,0.25);
+  box-shadow: var(--shadow-lg);
+}
+.nation-card.enabled:hover::before { opacity: 1; }
+.nation-card.disabled {
+  opacity: 0.6;
+  filter: grayscale(0.4);
+}
+.nation-card.blocked {
+  background: rgba(192,48,32,0.04);
+  border-color: rgba(192,48,32,0.2);
+}
+.card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.nation-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px; color: var(--text); line-height: 1;
+}
+.nation-status-badge {
+  font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 2px; font-weight: 600;
+}
+.badge-enabled  { background: rgba(42,122,75,0.1);  color: var(--green); border: 1px solid rgba(42,122,75,0.2); }
+.badge-disabled { background: rgba(138,126,116,0.1); color: var(--text-muted); border: 1px solid rgba(138,126,116,0.2); }
+.badge-blocked  { background: rgba(192,48,32,0.1); color: var(--red); border: 1px solid rgba(192,48,32,0.2); }
+.toggle-switch { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 8px; }
+.toggle-switch input { display: none; }
+.toggle-track {
+  width: 34px; height: 18px;
+  background: rgba(138,126,116,0.2);
+  border: 1px solid rgba(138,126,116,0.25);
+  border-radius: 9px; position: relative; transition: all 0.25s;
+}
+.toggle-track::after {
+  content: ''; position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--text-muted); transition: all 0.25s;
+}
+.toggle-switch input:checked + .toggle-track {
+  background: rgba(42,122,75,0.2);
+  border-color: rgba(42,122,75,0.4);
+}
+.toggle-switch input:checked + .toggle-track::after {
+  left: 18px; background: var(--green);
+}
+.toggle-label { font-size: 10px; letter-spacing: 1px; color: var(--text-muted); }
+.nation-balances {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin: 14px 0; padding: 12px 0;
+  border-top: 1px solid rgba(46,37,32,0.06);
+  border-bottom: 1px solid rgba(46,37,32,0.06);
+}
+.bal-item { text-align: center; }
+.bal-label { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.bal-value { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text); }
+.bal-value.green { color: var(--green); }
+.bal-value.red   { color: var(--red); }
+.bal-value.orange{ color: var(--swe-orange); }
+.card-actions { display: flex; flex-direction: column; gap: 7px; }
+.action-row { display: flex; gap: 6px; align-items: center; }
+.action-input {
+  flex: 1; background: rgba(46,37,32,0.04);
+  border: 1px solid rgba(46,37,32,0.1);
+  border-radius: var(--radius); padding: 8px 10px;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 12px; outline: none; transition: border-color 0.2s;
+}
+.action-input:focus {
+  border-color: rgba(224,90,0,0.4);
+  background: rgba(224,90,0,0.03);
+}
+.action-input::placeholder { color: var(--text-dim); }
+.action-input:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* NO-INVESTMENT notice */
+.no-invest-badge {
+  margin-top: 10px; padding: 8px 12px;
+  background: rgba(30,74,158,0.06);
+  border: 1px solid rgba(30,74,158,0.18);
+  border-radius: var(--radius);
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--blue); text-transform: uppercase; text-align: center;
+}
+
+/* Blocked card */
+.blocked-notice {
+  margin-top: 10px; padding: 8px 12px;
+  background: rgba(192,48,32,0.07);
+  border: 1px solid rgba(192,48,32,0.18);
+  border-radius: var(--radius);
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--red); text-transform: uppercase; text-align: center;
+}
+
+/* ──────────── CARDS TAB ──────────── */
+.bank-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid rgba(46,37,32,0.1);
+  margin-bottom: 4px;
+}
+.bank-tab {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 2.5px; font-weight: 600;
+  text-transform: uppercase; padding: 13px 24px;
+  background: transparent; border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+  margin-bottom: -1px;
+}
+.bank-tab:hover { color: var(--text); }
+.bank-tab.active { color: var(--swe-orange); border-bottom-color: var(--swe-orange); }
+
+/* ──────────── CREDIT CARD VISUAL ──────────── */
+.cc-wrap { perspective: 1000px; margin-bottom: 18px; }
+.cc-card {
+  width: 100%; aspect-ratio: 1.586;
+  border-radius: 12px; padding: 18px 22px 16px;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default; user-select: none;
+}
+.cc-card:hover {
+  transform: translateY(-3px) rotateX(2deg);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.22), 0 4px 14px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+/* ── SWEDBANK UNIQUE TIER CARD STYLES ── */
+/* Entry: clean white/bone */
+.cc-entry    { background: linear-gradient(135deg, #f0ece6 0%, #e6e0d8 55%, #ece8e0 100%); border: 1.5px solid rgba(180,168,150,0.6); }
+/* Privat: warm sand-orange */
+.cc-privat   { background: linear-gradient(135deg, #3a2818 0%, #2a1c10 55%, #3e2e1a 100%); border: 1px solid rgba(224,90,0,0.45); }
+/* Företag: Swedish steel blue */
+.cc-foretag  { background: linear-gradient(135deg, #0c1e3a 0%, #081426 55%, #102240 100%); border: 1px solid rgba(70,120,200,0.4); }
+/* Guld: true gold */
+.cc-guld     { background: linear-gradient(135deg, #2c1e06 0%, #1c1002 55%, #3a2a08 100%); border: 1px solid rgba(210,165,50,0.55); }
+/* Premium: arctic platinum */
+.cc-premium  { background: linear-gradient(135deg, #1a2028 0%, #0e1418 55%, #222c36 100%); border: 1px solid rgba(174,192,210,0.45); }
+/* Elit: deep crimson */
+.cc-elit     { background: linear-gradient(135deg, #1a0808 0%, #0e0404 55%, #200c0c 100%); border: 1px solid rgba(200,40,40,0.45); }
+/* Riksbank: sovereign gold-black */
+.cc-riksbank {
+  background: linear-gradient(135deg, #04040a 0%, #020208 55%, #080818 100%);
+  border: 1px solid rgba(224,90,0,0.65);
+}
+.cc-riksbank-shimmer {
+  position: absolute; inset: 0; z-index: 1;
+  background: repeating-linear-gradient(
+    55deg, transparent, transparent 18px,
+    rgba(224,90,0,0.03) 18px, rgba(224,90,0,0.03) 19px
+  );
+  pointer-events: none;
+}
+
+/* Card inner elements */
+.cc-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 25% 25%, rgba(255,255,255,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 80% 75%, rgba(255,255,255,0.025) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cc-top { display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 2; }
+.cc-bank-name {
+  font-family: 'DM Sans', sans-serif; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; line-height: 1.4;
+}
+.cc-tier-pill {
+  font-size: 7.5px; letter-spacing: 2px; font-weight: 700;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 20px; border: 1px solid currentColor;
+}
+.cc-mid { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
+/* Swedish NFC / contactless symbol instead of gold chip */
+.cc-nfc {
+  width: 28px; height: 28px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.cc-nfc::before {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-left-color: transparent;
+}
+.cc-nfc::after {
+  content: '((•))';
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: -1px;
+}
+/* for entry card (light) */
+.cc-entry .cc-nfc::before { border-color: rgba(80,60,40,0.25); border-left-color: transparent; }
+.cc-entry .cc-nfc::after  { color: rgba(80,60,40,0.5); }
+
+.cc-number {
+  font-family: 'Courier New', monospace;
+  font-size: 13px; letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.82);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  position: relative; z-index: 2;
+}
+/* entry card dark text */
+.cc-entry .cc-number { color: rgba(50,38,28,0.78); text-shadow: none; }
+.cc-entry .cc-bank-name { color: rgba(50,38,28,0.55); }
+
+.cc-bottom {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; position: relative; z-index: 2;
+}
+.cc-field-label {
+  font-size: 7px; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 3px;
+}
+.cc-holder-name {
+  font-family: 'DM Sans', sans-serif; font-size: 9.5px;
+  font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; max-width: 140px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cc-expiry-val { font-family: 'Courier New', monospace; font-size: 10px; }
+/* Swedbank logo mark — orange square cross */
+.cc-swe-mark {
+  width: 26px; height: 26px;
+  background: var(--swe-orange);
+  border-radius: 4px;
+  opacity: 0.7;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.cc-swe-mark::before {
+  content: '';
+  position: absolute;
+  width: 12px; height: 2px;
+  background: rgba(255,255,255,0.9);
+}
+.cc-swe-mark::after {
+  content: '';
+  position: absolute;
+  width: 2px; height: 12px;
+  background: rgba(255,255,255,0.9);
+}
+/* entry card light */
+.cc-entry .cc-field-label { color: rgba(50,38,28,0.4); }
+.cc-entry .cc-holder-name { color: rgba(50,38,28,0.75); }
+.cc-entry .cc-expiry-val  { color: rgba(50,38,28,0.6); }
+
+/* dark cards */
+.cc-privat .cc-bank-name, .cc-foretag .cc-bank-name, .cc-guld .cc-bank-name,
+.cc-premium .cc-bank-name, .cc-elit .cc-bank-name, .cc-riksbank .cc-bank-name {
+  color: rgba(255,255,255,0.4);
+}
+.cc-privat .cc-field-label, .cc-foretag .cc-field-label, .cc-guld .cc-field-label,
+.cc-premium .cc-field-label, .cc-elit .cc-field-label, .cc-riksbank .cc-field-label {
+  color: rgba(255,255,255,0.32);
+}
+.cc-privat .cc-holder-name, .cc-foretag .cc-holder-name, .cc-guld .cc-holder-name,
+.cc-premium .cc-holder-name, .cc-elit .cc-holder-name, .cc-riksbank .cc-holder-name {
+  color: rgba(255,255,255,0.8);
+}
+.cc-privat .cc-expiry-val, .cc-foretag .cc-expiry-val, .cc-guld .cc-expiry-val,
+.cc-premium .cc-expiry-val, .cc-elit .cc-expiry-val, .cc-riksbank .cc-expiry-val {
+  color: rgba(255,255,255,0.6);
+}
+
+/* ──────────── CARD GRID ITEM ──────────── */
+.card-grid-item {
+  background: var(--card);
+  border: 1px solid rgba(46,37,32,0.1);
+  border-radius: var(--radius-lg);
+  padding: 22px; box-shadow: var(--shadow);
+  transition: border-color 0.25s;
+}
+.card-nation-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px; color: var(--text); margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cc-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-bottom: 14px; padding: 10px 0;
+  border-top: 1px solid rgba(46,37,32,0.06);
+  border-bottom: 1px solid rgba(46,37,32,0.06);
+}
+.cc-stat { text-align: center; }
+.cc-stat-label { font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.cc-stat-val { font-family: 'DM Serif Display', serif; font-size: 15px; }
+.cc-stat-val.avail { color: var(--green); }
+.cc-stat-val.debt  { color: var(--red); }
+.cc-stat-val.limit { color: var(--swe-orange); }
+.cc-actions { display: flex; flex-direction: column; gap: 7px; }
+.cc-upgrade-row {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-top: 4px; padding-top: 10px;
+  border-top: 1px solid rgba(46,37,32,0.06);
+}
+.btn-upgrade {
+  background: rgba(224,90,0,0.07); color: var(--swe-orange);
+  border: 1px solid rgba(224,90,0,0.25); font-size: 8px; letter-spacing: 2px; flex: 1;
+}
+.btn-upgrade:hover { background: rgba(224,90,0,0.14); border-color: var(--swe-orange); }
+.btn-downgrade {
+  background: rgba(138,126,116,0.07); color: var(--text-muted);
+  border: 1px solid rgba(138,126,116,0.18); font-size: 8px; letter-spacing: 2px;
+}
+.btn-downgrade:hover { background: rgba(138,126,116,0.14); border-color: var(--text-muted); }
+.tier-cost-note {
+  font-size: 9px; color: var(--text-dim); letter-spacing: 1px;
+  padding: 4px 0 0; text-align: center;
+}
+.usa-discount-note {
+  font-size: 9px; padding: 6px 10px; margin-top: 8px;
+  background: rgba(30,74,158,0.06);
+  border: 1px solid rgba(30,74,158,0.15);
+  border-radius: var(--radius); color: var(--blue);
+  letter-spacing: 0.5px; text-align: center;
+}
+
+/* ──────────── EXPOSURE TABLE ──────────── */
+.exposure-table {
+  width: 100%; border-collapse: collapse;
+  background: var(--card); border: 1px solid rgba(46,37,32,0.1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  font-size: 12px; box-shadow: var(--shadow);
+}
+.exposure-table th {
+  font-size: 8px; letter-spacing: 2.5px; color: var(--text-dim);
+  text-transform: uppercase; padding: 10px 14px; text-align: left;
+  background: rgba(46,37,32,0.03);
+  border-bottom: 1px solid rgba(46,37,32,0.08); font-weight: 600;
+}
+.exposure-table td { padding: 9px 14px; border-bottom: 1px solid rgba(46,37,32,0.05); color: var(--text); vertical-align: middle; }
+.exposure-table tr:last-child td { border-bottom: none; }
+.exposure-table tr:hover td { background: rgba(224,90,0,0.02); }
+.exposure-table tfoot td {
+  background: rgba(224,90,0,0.04); border-top: 1px solid rgba(224,90,0,0.15);
+  font-weight: 600; color: var(--swe-orange); font-size: 11px; border-bottom: none;
+}
+.exp-nation { font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--text); }
+.exp-tier-pill { font-size: 8px; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; border: 1px solid currentColor; white-space: nowrap; }
+.exp-val { font-family: 'DM Serif Display', serif; font-size: 14px; }
+.exp-borrowed { color: var(--red); }
+.exp-avail    { color: var(--green); }
+.exp-limit    { color: var(--swe-orange); }
+.exp-zero     { color: var(--text-dim); }
+.exp-bar-wrap { width: 70px; height: 4px; background: rgba(46,37,32,0.08); border-radius: 2px; display: inline-block; vertical-align: middle; }
+.exp-bar      { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.exp-pct      { font-size: 10px; color: var(--text-muted); margin-left: 6px; vertical-align: middle; }
+.exp-total-label { font-family: 'DM Serif Display', serif; font-size: 16px; }
+.no-exposure  { padding: 20px; text-align: center; color: var(--text-dim); font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; }
+
+/* ──────────── LOG ──────────── */
+#tx-log {
+  background: var(--card); border: 1px solid rgba(46,37,32,0.1);
+  border-radius: var(--radius-lg); height: 340px;
+  overflow-y: auto; padding: 4px 0;
+  scrollbar-width: thin; scrollbar-color: rgba(224,90,0,0.2) transparent;
+  box-shadow: var(--shadow);
+}
+#tx-log::-webkit-scrollbar { width: 4px; }
+#tx-log::-webkit-scrollbar-thumb { background: rgba(224,90,0,0.2); border-radius: 2px; }
+.log-entry {
+  display: grid; grid-template-columns: 90px 110px 1fr auto;
+  gap: 12px; align-items: center;
+  padding: 9px 18px; border-bottom: 1px solid rgba(46,37,32,0.04);
+  font-size: 11px; transition: background 0.15s;
+}
+.log-entry:hover { background: rgba(224,90,0,0.025); }
+.log-entry:last-child { border-bottom: none; }
+.log-time   { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; }
+.log-nation { color: var(--text-muted); font-size: 11px; font-weight: 500; }
+.log-desc   { color: var(--text); }
+.log-amount { font-family: 'DM Serif Display', serif; font-size: 16px; text-align: right; white-space: nowrap; }
+.log-entry.gain .log-amount { color: var(--green); }
+.log-entry.gain .log-desc   { color: var(--green); }
+.log-entry.loss .log-amount { color: var(--red); }
+.log-entry.loss .log-desc   { color: var(--red); }
+.log-entry.treasury .log-amount { color: var(--swe-orange); }
+.log-entry.treasury .log-desc   { color: var(--swe-orange-dark); }
+.log-entry.cycle .log-amount    { color: var(--swe-orange-light); }
+.log-empty {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: var(--text-dim); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+
+/* ──────────── NOTIFICATIONS ──────────── */
+#notif-container {
+  position: fixed; top: 80px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 999; pointer-events: none;
+}
+.notif {
+  background: var(--dark2);
+  border: 1px solid rgba(224,90,0,0.3);
+  border-radius: var(--radius-lg); padding: 12px 18px;
+  font-size: 11px; color: #f5f2ee; min-width: 260px; max-width: 340px;
+  animation: notifIn 0.3s ease, notifOut 0.4s 2.8s ease forwards;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25); pointer-events: none;
+}
+.notif.green { border-color: rgba(42,122,75,0.45); }
+.notif.red   { border-color: rgba(192,48,32,0.45); }
+.notif.orange{ border-color: rgba(224,90,0,0.55); }
+.notif-title { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--swe-orange); margin-bottom: 4px; }
+.notif.green .notif-title { color: #4aaa6a; }
+.notif.red   .notif-title { color: #d06050; }
+@keyframes notifIn  { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes notifOut { from { opacity:1; transform: translateX(0); } to { opacity:0; transform: translateX(20px); } }
+
+/* ──────────── MODALS ──────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,20,16,0.6); z-index: 200;
+  align-items: center; justify-content: center;
+}
+.modal-box {
+  background: #fff; border-radius: var(--radius-lg);
+  padding: 32px 36px; min-width: 320px; max-width: 420px; width: 90%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+}
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--text); margin-bottom: 6px; }
+.modal-sub { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; }
+.modal-input {
+  width: 100%; background: rgba(46,37,32,0.04);
+  border: 1px solid rgba(46,37,32,0.15); border-radius: var(--radius);
+  padding: 10px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  outline: none; margin-bottom: 16px;
+}
+.modal-input:focus { border-color: var(--swe-orange); }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-modal-cancel {
+  background: transparent; border: 1px solid rgba(46,37,32,0.15);
+  color: var(--text-muted); font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 2px; font-weight: 600;
+  text-transform: uppercase; padding: 9px 18px; border-radius: var(--radius); cursor: pointer;
+}
+.btn-modal-ok {
+  background: var(--swe-orange); color: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 2px;
+  font-weight: 600; text-transform: uppercase; padding: 9px 18px;
+  border-radius: var(--radius); cursor: pointer; border: none;
+}
+.btn-modal-ok:hover { background: var(--swe-orange-light); }
+
+/* ──────────── FEE INFO BOX ──────────── */
+#fee-info-box {
+  background: rgba(224,90,0,0.04); border: 1px solid rgba(224,90,0,0.12);
+  border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 16px;
+  font-size: 10px; letter-spacing: 0.5px;
+}
+
+/* ──────────── RESPONSIVE ──────────── */
+@media (max-width: 640px) {
+  .page-wrap { padding: 14px; gap: 18px; }
+  .reserve-amount { font-size: 36px; }
+  #header { padding: 0 14px; }
+  .log-entry { grid-template-columns: 80px 1fr auto; }
+  .log-nation { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-inner">
+    <div class="bank-logo">
+      <div class="logo-mark"></div>
+      <div>
+        <div class="bank-name">Swedbank</div>
+        <div class="bank-sub">Private Banking · Est. 1820</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="live-dot"></span>SYSTEM LIVE<br>
+      <span id="clock">—</span>
+    </div>
+  </div>
+</header>
+
+<!-- NOTIFICATIONS -->
+<div id="notif-container"></div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="reserve-modal" onclick="if(event.target===this)closeEditReserve()">
+  <div class="modal-box">
+    <div class="modal-title">Edit Reserve</div>
+    <div class="modal-sub">Set a new absolute reserve balance</div>
+    <input class="modal-input" id="reserve-input" type="number" min="0" step="any" placeholder="Enter new reserve amount…">
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeEditReserve()">Cancel</button>
+      <button class="btn-modal-ok" onclick="applyEditReserve()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page-wrap">
+
+  <!-- TABS -->
+  <div class="bank-tabs">
+    <button class="bank-tab active" id="tab-btn-accounts" onclick="switchTab('accounts')">📊 Accounts</button>
+    <button class="bank-tab" id="tab-btn-cards" onclick="switchTab('cards')">💳 Cards</button>
+  </div>
+
+  <!-- ══════ ACCOUNTS TAB ══════ -->
+  <div id="tab-accounts">
+
+  <!-- RESERVE PANEL -->
+  <div class="section-label">Reserve Treasury</div>
+  <div id="reserve-panel">
+    <div class="reserve-top">
+      <div>
+        <div class="reserve-label">Total Reserve</div>
+        <div class="reserve-amount"><span class="currency-sym">$</span><span id="treasury-display">30,000</span></div>
+      </div>
+      <div class="reserve-stats">
+        <div class="reserve-stat">
+          <div class="reserve-stat-label">Card Fees &amp; Interest</div>
+          <div class="reserve-stat-val green" id="treasury-tax-total">$0</div>
+        </div>
+        <div class="reserve-stat">
+          <div class="reserve-stat-label">Cycles Advanced</div>
+          <div class="reserve-stat-val" id="treasury-cycles">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="reserve-controls">
+      <button class="btn btn-primary" onclick="advanceCycle()">⟳ Advance Cycle</button>
+      <button class="btn btn-outline" onclick="yearlyFeeTax()">📅 Yearly Fee Tax</button>
+      <button class="btn btn-outline" onclick="openEditReserve()">✎ Edit Reserve</button>
+      <button class="btn btn-undo" id="undo-btn" onclick="undo()" disabled>↩ Undo</button>
+      <div class="ctrl-sep"></div>
+      <button class="btn btn-data" onclick="exportJSON()">↓ Export</button>
+      <button class="btn btn-data" onclick="importJSON()">↑ Import</button>
+    </div>
+  </div>
+
+  <!-- NATIONS -->
+  <div class="section-label">Client Accounts</div>
+  <div id="nations-grid"></div>
+
+  <!-- BLOCKED -->
+  <div class="section-label">Permanently Restricted Entities</div>
+  <div id="blocked-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+
+  <!-- LOG -->
+  <div>
+    <div class="section-label">Transaction Ledger</div>
+    <div id="tx-log"><div class="log-empty">No transactions recorded</div></div>
+  </div>
+
+  </div><!-- end #tab-accounts -->
+
+  <!-- ══════ CARDS TAB ══════ -->
+  <div id="tab-cards" style="display:none">
+
+    <div class="section-label">Credit Exposure Overview</div>
+    <div id="exposure-panel" style="margin-bottom:24px;"></div>
+
+    <div id="fee-info-box">
+      <div>
+        <div style="color:var(--swe-orange-dark);letter-spacing:2.5px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Yearly Card Fee</div>
+        <div style="color:var(--text)">Fixed amount charged via <strong>Yearly Fee Tax</strong>. Entry tier is always free.</div>
+      </div>
+      <div>
+        <div style="color:var(--swe-orange-dark);letter-spacing:2.5px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Credit Interest</div>
+        <div style="color:var(--text)">% on outstanding debt, collected each <strong>Cycle</strong>. Nations with $0 debt pay nothing.</div>
+      </div>
+      <div>
+        <div style="color:var(--swe-orange-dark);letter-spacing:2.5px;font-size:8px;text-transform:uppercase;margin-bottom:4px">USA Market Discount</div>
+        <div style="color:var(--text)">Card tier grants a discount on <strong>USA Market</strong> trades: Entry <span style="color:var(--text-dim)">0%</span> · Privat <span style="color:var(--blue)">4%</span> · Företag <span style="color:var(--blue)">8%</span> · Guld <span style="color:var(--blue)">12%</span> · Premium <span style="color:var(--blue)">16%</span> · Elit <span style="color:var(--blue)">18%</span> · Riksbank <span style="color:var(--blue);font-weight:600">20%</span></div>
+      </div>
+    </div>
+
+    <div class="section-label">Card Accounts</div>
+    <div id="cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA MODEL
+═══════════════════════════════════════════════ */
+// tradeDiscount = % on USA Market trades
+const CARD_TIERS = {
+  entry:    { name:'Entry',    upgradeCost:0,      creditLimit:800,    maintenance:0,    interest:0.06, accent:'#8a7e74', textClr:'#b0a89e', tradeDiscount:0    },
+  privat:   { name:'Privat',   upgradeCost:600,    creditLimit:3500,   maintenance:35,   interest:0.055,accent:'#e05a00', textClr:'#f07030', tradeDiscount:0.04 },
+  foretag:  { name:'Företag',  upgradeCost:3000,   creditLimit:9000,   maintenance:75,   interest:0.05, accent:'#4678c8', textClr:'#7aabf0', tradeDiscount:0.08 },
+  guld:     { name:'Guld',     upgradeCost:9500,   creditLimit:22000,  maintenance:180,  interest:0.04, accent:'#d2a532', textClr:'#e8c55a', tradeDiscount:0.12 },
+  premium:  { name:'Premium',  upgradeCost:22000,  creditLimit:55000,  maintenance:380,  interest:0.03, accent:'#aec0d2', textClr:'#d0e4f4', tradeDiscount:0.16 },
+  elit:     { name:'Elit',     upgradeCost:50000,  creditLimit:120000, maintenance:750,  interest:0.025,accent:'#c82828', textClr:'#f07070', tradeDiscount:0.18 },
+  riksbank: { name:'Riksbank', upgradeCost:120000, creditLimit:400000, maintenance:1800, interest:0.015,accent:'#e05a00', textClr:'#ffd080', tradeDiscount:0.20 },
+};
+const TIER_ORDER = ['entry','privat','foretag','guld','premium','elit','riksbank'];
+
+const NATIONS = [
+  { id:'usa',    name:'USA',               enabled: true, blocked: false },
+  { id:'russia', name:'Russia',            enabled: true, blocked: false },
+  { id:'israel', name:'Israel',            enabled: true, blocked: false },
+  { id:'brazil', name:'Brazil',            enabled: true, blocked: false },
+  { id:'mexico', name:'Mexico',            enabled: true, blocked: false },
+  { id:'iran',   name:'Iran',              enabled: true, blocked: false },
+  { id:'iraq',   name:'Iraq',              enabled: true, blocked: false },
+  { id:'korea',  name:'Korea',             enabled: true, blocked: false },
+  { id:'chinajp',name:'China / Japan',     enabled: true, blocked: false },
+  { id:'uk',     name:'UK',                enabled: true, blocked: false },
+  { id:'germany',name:'Germany',           enabled: true, blocked: false },
+  { id:'canada', name:'Canada',            enabled: true, blocked: false },
+  { id:'denswiss',name:'Denmark / Switzerland', enabled: true, blocked: false },
+  { id:'sweden', name:'Sweden',            enabled: true, blocked: false },
+  { id:'ukraine',name:'Ukraine',           enabled: true, blocked: false },
+  { id:'dubai',  name:'Dubai',             enabled: true, blocked: false },
+];
+
+const BLOCKED = [
+  { id:'pcc',    name:'PCC',               reason:'Criminal Organization' },
+  { id:'nalliance',name:'Northern Alliance',reason:'Criminal Organization' },
+  { id:'alqaeda',name:'Al-Qaeda',          reason:'Terrorist Entity' },
+  { id:'talihezbollah',name:'Taliban / Hezbollah', reason:'Terrorist Entity' },
+  { id:'maracartel',name:'Mara Cartel',    reason:'Criminal Organization' },
+];
+
+function generateCardNumber() {
+  return Array.from({length:4}, () => String(Math.floor(1000 + Math.random() * 9000))).join(' ');
+}
+
+const accounts = {};
+NATIONS.forEach(n => {
+  accounts[n.id] = {
+    ...n,
+    balance: 0,
+    totalDeposited: 0,
+    totalWithdrawn: 0,
+    cardTier: 'entry',
+    creditDebt: 0,
+    cardDisabled: false,
+    cardNumber: generateCardNumber(),
+    highestCardTier: 'entry',
+  };
+});
+
+let treasury = 30000;
+let treasuryTaxTotal = 0;
+let cycles = 0;
+let logEntries = [];
+const MAX_UNDO = 10;
+let undoStack = [];
+
+/* ═══════════════════════════════════════════════
+   UNDO
+═══════════════════════════════════════════════ */
+function pushUndo() {
+  undoStack.push(JSON.parse(JSON.stringify({ accounts, treasury, treasuryTaxTotal, cycles, logEntries })));
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+  updateUndoBtn();
+}
+function undo() {
+  if (!undoStack.length) return;
+  const snap = undoStack.pop();
+  NATIONS.forEach(n => { if (snap.accounts && snap.accounts[n.id]) Object.assign(accounts[n.id], snap.accounts[n.id]); });
+  treasury         = snap.treasury         ?? 30000;
+  treasuryTaxTotal = snap.treasuryTaxTotal ?? 0;
+  cycles           = snap.cycles           ?? 0;
+  logEntries       = Array.isArray(snap.logEntries) ? snap.logEntries : [];
+  renderNations(); if (activeTab === 'cards') renderCards();
+  renderLog(); updateTreasury(); updateUndoBtn(); saveState();
+  notify('Action Undone', `State restored — ${undoStack.length} undo${undoStack.length!==1?'s':''} remaining`, 'orange');
+}
+function updateUndoBtn() {
+  const btn = document.getElementById('undo-btn'); if (!btn) return;
+  const n = undoStack.length; btn.disabled = n === 0;
+  btn.innerHTML = n > 0 ? `↩ Undo <span class="undo-count">${n}</span>` : `↩ Undo`;
+}
+
+/* ═══════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════ */
+function fmt(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function fmtShort(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:2 }); }
+function now() { return new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit' }); }
+
+/* ═══════════════════════════════════════════════
+   LOG
+═══════════════════════════════════════════════ */
+function addLog(type, nation, desc, amount) {
+  logEntries.unshift({ type, nation, desc, amount, time: now() });
+  renderLog();
+}
+function renderLog() {
+  const el = document.getElementById('tx-log');
+  if (!logEntries.length) { el.innerHTML = '<div class="log-empty">No transactions recorded</div>'; return; }
+  el.innerHTML = logEntries.map(e => `
+    <div class="log-entry ${e.type}">
+      <span class="log-time">${e.time}</span>
+      <span class="log-nation">${e.nation}</span>
+      <span class="log-desc">${e.desc}</span>
+      <span class="log-amount">${e.amount >= 0 ? '+' : ''}${fmt(e.amount)}</span>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATIONS
+═══════════════════════════════════════════════ */
+function notify(title, msg, cls='orange') {
+  const c = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = `notif ${cls}`;
+  el.innerHTML = `<div class="notif-title">${title}</div><div>${msg}</div>`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ═══════════════════════════════════════════════
+   TREASURY
+═══════════════════════════════════════════════ */
+function updateTreasury() {
+  document.getElementById('treasury-display').textContent =
+    Number(treasury).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  document.getElementById('treasury-tax-total').textContent = fmt(treasuryTaxTotal);
+  document.getElementById('treasury-cycles').textContent = cycles;
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER NATIONS
+═══════════════════════════════════════════════ */
+function renderNations() {
+  const grid = document.getElementById('nations-grid');
+  grid.innerHTML = NATIONS.map(n => {
+    const acc = accounts[n.id]; const en = acc.enabled;
+    return `
+    <div class="nation-card ${en ? 'enabled' : 'disabled'}" id="card-${n.id}">
+      <div class="card-header">
+        <div>
+          <div class="nation-name">${n.name}</div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${en ? 'checked' : ''} onchange="toggleNation('${n.id}', this.checked)">
+            <div class="toggle-track"></div>
+            <span class="toggle-label">${en ? 'Active' : 'Suspended'}</span>
+          </label>
+        </div>
+        <span class="nation-status-badge ${en ? 'badge-enabled' : 'badge-disabled'}">${en ? 'Enabled' : 'Disabled'}</span>
+      </div>
+      <div class="nation-balances">
+        <div class="bal-item"><div class="bal-label">Balance</div><div class="bal-value orange" id="bal-${n.id}">${fmtShort(acc.balance)}</div></div>
+        <div class="bal-item"><div class="bal-label">Deposited</div><div class="bal-value green" id="dep-${n.id}">${fmtShort(acc.totalDeposited)}</div></div>
+        <div class="bal-item"><div class="bal-label">Withdrawn</div><div class="bal-value red" id="wit-${n.id}">${fmtShort(acc.totalWithdrawn)}</div></div>
+      </div>
+      <div class="card-actions">
+        <div class="action-row">
+          <input class="action-input" type="number" id="dep-input-${n.id}" placeholder="Deposit amount…" min="0" step="any" ${!en?'disabled':''}>
+          <button class="btn btn-green" ${!en?'disabled':''} onclick="deposit('${n.id}')">Deposit</button>
+        </div>
+        <div class="action-row">
+          <input class="action-input" type="number" id="wit-input-${n.id}" placeholder="Withdraw amount…" min="0" step="any" ${!en?'disabled':''}>
+          <button class="btn btn-red" ${!en?'disabled':''} onclick="withdraw('${n.id}')">Withdraw</button>
+        </div>
+        <div class="no-invest-badge">🔒 Investments not offered — Deposit &amp; Withdrawal only</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBlocked() {
+  const grid = document.getElementById('blocked-grid');
+  grid.innerHTML = BLOCKED.map(b => `
+    <div class="nation-card blocked" id="card-${b.id}">
+      <div class="card-header">
+        <div><div class="nation-name">${b.name}</div></div>
+        <span class="nation-status-badge badge-blocked">BLOCKED</span>
+      </div>
+      <div class="blocked-notice">⛔ ${b.reason} — Access Permanently Denied</div>
+    </div>`).join('');
+}
+
+function updateCard(id) {
+  const acc = accounts[id]; const en = acc.enabled;
+  const card = document.getElementById(`card-${id}`); if (!card) return;
+  card.className = `nation-card ${en ? 'enabled' : 'disabled'}`;
+  document.getElementById(`bal-${id}`).textContent = fmtShort(acc.balance);
+  document.getElementById(`dep-${id}`).textContent = fmtShort(acc.totalDeposited);
+  document.getElementById(`wit-${id}`).textContent = fmtShort(acc.totalWithdrawn);
+}
+
+/* ═══════════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════════ */
+function toggleNation(id, checked) { pushUndo(); accounts[id].enabled = checked; saveState(); renderNations(); }
+
+function getInput(elId) {
+  const el = document.getElementById(elId);
+  const val = parseFloat(el.value); el.value = '';
+  return isNaN(val) || val <= 0 ? null : val;
+}
+
+function deposit(id) {
+  const acc = accounts[id]; if (!acc.enabled) return;
+  const amount = getInput(`dep-input-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid deposit amount.', 'red'); return; }
+  pushUndo();
+  acc.balance += amount; acc.totalDeposited += amount;
+  updateCard(id);
+  addLog('gain', acc.name, `Deposit received`, amount);
+  notify('Deposit Confirmed', `${acc.name} deposited ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function withdraw(id) {
+  const acc = accounts[id]; if (!acc.enabled) return;
+  const amount = getInput(`wit-input-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid withdrawal amount.', 'red'); return; }
+  if (amount > acc.balance) { notify('Insufficient Funds', `${acc.name} balance is only ${fmt(acc.balance)}`, 'red'); return; }
+  pushUndo();
+  acc.balance -= amount; acc.totalWithdrawn += amount;
+  updateCard(id);
+  addLog('loss', acc.name, `Withdrawal processed`, -amount);
+  notify('Withdrawal Confirmed', `${acc.name} withdrew ${fmt(amount)}`, 'red');
+  saveState();
+}
+
+function advanceCycle() {
+  pushUndo(); let totalInterest = 0;
+  NATIONS.forEach(n => {
+    const acc = accounts[n.id]; if (!acc.enabled) return;
+    if (acc.creditDebt > 0) {
+      const tier = CARD_TIERS[acc.cardTier];
+      const interest = acc.creditDebt * tier.interest;
+      acc.balance -= interest; totalInterest += interest;
+      addLog('loss', acc.name, `Credit interest (${Math.round(tier.interest*100)}% on ${fmt(acc.creditDebt)})`, -interest);
+    }
+    if (acc.balance < -5000 && !acc.cardDisabled) {
+      acc.cardDisabled = true; acc.cardTier = 'entry';
+      addLog('loss', acc.name, `⚠ Balance below −$5,000 — Card suspended & downgraded to Entry`, 0);
+      notify('Card Suspended', `${acc.name} exceeded −$5,000 — card disabled`, 'red');
+    }
+  });
+  treasury += totalInterest; treasuryTaxTotal += totalInterest; cycles++;
+  updateTreasury(); NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
+  const msg = totalInterest > 0 ? `Credit interest collected: ${fmt(totalInterest)}` : 'No interest charged (no active debt)';
+  addLog('cycle', 'Swedbank Treasury', `Cycle ${cycles} advanced — ${msg}`, totalInterest);
+  notify('Cycle Advanced', msg, 'orange');
+  saveState();
+}
+
+function yearlyFeeTax() {
+  pushUndo(); let totalFees = 0; let nCharged = 0;
+  NATIONS.forEach(n => {
+    const acc = accounts[n.id]; if (!acc.enabled) return;
+    const tier = CARD_TIERS[acc.cardTier]; if (tier.maintenance <= 0) return;
+    acc.balance -= tier.maintenance; totalFees += tier.maintenance; nCharged++;
+    addLog('loss', acc.name, `Yearly card fee — ${tier.name} tier (${fmt(tier.maintenance)})`, -tier.maintenance);
+    if (acc.balance < -5000 && !acc.cardDisabled) {
+      acc.cardDisabled = true; acc.cardTier = 'entry';
+      notify('Card Suspended', `${acc.name} exceeded −$5,000`, 'red');
+    }
+  });
+  treasury += totalFees; treasuryTaxTotal += totalFees; updateTreasury();
+  NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
+  if (!nCharged) { notify('Yearly Fee Tax', 'No nations have paid cards.', 'orange'); return; }
+  addLog('treasury', 'Swedbank Treasury', `Yearly Fee Tax — ${nCharged} client${nCharged!==1?'s':''} charged`, totalFees);
+  notify('Yearly Fee Tax', `${nCharged} client${nCharged!==1?'s':''} charged — ${fmt(totalFees)} collected`, 'orange');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
+   BORROW / REPAY
+═══════════════════════════════════════════════ */
+function borrow(id) {
+  const acc = accounts[id]; const tier = CARD_TIERS[acc.cardTier];
+  if (!acc.enabled || acc.cardDisabled) return;
+  const amount = getInput(`cc-borrow-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid borrow amount.', 'red'); return; }
+  const available = tier.creditLimit - acc.creditDebt;
+  if (amount > available) { notify('Credit Limit Exceeded', `Available: ${fmt(available)}`, 'red'); return; }
+  pushUndo();
+  acc.creditDebt += amount; acc.balance += amount;
+  updateCard(id); updateCreditCardDisplay(id);
+  addLog('gain', acc.name, `Credit borrowed — ${fmt(amount)} (debt: ${fmt(acc.creditDebt)})`, amount);
+  notify('Credit Approved', `${acc.name} borrowed ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function repayCredit(id) {
+  const acc = accounts[id]; if (!acc.enabled) return;
+  const amount = getInput(`cc-repay-${id}`);
+  if (!amount) { notify('Input Error', 'Enter a valid repayment amount.', 'red'); return; }
+  if (amount > acc.balance) { notify('Insufficient Balance', `Balance: ${fmt(acc.balance)}`, 'red'); return; }
+  if (amount > acc.creditDebt) { notify('Overpayment', `Debt is only ${fmt(acc.creditDebt)}`, 'red'); return; }
+  pushUndo();
+  acc.creditDebt -= amount; acc.balance -= amount;
+  if (acc.cardDisabled && acc.balance >= -5000 && acc.creditDebt <= 0) {
+    acc.cardDisabled = false;
+    addLog('gain', acc.name, `Card re-enabled — debt cleared`, 0);
+    notify('Card Re-enabled', `${acc.name} cleared all debt`, 'green');
+  }
+  updateCard(id); updateCreditCardDisplay(id);
+  addLog('loss', acc.name, `Credit repaid — ${fmt(amount)} (debt: ${fmt(acc.creditDebt)})`, -amount);
+  notify('Repayment Confirmed', `${acc.name} repaid ${fmt(amount)}`, 'green');
+  saveState();
+}
+
+function upgradeCard(id) {
+  const acc = accounts[id]; if (!acc.enabled || acc.cardDisabled) return;
+  const tidx = TIER_ORDER.indexOf(acc.cardTier);
+  const nextKey = TIER_ORDER[tidx + 1];
+  if (!nextKey) { notify('Max Tier', 'Already at Riksbank tier.', 'orange'); return; }
+  const nextIdx = TIER_ORDER.indexOf(nextKey);
+  const highestIdx = TIER_ORDER.indexOf(acc.highestCardTier || 'entry');
+  const isReupgrade = nextIdx <= highestIdx;
+  const baseCost = CARD_TIERS[nextKey].upgradeCost;
+  const cost = isReupgrade ? Math.round(baseCost * 0.75) : baseCost;
+  if (acc.balance < cost) { notify('Insufficient Funds', `Need ${fmt(cost)} to upgrade to ${CARD_TIERS[nextKey].name}`, 'red'); return; }
+  pushUndo();
+  acc.balance -= cost; acc.cardTier = nextKey;
+  if (nextIdx > highestIdx) acc.highestCardTier = nextKey;
+  treasury += cost; treasuryTaxTotal += cost;
+  updateCard(id); updateTreasury(); updateCreditCardDisplay(id);
+  const disc = isReupgrade ? ` (loyalty −25%)` : '';
+  addLog('loss', acc.name, `Card upgraded → ${CARD_TIERS[nextKey].name} — paid ${fmt(cost)}${disc}`, -cost);
+  addLog('treasury', 'Swedbank Treasury', `Card upgrade fee from ${acc.name}`, cost);
+  notify('Card Upgraded', `${acc.name} → ${CARD_TIERS[nextKey].name}${disc}`, 'orange');
+  saveState();
+}
+
+function downgradeCard(id) {
+  const acc = accounts[id]; if (!acc.enabled) return;
+  const tidx = TIER_ORDER.indexOf(acc.cardTier);
+  const prevKey = TIER_ORDER[tidx - 1];
+  if (!prevKey) { notify('Min Tier', 'Already at Entry tier.', 'red'); return; }
+  const prevTier = CARD_TIERS[prevKey];
+  if (acc.creditDebt > prevTier.creditLimit) {
+    notify('Cannot Downgrade', `Debt (${fmt(acc.creditDebt)}) exceeds ${prevTier.name} limit. Repay first.`, 'red'); return;
+  }
+  pushUndo(); const old = acc.cardTier; acc.cardTier = prevKey;
+  updateCreditCardDisplay(id);
+  addLog('loss', acc.name, `Card downgraded from ${CARD_TIERS[old].name} → ${prevTier.name}`, 0);
+  notify('Card Downgraded', `${acc.name} → ${prevTier.name}`, 'red');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
+   EDIT RESERVE
+═══════════════════════════════════════════════ */
+function openEditReserve() {
+  document.getElementById('reserve-input').value = treasury.toFixed(2);
+  document.getElementById('reserve-modal').style.display = 'flex';
+}
+function closeEditReserve() {
+  document.getElementById('reserve-modal').style.display = 'none';
+  document.getElementById('reserve-input').value = '';
+}
+function applyEditReserve() {
+  const val = parseFloat(document.getElementById('reserve-input').value);
+  if (isNaN(val) || val < 0) { notify('Invalid Amount', 'Enter a valid non-negative value.', 'red'); return; }
+  const prev = treasury; pushUndo(); treasury = val;
+  updateTreasury(); closeEditReserve();
+  addLog('treasury', 'Swedbank Treasury', `Reserve manually adjusted (${val >= prev ? '+' : ''}${fmt(val - prev)})`, val - prev);
+  notify('Reserve Updated', `Treasury set to ${fmt(val)}`, 'orange');
+  saveState();
+}
+
+/* ═══════════════════════════════════════════════
+   CREDIT EXPOSURE
+═══════════════════════════════════════════════ */
+function renderExposurePanel() {
+  const el = document.getElementById('exposure-panel'); if (!el) return;
+  const rows = NATIONS.map(n => {
+    const acc = accounts[n.id]; const tier = CARD_TIERS[acc.cardTier];
+    const debt = acc.creditDebt; const lim = tier.creditLimit;
+    const avail = Math.max(0, lim - debt);
+    const pct = lim > 0 ? Math.round((debt / lim) * 100) : 0;
+    return { acc, tier, debt, lim, avail, pct };
+  });
+  const totalDebt = rows.reduce((s,r)=>s+r.debt,0);
+  const totalLim  = rows.reduce((s,r)=>s+r.lim,0);
+  const totalAvail= rows.reduce((s,r)=>s+r.avail,0);
+  const totalPct  = totalLim > 0 ? Math.round((totalDebt/totalLim)*100) : 0;
+  const activeRows= rows.filter(r=>r.debt > 0 || r.acc.cardTier !== 'entry');
+  if (!activeRows.length) { el.innerHTML = `<div class="no-exposure">No active credit — all clients on Entry tier with $0 debt</div>`; return; }
+  const tierColors = { entry:'#8a7e74', privat:'#e05a00', foretag:'#4678c8', guld:'#d2a532', premium:'#aec0d2', elit:'#c82828', riksbank:'#e05a00' };
+  const barColor = pct => pct < 40 ? '#2a7a4b' : pct < 75 ? '#e05a00' : '#c03020';
+  el.innerHTML = `
+    <table class="exposure-table">
+      <thead><tr><th>Nation</th><th>Card Tier</th><th>Credit Limit</th><th>Borrowed</th><th>Available</th><th>Usage</th></tr></thead>
+      <tbody>${activeRows.map(r=>`
+        <tr>
+          <td><span class="exp-nation">${r.acc.name}</span>${r.acc.cardDisabled?' <span style="font-size:8px;color:var(--red);letter-spacing:1px">⛔ SUSPENDED</span>':''}</td>
+          <td><span class="exp-tier-pill" style="color:${tierColors[r.acc.cardTier]}">${r.tier.name}</span></td>
+          <td><span class="exp-val exp-limit">${fmtShort(r.lim)}</span></td>
+          <td><span class="exp-val ${r.debt>0?'exp-borrowed':'exp-zero'}">${r.debt>0?fmtShort(r.debt):'—'}</span></td>
+          <td><span class="exp-val ${r.avail<r.lim*0.25?'exp-borrowed':'exp-avail'}">${fmtShort(r.avail)}</span></td>
+          <td><span class="exp-bar-wrap"><span class="exp-bar" style="width:${r.pct}%;background:${barColor(r.pct)}"></span></span><span class="exp-pct">${r.pct}%</span></td>
+        </tr>`).join('')}
+      </tbody>
+      <tfoot><tr>
+        <td colspan="2"><span class="exp-total-label">TOTAL EXPOSURE</span></td>
+        <td><span class="exp-val">${fmtShort(totalLim)}</span></td>
+        <td><span class="exp-val" style="color:${totalDebt>0?'var(--red)':'var(--text-dim)'}">${totalDebt>0?fmtShort(totalDebt):'—'}</span></td>
+        <td><span class="exp-val" style="color:var(--green)">${fmtShort(totalAvail)}</span></td>
+        <td><span class="exp-bar-wrap"><span class="exp-bar" style="width:${totalPct}%;background:${barColor(totalPct)}"></span></span><span class="exp-pct">${totalPct}%</span></td>
+      </tr></tfoot>
+    </table>`;
+}
+
+/* ═══════════════════════════════════════════════
+   CARD FACE HTML
+═══════════════════════════════════════════════ */
+function cardFaceHTML(acc) {
+  const tier = CARD_TIERS[acc.cardTier]; const tclr = tier.textClr;
+  const isRiks = acc.cardTier === 'riksbank';
+  return `
+    <div class="cc-card cc-${acc.cardTier}">
+      ${isRiks ? '<div class="cc-riksbank-shimmer"></div>' : ''}
+      <div class="cc-top">
+        <div class="cc-bank-name">Swedbank<br><span style="font-size:7px;letter-spacing:2px;opacity:0.45">PRIVATE BANKING</span></div>
+        <div class="cc-tier-pill" style="color:${tclr}">${tier.name.toUpperCase()}</div>
+      </div>
+      <div class="cc-mid">
+        <div class="cc-nfc"></div>
+        <div class="cc-number">${acc.cardNumber}</div>
+      </div>
+      <div class="cc-bottom">
+        <div>
+          <div class="cc-field-label">Cardholder</div>
+          <div class="cc-holder-name">${acc.name}</div>
+        </div>
+        <div style="text-align:center">
+          <div class="cc-field-label">Valid Thru</div>
+          <div class="cc-expiry-val">12/99</div>
+        </div>
+        <div class="cc-swe-mark"></div>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER CARDS
+═══════════════════════════════════════════════ */
+function renderCards() {
+  renderExposurePanel();
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = NATIONS.map(n => {
+    const acc = accounts[n.id]; const tier = CARD_TIERS[acc.cardTier];
+    const tidx = TIER_ORDER.indexOf(acc.cardTier);
+    const nextTier = TIER_ORDER[tidx+1]; const prevTier = TIER_ORDER[tidx-1];
+    const availCredit = tier.creditLimit - acc.creditDebt;
+    const en = acc.enabled;
+    const nextIdx = nextTier ? TIER_ORDER.indexOf(nextTier) : -1;
+    const highestIdx = TIER_ORDER.indexOf(acc.highestCardTier || 'entry');
+    const isReupgrade = nextTier && nextIdx <= highestIdx;
+    const nextBaseCost = nextTier ? CARD_TIERS[nextTier].upgradeCost : 0;
+    const nextCost = isReupgrade ? Math.round(nextBaseCost * 0.75) : nextBaseCost;
+    const usaDisc = tier.tradeDiscount > 0 ? `${Math.round(tier.tradeDiscount*100)}%` : 'None';
+    return `
+    <div class="card-grid-item" id="cc-item-${n.id}">
+      <div class="card-nation-name">${acc.name}${acc.cardDisabled?'<span style="font-size:9px;letter-spacing:2px;color:var(--red)">⛔ SUSPENDED</span>':''}</div>
+      <div class="cc-wrap">${cardFaceHTML(acc)}</div>
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="cc-stat-label">Available</div><div class="cc-stat-val avail" id="cc-avail-${n.id}">${fmtShort(Math.max(0,availCredit))}</div></div>
+        <div class="cc-stat"><div class="cc-stat-label">Debt</div><div class="cc-stat-val debt" id="cc-debt-${n.id}">${fmtShort(acc.creditDebt)}</div></div>
+        <div class="cc-stat"><div class="cc-stat-label">Limit</div><div class="cc-stat-val limit">${fmtShort(tier.creditLimit)}</div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:6px;font-size:9px;color:var(--text-dim);letter-spacing:1.5px;flex-wrap:wrap">
+        <span>Maintenance: <span style="color:var(--text-muted)">${tier.maintenance>0?fmt(tier.maintenance)+'/yr':'Free'}</span></span>
+        <span style="opacity:.4">·</span>
+        <span>Interest: <span style="color:var(--text-muted)">${Math.round(tier.interest*100)}%/cycle</span></span>
+        <span style="opacity:.4">·</span>
+        <span>USA Market Discount: <span style="color:${tier.tradeDiscount>0?'var(--blue)':'var(--text-dim)'};font-weight:600">${usaDisc}</span></span>
+      </div>
+      ${acc.cardDisabled?`<div style="margin-bottom:8px;padding:8px;background:var(--red-bg);border:1px solid rgba(192,48,32,0.25);border-radius:3px;font-size:9px;letter-spacing:1.5px;color:var(--red);text-align:center">⚠ Card suspended — clear debt to re-enable</div>`:''}
+      <div class="cc-actions">
+        <div class="action-row">
+          <input class="action-input" type="number" id="cc-borrow-${n.id}" placeholder="Borrow amount…" min="1" step="any" ${!en||acc.cardDisabled?'disabled':''}>
+          <button class="btn btn-outline" style="color:var(--blue);border-color:rgba(30,74,158,0.3);background:rgba(30,74,158,0.05)" ${!en||acc.cardDisabled?'disabled':''} onclick="borrow('${n.id}')">Borrow</button>
+        </div>
+        <div class="action-row">
+          <input class="action-input" type="number" id="cc-repay-${n.id}" placeholder="Repay amount…" min="1" step="any" ${!en?'disabled':''}>
+          <button class="btn btn-green" ${!en?'disabled':''} onclick="repayCredit('${n.id}')">Repay</button>
+        </div>
+      </div>
+      <div class="cc-upgrade-row">
+        ${nextTier ? `<button class="btn btn-upgrade" onclick="upgradeCard('${n.id}')" ${!en||acc.cardDisabled?'disabled':''}>↑ Upgrade to ${CARD_TIERS[nextTier].name}${isReupgrade?' ✦':''}</button>` : `<span style="font-size:9px;color:var(--swe-orange);letter-spacing:2px;flex:1;text-align:center">✦ MAX TIER REACHED</span>`}
+        ${prevTier ? `<button class="btn btn-downgrade" onclick="downgradeCard('${n.id}')" ${!en?'disabled':''}>↓ Downgrade</button>` : ''}
+      </div>
+      ${nextTier ? `<div class="tier-cost-note">${isReupgrade?`Re-upgrade: <span style="color:var(--green)">${fmt(nextCost)}</span> <span style="opacity:.5;text-decoration:line-through">${fmt(nextBaseCost)}</span> <span style="color:var(--green)">−25% loyalty</span>`:`Upgrade cost: ${fmt(nextCost)}`} → Swedbank Reserve</div>` : ''}
+      <div class="usa-discount-note">🗽 USA Market discount at this tier: <strong>${usaDisc}</strong></div>
+    </div>`;
+  }).join('');
+}
+
+function updateCreditCardDisplay(id) {
+  const item = document.getElementById(`cc-item-${id}`); if (!item) return;
+  const acc = accounts[id]; const tier = CARD_TIERS[acc.cardTier];
+  const avail = Math.max(0, tier.creditLimit - acc.creditDebt);
+  const dEl = document.getElementById(`cc-avail-${id}`); const bEl = document.getElementById(`cc-debt-${id}`);
+  if (dEl) dEl.textContent = fmtShort(avail);
+  if (bEl) bEl.textContent = fmtShort(acc.creditDebt);
+  renderCards();
+}
+
+/* ═══════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════ */
+let activeTab = 'accounts';
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-accounts').style.display = tab==='accounts' ? '' : 'none';
+  document.getElementById('tab-cards').style.display    = tab==='cards'    ? '' : 'none';
+  document.getElementById('tab-btn-accounts').classList.toggle('active', tab==='accounts');
+  document.getElementById('tab-btn-cards').classList.toggle('active', tab==='cards');
+  if (tab==='cards') { renderExposurePanel(); renderCards(); }
+}
+
+/* ═══════════════════════════════════════════════
+   EXPORT / IMPORT
+═══════════════════════════════════════════════ */
+function exportJSON() {
+  const data = { accounts, treasury, treasuryTaxTotal, cycles, logEntries, _exported: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `sweden_bank_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  notify('Export Complete', 'Bank state saved as JSON.', 'orange');
+}
+function importJSON() {
+  const input = document.createElement('input'); input.type = 'file'; input.accept = '.json,application/json';
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result); pushUndo();
+        NATIONS.forEach(n => { if (d.accounts && d.accounts[n.id]) Object.assign(accounts[n.id], d.accounts[n.id]); });
+        treasury         = d.treasury         ?? 30000;
+        treasuryTaxTotal = d.treasuryTaxTotal ?? 0;
+        cycles           = d.cycles           ?? 0;
+        logEntries       = Array.isArray(d.logEntries) ? d.logEntries : [];
+        renderNations(); renderCards(); renderLog(); updateTreasury(); updateUndoBtn(); saveState();
+        notify('Import Successful', 'Bank state loaded.', 'green');
+      } catch { notify('Import Failed', 'Invalid JSON file.', 'red'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+/* ═══════════════════════════════════════════════
+   PERSIST
+═══════════════════════════════════════════════ */
+function saveState() {
+  try { localStorage.setItem('swe_bank_v1', JSON.stringify({ accounts, treasury, treasuryTaxTotal, cycles, logEntries })); } catch{}
+}
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('swe_bank_v1')); if (!s) return;
+    NATIONS.forEach(n => {
+      if (s.accounts && s.accounts[n.id]) {
+        const a = s.accounts[n.id];
+        accounts[n.id].balance        = a.balance        ?? 0;
+        accounts[n.id].totalDeposited = a.totalDeposited ?? 0;
+        accounts[n.id].totalWithdrawn = a.totalWithdrawn ?? 0;
+        accounts[n.id].enabled        = a.enabled        ?? true;
+        accounts[n.id].cardTier       = a.cardTier       ?? 'entry';
+        accounts[n.id].creditDebt     = a.creditDebt     ?? 0;
+        accounts[n.id].cardDisabled   = a.cardDisabled   ?? false;
+        accounts[n.id].cardNumber     = a.cardNumber     || generateCardNumber();
+        accounts[n.id].highestCardTier= a.highestCardTier ?? a.cardTier ?? 'entry';
+      }
+    });
+    treasury         = s.treasury         ?? 30000;
+    treasuryTaxTotal = s.treasuryTaxTotal ?? 0;
+    cycles           = s.cycles           ?? 0;
+    logEntries       = Array.isArray(s.logEntries) ? s.logEntries : [];
+  } catch{}
+}
+
+/* ═══════════════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════════════ */
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US', {
+    hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit',
+    day:'2-digit', month:'short', year:'numeric'
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+renderNations();
+renderBlocked();
+loadState();
+renderNations();
+renderLog();
+updateTreasury();
+updateUndoBtn();
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

@@ -424,10 +424,16 @@
           🤝 Alliances
         </button>
         <button class="nav-btn" data-app="bank">
-          🏦 Bank
+          🏦 Bank (Dubai)
         </button>
         <button class="nav-btn" data-app="dubai_trade">
-          🏛 Dubai Trade
+          🏛 Dubai Trade (Dubai)
+        </button>
+        <button class="nav-btn" data-app="sweden_bank">
+          🏧 Swedbank
+        </button>
+        <button class="nav-btn" data-app="usa_market">
+          🗽 USA Market
         </button>
         <button class="nav-btn" data-app="ussr_silo">
           ☭ USSR Silo
@@ -435,8 +441,8 @@
         <button class="nav-btn" data-app="diplomacy">
           🕊 Diplomacy
         </button>
-        <button class="nav-btn" data-app="usa_security">
-          🦅 USA Security
+        <button class="nav-btn" data-app="uk_security">
+          👑 UK Security
         </button>
         <button class="nav-btn" data-app="asian">
           🐉 Asian Logistics
@@ -504,14 +510,24 @@
         file: 'alliances.html'
       },
       'bank': {
-        name: 'Bank',
+        name: 'Bank (Dubai)',
         icon: '🏦',
         file: 'bank.html'
       },
       'dubai_trade': {
-        name: 'Dubai Trade',
+        name: 'Dubai Trade (Dubai)',
         icon: '🏛',
         file: 'dubai_trade.html'
+      },
+      'sweden_bank': {
+        name: 'Swedbank',
+        icon: '🏧',
+        file: 'sweden_bank.html'
+      },
+      'usa_market': {
+        name: 'USA Market',
+        icon: '🗽',
+        file: 'usa_market.html'
       },
       'ussr_silo': {
         name: 'USSR Silo',
@@ -523,10 +539,10 @@
         icon: '🕊',
         file: 'diplomacy.html'
       },
-      'usa_security': {
-        name: 'USA Security',
-        icon: '🦅',
-        file: 'usa_security.html'
+      'uk_security': {
+        name: 'UK Security',
+        icon: '👑',
+        file: 'uk_security.html'
       },
       'asian': {
         name: 'Asian Logistics',
@@ -792,8 +808,14 @@
           localStorage.setItem('tc_diplomacy', JSON.stringify(merged));
         } },
       { name:'usa_security.json', path:'assets/usa_security.json',
-        read:()=>{ try{return JSON.parse(localStorage.getItem('usa_security_v1')||'null');}catch{return null;} },
-        write:(d)=>{ if(d) localStorage.setItem('usa_security_v1',JSON.stringify(d)); } },
+        read:()=>{ try{return JSON.parse(localStorage.getItem('uk_security_v1')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('uk_security_v1',JSON.stringify(d)); } },
+      { name:'sweden_bank.json', path:'assets/sweden_bank.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('swe_bank_v1')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('swe_bank_v1',JSON.stringify(d)); } },
+      { name:'usa_market.json', path:'assets/usa_market.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('usa_market_v1')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('usa_market_v1',JSON.stringify(d)); } },
       { name:'asian.json', path:'assets/asian.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('cnjp_logistics_v2')||'null');}catch{return null;} },
         write:(d)=>{ if(d) localStorage.setItem('cnjp_logistics_v2',JSON.stringify(d)); } },

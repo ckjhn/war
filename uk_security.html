@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U.K. Defence Security Services | Official Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --uk-blue:      #00247d;
+      --uk-blue-mid:  #003399;
+      --uk-blue-light:#0052cc;
+      --uk-red:       #cf142b;
+      --uk-gold:      #c8a951;
+      --bg:            #f1f1f1;
+      --white:         #ffffff;
+      --gray-light:    #f9f9f9;
+      --gray-mid:      #d6d7d9;
+      --gray-dark:     #5b616b;
+      --gray-text:     #212121;
+      --link:          #0071bc;
+      --link-visited:  #4c2c92;
+      --success-green: #2e8540;
+      --success-bg:    #e7f4e4;
+      --warn-yellow:   #fef0c8;
+      --warn-border:   #f9c642;
+      --danger-bg:     #fce8e8;
+      --danger-border: #cd2026;
+      --pending-bg:    #e8f1fb;
+      --pending-border:#205493;
+      --font-sans:     'Source Sans 3', 'Public Sans', Arial, sans-serif;
+      --font-serif:    'Source Serif 4', Georgia, serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: var(--bg); color: var(--gray-text); font-family: var(--font-sans); font-size: 15px; line-height: 1.5; }
+
+    /* ── GOV.GOV TOP NOTICE BAR ── */
+    .gov-notice {
+      background: var(--uk-blue);
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 0;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .gov-notice-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+    }
+    .gov-notice img { width: 16px; height: 11px; vertical-align: middle; }
+    .gov-notice a { color: var(--uk-gold); text-decoration: none; font-weight: 600; }
+
+    /* ── BETA BANNER ── */
+    .beta-banner {
+      background: var(--warn-yellow);
+      border-bottom: 2px solid var(--warn-border);
+      padding: 8px 0;
+      font-size: 13px;
+      color: #333;
+    }
+    .beta-banner-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .beta-tag {
+      background: var(--uk-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--white);
+      border-bottom: 4px solid var(--uk-blue);
+      padding: 0;
+    }
+    .site-header-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .agency-logo {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .seal-circle {
+      width: 60px; height: 60px;
+      background: var(--uk-blue);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      border: 3px solid var(--uk-gold);
+    }
+    .agency-text {}
+    .agency-name {
+      font-family: var(--font-sans);
+      font-size: 19px; font-weight: 700;
+      color: var(--uk-blue);
+      line-height: 1.2;
+      letter-spacing: 0.3px;
+    }
+    .agency-sub {
+      font-size: 12px; color: var(--gray-dark);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .header-troop-status {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    }
+    .troop-status-label {
+      font-size: 11px; color: var(--gray-dark);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .troop-status-count {
+      font-size: 24px; font-weight: 700; color: var(--uk-blue);
+      font-family: var(--font-serif); line-height: 1;
+    }
+    .troop-status-count.unset { color: var(--gray-dark); font-size: 16px; }
+    .btn-configure {
+      background: var(--uk-blue-mid);
+      color: #fff;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 13px; font-weight: 600;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-configure:hover { background: var(--uk-blue); }
+
+    /* ── RED ACCENT BAR ── */
+    .accent-bar {
+      height: 8px;
+      background: linear-gradient(90deg, var(--uk-blue) 0%, var(--uk-blue-mid) 33%, var(--uk-red) 66%, var(--uk-red) 100%);
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      background: var(--uk-blue);
+      border-bottom: 3px solid var(--uk-gold);
+    }
+    .site-nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; gap: 0;
+    }
+    .nav-link {
+      display: block;
+      color: rgba(255,255,255,0.85);
+      font-size: 14px; font-weight: 600;
+      padding: 12px 18px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -3px;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
+      background: none; border-top: none; border-left: none; border-right: none;
+      border-bottom: 3px solid transparent;
+      font-family: var(--font-sans);
+    }
+    .nav-link:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.4); }
+    .nav-link.active { color: #fff; border-bottom-color: var(--uk-gold); background: rgba(255,255,255,0.08); }
+
+    /* ── PAGE LAYOUT ── */
+    .page-wrapper {
+      max-width: 1200px; margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* ── PAGE TITLE SECTION ── */
+    .page-title-section {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+    .page-breadcrumb {
+      font-size: 13px; color: var(--gray-dark);
+      margin-bottom: 8px;
+    }
+    .page-breadcrumb a { color: var(--link); text-decoration: none; }
+    .page-breadcrumb a:hover { text-decoration: underline; }
+    .page-breadcrumb .sep { margin: 0 6px; color: var(--gray-mid); }
+    .page-h1 {
+      font-family: var(--font-serif);
+      font-size: 30px; font-weight: 600;
+      color: var(--uk-blue);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .page-lead {
+      font-size: 16px; color: var(--gray-dark);
+      max-width: 680px; line-height: 1.6;
+    }
+
+    /* ── STAT CARDS ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-top: 4px solid var(--uk-blue);
+      padding: 18px 20px;
+    }
+    .stat-card.red-top { border-top-color: var(--uk-red); }
+    .stat-card.gold-top { border-top-color: var(--uk-gold); }
+    .stat-card.green-top { border-top-color: var(--success-green); }
+    .stat-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--gray-dark);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .stat-card-value {
+      font-family: var(--font-serif);
+      font-size: 28px; font-weight: 600;
+      color: var(--uk-blue); line-height: 1;
+    }
+
+    /* ── TAB PANEL ── */
+    .tab-container { margin-bottom: 8px; }
+    .tab-list {
+      display: flex; border-bottom: 2px solid var(--uk-blue);
+      gap: 0; background: transparent;
+    }
+    .tab-btn {
+      background: var(--gray-light);
+      border: 1px solid var(--gray-mid);
+      border-bottom: none;
+      color: var(--gray-dark);
+      font-family: var(--font-sans);
+      font-size: 14px; font-weight: 600;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-right: 4px;
+      border-radius: 4px 4px 0 0;
+      letter-spacing: 0.2px;
+      transition: all 0.15s;
+    }
+    .tab-btn:hover { background: #e8ecf1; color: var(--uk-blue); }
+    .tab-btn.active {
+      background: var(--white);
+      color: var(--uk-blue);
+      border-top: 3px solid var(--uk-blue);
+      padding-top: 8px;
+    }
+    .tab-panel { display: none; padding-top: 24px; }
+    .tab-panel.active { display: block; }
+
+    /* ── SECTION TITLES ── */
+    .section-h2 {
+      font-family: var(--font-serif);
+      font-size: 22px; font-weight: 600;
+      color: var(--uk-blue);
+      margin-bottom: 6px;
+    }
+    .section-desc {
+      font-size: 14px; color: var(--gray-dark);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .rule { height: 1px; background: var(--gray-mid); margin: 24px 0; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .form-card-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--uk-blue);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-mid);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: var(--font-sans);
+    }
+    .usa-flag-small { width: 22px; height: 14px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 16px; align-items: end;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
+
+    .usa-field { display: flex; flex-direction: column; gap: 5px; }
+    .usa-label {
+      font-size: 13px; font-weight: 700;
+      color: var(--gray-text);
+    }
+    .usa-label .req { color: var(--uk-red); margin-left: 2px; }
+    .usa-input, .usa-select, .usa-textarea {
+      background: var(--white);
+      border: 1px solid #5b616b;
+      color: var(--gray-text);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      padding: 9px 12px;
+      border-radius: 3px;
+      outline: none;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .usa-input:focus, .usa-select:focus, .usa-textarea:focus {
+      border-color: var(--uk-blue-light);
+      box-shadow: 0 0 0 3px rgba(46,120,210,0.25);
+      outline: none;
+    }
+    .usa-input::placeholder, .usa-textarea::placeholder { color: #aeb0b5; }
+    .usa-textarea { resize: vertical; min-height: 80px; }
+    .usa-select option { background: #fff; }
+    .usa-hint { font-size: 12px; color: var(--gray-dark); margin-top: 3px; }
+
+    /* ── COST PREVIEW BOX ── */
+    .cost-box {
+      background: var(--pending-bg);
+      border-left: 4px solid var(--uk-blue);
+      padding: 14px 18px;
+      margin: 16px 0;
+      display: none;
+    }
+    .cost-box-title {
+      font-weight: 700; font-size: 13px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--uk-blue); margin-bottom: 10px;
+    }
+    .cost-table { width: 100%; border-collapse: collapse; }
+    .cost-table td {
+      font-size: 13px; padding: 4px 0;
+      vertical-align: top;
+    }
+    .cost-table td:first-child { color: var(--gray-dark); width: 55%; }
+    .cost-table td:last-child { font-weight: 700; text-align: right; }
+    .cost-table .total-row td { border-top: 1px solid var(--uk-blue-mid); padding-top: 8px; font-size: 16px; color: var(--uk-blue); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-sans);
+      font-weight: 700; font-size: 14px;
+      letter-spacing: 0.3px;
+      padding: 9px 20px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--uk-blue); color: #fff; border-color: var(--uk-blue); }
+    .btn-primary:hover { background: var(--uk-blue-mid); border-color: var(--uk-blue-mid); }
+    .btn-secondary { background: transparent; color: var(--uk-blue); border-color: var(--uk-blue); }
+    .btn-secondary:hover { background: var(--pending-bg); }
+    .btn-success { background: var(--success-green); color: #fff; border-color: var(--success-green); }
+    .btn-success:hover { filter: brightness(0.9); }
+    .btn-danger { background: var(--uk-red); color: #fff; border-color: var(--uk-red); }
+    .btn-danger:hover { filter: brightness(0.9); }
+    .btn-ghost { background: transparent; color: var(--gray-dark); border-color: var(--gray-mid); }
+    .btn-ghost:hover { border-color: var(--gray-dark); color: var(--gray-text); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
+
+    /* ── ALERT BOXES ── */
+    .alert {
+      padding: 12px 16px;
+      border-left: 4px solid;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .alert-warn { background: var(--warn-yellow); border-color: var(--warn-border); }
+    .alert-info { background: var(--pending-bg); border-color: var(--uk-blue); color: var(--uk-blue); }
+    .alert strong { font-weight: 700; }
+
+    /* ── PROPOSAL CARDS ── */
+    .filter-bar {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .filter-label { font-size: 13px; color: var(--gray-dark); font-weight: 600; }
+    .filter-btn {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      color: var(--gray-dark);
+      font-size: 13px; font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      cursor: pointer; transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .filter-btn:hover { border-color: var(--uk-blue); color: var(--uk-blue); }
+    .filter-btn.active { background: var(--uk-blue); color: #fff; border-color: var(--uk-blue); }
+    .filter-btn.pending.active  { background: var(--uk-blue-mid); border-color: var(--uk-blue-mid); }
+    .filter-btn.accepted.active { background: var(--success-green); border-color: var(--success-green); }
+    .filter-btn.denied.active   { background: var(--uk-red); border-color: var(--uk-red); }
+
+    .proposals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .proposal-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-top: 4px solid var(--gray-mid);
+      cursor: pointer;
+      transition: box-shadow 0.15s;
+      animation: fadein 0.25s ease;
+    }
+    @keyframes fadein { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+    .proposal-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .proposal-card.pending  { border-top-color: var(--uk-blue-mid); }
+    .proposal-card.accepted { border-top-color: var(--success-green); }
+    .proposal-card.denied   { border-top-color: var(--uk-red); }
+
+    .pc-head {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--gray-mid);
+    }
+    .pc-country-name {
+      font-family: var(--font-serif);
+      font-size: 17px; font-weight: 600;
+      color: var(--uk-blue);
+    }
+    .status-pill {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .status-pill.pending  { background: var(--pending-bg); color: var(--uk-blue-mid); }
+    .status-pill.accepted { background: var(--success-bg); color: var(--success-green); }
+    .status-pill.denied   { background: var(--danger-bg); color: var(--uk-red); }
+
+    .pc-body { padding: 12px 16px; }
+    .pc-dl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+    .pc-dt { font-size: 11px; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .pc-dd { font-size: 13px; font-weight: 700; color: var(--gray-text); }
+    .pc-dd.cost-green { color: var(--success-green); font-size: 15px; }
+    .pc-purpose-excerpt {
+      margin-top: 10px;
+      font-size: 13px; color: var(--gray-dark);
+      font-style: italic; line-height: 1.5;
+      border-left: 2px solid var(--gray-mid);
+      padding-left: 10px;
+    }
+    .pc-foot {
+      padding: 10px 16px;
+      border-top: 1px solid var(--gray-mid);
+      background: var(--gray-light);
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .over-limit-warn {
+      background: var(--warn-yellow);
+      border: 1px solid var(--warn-border);
+      font-size: 11px; padding: 4px 8px; margin-top: 8px;
+      color: #7a5900;
+    }
+
+    /* ── BLOCKED SECTION ── */
+    .blocked-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .blocked-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--danger-bg);
+      border: 1px solid var(--uk-red);
+      color: var(--uk-red);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 3px;
+    }
+    .blocked-chip button {
+      background: none; border: none; color: inherit;
+      cursor: pointer; font-size: 14px; line-height: 1;
+      padding: 0; opacity: 0.7;
+    }
+    .blocked-chip button:hover { opacity: 1; }
+
+    .block-form-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .block-form-row .usa-field { flex: 1; min-width: 200px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(17,46,81,0.55);
+      z-index: 900;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white);
+      border-top: 6px solid var(--uk-blue);
+      width: 90%; max-width: 560px;
+      max-height: 88vh; overflow-y: auto;
+      transform: translateY(12px); transition: transform 0.2s;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--gray-mid);
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 20px; font-weight: 600;
+      color: var(--uk-blue);
+    }
+    .modal-close {
+      background: none; border: none; font-size: 20px;
+      color: var(--gray-dark); cursor: pointer;
+    }
+    .modal-close:hover { color: var(--uk-blue); }
+    .modal-body { padding: 20px 24px; }
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--gray-mid);
+      background: var(--gray-light);
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    .detail-section-label {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gray-dark); margin-bottom: 8px;
+      padding-bottom: 4px; border-bottom: 1px solid var(--gray-mid);
+    }
+    .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+    .detail-table tr { border-bottom: 1px solid #f0f0f0; }
+    .detail-table td { padding: 7px 0; font-size: 14px; vertical-align: top; }
+    .detail-table td:first-child { color: var(--gray-dark); width: 50%; font-size: 13px; }
+    .detail-table td:last-child { font-weight: 700; }
+    .detail-cost-large {
+      font-family: var(--font-serif);
+      font-size: 26px; color: var(--success-green);
+    }
+    .decision-box {
+      padding: 12px 16px;
+      margin-top: 14px;
+      border-radius: 3px;
+      font-weight: 700; font-size: 15px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .decision-box.accepted { background: var(--success-bg); color: var(--success-green); border: 1px solid #a5d6a7; }
+    .decision-box.denied   { background: var(--danger-bg); color: var(--uk-red); border: 1px solid #f5a0a0; }
+    .decision-box.pending  { background: var(--pending-bg); color: var(--uk-blue); border: 1px solid #9ac0e8; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center; padding: 60px 20px;
+      color: var(--gray-dark);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; display: block; }
+    .empty-state-text { font-size: 15px; }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--uk-blue);
+      color: rgba(255,255,255,0.7);
+      padding: 24px 0 16px;
+      margin-top: 40px;
+      font-size: 13px;
+    }
+    .site-footer-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+    }
+    .footer-top {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 14px;
+    }
+    .footer-logo { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .footer-note { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 16px; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--gray-mid); }
+  </style>
+</head>
+<body>
+
+  <!-- GOV NOTICE -->
+  <div class="gov-notice">
+    <div class="gov-notice-inner">
+      🇺🇸 &nbsp;An official website of the United States Government &nbsp;·&nbsp;
+      <a href="#">Here's how you know ›</a>
+    </div>
+  </div>
+
+  <!-- BETA BANNER -->
+  <div class="beta-banner">
+    <div class="beta-banner-inner">
+      <span class="beta-tag">BETA</span>
+      <span>This portal is in active development. For issues, contact your designated Security Liaison Officer.</span>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="site-header-inner">
+      <div class="agency-logo">
+        <div class="seal-circle">👑</div>
+        <div class="agency-text">
+          <div class="agency-name">U.K. Defence Security Services</div>
+          <div class="agency-sub">Ministry of Defence · International Security Operations</div>
+        </div>
+      </div>
+      <div class="header-troop-status">
+        <div class="troop-status-label">Available Personnel</div>
+        <div class="troop-status-count" id="headerTroopCount">
+          <span id="headerTroopDisplay" class="unset">Not configured</span>
+        </div>
+        <button class="btn-configure" onclick="openTroopModal()">Configure Troop Level</button>
+      </div>
+    </div>
+  </div>
+  <div class="accent-bar"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <button class="nav-link active" onclick="switchTab('proposals', this)">Proposals Log</button>
+      <button class="nav-link" onclick="switchTab('submit', this)">Submit a Request</button>
+      <button class="nav-link" onclick="switchTab('blocked', this)">Restricted Countries</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="page-wrapper">
+
+    <!-- PAGE TITLE -->
+    <div class="page-title-section">
+      <div class="page-breadcrumb">
+        <a href="#">Home</a><span class="sep">/</span>
+        <a href="#">Defense</a><span class="sep">/</span>
+        Security Services Portal
+      </div>
+      <h1 class="page-h1" id="pageH1">Security Services — Proposals Log</h1>
+      <p class="page-lead" id="pageLead">Review, approve, and manage all security service proposals submitted by allied nations. Each proposal is subject to availability review and command authorization.</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row" id="statsRow"></div>
+
+    <!-- TAB: PROPOSALS LOG -->
+    <div class="tab-panel active" id="tab-proposals">
+      <div class="filter-bar">
+        <span class="filter-label">Filter by status:</span>
+        <button class="filter-btn active" data-f="all" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn pending" data-f="pending" onclick="setFilter('pending',this)">Pending Review</button>
+        <button class="filter-btn accepted" data-f="accepted" onclick="setFilter('accepted',this)">Authorized</button>
+        <button class="filter-btn denied" data-f="denied" onclick="setFilter('denied',this)">Denied</button>
+      </div>
+      <div class="proposals-grid" id="proposalGrid"></div>
+    </div>
+
+    <!-- TAB: SUBMIT REQUEST -->
+    <div class="tab-panel" id="tab-submit">
+      <h2 class="section-h2">Submit a Security Services Request</h2>
+      <p class="section-desc">Use this form to submit a formal request for U.S. security personnel. All requests are reviewed by the Security Command Office. Rate: <strong>$50 per agent per turn.</strong></p>
+
+      <div class="alert alert-info">
+        <strong>Information:</strong> Requests from countries on the Restricted List will be automatically rejected. The requesting country must not be subject to a standing security restriction.
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">🇺🇸 &nbsp;Security Services Request Form</div>
+
+        <div class="form-row">
+          <div class="usa-field">
+            <label class="usa-label">Requesting Country <span class="req">*</span></label>
+            <select class="usa-select" id="propCountry">
+              <option value="">— Select a country —</option>
+            </select>
+          </div>
+          <div class="usa-field">
+            <label class="usa-label">Agents Requested <span class="req">*</span></label>
+            <input class="usa-input" type="number" id="propTroops" placeholder="e.g. 200" min="1" step="1">
+            <div class="usa-hint">Available: <strong id="availHint">—</strong></div>
+          </div>
+          <div class="usa-field">
+            <label class="usa-label">Duration (Turns) <span class="req">*</span></label>
+            <input class="usa-input" type="number" id="propTurns" placeholder="e.g. 4" min="1" step="1">
+          </div>
+        </div>
+
+        <div class="usa-field" style="margin-bottom: 14px;">
+          <label class="usa-label">Mission Description & Purpose <span class="req">*</span></label>
+          <textarea class="usa-textarea" id="propPurpose" placeholder="Provide a full description of the security mission, objectives, and operational context…"></textarea>
+        </div>
+
+        <!-- Cost preview -->
+        <div class="cost-box" id="costPreview">
+          <div class="cost-box-title">Estimated Cost Breakdown</div>
+          <table class="cost-table">
+            <tr><td>Agents Requested</td><td id="prevTroops">—</td></tr>
+            <tr><td>Duration</td><td id="prevTurns">—</td></tr>
+            <tr><td>Rate per Agent per Turn</td><td>$50.00</td></tr>
+            <tr class="total-row"><td><strong>Estimated Total</strong></td><td><strong id="prevTotal">—</strong></td></tr>
+          </table>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+          <button class="btn btn-primary" onclick="submitProposal()">Submit Request</button>
+          <button class="btn btn-ghost" onclick="clearForm()">Clear Form</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: BLOCKED -->
+    <div class="tab-panel" id="tab-blocked">
+      <h2 class="section-h2">Restricted Countries</h2>
+      <p class="section-desc">Countries on this list are prohibited from submitting security service requests. Any proposal from a restricted country will be automatically rejected at time of submission.</p>
+
+      <div class="form-card">
+        <div class="form-card-title">Add Restriction</div>
+        <div class="block-form-row">
+          <div class="usa-field">
+            <label class="usa-label">Country Name</label>
+            <select class="usa-select" id="blockSelect">
+              <option value="">— Select a country —</option>
+            </select>
+          </div>
+          <button class="btn btn-danger" onclick="blockCountry()" style="margin-bottom:1px;">Restrict Country</button>
+        </div>
+      </div>
+
+      <div class="blocked-chips" id="blockedList"></div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="footer-top">
+        <div class="footer-logo">👑 U.K. Defence Security Services</div>
+      </div>
+      <div class="footer-note">
+        This is a controlled government portal. Unauthorized access is prohibited under applicable law. All transactions are logged and subject to federal oversight.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── TROOP MODAL ── -->
+  <div class="modal-overlay" id="troopModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Configure Personnel Availability</div>
+        <button class="modal-close" onclick="closeTroopModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" style="margin-bottom:16px;">
+          <strong>Note:</strong> This figure represents the total number of security agents currently available for deployment. Proposals exceeding this count will be flagged for review.
+        </div>
+        <div class="usa-field">
+          <label class="usa-label">Total Available Agents</label>
+          <input class="usa-input" type="number" id="troopInput" min="0" step="1" placeholder="e.g. 5000">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeTroopModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTroops()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DETAIL MODAL ── -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="detailTitle">Proposal Details</div>
+        <button class="modal-close" onclick="closeDetailModal()">✕</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+      <div class="modal-footer" id="detailFooter"></div>
+    </div>
+  </div>
+
+<script>
+/* ─── CONSTANTS ─── */
+const STORE_KEY    = 'uk_security_v1';
+const TC_COUNTRIES = 'tc_countries';
+const RATE         = 50;
+
+/* ─── STATE ─── */
+function defaultState() { return { troops: 0, proposals: [], blocked: [] }; }
+function loadState() {
+  try { const r = localStorage.getItem(STORE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  return defaultState();
+}
+function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+function getCountries() {
+  try {
+    const all = JSON.parse(localStorage.getItem(TC_COUNTRIES) || '[]');
+    return all.filter(c => c.type === 'country' || !c.type);
+  } catch(e) { return []; }
+}
+
+let state = loadState();
+let activeFilter = 'all';
+let openId = null;
+
+/* ─── NAV ─── */
+const PAGE_META = {
+  proposals: { h1: 'Security Services — Proposals Log', lead: 'Review, approve, and manage all security service proposals submitted by allied nations. Each proposal is subject to availability review and command authorization.' },
+  submit:    { h1: 'Submit a Security Services Request', lead: 'Use this form to formally request U.S. security personnel on behalf of your country.' },
+  blocked:   { h1: 'Restricted Countries Registry', lead: 'Manage the list of countries restricted from accessing U.S. security services.' },
+};
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const m = PAGE_META[tab];
+  if (m) { document.getElementById('pageH1').textContent = m.h1; document.getElementById('pageLead').textContent = m.lead; }
+  renderAll();
+}
+
+/* ─── TROOPS ─── */
+function openTroopModal() {
+  document.getElementById('troopInput').value = state.troops || '';
+  document.getElementById('troopModal').classList.add('open');
+}
+function closeTroopModal() { document.getElementById('troopModal').classList.remove('open'); }
+function saveTroops() {
+  const v = parseInt(document.getElementById('troopInput').value);
+  if (isNaN(v) || v < 0) { alert('Please enter a valid number.'); return; }
+  state.troops = v;
+  saveState(); closeTroopModal(); renderAll();
+}
+
+/* ─── COST PREVIEW ─── */
+function updatePreview() {
+  const t = parseInt(document.getElementById('propTroops').value) || 0;
+  const d = parseInt(document.getElementById('propTurns').value)  || 0;
+  const box = document.getElementById('costPreview');
+  if (t > 0 && d > 0) {
+    document.getElementById('prevTroops').textContent = t.toLocaleString() + ' agents';
+    document.getElementById('prevTurns').textContent  = d + ' turn(s)';
+    document.getElementById('prevTotal').textContent  = '$' + (t * d * RATE).toLocaleString();
+    box.style.display = 'block';
+  } else {
+    box.style.display = 'none';
+  }
+}
+document.getElementById('propTroops').addEventListener('input', updatePreview);
+document.getElementById('propTurns').addEventListener('input',  updatePreview);
+
+/* ─── PROPOSALS ─── */
+function submitProposal() {
+  const country = document.getElementById('propCountry').value.trim();
+  const troops  = parseInt(document.getElementById('propTroops').value);
+  const turns   = parseInt(document.getElementById('propTurns').value);
+  const purpose = document.getElementById('propPurpose').value.trim();
+  if (!country) { alert('Please select a requesting country.'); return; }
+  if (isNaN(troops) || troops < 1) { alert('Please enter a valid number of agents.'); return; }
+  if (isNaN(turns) || turns < 1)   { alert('Please enter a valid duration.'); return; }
+  if (!purpose) { alert('Please provide a mission description.'); return; }
+
+  const blocked = state.blocked.map(b => b.toLowerCase());
+  if (blocked.includes(country.toLowerCase())) {
+    alert(`⛔ "${country}" is on the Restricted Countries list and cannot submit proposals.`); return;
+  }
+
+  const overLimit = state.troops > 0 && troops > state.troops;
+  state.proposals.unshift({
+    id: Date.now().toString(), country, troops, turns, purpose,
+    status: 'pending',
+    totalCost: troops * turns * RATE,
+    overLimit,
+    createdAt: new Date().toISOString(),
+    decidedAt: null
+  });
+  saveState(); clearForm();
+  switchTab('proposals', document.querySelector('.nav-link'));
+  renderAll();
+}
+
+function clearForm() {
+  document.getElementById('propCountry').value = '';
+  document.getElementById('propTroops').value  = '';
+  document.getElementById('propTurns').value   = '';
+  document.getElementById('propPurpose').value = '';
+  document.getElementById('costPreview').style.display = 'none';
+}
+
+function acceptProposal(id, skipConfirm) {
+  const p = state.proposals.find(x => x.id === id); if (!p) return;
+  if (p.overLimit && !skipConfirm) {
+    if (!confirm(`This request exceeds available troop count (${state.troops.toLocaleString()} available vs ${p.troops.toLocaleString()} requested). Authorize anyway?`)) return;
+  }
+  p.status = 'accepted'; p.decidedAt = new Date().toISOString();
+  saveState(); renderAll(); if (openId === id) openDetailModal(id);
+}
+function denyProposal(id) {
+  const p = state.proposals.find(x => x.id === id); if (!p) return;
+  p.status = 'denied'; p.decidedAt = new Date().toISOString();
+  saveState(); renderAll(); if (openId === id) openDetailModal(id);
+}
+function deleteProposal(id) {
+  if (!confirm('Permanently remove this proposal from the log?')) return;
+  state.proposals = state.proposals.filter(x => x.id !== id);
+  saveState(); closeDetailModal(); renderAll();
+}
+
+/* ─── BLOCKING ─── */
+function blockCountry() {
+  const name = document.getElementById('blockSelect').value.trim();
+  if (!name) return;
+  if (state.blocked.map(b => b.toLowerCase()).includes(name.toLowerCase())) { alert('Already restricted.'); return; }
+  state.blocked.push(name);
+  saveState(); populateSelects(); renderBlockedList();
+}
+function unblockCountry(name) {
+  state.blocked = state.blocked.filter(b => b.toLowerCase() !== name.toLowerCase());
+  saveState(); populateSelects(); renderBlockedList();
+}
+
+/* ─── FILTER ─── */
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.f === f);
+  });
+  renderProposalGrid();
+}
+
+/* ─── SELECTS POPULATION ─── */
+function populateSelects() {
+  const countries = getCountries();
+  const blocked = state.blocked.map(b => b.toLowerCase());
+
+  // proposal form select
+  const propSel = document.getElementById('propCountry');
+  const propVal = propSel.value;
+  propSel.innerHTML = '<option value="">— Select a country —</option>';
+  countries.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = (c.flag ? c.flag + ' ' : '') + c.name;
+    if (blocked.includes(c.name.toLowerCase())) opt.textContent += ' (Restricted)';
+    propSel.appendChild(opt);
+  });
+  if (propVal) propSel.value = propVal;
+
+  // block select
+  const blockSel = document.getElementById('blockSelect');
+  const blockVal = blockSel.value;
+  blockSel.innerHTML = '<option value="">— Select a country —</option>';
+  countries.forEach(c => {
+    if (!blocked.includes(c.name.toLowerCase())) {
+      const opt = document.createElement('option');
+      opt.value = c.name;
+      opt.textContent = (c.flag ? c.flag + ' ' : '') + c.name;
+      blockSel.appendChild(opt);
+    }
+  });
+  if (blockVal) blockSel.value = blockVal;
+}
+
+/* ─── DETAIL MODAL ─── */
+function openDetailModal(id) {
+  const p = state.proposals.find(x => x.id === id); if (!p) return;
+  openId = id;
+
+  document.getElementById('detailTitle').textContent = `Proposal — ${p.country}`;
+
+  const fmt_date = iso => iso ? new Date(iso).toLocaleString('en-US', { dateStyle:'medium', timeStyle:'short' }) : '—';
+  const statusMap = { pending: '⏳ Awaiting Decision', accepted: '✅ Authorized', denied: '❌ Denied' };
+
+  let overWarn = p.overLimit
+    ? `<div class="alert alert-warn"><strong>Warning:</strong> This proposal requests more agents than the configured availability (${state.troops.toLocaleString()} available, ${p.troops.toLocaleString()} requested).</div>`
+    : '';
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-section-label">Proposal Information</div>
+    <table class="detail-table">
+      <tr><td>Requesting Country</td><td>${p.country}</td></tr>
+      <tr><td>Agents Requested</td><td>${p.troops.toLocaleString()}</td></tr>
+      <tr><td>Duration</td><td>${p.turns} turn(s)</td></tr>
+      <tr><td>Rate</td><td>$50.00 per agent per turn</td></tr>
+      <tr><td>Submitted</td><td>${fmt_date(p.createdAt)}</td></tr>
+      <tr><td>Decision Date</td><td>${fmt_date(p.decidedAt)}</td></tr>
+    </table>
+
+    <div class="detail-section-label">Financial Summary</div>
+    <table class="detail-table">
+      <tr><td>Total Cost (if authorized)</td><td class="detail-cost-large">$${p.totalCost.toLocaleString()}</td></tr>
+    </table>
+
+    <div class="detail-section-label">Mission Description</div>
+    <p style="font-size:14px;color:#444;line-height:1.7;margin-bottom:14px;padding:10px;background:#f9f9f9;border-left:3px solid var(--uk-blue);">${p.purpose}</p>
+
+    ${overWarn}
+    <div class="decision-box ${p.status}">${statusMap[p.status]}</div>
+  `;
+
+  let footer = `<button class="btn btn-ghost btn-sm" onclick="deleteProposal('${p.id}')">Delete Record</button>
+                <button class="btn btn-secondary btn-sm" onclick="closeDetailModal()">Close</button>`;
+  if (p.status === 'pending') {
+    footer = `<button class="btn btn-ghost btn-sm" onclick="deleteProposal('${p.id}')">Delete Record</button>
+              <button class="btn btn-secondary btn-sm" onclick="closeDetailModal()">Close</button>
+              <button class="btn btn-danger btn-sm" onclick="denyProposal('${p.id}')">Deny</button>
+              <button class="btn btn-success btn-sm" onclick="acceptProposal('${p.id}')">Authorize</button>`;
+  }
+  document.getElementById('detailFooter').innerHTML = footer;
+  document.getElementById('detailModal').classList.add('open');
+}
+function closeDetailModal() { openId = null; document.getElementById('detailModal').classList.remove('open'); }
+
+/* ─── RENDER ─── */
+function renderAll() {
+  renderStats(); renderProposalGrid(); renderBlockedList();
+  document.getElementById('availHint').textContent = state.troops > 0 ? state.troops.toLocaleString() + ' agents' : 'Not configured';
+  const disp = document.getElementById('headerTroopDisplay');
+  if (state.troops > 0) {
+    disp.textContent = state.troops.toLocaleString(); disp.classList.remove('unset');
+  } else {
+    disp.textContent = 'Not configured'; disp.classList.add('unset');
+  }
+  populateSelects();
+}
+
+function renderStats() {
+  const total    = state.proposals.length;
+  const pending  = state.proposals.filter(p => p.status === 'pending').length;
+  const accepted = state.proposals.filter(p => p.status === 'accepted').length;
+  const revenue  = state.proposals.filter(p => p.status === 'accepted').reduce((s,p) => s + p.totalCost, 0);
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-card-label">Total Proposals</div><div class="stat-card-value">${total}</div></div>
+    <div class="stat-card" style="border-top-color:var(--uk-blue-mid)"><div class="stat-card-label">Pending Review</div><div class="stat-card-value" style="color:var(--uk-blue-mid)">${pending}</div></div>
+    <div class="stat-card green-top"><div class="stat-card-label">Authorized</div><div class="stat-card-value" style="color:var(--success-green)">${accepted}</div></div>
+    <div class="stat-card gold-top"><div class="stat-card-label">Revenue (Authorized)</div><div class="stat-card-value" style="color:#7a5900;font-size:22px">$${revenue.toLocaleString()}</div></div>
+    <div class="stat-card"><div class="stat-card-label">Available Personnel</div><div class="stat-card-value">${state.troops > 0 ? state.troops.toLocaleString() : '—'}</div></div>
+  `;
+}
+
+function renderProposalGrid() {
+  const grid = document.getElementById('proposalGrid');
+  let list = state.proposals;
+  if (activeFilter !== 'all') list = list.filter(p => p.status === activeFilter);
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-state-icon">📋</span><div class="empty-state-text">${activeFilter === 'all' ? 'No proposals have been submitted yet. Use the "Submit a Request" tab.' : 'No proposals match this filter.'}</div></div>`;
+    return;
+  }
+  const fmt = iso => new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const pill = { pending: 'Pending Review', accepted: 'Authorized', denied: 'Denied' };
+  grid.innerHTML = list.map(p => {
+    const overWarn = p.overLimit ? `<div class="over-limit-warn">⚠ Exceeds available personnel count</div>` : '';
+    const foot = p.status === 'pending'
+      ? `<div class="pc-foot" onclick="event.stopPropagation()">
+           <button class="btn btn-danger btn-xs" onclick="denyProposal('${p.id}');renderAll()">Deny</button>
+           <button class="btn btn-success btn-xs" onclick="acceptProposal('${p.id}')">Authorize</button>
+         </div>` : '';
+    return `<div class="proposal-card ${p.status}" onclick="openDetailModal('${p.id}')">
+      <div class="pc-head">
+        <div class="pc-country-name">${p.country}</div>
+        <span class="status-pill ${p.status}">${pill[p.status]}</span>
+      </div>
+      <div class="pc-body">
+        <div class="pc-dl">
+          <div><div class="pc-dt">Agents</div><div class="pc-dd">${p.troops.toLocaleString()}</div></div>
+          <div><div class="pc-dt">Duration</div><div class="pc-dd">${p.turns} turn(s)</div></div>
+          <div><div class="pc-dt">Total Cost</div><div class="pc-dd cost-green">$${p.totalCost.toLocaleString()}</div></div>
+          <div><div class="pc-dt">Submitted</div><div class="pc-dd">${fmt(p.createdAt)}</div></div>
+        </div>
+        ${overWarn}
+        <div class="pc-purpose-excerpt">"${p.purpose.length > 120 ? p.purpose.slice(0,120) + '…' : p.purpose}"</div>
+      </div>
+      ${foot}
+    </div>`;
+  }).join('');
+}
+
+function renderBlockedList() {
+  const el = document.getElementById('blockedList');
+  if (state.blocked.length === 0) {
+    el.innerHTML = `<p style="color:var(--gray-dark);font-size:14px;margin-top:8px;">No countries are currently restricted.</p>`;
+    return;
+  }
+  el.innerHTML = state.blocked.map(name => `
+    <div class="blocked-chip">
+      ${name}
+      <button onclick="unblockCountry('${name.replace(/'/g,"\\'")}')">✕</button>
+    </div>
+  `).join('');
+}
+
+/* ─── MODAL CLOSE ON OVERLAY ─── */
+document.getElementById('troopModal').addEventListener('click', e => { if (e.target === document.getElementById('troopModal')) closeTroopModal(); });
+document.getElementById('detailModal').addEventListener('click', e => { if (e.target === document.getElementById('detailModal')) closeDetailModal(); });
+
+/* ─── INIT ─── */
+renderAll();
+</script>
+</body>
+</html>

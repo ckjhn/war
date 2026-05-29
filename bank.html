@@ -1168,7 +1168,7 @@
     <div id="fee-info-box" style="
       background:rgba(201,168,76,0.04); border:1px solid rgba(201,168,76,0.15);
       border-radius:6px; padding:12px 18px; margin-bottom:20px;
-      display:grid; grid-template-columns:repeat(3,1fr); gap:16px; font-size:10px; letter-spacing:1px;
+      display:grid; grid-template-columns:repeat(4,1fr); gap:16px; font-size:10px; letter-spacing:1px;
     ">
       <div>
         <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Yearly Card Fee</div>
@@ -1182,6 +1182,10 @@
         <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Deposits & Withdrawals</div>
         <div style="color:var(--green);font-weight:600">FREE — No fee, no tax. Nations deposit and withdraw any amount at any time at zero cost.</div>
       </div>
+      <div>
+        <div style="color:var(--gold-dark);letter-spacing:3px;font-size:8px;text-transform:uppercase;margin-bottom:4px">Dubai Trade Discount</div>
+        <div style="color:var(--text)">Card tier grants a discount on <strong>Dubai Market</strong> trades: Basic <span style="color:var(--text-dim)">0%</span> · Standard <span style="color:var(--gold)">4%</span> · VIP <span style="color:var(--gold)">8%</span> · Gold <span style="color:var(--gold)">13%</span> · Platinum <span style="color:var(--gold)">18%</span> · Signature <span style="color:var(--gold)">22%</span> · Infinity <span style="color:var(--gold-light);font-weight:600">25%</span></div>
+      </div>
     </div>
 
     <div class="section-label">Credit Card Accounts</div>
@@ -1194,14 +1198,15 @@
 /* ═══════════════════════════════════════════════
    DATA MODEL
 ═══════════════════════════════════════════════ */
+// tradeDiscount = % discount on Dubai Trade market purchases for this card tier
 const CARD_TIERS = {
-  basic:     { name:'Basic',     upgradeCost:0,       creditLimit:1000,   maintenance:0,    interest:0.08, accent:'#6b7280', textClr:'#9ca3af' },
-  standard:  { name:'Standard',  upgradeCost:1000,    creditLimit:5000,   maintenance:50,   interest:0.07, accent:'#4a7fc1', textClr:'#93c5fd' },
-  vip:       { name:'VIP',       upgradeCost:5000,    creditLimit:12000,  maintenance:100,  interest:0.06, accent:'#7c3aed', textClr:'#c4b5fd' },
-  gold:      { name:'Gold',      upgradeCost:15000,   creditLimit:30000,  maintenance:250,  interest:0.05, accent:'#c9a84c', textClr:'#e0c06a' },
-  platinum:  { name:'Platinum',  upgradeCost:30000,   creditLimit:75000,  maintenance:500,  interest:0.04, accent:'#a0aec0', textClr:'#e2e8f0' },
-  signature: { name:'Signature', upgradeCost:60000,   creditLimit:150000, maintenance:1000, interest:0.03, accent:'#dc2626', textClr:'#fca5a5' },
-  infinity:  { name:'Infinity',  upgradeCost:150000,  creditLimit:500000, maintenance:2500, interest:0.02, accent:'#c9a84c', textClr:'#fde68a' },
+  basic:     { name:'Basic',     upgradeCost:0,       creditLimit:1000,   maintenance:0,    interest:0.08, accent:'#6b7280', textClr:'#9ca3af', tradeDiscount:0    },
+  standard:  { name:'Standard',  upgradeCost:1000,    creditLimit:5000,   maintenance:50,   interest:0.07, accent:'#4a7fc1', textClr:'#93c5fd', tradeDiscount:0.04 },
+  vip:       { name:'VIP',       upgradeCost:5000,    creditLimit:12000,  maintenance:100,  interest:0.06, accent:'#7c3aed', textClr:'#c4b5fd', tradeDiscount:0.08 },
+  gold:      { name:'Gold',      upgradeCost:15000,   creditLimit:30000,  maintenance:250,  interest:0.05, accent:'#c9a84c', textClr:'#e0c06a', tradeDiscount:0.13 },
+  platinum:  { name:'Platinum',  upgradeCost:30000,   creditLimit:75000,  maintenance:500,  interest:0.04, accent:'#a0aec0', textClr:'#e2e8f0', tradeDiscount:0.18 },
+  signature: { name:'Signature', upgradeCost:60000,   creditLimit:150000, maintenance:1000, interest:0.03, accent:'#dc2626', textClr:'#fca5a5', tradeDiscount:0.22 },
+  infinity:  { name:'Infinity',  upgradeCost:150000,  creditLimit:500000, maintenance:2500, interest:0.02, accent:'#c9a84c', textClr:'#fde68a', tradeDiscount:0.25 },
 };
 const TIER_ORDER = ['basic','standard','vip','gold','platinum','signature','infinity'];
 
@@ -1994,6 +1999,8 @@ function renderCards() {
         <span>Maintenance: <span style="color:var(--text-muted)">${tier.maintenance > 0 ? fmt(tier.maintenance)+'/cycle' : 'Free'}</span></span>
         <span style="opacity:.4">·</span>
         <span>Interest: <span style="color:var(--text-muted)">${Math.round(tier.interest*100)}%/cycle on debt</span></span>
+        <span style="opacity:.4">·</span>
+        <span>Dubai Trade Discount: <span style="color:${tier.tradeDiscount > 0 ? 'var(--gold)' : 'var(--text-dim)'};font-weight:600">${tier.tradeDiscount > 0 ? Math.round(tier.tradeDiscount*100)+'%' : 'None'}</span></span>
       </div>
       ${acc.cardDisabled ? `<div class="cc-disabled-notice">⚠ Card suspended — balance exceeded −$5,000<br>Clear debt to re-enable investments. Card downgraded to Basic.</div>` : ''}
       <div class="cc-actions">

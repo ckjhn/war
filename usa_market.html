@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USA Open Market</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap');
+
+:root {
+  --usa-navy: #0b1f3a;
+  --usa-navy-mid: #1a3560;
+  --usa-blue: #2a5298;
+  --usa-blue-light: #4a7acc;
+  --usa-red: #b22234;
+  --usa-red-light: #cc3344;
+  --usa-cream: #f5f0e8;
+  --usa-cream2: #ede8de;
+  --usa-white: #faf8f4;
+  --usa-gold: #c8a840;
+  --usa-gold-light: #e0c060;
+  --bg: #0d1826;
+  --bg2: #111f30;
+  --bg3: #162438;
+  --bg4: #1c2e46;
+  --card: #0f1e30;
+  --card-border: rgba(42,82,152,0.22);
+  --text: #d8e8f5;
+  --text-muted: #6888aa;
+  --text-dim: #3a5070;
+  --green: #3ab870;
+  --red-bright: #e04040;
+  --radius: 4px;
+  --radius-lg: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 70% 35% at 50% 0%, rgba(42,82,152,0.08) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(42,82,152,0.025) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(42,82,152,0.025) 40px);
+}
+
+/* ──────────── HEADER ──────────── */
+#header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,31,58,0.97);
+  border-bottom: 3px solid var(--usa-red);
+  backdrop-filter: blur(12px);
+  padding: 0 32px;
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1700px; margin: 0 auto; height: 68px;
+}
+.market-logo { display: flex; align-items: center; gap: 16px; }
+.logo-seal {
+  width: 44px; height: 44px;
+  background: var(--usa-navy-mid);
+  border-radius: 50%;
+  border: 2px solid var(--usa-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.market-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--usa-cream); letter-spacing: 2px; text-transform: uppercase;
+}
+.market-sub {
+  font-size: 9px; letter-spacing: 3.5px;
+  color: var(--text-muted); text-transform: uppercase; margin-top: 1px;
+}
+.header-right { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; text-align: right; }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Stars stripe accent */
+.stars-stripe {
+  background: linear-gradient(90deg, var(--usa-red) 0%, var(--usa-red) 33%, var(--usa-blue) 33%, var(--usa-blue) 66%, var(--usa-navy) 66%);
+  height: 4px;
+}
+
+/* ──────────── LAYOUT ──────────── */
+.page-wrap {
+  max-width: 1700px; margin: 0 auto;
+  padding: 22px 32px 48px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.section-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; letter-spacing: 4px;
+  color: var(--usa-blue-light); text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(42,82,152,0.4), transparent); }
+
+/* ──────────── STATS BAR ──────────── */
+.stats-bar {
+  background: linear-gradient(135deg, #0b1a30, #0e2040);
+  border: 1px solid rgba(42,82,152,0.35);
+  border-radius: var(--radius-lg);
+  padding: 18px 28px;
+  display: flex; gap: 0; align-items: center; flex-wrap: wrap;
+}
+.stat-item { flex: 1; min-width: 130px; border-right: 1px solid rgba(42,82,152,0.15); padding: 0 22px; text-align: center; }
+.stat-item:first-child { padding-left: 0; }
+.stat-item:last-child  { border-right: none; }
+.stat-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; }
+.stat-val   { font-family: 'Barlow Condensed', sans-serif; font-size: 24px; color: var(--usa-cream); font-weight: 500; }
+.stat-val.green { color: var(--green); }
+.stat-val.small { font-size: 16px; color: var(--text-muted); }
+
+/* Markup row */
+.markup-row {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding-top: 14px; margin-top: 14px;
+  border-top: 1px solid rgba(42,82,152,0.12); width: 100%;
+}
+.markup-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; }
+.markup-val   { font-family: 'Barlow Condensed', sans-serif; font-size: 24px; color: var(--usa-blue-light); min-width: 50px; text-align: right; }
+input[type=range] {
+  -webkit-appearance: none; flex: 1; height: 2px; outline: none; border-radius: 2px; cursor: pointer;
+  background: linear-gradient(90deg, var(--usa-blue-light) var(--pct,25%), rgba(42,82,152,.15) var(--pct,25%));
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px; background: var(--usa-blue-light);
+  border-radius: 50%; border: 2px solid var(--bg); box-shadow: 0 0 8px rgba(42,82,152,.5);
+}
+
+/* ──────────── MAIN LAYOUT ──────────── */
+.trade-layout {
+  display: grid; grid-template-columns: 1fr 400px;
+  gap: 20px; align-items: start;
+}
+
+/* ──────────── ITEM BROWSER ──────────── */
+.browser-panel {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.browser-header { padding: 16px 20px 12px; border-bottom: 1px solid rgba(255,255,255,.04); }
+.search-row {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius); padding: 8px 12px;
+}
+.search-row input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 12px; }
+.search-row input::placeholder { color: var(--text-dim); }
+.cat-tabs { display: flex; gap: 4px; padding: 12px 20px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,.04); }
+.cat-tab {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px; letter-spacing: 2px; font-weight: 600; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 2px; cursor: pointer; transition: all .2s;
+  background: transparent; border: 1px solid rgba(255,255,255,.07); color: var(--text-muted);
+}
+.cat-tab:hover { color: var(--text); border-color: rgba(42,82,152,.4); }
+.cat-tab.active { background: rgba(42,82,152,.15); border-color: var(--usa-blue); color: var(--usa-blue-light); }
+.items-list {
+  padding: 12px; display: flex; flex-direction: column; gap: 4px;
+  max-height: 560px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: rgba(42,82,152,.3) transparent;
+}
+.items-list::-webkit-scrollbar { width: 4px; }
+.items-list::-webkit-scrollbar-thumb { background: rgba(42,82,152,.3); border-radius: 2px; }
+.item-row {
+  display: grid; grid-template-columns: 1fr auto auto;
+  align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius);
+  border: 1px solid transparent; cursor: pointer;
+  transition: all .15s; background: rgba(255,255,255,.02);
+}
+.item-row:hover { background: rgba(42,82,152,.08); border-color: rgba(42,82,152,.25); }
+.item-row.selected { background: rgba(42,82,152,.14); border-color: rgba(42,82,152,.5); }
+.item-name-col { min-width: 0; }
+.item-name-text { font-size: 12px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-cat-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 8px; letter-spacing: 1.5px; color: var(--text-dim); text-transform: uppercase; margin-top: 2px; }
+.item-market-price { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; color: var(--text-muted); text-align: right; white-space: nowrap; }
+.item-usa-price    { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; color: var(--usa-blue-light); font-weight: 600; text-align: right; white-space: nowrap; }
+
+/* ──────────── ORDER PANEL ──────────── */
+.order-panel { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 14px; }
+.order-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 20px;
+}
+.order-title { font-family: 'Barlow Condensed', sans-serif; font-size: 21px; font-weight: 600; color: var(--usa-cream); margin-bottom: 16px; letter-spacing: 1px; }
+
+/* PUBLIC BADGE */
+.public-banner {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(58,184,112,0.08); border: 1px solid rgba(58,184,112,0.25);
+  border-radius: var(--radius); padding: 8px 12px; margin-bottom: 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+}
+
+.selected-item-display {
+  background: rgba(42,82,152,.07);
+  border: 1px solid rgba(42,82,152,.22);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px;
+  min-height: 52px; display: flex; align-items: center;
+}
+.selected-item-display.empty { color: var(--text-dim); font-size: 11px; letter-spacing: 1.5px; justify-content: center; }
+.sel-item-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.sel-item-meta { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
+.form-group { margin-bottom: 12px; }
+.form-label { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.public-tag { font-size: 7px; letter-spacing: 2px; color: var(--green); background: rgba(58,184,112,.1); border: 1px solid rgba(58,184,112,.25); padding: 2px 7px; border-radius: 2px; }
+.form-select, .form-input {
+  width: 100%; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius); padding: 9px 11px; color: var(--text);
+  font-family: 'Barlow', sans-serif; font-size: 12px; outline: none; transition: border-color .2s;
+}
+.form-select:focus, .form-input:focus { border-color: rgba(42,82,152,.5); background: rgba(42,82,152,.04); }
+.form-select option { background: #1a2a40; }
+
+/* Discount indicator */
+.discount-indicator {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(42,82,152,0.08); border: 1px solid rgba(42,82,152,0.2);
+  border-radius: var(--radius); padding: 7px 11px; margin-bottom: 10px;
+  font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px;
+}
+.discount-indicator.active { background: rgba(200,168,64,0.08); border-color: rgba(200,168,64,0.25); color: var(--usa-gold); }
+.disc-label { font-family: 'Barlow Condensed', sans-serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
+
+.price-breakdown {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius);
+  padding: 12px 14px; margin: 10px 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.pb-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; color: var(--text-muted); }
+.pb-row.total { border-top: 1px solid rgba(255,255,255,.06); padding-top: 8px; margin-top: 2px; font-size: 13px; color: var(--text); }
+.pb-row.earn  { color: var(--usa-blue-light); font-weight: 600; }
+.pb-row.discount-row { color: var(--usa-gold); }
+.pb-val { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; }
+.pb-row.total .pb-val { font-size: 19px; color: var(--usa-cream); }
+.pb-row.earn  .pb-val { color: var(--usa-blue-light); }
+.pb-row.discount-row .pb-val { color: var(--usa-gold); }
+.balance-check { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; letter-spacing: .5px; }
+.balance-check.warn { color: var(--red-bright); }
+.balance-check.ok   { color: var(--green); }
+
+/* Buttons */
+.btn { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; padding: 11px 22px; border: none; cursor: pointer; border-radius: var(--radius); transition: all .2s; }
+.btn-usa { background: linear-gradient(135deg, var(--usa-navy-mid), var(--usa-blue)); color: var(--usa-cream); width: 100%; }
+.btn-usa:hover { background: linear-gradient(135deg, var(--usa-blue), var(--usa-blue-light)); box-shadow: 0 0 20px rgba(42,82,152,.35); transform: translateY(-1px); }
+.btn-usa:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-data { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2px; background: rgba(100,120,150,.08); color: var(--text-muted); border: 1px solid rgba(100,120,150,.2); padding: 8px 14px; border-radius: var(--radius); cursor: pointer; transition: all .2s; }
+.btn-data:hover { background: rgba(42,82,152,.1); color: var(--usa-blue-light); border-color: rgba(42,82,152,.3); }
+
+/* Explosion size */
+.missile-size-select { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 10px; padding: 4px 6px; border-radius: 3px; cursor: pointer; outline: none; }
+
+/* ──────────── LOG SECTION ──────────── */
+.log-wrap { background: var(--bg2); border: 1px solid rgba(42,82,152,.15); border-radius: var(--radius-lg); overflow: hidden; }
+.log-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,.04); flex-wrap: wrap; gap: 10px;
+}
+.log-count { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; }
+#trade-log { max-height: 420px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(42,82,152,.2) transparent; }
+#trade-log::-webkit-scrollbar { width: 4px; }
+#trade-log::-webkit-scrollbar-thumb { background: rgba(42,82,152,.2); border-radius: 2px; }
+.log-entry { padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,.03); transition: background .15s; }
+.log-entry:hover { background: rgba(42,82,152,.04); }
+.log-entry:last-child { border-bottom: none; }
+.log-row1 {
+  display: grid; grid-template-columns: 90px 120px 1fr auto;
+  gap: 10px; align-items: center; font-size: 12px; margin-bottom: 4px;
+}
+.log-time   { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 1px; color: var(--text-dim); }
+.log-buyer  { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.log-item   { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-total  { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; color: var(--usa-blue-light); font-weight: 600; text-align: right; white-space: nowrap; }
+.log-row2   { font-size: 10px; color: var(--text-dim); letter-spacing: .3px; }
+/* PUBLIC seller row — visible to all */
+.log-public-row { font-size: 10px; color: rgba(58,184,112,0.7); margin-top: 3px; }
+.log-empty { display: flex; align-items: center; justify-content: center; height: 120px; color: var(--text-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; }
+
+/* Discount badge on log entry */
+.log-discount-badge { display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 7px; letter-spacing: 2px; padding: 2px 7px; border-radius: 2px; margin-left: 8px; vertical-align: middle; background: rgba(200,168,64,.12); color: var(--usa-gold); border: 1px solid rgba(200,168,64,.2); }
+
+/* ──────────── NOTIF ──────────── */
+#notif-container { position: fixed; top: 88px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 999; pointer-events: none; }
+.notif { background: var(--bg3); border: 1px solid rgba(42,82,152,.3); border-radius: var(--radius-lg); padding: 12px 18px; font-size: 11px; color: var(--text); min-width: 260px; max-width: 340px; animation: notifIn .3s ease, notifOut .4s 2.8s ease forwards; box-shadow: 0 8px 24px rgba(0,0,0,.5); pointer-events: none; }
+.notif.green { border-color: rgba(58,184,112,.4); }
+.notif.red   { border-color: rgba(224,64,64,.4); }
+.notif.blue  { border-color: rgba(42,82,152,.55); }
+.notif-title { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--usa-blue-light); margin-bottom: 4px; }
+.notif.green .notif-title { color: var(--green); }
+.notif.red   .notif-title { color: var(--red-bright); }
+@keyframes notifIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes notifOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(20px)} }
+
+@media(max-width:1100px) { .trade-layout { grid-template-columns: 1fr; } .order-panel { position: static; } }
+@media(max-width:640px)  { .page-wrap { padding: 14px; } .log-row1 { grid-template-columns: 80px 1fr auto; } .log-buyer { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="stars-stripe"></div>
+<header id="header">
+  <div class="header-inner">
+    <div class="market-logo">
+      <div class="logo-seal">🦅</div>
+      <div>
+        <div class="market-name">USA Open Market</div>
+        <div class="market-sub">Public Exchange · All Transactions Visible</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="live-dot"></span>MARKET OPEN<br>
+      <span id="clock">—</span>
+    </div>
+  </div>
+</header>
+
+<div id="notif-container"></div>
+
+<div class="page-wrap">
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">USA Treasury</div>
+      <div class="stat-val" id="stat-treasury">$50,000.00</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Fees Earned (Session)</div>
+      <div class="stat-val green" id="stat-trade-rev">$0.00</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Trades Executed</div>
+      <div class="stat-val small" id="stat-trade-count">0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Total Volume</div>
+      <div class="stat-val small" id="stat-volume">$0</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Discounts Given</div>
+      <div class="stat-val small" id="stat-discounts">$0</div>
+    </div>
+    <div class="stat-item" style="flex:2">
+      <div class="markup-row">
+        <span class="markup-label">USA Service Fee</span>
+        <div class="markup-val"><span id="markup-val">12</span>%</div>
+        <input type="range" id="markup-slider" min="0" max="30" value="12" step="0.5" style="flex:1">
+        <span id="markup-saved-badge" style="font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;color:var(--green);text-transform:uppercase;opacity:0;transition:opacity 0.3s;white-space:nowrap">✓ Saved</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;padding-left:16px;border-left:1px solid rgba(42,82,152,0.15);flex-shrink:0">
+        <button onclick="exportTradeJSON()" class="btn-data">↓ Export</button>
+        <button onclick="importTradeJSON()" class="btn-data">↑ Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="trade-layout">
+
+    <!-- LEFT: Item Browser -->
+    <div class="browser-panel">
+      <div class="browser-header">
+        <div class="section-label">Item Catalogue</div>
+        <div class="search-row">
+          <span style="color:var(--text-dim)">🔍</span>
+          <input type="text" id="search-input" placeholder="Search items…" oninput="filterItems()">
+        </div>
+      </div>
+      <div class="cat-tabs" id="cat-tabs"></div>
+      <div class="items-list" id="items-list"></div>
+    </div>
+
+    <!-- RIGHT: Order Form -->
+    <div class="order-panel">
+      <div class="order-card">
+        <div class="order-title">Trade Order</div>
+
+        <!-- Public notice -->
+        <div class="public-banner">
+          🌐 <span>All trades are <strong>public</strong> — buyer &amp; seller visible to everyone</span>
+        </div>
+
+        <div class="selected-item-display" id="sel-item-display">
+          <span class="empty">← Select an item from the catalogue</span>
+        </div>
+
+        <!-- Explosion size (missiles only) -->
+        <div class="form-group" id="explosion-group" style="display:none">
+          <div class="form-label">Explosion Size</div>
+          <select class="form-select" id="explosion-select" onchange="updateBreakdown()">
+            <option value="small">Small (0.6×)</option>
+            <option value="medium" selected>Medium (1.0×)</option>
+            <option value="big">Big (1.5×)</option>
+            <option value="huge">Huge (2.3×)</option>
+            <option value="gigantic">Gigantic (3.8×)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">Quantity</div>
+          <input class="form-input" type="number" id="qty-input" value="1" min="1" step="1" oninput="updateBreakdown()">
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            Buyer Nation
+            <span class="public-tag">🌐 PUBLIC</span>
+          </div>
+          <select class="form-select" id="buyer-select" onchange="updateBreakdown()">
+            <option value="">— Select buyer —</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            Seller / Source
+            <span class="public-tag">🌐 PUBLIC</span>
+          </div>
+          <select class="form-select" id="seller-select" onchange="updateBreakdown()">
+            <option value="external">External Source (no in-game payment)</option>
+          </select>
+        </div>
+
+        <!-- Swedbank discount indicator -->
+        <div class="discount-indicator" id="discount-indicator">
+          <div>
+            <div class="disc-label">Swedbank Card Discount</div>
+            <div id="discount-detail" style="margin-top:2px;font-size:10px">Select a buyer to check discount</div>
+          </div>
+          <div id="discount-pct" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;margin-left:auto">—</div>
+        </div>
+
+        <!-- Price breakdown -->
+        <div class="price-breakdown" id="price-breakdown">
+          <div class="pb-row"><span style="color:var(--text-dim);font-size:11px;letter-spacing:1px">Select an item to see pricing</span></div>
+        </div>
+
+        <div class="balance-check" id="balance-check"></div>
+
+        <button class="btn btn-usa" id="execute-btn" onclick="executeTrade()" disabled>Execute Trade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log-wrap">
+    <div class="log-toolbar">
+      <div class="section-label" style="margin:0;flex:1">Public Transaction Ledger</div>
+      <div class="log-count" id="log-count">0 entries</div>
+    </div>
+    <div id="trade-log"><div class="log-empty">No trades executed yet</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   SHARED DATA
+══════════════════════════════════════════ */
+const NATION_LIST = [
+  {id:'usa',    name:'USA'},            {id:'russia', name:'Russia'},
+  {id:'israel', name:'Israel'},         {id:'brazil', name:'Brazil'},
+  {id:'mexico', name:'Mexico'},         {id:'iran',   name:'Iran'},
+  {id:'iraq',   name:'Iraq'},           {id:'korea',  name:'Korea'},
+  {id:'chinajp',name:'China / Japan'},  {id:'uk',     name:'UK'},
+  {id:'germany',name:'Germany'},        {id:'canada', name:'Canada'},
+  {id:'denswiss',name:'Denmark / Switzerland'},{id:'sweden', name:'Sweden'},
+  {id:'ukraine',name:'Ukraine'},        {id:'dubai',  name:'Dubai'},
+];
+
+/* Swedbank card tier → discount on USA market trades */
+const SWE_TIER_DISCOUNT = {
+  entry:    0,
+  privat:   0.04,
+  foretag:  0.08,
+  guld:     0.12,
+  premium:  0.16,
+  elit:     0.18,
+  riksbank: 0.20,
+};
+
+const CATEGORIES = [
+  {id:'all',label:'All'},{id:'brute',label:'Resources'},{id:'refined',label:'Refined'},
+  {id:'weapons',label:'Weapons'},{id:'ammo',label:'Ammo'},{id:'air',label:'Air'},
+  {id:'land',label:'Land'},{id:'water',label:'Water'},{id:'missiles',label:'Missiles'},
+  {id:'other',label:'Other'},
+];
+const CAT_LABEL = {brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other'};
+
+const ITEMS = [
+  {id:1,cat:'brute',name:'Iron',price:2,unit:'un'},{id:2,cat:'brute',name:'Coal',price:1,unit:'un'},
+  {id:3,cat:'brute',name:'Gravel',price:0.50,unit:'un'},{id:4,cat:'brute',name:'Latex',price:4,unit:'un'},
+  {id:5,cat:'brute',name:'Silicon',price:8,unit:'un'},{id:6,cat:'brute',name:'Gold',price:45,unit:'un'},
+  {id:7,cat:'brute',name:'Diamond',price:180,unit:'un'},{id:8,cat:'brute',name:'Oil',price:3,unit:'L'},
+  {id:9,cat:'brute',name:'Gas',price:2,unit:'L'},{id:10,cat:'brute',name:'Uranium',price:800,unit:'un'},
+  {id:11,cat:'refined',name:'Refined Iron',price:22,unit:'un'},{id:12,cat:'refined',name:'Gunpowder',price:1.80,unit:'un'},
+  {id:13,cat:'refined',name:'Tires',price:60,unit:'un'},{id:14,cat:'refined',name:'Fuel',price:3,unit:'L'},
+  {id:15,cat:'refined',name:'Electronics',price:250,unit:'un'},{id:16,cat:'refined',name:'Chips',price:700,unit:'un'},
+  {id:17,cat:'refined',name:'Refined Uranium',price:55000,unit:'un'},
+  {id:18,cat:'weapons',name:'Knife',price:80,unit:'un'},{id:19,cat:'weapons',name:'Pistol',price:280,unit:'un'},
+  {id:20,cat:'weapons',name:'SMG',price:900,unit:'un'},{id:21,cat:'weapons',name:'Rifle',price:1200,unit:'un'},
+  {id:22,cat:'weapons',name:'Sniper Rifle',price:2000,unit:'un'},{id:23,cat:'weapons',name:'Heavy Weapon',price:3000,unit:'un'},
+  {id:24,cat:'weapons',name:'Hand Anti-Tank Missile',price:7500,unit:'un'},
+  {id:25,cat:'weapons',name:'Light Military Vest',price:500,unit:'un'},{id:26,cat:'weapons',name:'Heavy Military Vest',price:1000,unit:'un'},
+  {id:27,cat:'weapons',name:'Old Mortar',price:28000,unit:'un'},{id:28,cat:'weapons',name:'Resources / Supplies',price:1.50,unit:'pack'},
+  {id:37,cat:'ammo',name:'Pistol Ammo',price:140,unit:'100 bullets'},{id:29,cat:'ammo',name:'SMG Ammo',price:150,unit:'100 bullets'},
+  {id:30,cat:'ammo',name:'Rifle Ammo',price:160,unit:'50 bullets'},{id:31,cat:'ammo',name:'Heavy Ammo',price:360,unit:'50 bullets'},
+  {id:32,cat:'ammo',name:'.50 Cal Ammo',price:350,unit:'100 bullets'},{id:33,cat:'ammo',name:'22mm Autocannon Ammo',price:650,unit:'25 bullets'},
+  {id:34,cat:'ammo',name:'Sniper Ammo',price:320,unit:'50 bullets'},{id:35,cat:'ammo',name:'Anti-Tank Missile Ammo',price:2500,unit:'1 missile'},
+  {id:38,cat:'ammo',name:'Mortar Ammo',price:1500,unit:'4 rounds'},
+  {id:43,cat:'air',name:'Helicopter',price:45000,unit:'un'},{id:80,cat:'air',name:'Warfare Helicopter',price:135000,unit:'un'},
+  {id:44,cat:'air',name:'Light Fighter Jet',price:55000,unit:'un'},{id:45,cat:'air',name:'Medium Fighter Jet',price:120000,unit:'un'},
+  {id:46,cat:'air',name:'Airplane',price:180000,unit:'un'},{id:47,cat:'air',name:'Heavy Fighter Jet',price:175000,unit:'un'},
+  {id:48,cat:'air',name:'Bomber Jet',price:220000,unit:'un'},
+  {id:49,cat:'land',name:'Motorbike',price:3500,unit:'un'},{id:50,cat:'land',name:'Car',price:7000,unit:'un'},
+  {id:51,cat:'land',name:'Truck',price:18000,unit:'un'},{id:52,cat:'land',name:'Light Tank',price:50000,unit:'un'},
+  {id:53,cat:'land',name:'Medium Tank',price:80000,unit:'un'},{id:54,cat:'land',name:'Heavy Tank',price:125000,unit:'un'},
+  {id:55,cat:'water',name:'Boat',price:2500,unit:'un'},{id:56,cat:'water',name:'Ship',price:90000,unit:'un'},
+  {id:57,cat:'water',name:'Submarine',price:200000,unit:'un'},{id:58,cat:'water',name:'Warship',price:230000,unit:'un'},
+  {id:59,cat:'water',name:'Carrier',price:580000,unit:'un'},{id:60,cat:'water',name:'Supercarrier',price:1000000,unit:'un'},
+  {id:61,cat:'missiles',name:'Unguided Missile (Drop)',isMissile:true,basePrice:3500,explosionPrices:{small:2100,medium:3500,big:5250,huge:8050,gigantic:13300},unit:'un'},
+  {id:62,cat:'missiles',name:'Unguided Missile (Rocket)',isMissile:true,basePrice:6500,explosionPrices:{small:3900,medium:6500,big:9750,huge:14950,gigantic:24700},unit:'un'},
+  {id:63,cat:'missiles',name:'Submarine Torpedo',isMissile:true,basePrice:7000,explosionPrices:{small:4200,medium:7000,big:10500,huge:16100,gigantic:26600},unit:'un'},
+  {id:64,cat:'missiles',name:'Cruise Missile',isMissile:true,basePrice:25000,explosionPrices:{small:15000,medium:25000,big:37500,huge:57500,gigantic:95000},unit:'un'},
+  {id:65,cat:'missiles',name:'Guided Missile',isMissile:true,basePrice:27000,explosionPrices:{small:16200,medium:27000,big:40500,huge:62100,gigantic:102600},unit:'un'},
+  {id:66,cat:'missiles',name:'Anti-Missile Rocket',isMissile:true,basePrice:18000,explosionPrices:{small:10800,medium:18000,big:27000,huge:41400,gigantic:68400},unit:'un'},
+  {id:67,cat:'missiles',name:'Hypersonic Missile',isMissile:true,basePrice:62000,explosionPrices:{small:37200,medium:62000,big:93000,huge:142600,gigantic:235600},unit:'un'},
+  {id:68,cat:'missiles',name:'Ballistic Missile (ICBM)',isMissile:true,basePrice:130000,explosionPrices:{small:78000,medium:130000,big:195000,huge:299000,gigantic:494000},unit:'un'},
+  {id:69,cat:'missiles',name:'Nuclear Missile',isMissile:true,basePrice:380000,explosionPrices:{small:228000,medium:380000,big:570000,huge:874000,gigantic:1444000},unit:'un'},
+  {id:70,cat:'other',name:'Grenade',price:40,unit:'un'},{id:71,cat:'other',name:'Specialized Grenade',price:75,unit:'un'},
+  {id:72,cat:'other',name:'Land Bomb (Anti-Tank)',price:300,unit:'un'},{id:81,cat:'other',name:'C4 Explosive',price:750,unit:'un'},
+  {id:73,cat:'other',name:'Drone',price:7500,unit:'un'},{id:74,cat:'other',name:'Barricade',price:350,unit:'un'},
+  {id:75,cat:'other',name:'Barrier',price:850,unit:'un'},
+  {id:39,cat:'other',name:'Other Stuff (Small)',price:100,unit:'un'},{id:40,cat:'other',name:'Other Stuff (Medium)',price:300,unit:'un'},
+  {id:41,cat:'other',name:'Other Stuff (Big)',price:550,unit:'un'},{id:42,cat:'other',name:'Other Stuff (Huge)',price:850,unit:'un'},
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let markupPct      = 12;
+let selectedItem   = null;
+let activeCategory = 'all';
+let searchQuery    = '';
+let trades         = [];
+let tradeRevenue   = 0;
+let tradeVolume    = 0;
+let totalDiscounts = 0;
+
+/* ══════════════════════════════════════════
+   BANK STATE (Dubai bank shared via dib_state)
+   Swedbank state via swe_bank_v1
+══════════════════════════════════════════ */
+function loadDubaiBank() {
+  try { return JSON.parse(localStorage.getItem('dib_state')) || {accounts:{}, treasury:50000}; }
+  catch { return {accounts:{}, treasury:50000}; }
+}
+function saveDubaiBank(state) {
+  try { localStorage.setItem('dib_state', JSON.stringify(state)); } catch {}
+}
+function loadSweBank() {
+  try { return JSON.parse(localStorage.getItem('swe_bank_v1')) || {accounts:{}}; }
+  catch { return {accounts:{}}; }
+}
+function saveSweBank(state) {
+  try { localStorage.setItem('swe_bank_v1', JSON.stringify(state)); } catch {}
+}
+
+function loadTrades() {
+  try {
+    const d = JSON.parse(localStorage.getItem('usa_market_v1') || '{}');
+    trades         = d.trades         || [];
+    tradeRevenue   = d.tradeRevenue   || 0;
+    tradeVolume    = d.tradeVolume    || 0;
+    totalDiscounts = d.totalDiscounts || 0;
+  } catch { trades=[]; tradeRevenue=0; tradeVolume=0; totalDiscounts=0; }
+}
+function saveTrades() {
+  try { localStorage.setItem('usa_market_v1', JSON.stringify({trades, tradeRevenue, tradeVolume, totalDiscounts})); } catch {}
+}
+
+/* ══════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════ */
+function fmt(n) {
+  if (n < 1 && n > 0) return '$' + n.toFixed(2);
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtShort(n) {
+  return '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:2});
+}
+function nowStr() {
+  return new Date().toLocaleTimeString('en-US', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+function getItemBasePrice(item) {
+  if (item.isMissile) {
+    const lvl = document.getElementById('explosion-select')?.value || 'medium';
+    return item.explosionPrices[lvl] || item.basePrice;
+  }
+  return item.price;
+}
+function getUSAPrice(marketPrice) { return marketPrice * (1 + markupPct / 100); }
+
+/* Get the Swedbank card tier discount for a buyer, checking swe_bank_v1 */
+function getSweDiscount(buyerId) {
+  if (!buyerId) return 0;
+  const swe = loadSweBank();
+  const acc = swe.accounts && swe.accounts[buyerId];
+  if (!acc || !acc.enabled) return 0;
+  const tier = acc.cardTier || 'entry';
+  return SWE_TIER_DISCOUNT[tier] || 0;
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════════════════ */
+function notify(title, msg, cls='blue') {
+  const c = document.getElementById('notif-container');
+  const el = document.createElement('div');
+  el.className = `notif ${cls}`;
+  el.innerHTML = `<div class="notif-title">${title}</div><div>${msg}</div>`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ══════════════════════════════════════════
+   STATS
+══════════════════════════════════════════ */
+function updateStats() {
+  const dubai = loadDubaiBank();
+  document.getElementById('stat-treasury').textContent    = fmt(dubai.treasury ?? 50000);
+  document.getElementById('stat-trade-rev').textContent   = fmt(tradeRevenue);
+  document.getElementById('stat-trade-count').textContent = trades.length;
+  document.getElementById('stat-volume').textContent      = fmtShort(tradeVolume);
+  document.getElementById('stat-discounts').textContent   = fmtShort(totalDiscounts);
+}
+
+/* ══════════════════════════════════════════
+   POPULATE SELECTORS
+══════════════════════════════════════════ */
+function populateSelectors() {
+  const dubai  = loadDubaiBank();
+  const buyerEl  = document.getElementById('buyer-select');
+  const sellerEl = document.getElementById('seller-select');
+
+  const prevBuyer  = buyerEl.value;
+  const prevSeller = sellerEl.value;
+
+  buyerEl.innerHTML  = '<option value="">— Select buyer —</option>';
+  sellerEl.innerHTML = '<option value="external">External Source (no in-game payment)</option>';
+
+  NATION_LIST.forEach(n => {
+    const acc     = dubai.accounts[n.id];
+    const enabled = acc ? acc.enabled !== false : true;
+    const bal     = acc ? acc.balance || 0 : 0;
+    if (enabled) {
+      buyerEl.innerHTML  += `<option value="${n.id}">${n.name} (${fmt(bal)})</option>`;
+      sellerEl.innerHTML += `<option value="${n.id}">${n.name}</option>`;
+    }
+  });
+
+  if (prevBuyer)  buyerEl.value  = prevBuyer;
+  if (prevSeller) sellerEl.value = prevSeller;
+}
+
+/* ══════════════════════════════════════════
+   CATEGORY TABS
+══════════════════════════════════════════ */
+function renderCatTabs() {
+  document.getElementById('cat-tabs').innerHTML = CATEGORIES.map(c =>
+    `<button class="cat-tab${activeCategory===c.id?' active':''}" onclick="setCategory('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+function setCategory(id) { activeCategory = id; renderCatTabs(); renderItems(); }
+
+/* ══════════════════════════════════════════
+   ITEM LIST
+══════════════════════════════════════════ */
+function filterItems() { searchQuery = document.getElementById('search-input').value.toLowerCase(); renderItems(); }
+function renderItems() {
+  const visible = ITEMS.filter(i => {
+    if (activeCategory !== 'all' && i.cat !== activeCategory) return false;
+    if (searchQuery && !i.name.toLowerCase().includes(searchQuery)) return false;
+    return true;
+  });
+  const el = document.getElementById('items-list');
+  if (!visible.length) { el.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:11px;letter-spacing:2px;font-family:Barlow Condensed,sans-serif">NO ITEMS FOUND</div>'; return; }
+  el.innerHTML = visible.map(item => {
+    const mp = item.isMissile ? (item.explosionPrices['medium'] || item.basePrice) : item.price;
+    const up = getUSAPrice(mp);
+    const isSelected = selectedItem && selectedItem.id === item.id;
+    return `
+    <div class="item-row${isSelected?' selected':''}" onclick="selectItem(${item.id})">
+      <div class="item-name-col">
+        <div class="item-name-text">${item.name}</div>
+        <div class="item-cat-badge">${CAT_LABEL[item.cat]||item.cat}${item.unit?' · '+item.unit:''}</div>
+      </div>
+      <div class="item-market-price">MKT ${fmtShort(mp)}</div>
+      <div class="item-usa-price">${fmtShort(up)}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectItem(id) {
+  selectedItem = ITEMS.find(i => i.id === id);
+  document.getElementById('explosion-group').style.display = selectedItem?.isMissile ? '' : 'none';
+  if (selectedItem) {
+    const mp = getItemBasePrice(selectedItem);
+    const up = getUSAPrice(mp);
+    document.getElementById('sel-item-display').innerHTML = `
+      <div>
+        <div class="sel-item-name">${selectedItem.name}</div>
+        <div class="sel-item-meta">Market: ${fmt(mp)} / ${selectedItem.unit||'un'} &nbsp;·&nbsp; USA: <strong style="color:var(--usa-blue-light)">${fmt(up)}</strong> / ${selectedItem.unit||'un'}</div>
+      </div>`;
+  } else {
+    document.getElementById('sel-item-display').innerHTML = '<span class="empty">← Select an item from the catalogue</span>';
+  }
+  renderItems();
+  updateBreakdown();
+}
+
+/* ══════════════════════════════════════════
+   PRICE BREAKDOWN — with Swedbank discount
+══════════════════════════════════════════ */
+function updateBreakdown() {
+  const bpEl    = document.getElementById('price-breakdown');
+  const balEl   = document.getElementById('balance-check');
+  const execBtn = document.getElementById('execute-btn');
+  const discInd = document.getElementById('discount-indicator');
+  const discDetail = document.getElementById('discount-detail');
+  const discPct    = document.getElementById('discount-pct');
+
+  const buyerId = document.getElementById('buyer-select').value;
+
+  // Swedbank discount lookup
+  const sweDiscount = getSweDiscount(buyerId);
+  const hasDiscount = sweDiscount > 0;
+
+  if (hasDiscount) {
+    discInd.className = 'discount-indicator active';
+    const swe = loadSweBank();
+    const acc = swe.accounts && swe.accounts[buyerId];
+    const tierName = acc ? (acc.cardTier || 'entry') : 'entry';
+    discDetail.textContent = `Swedbank ${tierName.charAt(0).toUpperCase()+tierName.slice(1)} card — USA Market discount applied`;
+    discPct.textContent = `−${Math.round(sweDiscount*100)}%`;
+    discPct.style.color = 'var(--usa-gold)';
+  } else {
+    discInd.className = 'discount-indicator';
+    if (buyerId) {
+      const swe = loadSweBank();
+      const acc = swe.accounts && swe.accounts[buyerId];
+      if (acc && acc.enabled) {
+        discDetail.textContent = `Swedbank Entry card — no discount`;
+      } else {
+        discDetail.textContent = `No active Swedbank account — no discount`;
+      }
+    } else {
+      discDetail.textContent = 'Select a buyer to check discount';
+    }
+    discPct.textContent = '—';
+    discPct.style.color = 'var(--text-dim)';
+  }
+
+  if (!selectedItem) {
+    bpEl.innerHTML = '<div class="pb-row"><span style="color:var(--text-dim);font-size:11px;letter-spacing:1px">Select an item to see pricing</span></div>';
+    balEl.textContent = '';
+    execBtn.disabled = true;
+    return;
+  }
+
+  const qty      = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
+  const mp       = getItemBasePrice(selectedItem);
+  const up       = getUSAPrice(mp);   // USA price before discount
+  const mktTotal = mp * qty;
+  const usaTotal = up * qty;
+
+  // Apply Swedbank discount to buyer's cost (reduces what buyer pays, USA still earns full fee from mktTotal)
+  const discAmount = hasDiscount ? usaTotal * sweDiscount : 0;
+  const buyerPaid  = usaTotal - discAmount;
+  // USA market earns: buyerPaid - mktTotal (seller receives mktTotal)
+  const usaEarns   = buyerPaid - mktTotal;
+
+  const dubai    = loadDubaiBank();
+  const buyerAcc = buyerId ? dubai.accounts[buyerId] : null;
+  const sellerAcc= document.getElementById('seller-select').value !== 'external'
+                   ? dubai.accounts[document.getElementById('seller-select').value] : null;
+  const buyerBal = buyerAcc ? buyerAcc.balance : 0;
+  const canAfford = buyerAcc && buyerBal >= buyerPaid;
+
+  bpEl.innerHTML = `
+    <div class="pb-row"><span>Market price / unit</span><span class="pb-val">${fmt(mp)}</span></div>
+    <div class="pb-row"><span>USA price / unit (+${markupPct}%)</span><span class="pb-val" style="color:var(--usa-blue-light)">${fmt(up)}</span></div>
+    <div class="pb-row"><span>Quantity</span><span class="pb-val">× ${qty.toLocaleString()}</span></div>
+    ${hasDiscount ? `<div class="pb-row discount-row"><span>Swedbank discount (−${Math.round(sweDiscount*100)}%)</span><span class="pb-val">−${fmt(discAmount)}</span></div>` : ''}
+    <div class="pb-row total"><span>Buyer pays (total)</span><span class="pb-val">${fmt(buyerPaid)}</span></div>
+    ${sellerAcc ? `<div class="pb-row"><span>Seller receives</span><span class="pb-val" style="color:var(--green)">${fmt(mktTotal)}</span></div>` : ''}
+    <div class="pb-row earn"><span>USA earns (fee${hasDiscount ? ' after discount' : ''})</span><span class="pb-val">${fmt(usaEarns)}</span></div>
+  `;
+
+  if (!buyerId) {
+    balEl.className = 'balance-check';
+    balEl.textContent = 'Select a buyer nation to verify balance.';
+    execBtn.disabled = true;
+  } else if (!canAfford) {
+    balEl.className = 'balance-check warn';
+    balEl.textContent = `⚠ ${NATION_LIST.find(n=>n.id===buyerId)?.name||buyerId} balance: ${fmt(buyerBal)} — insufficient funds.`;
+    execBtn.disabled = true;
+  } else {
+    balEl.className = 'balance-check ok';
+    balEl.textContent = `✓ Balance after trade: ${fmt(buyerBal - buyerPaid)}`;
+    execBtn.disabled = false;
+  }
+}
+
+/* ══════════════════════════════════════════
+   EXECUTE TRADE
+══════════════════════════════════════════ */
+function executeTrade() {
+  if (!selectedItem) { notify('Error', 'Select an item first.', 'red'); return; }
+  const qty      = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
+  const buyerId  = document.getElementById('buyer-select').value;
+  const sellerId = document.getElementById('seller-select').value;
+  const expLevel = selectedItem.isMissile ? document.getElementById('explosion-select').value : null;
+  if (!buyerId) { notify('Error', 'Select a buyer nation.', 'red'); return; }
+
+  const mp         = getItemBasePrice(selectedItem);
+  const up         = getUSAPrice(mp);
+  const mktTotal   = mp * qty;
+  const usaTotal   = up * qty;
+  const sweDiscount= getSweDiscount(buyerId);
+  const discAmount = sweDiscount > 0 ? usaTotal * sweDiscount : 0;
+  const buyerPaid  = usaTotal - discAmount;
+  const usaEarns   = buyerPaid - mktTotal;
+
+  const dubai = loadDubaiBank();
+  const buyerAcc = dubai.accounts[buyerId];
+  if (!buyerAcc || buyerAcc.balance < buyerPaid) {
+    notify('Insufficient Funds', 'Buyer cannot afford this transaction.', 'red'); return;
+  }
+
+  const buyerName  = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
+  const sellerName = sellerId === 'external' ? 'External Source' : (NATION_LIST.find(n=>n.id===sellerId)?.name || sellerId);
+
+  // Deduct buyer
+  buyerAcc.balance -= buyerPaid;
+  // Pay seller (market price, not markup)
+  if (sellerId !== 'external' && dubai.accounts[sellerId]) {
+    dubai.accounts[sellerId].balance += mktTotal;
+  }
+
+  // USA market treasury earns (stored in dubai bank treasury for now, or standalone)
+  dubai.treasury = (dubai.treasury || 50000) + usaEarns;
+  // Tag as usa market fees separately
+  dubai.usaMarketFees = (dubai.usaMarketFees || 0) + usaEarns;
+
+  // Bank log entries — ALL PUBLIC (no privacy in USA market)
+  if (!dubai.logEntries) dubai.logEntries = [];
+  dubai.logEntries.unshift({
+    type: 'treasury', nation: 'USA Market',
+    desc: `Trade: ${buyerName} bought ${qty>1?qty+'× ':''}${selectedItem.name}${expLevel?' ('+expLevel+')':''} from ${sellerName} — USA earned ${fmt(usaEarns)}${sweDiscount>0?' [Swe −'+Math.round(sweDiscount*100)+'%]':''}`,
+    amount: usaEarns, time: nowStr()
+  });
+  dubai.logEntries.unshift({
+    type: 'loss', nation: buyerName,
+    desc: `USA Market purchase: ${qty>1?qty+'× ':''}${selectedItem.name} from ${sellerName}${sweDiscount>0?' [Swedbank discount −'+Math.round(sweDiscount*100)+'%]':''}`,
+    amount: -buyerPaid, time: nowStr()
+  });
+  if (sellerId !== 'external' && dubai.accounts[sellerId]) {
+    dubai.logEntries.unshift({
+      type: 'gain', nation: sellerName,
+      desc: `USA Market sale: ${qty>1?qty+'× ':''}${selectedItem.name} to ${buyerName}`,
+      amount: mktTotal, time: nowStr()
+    });
+  }
+  saveDubaiBank(dubai);
+
+  // Record trade
+  const expLabels = {small:'Small',medium:'Medium',big:'Big',huge:'Huge',gigantic:'Gigantic'};
+  trades.unshift({
+    id: Date.now(), time: nowStr(),
+    buyerId, buyerName, sellerId, sellerName,
+    itemId: selectedItem.id, itemName: selectedItem.name,
+    qty, unit: selectedItem.unit,
+    explosionLabel: expLevel ? expLabels[expLevel] : null,
+    marketUnitPrice: mp,
+    usaUnitPrice: up,
+    mktTotal, usaTotal, discAmount, buyerPaid,
+    sweDiscount, markupPct,
+    usaEarned: usaEarns,
+    // ALL public — no privacy flag in USA market
+  });
+  tradeRevenue   += usaEarns;
+  tradeVolume    += buyerPaid;
+  totalDiscounts += discAmount;
+  saveTrades();
+
+  updateStats();
+  populateSelectors();
+  updateBreakdown();
+  renderLog();
+
+  const discNote = sweDiscount > 0 ? ` · Swedbank discount −${Math.round(sweDiscount*100)}% (saved ${fmt(discAmount)})` : '';
+  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} from ${sellerName}${discNote}`, 'blue');
+}
+
+/* ══════════════════════════════════════════
+   LOG (always public — buyer & seller shown)
+══════════════════════════════════════════ */
+function renderLog() {
+  const el = document.getElementById('trade-log');
+  document.getElementById('log-count').textContent = trades.length + ' entr' + (trades.length===1?'y':'ies');
+  if (!trades.length) { el.innerHTML = '<div class="log-empty">No trades executed yet</div>'; return; }
+  el.innerHTML = [...trades].map(t => {
+    const discBadge = t.sweDiscount > 0
+      ? `<span class="log-discount-badge">SWEDBANK −${Math.round(t.sweDiscount*100)}%</span>`
+      : '';
+    return `
+    <div class="log-entry">
+      <div class="log-row1">
+        <span class="log-time">${t.time}</span>
+        <span class="log-buyer">${t.buyerName}</span>
+        <span class="log-item">${t.qty>1?t.qty+'× ':''}${t.itemName}${t.explosionLabel?' ('+t.explosionLabel+')':''}${discBadge}</span>
+        <span class="log-total">${fmt(t.buyerPaid)}</span>
+      </div>
+      <div class="log-row2">USA Market · ${t.unit||'un'} · Mkt ref: ${fmt(t.marketUnitPrice)}/unit · Fee ${t.markupPct}%${t.discAmount>0?' · Discount: −'+fmt(t.discAmount):''}</div>
+      <div class="log-public-row">🌐 Buyer: <strong>${t.buyerName}</strong> &nbsp;·&nbsp; Seller: <strong>${t.sellerName}</strong> &nbsp;·&nbsp; USA earned: ${fmt(t.usaEarned)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   MARKUP SLIDER
+══════════════════════════════════════════ */
+const markupSlider = document.getElementById('markup-slider');
+const markupValEl  = document.getElementById('markup-val');
+function updateMarkupGradient() {
+  const pct = (markupPct / 30) * 100;
+  markupSlider.style.setProperty('--pct', pct + '%');
+}
+markupSlider.addEventListener('input', () => {
+  markupPct = parseFloat(markupSlider.value);
+  markupValEl.textContent = markupPct % 1 === 0 ? markupPct : markupPct.toFixed(1);
+  updateMarkupGradient();
+  renderItems();
+  updateBreakdown();
+  try { localStorage.setItem('usa_market_markup', markupPct); } catch {}
+  const badge = document.getElementById('markup-saved-badge');
+  if (badge) { badge.style.opacity='1'; clearTimeout(badge._t); badge._t=setTimeout(()=>{badge.style.opacity='0';},1800); }
+});
+
+/* ══════════════════════════════════════════
+   CLOCK
+══════════════════════════════════════════ */
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US', {
+    hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit',
+    day:'2-digit', month:'short', year:'numeric'
+  });
+}
+
+/* ══════════════════════════════════════════
+   EXPORT / IMPORT
+══════════════════════════════════════════ */
+function exportTradeJSON() {
+  const data = { trades, tradeRevenue, tradeVolume, totalDiscounts, markupPct, _exported: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `usa_market_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  notify('Export Complete', 'Trade history saved as JSON.', 'blue');
+}
+function importTradeJSON() {
+  const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        trades         = Array.isArray(d.trades) ? d.trades : [];
+        tradeRevenue   = d.tradeRevenue   ?? 0;
+        tradeVolume    = d.tradeVolume    ?? 0;
+        totalDiscounts = d.totalDiscounts ?? 0;
+        if (d.markupPct !== undefined) {
+          markupPct = d.markupPct;
+          markupSlider.value = markupPct;
+          markupValEl.textContent = markupPct % 1 === 0 ? markupPct : markupPct.toFixed(1);
+          updateMarkupGradient();
+        }
+        saveTrades(); renderLog(); updateStats();
+        notify('Import Successful', `${trades.length} trade records loaded.`, 'green');
+      } catch { notify('Import Failed', 'Invalid JSON file.', 'red'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+try {
+  const saved = parseFloat(localStorage.getItem('usa_market_markup'));
+  if (!isNaN(saved)) { markupPct = saved; markupSlider.value = saved; markupValEl.textContent = saved; }
+} catch {}
+
+loadTrades();
+populateSelectors();
+renderCatTabs();
+renderItems();
+renderLog();
+updateStats();
+updateMarkupGradient();
+updateClock();
+setInterval(updateClock, 1000);
+// Periodic refresh of selectors and stats
+setInterval(() => {
+  const bv = document.getElementById('buyer-select').value;
+  const sv = document.getElementById('seller-select').value;
+  populateSelectors();
+  if (bv) document.getElementById('buyer-select').value = bv;
+  if (sv) document.getElementById('seller-select').value = sv;
+  updateStats();
+  updateBreakdown();
+}, 8000);
+</script>
+</body>
+</html>
