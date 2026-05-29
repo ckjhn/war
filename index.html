@@ -441,6 +441,9 @@
         <button class="nav-btn" data-app="asian">
           🐉 Asian Logistics
         </button>
+        <button class="nav-btn" data-app="germany">
+          🏭 Germany
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -529,6 +532,11 @@
         name: 'Asian Logistics',
         icon: '🐉',
         file: 'asian.html'
+      },
+      'germany': {
+        name: 'Germany',
+        icon: '🏭',
+        file: 'germany.html'
       },
       'sync': {
         name: 'Sync',
@@ -788,7 +796,10 @@
         write:(d)=>{ if(d) localStorage.setItem('usa_security_v1',JSON.stringify(d)); } },
       { name:'asian.json', path:'assets/asian.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('cnjp_logistics_v2')||'null');}catch{return null;} },
-        write:(d)=>{ if(d) localStorage.setItem('cnjp_logistics_v2',JSON.stringify(d)); } }
+        write:(d)=>{ if(d) localStorage.setItem('cnjp_logistics_v2',JSON.stringify(d)); } },
+      { name:'germany.json', path:'assets/germany.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('de_industry_v1')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('de_industry_v1',JSON.stringify(d)); } }
     ];
 
     function loadGhConfig(){
@@ -945,7 +956,7 @@
           </div>
           <div style="${card}">
             <div style="${sec}">Files Managed</div>
-            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json','ussr_silos.json','diplomacy.json','usa_security.json','asian.json'].map(f=>`
+            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json','ussr_silos.json','diplomacy.json','usa_security.json','asian.json','germany.json'].map(f=>`
               <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
                 <span>📁</span>
                 <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>
