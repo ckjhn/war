@@ -435,6 +435,12 @@
         <button class="nav-btn" data-app="diplomacy">
           🕊 Diplomacy
         </button>
+        <button class="nav-btn" data-app="usa_security">
+          🦅 USA Security
+        </button>
+        <button class="nav-btn" data-app="asian">
+          🐉 Asian Logistics
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -513,6 +519,16 @@
         name: 'Diplomacy',
         icon: '🕊',
         file: 'diplomacy.html'
+      },
+      'usa_security': {
+        name: 'USA Security',
+        icon: '🦅',
+        file: 'usa_security.html'
+      },
+      'asian': {
+        name: 'Asian Logistics',
+        icon: '🐉',
+        file: 'asian.html'
       },
       'sync': {
         name: 'Sync',
@@ -766,7 +782,13 @@
           try{ local=JSON.parse(localStorage.getItem('tc_diplomacy')||'{}'); }catch{}
           const merged=Object.assign({}, d, local);
           localStorage.setItem('tc_diplomacy', JSON.stringify(merged));
-        } }
+        } },
+      { name:'usa_security.json', path:'assets/usa_security.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('usa_security_v1')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('usa_security_v1',JSON.stringify(d)); } },
+      { name:'asian.json', path:'assets/asian.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('cnjp_logistics_v2')||'null');}catch{return null;} },
+        write:(d)=>{ if(d) localStorage.setItem('cnjp_logistics_v2',JSON.stringify(d)); } }
     ];
 
     function loadGhConfig(){
@@ -923,7 +945,7 @@
           </div>
           <div style="${card}">
             <div style="${sec}">Files Managed</div>
-            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json','ussr_silos.json','diplomacy.json'].map(f=>`
+            ${['database.json','conflicts.json','turn.json','trade.json','alliances.json','bank.json','trades.json','ussr_silos.json','diplomacy.json','usa_security.json','asian.json'].map(f=>`
               <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--hub-border);font-family:'Exo 2',sans-serif;font-size:11px;color:var(--hub-text-light);">
                 <span>📁</span>
                 <span style="font-family:'Courier New',monospace;color:var(--hub-text);font-size:11px;">assets/${f}</span>

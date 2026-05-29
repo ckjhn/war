@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-CN" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中日物流指挥系统 | CN/JP Logistics Command</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════════
+       CHINA THEME — Default
+    ══════════════════════════════════════════════════ */
+    :root {
+      --primary:       #de2910;   /* 中国红 */
+      --primary-dark:  #a81f0a;
+      --primary-light: #f8e8e6;
+      --primary-mid:   rgba(222,41,16,0.12);
+      --gold:          #ffde00;   /* 黄星 */
+      --gold-mid:      rgba(255,222,0,0.15);
+      --bg:            #f5f5f5;
+      --surface:       #ffffff;
+      --surface2:      #fafafa;
+      --border:        #e0e0e0;
+      --border-strong: #bdbdbd;
+      --text:          #212121;
+      --text-secondary:#616161;
+      --text-muted:    #9e9e9e;
+      --link:          #1565c0;
+      --success:       #2e7d32;
+      --success-bg:    #e8f5e9;
+      --danger:        #c62828;
+      --danger-bg:     #ffebee;
+      --warn-bg:       #fff8e1;
+      --warn-border:   #f9a825;
+      --hired-bg:      #e8f5e9;
+      --hired-border:  rgba(46,125,50,0.3);
+      --avail-bg:      #e3f2fd;
+      --avail-border:  rgba(21,101,192,0.3);
+      --font-zh:       'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+      --font-jp:       'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+      --font-serif-zh: 'Noto Serif SC', serif;
+      --font-serif-jp: 'Noto Serif JP', serif;
+      --font-ui:       var(--font-zh);
+      --font-serif-ui: var(--font-serif-zh);
+    }
+
+    /* ══════════════════════════════════════════════════
+       JAPAN THEME
+    ══════════════════════════════════════════════════ */
+    body.jp {
+      --primary:       #bc002d;   /* 日本赤 */
+      --primary-dark:  #8b0020;
+      --primary-light: #fce4ec;
+      --primary-mid:   rgba(188,0,45,0.10);
+      --gold:          #ffffff;
+      --gold-mid:      rgba(255,255,255,0.15);
+      --bg:            #f7f7f7;
+      --surface:       #ffffff;
+      --surface2:      #fafafa;
+      --border:        #ddd;
+      --border-strong: #bbb;
+      --text:          #1a1a1a;
+      --text-secondary:#555;
+      --text-muted:    #999;
+      --font-ui:       var(--font-jp);
+      --font-serif-ui: var(--font-serif-jp);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px; line-height: 1.7;
+      transition: font-family 0.1s;
+    }
+
+    /* ══════════════════════════════════════════════════
+       NOTICE BAR
+    ══════════════════════════════════════════════════ */
+    .notice-bar {
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+      padding: 5px 16px;
+      letter-spacing: 1px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .notice-bar .stars { color: var(--gold); letter-spacing: 2px; }
+
+    /* ══════════════════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════════════════ */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 3px solid var(--primary);
+      padding: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .header-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 14px 24px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header-brand { display: flex; align-items: center; gap: 14px; }
+    .header-emblem {
+      width: 52px; height: 52px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; flex-shrink: 0;
+      color: var(--gold);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: background 0.4s;
+    }
+    .header-text {}
+    .header-title {
+      font-family: var(--font-serif-ui);
+      font-size: 20px; font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+      letter-spacing: 1px;
+      transition: font-family 0.1s;
+    }
+    .header-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Country toggle */
+    .country-toggle {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border-strong);
+      border-radius: 3px; overflow: hidden;
+      flex-shrink: 0;
+    }
+    .ctoggle-btn {
+      background: var(--surface2);
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 500;
+      padding: 8px 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+      border-right: 1px solid var(--border);
+    }
+    .ctoggle-btn:last-child { border-right: none; }
+    .ctoggle-btn.active {
+      background: var(--primary); color: #fff;
+    }
+    .ctoggle-btn:not(.active):hover { background: var(--primary-light); color: var(--primary); }
+
+    /* ══════════════════════════════════════════════════
+       NAV BAR
+    ══════════════════════════════════════════════════ */
+    .site-nav {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; gap: 0;
+    }
+    .nav-item {
+      display: block;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-secondary);
+      padding: 11px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      background: none; border-top: none; border-left: none; border-right: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-ui);
+      letter-spacing: 0.3px;
+    }
+    .nav-item:hover { color: var(--primary); }
+    .nav-item.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+    /* ══════════════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════════════ */
+    .page {
+      max-width: 1200px; margin: 0 auto;
+      padding: 24px 24px 60px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       PAGE TITLE
+    ══════════════════════════════════════════════════ */
+    .page-top {
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-h1 {
+      font-family: var(--font-serif-ui);
+      font-size: 24px; font-weight: 700;
+      color: var(--primary); margin-bottom: 4px;
+      letter-spacing: 0.5px; transition: font-family 0.1s;
+    }
+    .page-sub { font-size: 13px; color: var(--text-muted); }
+
+    /* ══════════════════════════════════════════════════
+       STAT ROW
+    ══════════════════════════════════════════════════ */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 12px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      padding: 14px 16px;
+    }
+    .stat-card.gold { border-left-color: #f9a825; }
+    .stat-card.green { border-left-color: var(--success); }
+    .stat-label {
+      font-size: 11px; color: var(--text-muted);
+      margin-bottom: 4px; font-weight: 500; letter-spacing: 0.5px;
+    }
+    .stat-value {
+      font-family: var(--font-serif-ui);
+      font-size: 24px; font-weight: 700;
+      color: var(--text); line-height: 1;
+      transition: font-family 0.1s;
+    }
+    .stat-value.red   { color: var(--primary); }
+    .stat-value.green { color: var(--success); }
+    .stat-value.gold  { color: #c77800; }
+
+    /* ══════════════════════════════════════════════════
+       TABS
+    ══════════════════════════════════════════════════ */
+    .tab-list {
+      display: flex; border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      background: transparent; border: none;
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      padding: 10px 18px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s; letter-spacing: 0.3px;
+    }
+    .tab-btn:hover { color: var(--primary); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ══════════════════════════════════════════════════
+       FORM CARD
+    ══════════════════════════════════════════════════ */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-card-title {
+      font-size: 13px; font-weight: 700;
+      color: var(--text);
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-card-title::before {
+      content: '';
+      width: 3px; height: 16px;
+      background: var(--primary);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 14px; align-items: end;
+    }
+    @media (max-width: 800px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .cn-field { display: flex; flex-direction: column; gap: 5px; }
+    .cn-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .cn-input, .cn-select {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 2px; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .cn-input:focus, .cn-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-mid);
+    }
+    .cn-input::placeholder { color: var(--text-muted); }
+    .cn-select option { background: #fff; }
+    .cn-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ══════════════════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 600;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      cursor: pointer; border-radius: 2px;
+      transition: all 0.15s; white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+    .btn-outline { background: transparent; color: var(--primary); border-color: var(--primary); }
+    .btn-outline:hover { background: var(--primary-light); }
+    .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border-strong); }
+    .btn-ghost:hover { border-color: var(--text-secondary); }
+    .btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+    .btn-danger:hover { background: var(--danger-bg); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
+
+    /* ══════════════════════════════════════════════════
+       VEHICLE GRID
+    ══════════════════════════════════════════════════ */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px; margin-bottom: 24px;
+    }
+
+    .vcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--primary);
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+      animation: fadein 0.2s ease;
+    }
+    @keyframes fadein { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+    .vcard:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+    .vcard.hired { border-top-color: var(--success); }
+
+    .vcard-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .vcard-type-icon { font-size: 22px; line-height: 1; }
+    .vcard-status {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 2px;
+      letter-spacing: 0.3px;
+    }
+    .vcard-status.available { background: var(--avail-bg); color: var(--link); border: 1px solid var(--avail-border); }
+    .vcard-status.hired     { background: var(--hired-bg);  color: var(--success); border: 1px solid var(--hired-border); }
+
+    .vcard-body { padding: 12px 14px; }
+    .vcard-plate {
+      font-size: 16px; font-weight: 700;
+      color: var(--text); letter-spacing: 1px;
+      margin-bottom: 2px; font-family: var(--font-serif-ui);
+    }
+    .vcard-type-name { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+
+    .vcard-price-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin-bottom: 10px;
+    }
+    .vcard-price-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 8px 10px; border-radius: 2px;
+    }
+    .vcard-price-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; letter-spacing: 0.3px; }
+    .vcard-price-val {
+      font-family: var(--font-serif-ui);
+      font-size: 14px; font-weight: 700; color: var(--text);
+    }
+    .vcard-price-val.cycle { color: var(--primary); font-size: 16px; }
+
+    .vcard-hired-info {
+      background: var(--hired-bg);
+      border: 1px solid var(--hired-border);
+      padding: 8px 10px; font-size: 12px;
+      color: var(--success); margin-bottom: 10px;
+      border-radius: 2px;
+    }
+
+    .vcard-footer {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+
+    /* ══════════════════════════════════════════════════
+       HIRING LIST
+    ══════════════════════════════════════════════════ */
+    .country-list-items { display: flex; flex-direction: column; gap: 10px; }
+
+    .chire-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .chire-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    .chire-head:hover { background: var(--primary-light); }
+    .chire-country {
+      font-family: var(--font-serif-ui);
+      font-size: 15px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .chire-total {
+      font-family: var(--font-serif-ui);
+      font-size: 15px; color: var(--success); font-weight: 700;
+    }
+    .chire-body { padding: 12px 16px; display: none; }
+    .chire-body.open { display: block; }
+
+    .chire-vehicle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .chire-vehicle-row:last-child { border-bottom: none; }
+    .chire-vehicle-name { color: var(--text); }
+    .chire-vehicle-price { color: var(--text-muted); }
+    .chire-vehicle-price strong { color: var(--success); }
+
+    /* ══════════════════════════════════════════════════
+       BLOCKED
+    ══════════════════════════════════════════════════ */
+    .blocked-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .blocked-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--danger-bg);
+      border: 1px solid rgba(198,40,40,0.3);
+      color: var(--danger);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 2px;
+    }
+    .blocked-chip button {
+      background: none; border: none; color: inherit;
+      cursor: pointer; font-size: 14px; padding: 0; opacity: 0.7;
+    }
+    .blocked-chip button:hover { opacity: 1; }
+    .block-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .block-row .cn-field { flex: 1; min-width: 180px; }
+
+    /* ══════════════════════════════════════════════════
+       SECTION TITLE
+    ══════════════════════════════════════════════════ */
+    .sec-title {
+      font-family: var(--font-serif-ui);
+      font-size: 17px; font-weight: 700;
+      color: var(--text); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+      transition: font-family 0.1s;
+    }
+    .sec-title::before {
+      content: '';
+      width: 4px; height: 20px;
+      background: var(--primary);
+      border-radius: 2px; flex-shrink: 0;
+    }
+    .sec-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; margin-left: 14px; }
+
+    /* ══════════════════════════════════════════════════
+       MODAL
+    ══════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 900;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border-top: 4px solid var(--primary);
+      width: 90%; max-width: 460px;
+      transform: translateY(10px); transition: transform 0.2s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-title {
+      font-family: var(--font-serif-ui);
+      font-size: 17px; font-weight: 700;
+      color: var(--primary);
+    }
+    .modal-close {
+      background: none; border: none; font-size: 18px;
+      color: var(--text-muted); cursor: pointer;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface2);
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+
+    /* ══════════════════════════════════════════════════
+       ALERT
+    ══════════════════════════════════════════════════ */
+    .alert-info {
+      background: var(--warn-bg);
+      border-left: 3px solid var(--warn-border);
+      padding: 10px 14px; font-size: 13px;
+      color: #555; margin-bottom: 16px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       EMPTY STATE
+    ══════════════════════════════════════════════════ */
+    .empty-state {
+      grid-column: 1/-1; text-align: center;
+      padding: 50px 20px; color: var(--text-muted);
+      font-size: 13px;
+    }
+    .empty-icon { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3; }
+
+    /* FOOTER */
+    .site-footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.75);
+      font-size: 12px; padding: 20px 0;
+      margin-top: 40px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-brand { font-family: var(--font-serif-ui); font-size: 15px; color: #fff; font-weight: 700; }
+    .footer-note { color: rgba(255,255,255,0.5); }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); }
+  </style>
+</head>
+<body>
+
+  <!-- NOTICE BAR (dynamic: CN or JP) -->
+  <div class="notice-bar" id="noticeBar">
+    <span class="stars" id="noticeStars">★ ★★★★</span>
+    <span id="noticeText">中华人民共和国 · 物流车辆指挥系统 · 官方操作平台</span>
+    <span class="stars" id="noticeStars2">★ ★★★★</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-emblem" id="headerEmblem">★</div>
+        <div class="header-text">
+          <div class="header-title" id="headerTitle">中日物流指挥中心</div>
+          <div class="header-subtitle" id="headerSubtitle">车辆租赁运营管理系统 · Vehicle Rental Operations Management</div>
+        </div>
+      </div>
+      <div class="country-toggle">
+        <button class="ctoggle-btn active" id="btnCN" onclick="setCountry('cn')">🇨🇳 中文 (China)</button>
+        <button class="ctoggle-btn" id="btnJP" onclick="setCountry('jp')">🇯🇵 日本語 (Japan)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <button class="nav-item active" id="navFleet"   onclick="switchTab('fleet',this)" id="navFleet"></button>
+      <button class="nav-item"        id="navHiring"  onclick="switchTab('hiring',this)" id="navHiring"></button>
+      <button class="nav-item"        id="navBlocked" onclick="switchTab('blocked',this)" id="navBlocked"></button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="page">
+
+    <!-- PAGE TOP -->
+    <div class="page-top">
+      <div class="page-h1" id="pageH1"></div>
+      <div class="page-sub" id="pageSub"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row" id="statsRow"></div>
+
+    <!-- TAB: FLEET -->
+    <div class="tab-panel active" id="tab-fleet">
+
+      <div class="sec-title" id="regTitle"></div>
+      <div class="sec-sub" id="regSub"></div>
+
+      <div class="form-card">
+        <div class="form-card-title" id="formCardTitle"></div>
+        <div class="form-grid">
+          <div class="cn-field">
+            <label class="cn-label" id="lblType"></label>
+            <select class="cn-select" id="vehType">
+              <option value="🚛 Truck / 卡车">🚛 Truck / 卡车</option>
+              <option value="🚌 Bus / 巴士">🚌 Bus / 巴士</option>
+              <option value="🚗 Car / 汽车">🚗 Car / 汽车</option>
+              <option value="🏍 Motorcycle / 摩托车">🏍 Motorcycle / 摩托车</option>
+              <option value="🚢 Ship / 船舶">🚢 Ship / 船舶</option>
+              <option value="✈️ Aircraft / 飞机">✈️ Aircraft / 飞机</option>
+              <option value="🚂 Train / 列车">🚂 Train / 列车</option>
+              <option value="🚁 Helicopter / 直升机">🚁 Helicopter / 直升机</option>
+              <option value="🛳 Cargo Vessel / 货轮">🛳 Cargo Vessel / 货轮</option>
+              <option value="⛽ Tanker / 油轮">⛽ Tanker / 油轮</option>
+            </select>
+          </div>
+          <div class="cn-field">
+            <label class="cn-label" id="lblPlate"></label>
+            <input type="text" class="cn-input" id="vehPlate" maxlength="20">
+          </div>
+          <div class="cn-field">
+            <label class="cn-label" id="lblPrice"></label>
+            <input type="number" class="cn-input" id="vehPrice" min="0" step="1">
+          </div>
+          <button class="btn btn-primary" onclick="addVehicle()" id="btnAddVehicle"></button>
+        </div>
+      </div>
+
+      <div class="sec-title" id="fleetTitle"></div>
+      <div class="sec-sub" id="fleetSub"></div>
+      <div class="vehicle-grid" id="vehicleGrid"></div>
+
+    </div>
+
+    <!-- TAB: HIRING -->
+    <div class="tab-panel" id="tab-hiring">
+      <div class="sec-title" id="hiringTitle"></div>
+      <div class="sec-sub" id="hiringSub"></div>
+      <div class="country-list-items" id="hiringList"></div>
+    </div>
+
+    <!-- TAB: BLOCKED -->
+    <div class="tab-panel" id="tab-blocked">
+      <div class="sec-title" id="blockedTitle"></div>
+      <div class="sec-sub" id="blockedSub"></div>
+
+      <div class="form-card">
+        <div class="form-card-title" id="blockFormTitle"></div>
+        <div class="block-row">
+          <div class="cn-field">
+            <label class="cn-label" id="lblBlockCountry"></label>
+            <select class="cn-select" id="blockSelect">
+              <option value="">— Select a country —</option>
+            </select>
+          </div>
+          <button class="btn btn-danger" onclick="blockCountry()" id="btnBlock"></button>
+        </div>
+      </div>
+      <div class="blocked-chips" id="blockedList"></div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand" id="footerBrand"></div>
+      <div class="footer-note" id="footerNote"></div>
+    </div>
+  </footer>
+
+  <!-- HIRE MODAL -->
+  <div class="modal-overlay" id="hireModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="hireModalTitle"></div>
+        <button class="modal-close" onclick="closeHireModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="cn-field">
+          <label class="cn-label" id="lblHireCountry"></label>
+          <select class="cn-select" id="hireCountrySelect">
+            <option value="">— Select a country —</option>
+          </select>
+        </div>
+        <div class="cn-field">
+          <label class="cn-label" id="lblHireTurns"></label>
+          <input type="number" class="cn-input" id="hireTurns" min="1" step="1" value="4">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeHireModal()" id="btnCancelHire"></button>
+        <button class="btn btn-primary" onclick="confirmHire()" id="btnConfirmHire"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETURN MODAL -->
+  <div class="modal-overlay" id="returnModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="returnModalTitle"></div>
+        <button class="modal-close" onclick="closeReturnModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="returnDetails" style="font-size:13px;color:var(--text-secondary);line-height:1.7;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeReturnModal()" id="btnCancelReturn"></button>
+        <button class="btn btn-primary" onclick="confirmReturn()" id="btnConfirmReturn"></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ═════════════════════════════════════════════════
+   I18N — CHINESE / JAPANESE STRINGS
+═════════════════════════════════════════════════ */
+const I18N = {
+  cn: {
+    lang: 'zh-CN',
+    // ── Decorative / ornamental only ──
+    notice:        '中华人民共和国物流指挥系统  ·  CN/JP Logistics Command  ·  Official Operations Portal',
+    noticeStars:   '★ ★★★★',
+    headerTitle:   '中日物流指挥中心  ·  CN/JP Logistics Command',
+    headerSub:     '车辆租赁运营管理  ·  Vehicle Rental Operations Management',
+    emblem:        '★',
+    footerBrand:   '中日物流指挥中心  ·  CN/JP Logistics Command Center',
+    footerNote:    '官方操作平台  ·  Official Operations Platform — Unauthorized access is prohibited',
+    // ── Navigation (English, Chinese as secondary accent) ──
+    navFleet:      '🚛 Fleet Management',
+    navHiring:     '📋 Active Hires',
+    navBlocked:    '🚫 Blocked Countries',
+    // ── Page headings ──
+    pageH1_fleet:  'Fleet Management',
+    pageSub_fleet: '车队管理  ·  Register and manage vehicles available for international hire',
+    pageH1_hiring: 'Active Hires',
+    pageSub_hiring:'在租记录  ·  All countries currently renting vehicles and their cycle costs',
+    pageH1_blocked:'Blocked Countries',
+    pageSub_blocked:'禁止名单  ·  Blocked countries cannot hire any vehicles',
+    // ── Section titles ──
+    regTitle:      'Register a New Vehicle',
+    regSub:        '登记新车辆  ·  Fill in the vehicle details to add it to the available fleet',
+    formCardTitle: 'Vehicle Registration Form  ·  车辆登记表',
+    fleetTitle:    'Current Fleet',
+    fleetSub:      '当前车队  ·  Click "Hire Out" to assign a vehicle, "Return" to release it',
+    hiringTitle:   'Hired Vehicles Summary',
+    hiringSub:     '在租汇总  ·  Per-country breakdown with cycle (4-turn) totals',
+    blockedTitle:  'Blocked Countries',
+    blockedSub:    '禁止国家  ·  Countries on this list are barred from hiring any vehicles',
+    blockFormTitle:'Add Restriction  ·  添加禁令',
+    // ── Form labels ──
+    lblType:       'Vehicle Type',
+    lblPlate:      'License Plate',
+    lblPrice:      'Price per Turn ($)',
+    lblBlockCountry:'Country',
+    lblHireCountry:'Hiring Country',
+    lblHireTurns:  'Number of Turns',
+    // ── Buttons — always English ──
+    btnAdd:        '+ Register',
+    btnBlock:      'Block',
+    btnHireOut:    'Hire Out',
+    btnReturn:     'Return',
+    btnDelete:     'Delete',
+    btnCancelHire: 'Cancel',
+    btnConfirmHire:'Confirm Hire',
+    btnCancelReturn:'Cancel',
+    btnConfirmReturn:'Confirm Return',
+    // ── Modal titles ──
+    hireModalTitle:'Hire Vehicle',
+    returnModalTitle:'Confirm Return',
+    returnConfirmText:'Return this vehicle and make it available again?',
+    // ── Status badges ──
+    vcard_avail:   'Available',
+    vcard_hired:   'Hired',
+    // ── Card info labels ──
+    pricePerTurn:  'Per Turn',
+    priceCycle:    'Per Cycle (4T)',
+    hiredBy:       'Hired by:',
+    turns:         'turn(s)',
+    totalPaid:     'Total paid:',
+    perTurnLabel:  '/turn',
+    cycleLabel:    '/cycle',
+    // ── Stats ──
+    stat_total:    'Total Vehicles',
+    stat_avail:    'Available',
+    stat_hired:    'Hired Out',
+    stat_income:   'Cycle Income',
+    // ── Empty states ──
+    emptyFleet:    'No vehicles registered. Add your first vehicle above.',
+    emptyHiring:   'No vehicles currently hired out.',
+    emptyBlocked:  'No countries are currently blocked.',
+  },
+  jp: {
+    lang: 'ja',
+    // ── Decorative / ornamental only ──
+    notice:        '中日物流司令センター  ·  CN/JP Logistics Command  ·  公式操作ポータル',
+    noticeStars:   '⛩',
+    headerTitle:   '中日物流司令センター  ·  CN/JP Logistics Command',
+    headerSub:     '車両レンタル業務管理  ·  Vehicle Rental Operations Management',
+    emblem:        '⛩',
+    footerBrand:   '中日物流司令センター  ·  CN/JP Logistics Command Center',
+    footerNote:    '公式操作ポータル  ·  Official Operations Platform — Unauthorized access is prohibited',
+    // ── Navigation ──
+    navFleet:      '🚛 Fleet Management',
+    navHiring:     '📋 Active Hires',
+    navBlocked:    '🚫 Blocked Countries',
+    // ── Page headings ──
+    pageH1_fleet:  'Fleet Management',
+    pageSub_fleet: '車両管理  ·  Register and manage vehicles available for international hire',
+    pageH1_hiring: 'Active Hires',
+    pageSub_hiring:'貸出記録  ·  All countries currently renting vehicles and their cycle costs',
+    pageH1_blocked:'Blocked Countries',
+    pageSub_blocked:'禁止国リスト  ·  Blocked countries cannot hire any vehicles',
+    // ── Section titles ──
+    regTitle:      'Register a New Vehicle',
+    regSub:        '車両新規登録  ·  Fill in the vehicle details to add it to the available fleet',
+    formCardTitle: 'Vehicle Registration Form  ·  車両登録フォーム',
+    fleetTitle:    'Current Fleet',
+    fleetSub:      '現在の車団  ·  Click "Hire Out" to assign a vehicle, "Return" to release it',
+    hiringTitle:   'Hired Vehicles Summary',
+    hiringSub:     '貸出記録  ·  Per-country breakdown with cycle (4-turn) totals',
+    blockedTitle:  'Blocked Countries',
+    blockedSub:    '禁止国  ·  Countries on this list are barred from hiring any vehicles',
+    blockFormTitle:'Add Restriction  ·  禁止を追加',
+    // ── Form labels ──
+    lblType:       'Vehicle Type',
+    lblPlate:      'License Plate',
+    lblPrice:      'Price per Turn ($)',
+    lblBlockCountry:'Country',
+    lblHireCountry:'Hiring Country',
+    lblHireTurns:  'Number of Turns',
+    // ── Buttons — always English ──
+    btnAdd:        '+ Register',
+    btnBlock:      'Block',
+    btnHireOut:    'Hire Out',
+    btnReturn:     'Return',
+    btnDelete:     'Delete',
+    btnCancelHire: 'Cancel',
+    btnConfirmHire:'Confirm Hire',
+    btnCancelReturn:'Cancel',
+    btnConfirmReturn:'Confirm Return',
+    // ── Modal titles ──
+    hireModalTitle:'Hire Vehicle',
+    returnModalTitle:'Confirm Return',
+    returnConfirmText:'Return this vehicle and make it available again?',
+    // ── Status badges ──
+    vcard_avail:   'Available',
+    vcard_hired:   'Hired',
+    // ── Card info labels ──
+    pricePerTurn:  'Per Turn',
+    priceCycle:    'Per Cycle (4T)',
+    hiredBy:       'Hired by:',
+    turns:         'turn(s)',
+    totalPaid:     'Total paid:',
+    perTurnLabel:  '/turn',
+    cycleLabel:    '/cycle',
+    // ── Stats ──
+    stat_total:    'Total Vehicles',
+    stat_avail:    'Available',
+    stat_hired:    'Hired Out',
+    stat_income:   'Cycle Income',
+    // ── Empty states ──
+    emptyFleet:    'No vehicles registered. Add your first vehicle above.',
+    emptyHiring:   'No vehicles currently hired out.',
+    emptyBlocked:  'No countries are currently blocked.',
+  }
+};
+
+/* ═════════════════════════════════════════════════
+   STATE
+═════════════════════════════════════════════════ */
+const STORE_KEY    = 'cnjp_logistics_v2';
+const TC_COUNTRIES = 'tc_countries';
+
+function defaultState() { return { cn: {vehicles:[], blocked:[]}, jp: {vehicles:[], blocked:[]} }; }
+function loadState() {
+  try { const r = localStorage.getItem(STORE_KEY); if (r) { const p = JSON.parse(r); if (!p.cn) p.cn = {vehicles:[],blocked:[]}; if (!p.jp) p.jp = {vehicles:[],blocked:[]}; return p; } } catch(e) {}
+  return defaultState();
+}
+function saveState() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+function getCountries() {
+  try { return (JSON.parse(localStorage.getItem(TC_COUNTRIES) || '[]')).filter(c => c.type === 'country' || !c.type); } catch(e) { return []; }
+}
+
+let state       = loadState();
+let activeCountry = 'cn';   // 'cn' | 'jp'
+let activeTab   = 'fleet';
+let pendingHireId   = null;
+let pendingReturnId = null;
+
+function t(key) { return I18N[activeCountry][key] || key; }
+function cdata() { return state[activeCountry]; }
+
+/* ═════════════════════════════════════════════════
+   COUNTRY TOGGLE
+═════════════════════════════════════════════════ */
+function setCountry(c) {
+  activeCountry = c;
+  document.body.classList.toggle('jp', c === 'jp');
+  document.getElementById('htmlRoot').lang = I18N[c].lang;
+  document.getElementById('btnCN').classList.toggle('active', c === 'cn');
+  document.getElementById('btnJP').classList.toggle('active', c === 'jp');
+  applyI18N();
+  renderAll();
+  populateHireSelect();
+  populateBlockSelect();
+}
+
+function applyI18N() {
+  const s = I18N[activeCountry];
+  document.getElementById('noticeText').textContent   = s.notice;
+  document.getElementById('noticeStars').textContent  = s.noticeStars;
+  document.getElementById('noticeStars2').textContent = s.noticeStars;
+  document.getElementById('headerEmblem').textContent = s.emblem;
+  document.getElementById('headerTitle').textContent  = s.headerTitle;
+  document.getElementById('headerSubtitle').textContent = s.headerSub;
+  document.getElementById('navFleet').textContent   = s.navFleet;
+  document.getElementById('navHiring').textContent  = s.navHiring;
+  document.getElementById('navBlocked').textContent = s.navBlocked;
+  document.getElementById('footerBrand').textContent = s.footerBrand;
+  document.getElementById('footerNote').textContent  = s.footerNote;
+  document.getElementById('formCardTitle').textContent = s.formCardTitle;
+  document.getElementById('lblType').textContent  = s.lblType;
+  document.getElementById('lblPlate').textContent = s.lblPlate;
+  document.getElementById('lblPrice').textContent = s.lblPrice;
+  document.getElementById('btnAddVehicle').textContent = s.btnAdd;
+  document.getElementById('blockedTitle').textContent  = s.blockedTitle;
+  document.getElementById('blockedSub').textContent    = s.blockedSub;
+  document.getElementById('blockFormTitle').textContent= s.blockFormTitle;
+  document.getElementById('lblBlockCountry').textContent = s.lblBlockCountry;
+  document.getElementById('btnBlock').textContent     = s.btnBlock;
+  document.getElementById('hireModalTitle').textContent  = s.hireModalTitle;
+  document.getElementById('lblHireCountry').textContent  = s.lblHireCountry;
+  document.getElementById('lblHireTurns').textContent    = s.lblHireTurns;
+  document.getElementById('btnCancelHire').textContent   = s.btnCancelHire;
+  document.getElementById('btnConfirmHire').textContent  = s.btnConfirmHire;
+  document.getElementById('returnModalTitle').textContent= s.returnModalTitle;
+  document.getElementById('btnCancelReturn').textContent = s.btnCancelReturn;
+  document.getElementById('btnConfirmReturn').textContent= s.btnConfirmReturn;
+  updatePageMeta();
+}
+
+function updatePageMeta() {
+  const tab = activeTab;
+  document.getElementById('pageH1').textContent  = t('pageH1_' + tab);
+  document.getElementById('pageSub').textContent = t('pageSub_' + tab);
+  document.getElementById('regTitle').textContent = t('regTitle');
+  document.getElementById('regSub').textContent   = t('regSub');
+  document.getElementById('fleetTitle').textContent = t('fleetTitle');
+  document.getElementById('fleetSub').textContent   = t('fleetSub');
+  document.getElementById('hiringTitle').textContent = t('hiringTitle');
+  document.getElementById('hiringSub').textContent   = t('hiringSub');
+}
+
+/* ═════════════════════════════════════════════════
+   TAB
+═════════════════════════════════════════════════ */
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
+  updatePageMeta();
+  renderAll();
+}
+
+/* ═════════════════════════════════════════════════
+   VEHICLE CRUD
+═════════════════════════════════════════════════ */
+function addVehicle() {
+  const type  = document.getElementById('vehType').value;
+  const plate = document.getElementById('vehPlate').value.trim().toUpperCase();
+  const price = parseFloat(document.getElementById('vehPrice').value);
+  if (!plate) { alert('Please enter a license plate.'); return; }
+  if (isNaN(price) || price <= 0) { alert('Please enter a valid price per turn.'); return; }
+  if (cdata().vehicles.some(v => v.plate === plate)) { alert('A vehicle with this plate already exists.'); return; }
+  cdata().vehicles.push({ id: Date.now().toString(), type, plate, pricePerTurn: price, hired: false, hiredBy: null, hireTurns: 0 });
+  saveState();
+  document.getElementById('vehPlate').value = '';
+  document.getElementById('vehPrice').value = '';
+  renderAll();
+}
+
+function deleteVehicle(id) {
+  const v = cdata().vehicles.find(x => x.id === id); if (!v) return;
+  if (v.hired && !confirm(`"${v.plate}" is currently hired out. Delete anyway?`)) return;
+  cdata().vehicles = cdata().vehicles.filter(x => x.id !== id);
+  saveState(); renderAll();
+}
+
+/* ═════════════════════════════════════════════════
+   HIRE / RETURN
+═════════════════════════════════════════════════ */
+function openHireModal(id) {
+  pendingHireId = id;
+  const v = cdata().vehicles.find(x => x.id === id); if (!v) return;
+  document.getElementById('hireModalTitle').textContent = t('hireModalTitle') + ' — ' + v.plate;
+  document.getElementById('hireTurns').value = '4';
+  populateHireSelect();
+  document.getElementById('hireModal').classList.add('open');
+}
+function closeHireModal() { pendingHireId = null; document.getElementById('hireModal').classList.remove('open'); }
+
+function confirmHire() {
+  const country = document.getElementById('hireCountrySelect').value.trim();
+  const turns   = parseInt(document.getElementById('hireTurns').value);
+  if (!country) { alert('Please select a hiring country.'); return; }
+  if (isNaN(turns) || turns < 1) { alert('Please enter a valid number of turns.'); return; }
+  const blocked = cdata().blocked.map(b => b.toLowerCase());
+  if (blocked.includes(country.toLowerCase())) {
+    alert(`⛔ "${country}" is blocked and cannot hire any vehicles.`);
+    return;
+  }
+  const v = cdata().vehicles.find(x => x.id === pendingHireId); if (!v) return;
+  v.hired = true; v.hiredBy = country; v.hireTurns = turns;
+  saveState(); closeHireModal(); renderAll();
+}
+
+function openReturnModal(id) {
+  pendingReturnId = id;
+  const v = cdata().vehicles.find(x => x.id === id); if (!v) return;
+  document.getElementById('returnDetails').textContent = `${t('hiredBy')} ${v.hiredBy} · ${v.plate} · ${v.hireTurns} ${t('turns')}`;
+  document.getElementById('returnModal').classList.add('open');
+}
+function closeReturnModal() { pendingReturnId = null; document.getElementById('returnModal').classList.remove('open'); }
+
+function confirmReturn() {
+  const v = cdata().vehicles.find(x => x.id === pendingReturnId); if (!v) return;
+  v.hired = false; v.hiredBy = null; v.hireTurns = 0;
+  saveState(); closeReturnModal(); renderAll();
+}
+
+/* ═════════════════════════════════════════════════
+   BLOCKING
+═════════════════════════════════════════════════ */
+function blockCountry() {
+  const name = document.getElementById('blockSelect').value.trim(); if (!name) return;
+  if (cdata().blocked.map(b => b.toLowerCase()).includes(name.toLowerCase())) {
+    alert('This country is already blocked.'); return;
+  }
+  cdata().blocked.push(name);
+  saveState(); populateBlockSelect(); renderBlockedList();
+}
+function unblockCountry(name) {
+  cdata().blocked = cdata().blocked.filter(b => b.toLowerCase() !== name.toLowerCase());
+  saveState(); populateBlockSelect(); renderBlockedList();
+}
+
+/* ═════════════════════════════════════════════════
+   SELECT POPULATION
+═════════════════════════════════════════════════ */
+function populateHireSelect() {
+  const countries = getCountries();
+  const blocked = cdata().blocked.map(b => b.toLowerCase());
+  const sel = document.getElementById('hireCountrySelect');
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">— Select a country —</option>`;
+  countries.forEach(c => {
+    if (!blocked.includes(c.name.toLowerCase())) {
+      const o = document.createElement('option');
+      o.value = c.name;
+      o.textContent = (c.flag ? c.flag + ' ' : '') + c.name;
+      sel.appendChild(o);
+    }
+  });
+  if (cur) sel.value = cur;
+}
+
+function populateBlockSelect() {
+  const countries = getCountries();
+  const blocked = cdata().blocked.map(b => b.toLowerCase());
+  const sel = document.getElementById('blockSelect');
+  sel.innerHTML = `<option value="">— Select a country —</option>`;
+  countries.forEach(c => {
+    if (!blocked.includes(c.name.toLowerCase())) {
+      const o = document.createElement('option');
+      o.value = c.name;
+      o.textContent = (c.flag ? c.flag + ' ' : '') + c.name;
+      sel.appendChild(o);
+    }
+  });
+}
+
+/* ═════════════════════════════════════════════════
+   RENDER
+═════════════════════════════════════════════════ */
+function renderAll() {
+  renderStats(); renderVehicleGrid(); renderHiringList(); renderBlockedList();
+}
+
+function renderStats() {
+  const d = cdata();
+  const total  = d.vehicles.length;
+  const hired  = d.vehicles.filter(v => v.hired).length;
+  const avail  = total - hired;
+  const income = d.vehicles.filter(v => v.hired).reduce((s, v) => s + v.pricePerTurn * 4, 0);
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-label">${t('stat_total')}</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card green"><div class="stat-label">${t('stat_avail')}</div><div class="stat-value green">${avail}</div></div>
+    <div class="stat-card" style="border-left-color:var(--primary)"><div class="stat-label">${t('stat_hired')}</div><div class="stat-value red">${hired}</div></div>
+    <div class="stat-card gold"><div class="stat-label">${t('stat_income')}</div><div class="stat-value gold">$${income.toLocaleString()}</div></div>
+  `;
+}
+
+function renderVehicleGrid() {
+  const d = cdata();
+  const grid = document.getElementById('vehicleGrid');
+  if (d.vehicles.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-icon">🚛</span>${t('emptyFleet')}</div>`;
+    return;
+  }
+  grid.innerHTML = d.vehicles.map(v => {
+    const icon = v.type.split(' ')[0];
+    const name = v.type.replace(icon, '').trim();
+    const cycle = v.pricePerTurn * 4;
+    const statusText = v.hired ? t('vcard_hired') : t('vcard_avail');
+    const statusCls  = v.hired ? 'hired' : 'available';
+    const hiredHtml  = v.hired
+      ? `<div class="vcard-hired-info">${t('hiredBy')} <strong>${v.hiredBy}</strong> · ${v.hireTurns} ${t('turns')}<br>${t('totalPaid')} $${(v.pricePerTurn * v.hireTurns).toLocaleString()}</div>`
+      : '';
+    const actions = v.hired
+      ? `<button class="btn btn-ghost btn-sm" onclick="openReturnModal('${v.id}')">${t('btnReturn')}</button>
+         <button class="btn btn-danger btn-xs" onclick="deleteVehicle('${v.id}')">${t('btnDelete')}</button>`
+      : `<button class="btn btn-primary btn-sm" onclick="openHireModal('${v.id}')">${t('btnHireOut')}</button>
+         <button class="btn btn-danger btn-xs" onclick="deleteVehicle('${v.id}')">${t('btnDelete')}</button>`;
+    return `<div class="vcard ${v.hired ? 'hired' : ''}">
+      <div class="vcard-head">
+        <div class="vcard-type-icon">${icon}</div>
+        <span class="vcard-status ${statusCls}">${statusText}</span>
+      </div>
+      <div class="vcard-body">
+        <div class="vcard-plate">${v.plate}</div>
+        <div class="vcard-type-name">${name}</div>
+        <div class="vcard-price-row">
+          <div class="vcard-price-box">
+            <div class="vcard-price-label">${t('pricePerTurn')}</div>
+            <div class="vcard-price-val">$${v.pricePerTurn.toLocaleString()}</div>
+          </div>
+          <div class="vcard-price-box">
+            <div class="vcard-price-label">${t('priceCycle')}</div>
+            <div class="vcard-price-val cycle">$${cycle.toLocaleString()}</div>
+          </div>
+        </div>
+        ${hiredHtml}
+      </div>
+      <div class="vcard-footer">${actions}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHiringList() {
+  const d = cdata();
+  const list = document.getElementById('hiringList');
+  const hired = d.vehicles.filter(v => v.hired);
+  if (hired.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="empty-icon">📋</span>${t('emptyHiring')}</div>`;
+    return;
+  }
+  const byCountry = {};
+  hired.forEach(v => { if (!byCountry[v.hiredBy]) byCountry[v.hiredBy] = []; byCountry[v.hiredBy].push(v); });
+  list.innerHTML = Object.entries(byCountry).map(([country, vehicles]) => {
+    const cycleTotal = vehicles.reduce((s, v) => s + v.pricePerTurn * 4, 0);
+    const rows = vehicles.map(v => `
+      <div class="chire-vehicle-row">
+        <span class="chire-vehicle-name">${v.type.split(' ')[0]} ${v.plate}</span>
+        <span class="chire-vehicle-price">$${v.pricePerTurn.toLocaleString()}${t('perTurnLabel')} &nbsp;·&nbsp; <strong>$${(v.pricePerTurn*4).toLocaleString()}${t('cycleLabel')}</strong></span>
+      </div>`).join('');
+    return `<div class="chire-card">
+      <div class="chire-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="chire-country">🌐 ${country}</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="chire-total">$${cycleTotal.toLocaleString()} ${t('cycleLabel')}</div>
+          <span style="color:var(--text-muted);">▾</span>
+        </div>
+      </div>
+      <div class="chire-body">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderBlockedList() {
+  const d = cdata();
+  const el = document.getElementById('blockedList');
+  if (d.blocked.length === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:13px;margin-top:8px;">${t('emptyBlocked')}</p>`;
+    return;
+  }
+  el.innerHTML = d.blocked.map(name => `
+    <div class="blocked-chip">${name}
+      <button onclick="unblockCountry('${name.replace(/'/g,"\\'")}')">✕</button>
+    </div>`).join('');
+}
+
+/* ═════════════════════════════════════════════════
+   MODAL CLOSE ON OVERLAY
+═════════════════════════════════════════════════ */
+document.getElementById('hireModal').addEventListener('click', e => { if (e.target === document.getElementById('hireModal')) closeHireModal(); });
+document.getElementById('returnModal').addEventListener('click', e => { if (e.target === document.getElementById('returnModal')) closeReturnModal(); });
+
+/* ═════════════════════════════════════════════════
+   INIT
+═════════════════════════════════════════════════ */
+applyI18N();
+populateHireSelect();
+populateBlockSelect();
+renderAll();
+</script>
+</body>
+</html>
