@@ -1037,6 +1037,7 @@ function executeTrade() {
     const avail = Math.max(0, (SWE_LIMITS[sAcc.cardTier||'entry']||800) - (sAcc.creditDebt||0));
     if (avail < buyerPaid) { notify('Credit Limit','Available Swedbank credit: '+fmt(avail),'red'); return; }
     sAcc.creditDebt = (sAcc.creditDebt||0) + buyerPaid;
+    sweState.treasuryCardCharges = (sweState.treasuryCardCharges || 0) + buyerPaid;
     saveSweBank(sweState);
   }
 
@@ -1048,6 +1049,10 @@ function executeTrade() {
   // Dubai treasury earns
   state.treasury = (state.treasury || 50000) + dubaiEarns;
   state.treasuryTradeFees = (state.treasuryTradeFees || 0) + dubaiEarns;
+  // Track card charges separately for bank notification system
+  if (paymentMethod === 'dib-credit' || paymentMethod === 'swe-credit') {
+    state.treasuryCardCharges = (state.treasuryCardCharges || 0) + buyerPaid;
+  }
 
   // Bank log
   if (!state.logEntries) state.logEntries = [];

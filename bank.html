@@ -1083,6 +1083,7 @@
   <div class="bank-tabs">
     <button class="bank-tab active" id="tab-btn-accounts" onclick="switchTab('accounts')">📊 Accounts</button>
     <button class="bank-tab" id="tab-btn-cards" onclick="switchTab('cards')">💳 Credit Cards</button>
+    <button class="bank-tab" id="tab-btn-dashboard" onclick="switchTab('dashboard')">📈 Dashboard</button>
   </div>
 
   <!-- ══════ ACCOUNTS TAB ══════ -->
@@ -1096,8 +1097,16 @@
       </div>
       <div class="treasury-stats">
         <div class="treasury-stat">
-          <div class="treasury-stat-label">Card Fees & Interest</div>
-          <div class="treasury-stat-val green" id="treasury-tax-total">$0</div>
+          <div class="treasury-stat-label">Card Upgrade Fees</div>
+          <div class="treasury-stat-val green" id="treasury-upgrade-fees">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Credit Interest</div>
+          <div class="treasury-stat-val green" id="treasury-interest">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Yearly Card Fees</div>
+          <div class="treasury-stat-val green" id="treasury-yearly-fees">$0</div>
         </div>
         <div class="treasury-stat">
           <div class="treasury-stat-label">Investment Gains</div>
@@ -1110,6 +1119,10 @@
         <div class="treasury-stat">
           <div class="treasury-stat-label">Trade Brokerage Fees</div>
           <div class="treasury-stat-val green" id="treasury-trade-fees">$0</div>
+        </div>
+        <div class="treasury-stat">
+          <div class="treasury-stat-label">Market Card Charges</div>
+          <div class="treasury-stat-val green" id="treasury-card-charges">$0</div>
         </div>
         <div class="treasury-stat">
           <div class="treasury-stat-label">Cycles Advanced</div>
@@ -1192,6 +1205,11 @@
     <div id="cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;"></div>
   </div>
 
+  <!-- ══════ DASHBOARD TAB ══════ -->
+  <div id="tab-dashboard" style="display:none">
+    <div id="dashboard-content"></div>
+  </div>
+
 </div>
 
 <script>
@@ -1256,12 +1274,17 @@ NATIONS.forEach(n => {
 });
 
 let treasury = 50000;
-let treasuryTaxTotal = 0;
+let treasuryUpgradeFees = 0;   // card upgrades
+let treasuryInterest = 0;       // credit interest per cycle
+let treasuryYearlyFees = 0;     // yearly card maintenance
 let treasuryInvestGain = 0;
 let treasuryInvestLoss = 0;
-let treasuryTradeFees = 0;
+let treasuryTradeFees = 0;      // Dubai Trade brokerage
+let treasuryCardCharges = 0;    // market purchases charged to card
 let cycles = 0;
 let taxRate = 5;
+// Legacy alias kept for compatibility
+let treasuryTaxTotal = 0;
 
 const TIERS = [
   { min: 200,  max: 500,  failRisk: 0.20, returnMult: 1.20 },
@@ -1281,15 +1304,18 @@ function pushUndo() {
   undoStack.push(JSON.parse(JSON.stringify({
     accounts,
     treasury,
-    treasuryTaxTotal,
+    treasuryUpgradeFees,
+    treasuryInterest,
+    treasuryYearlyFees,
     treasuryInvestGain,
     treasuryInvestLoss,
     treasuryTradeFees,
+    treasuryCardCharges,
     cycles,
     taxRate,
     logEntries,
   })));
-  if (undoStack.length > MAX_UNDO) undoStack.shift(); // drop oldest if over limit
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
   updateUndoBtn();
 }
 
@@ -1303,13 +1329,16 @@ function undo() {
       Object.assign(accounts[n.id], snap.accounts[n.id]);
     }
   });
-  treasury          = snap.treasury          ?? 50000;
-  treasuryTaxTotal  = snap.treasuryTaxTotal  ?? 0;
-  treasuryInvestGain= snap.treasuryInvestGain?? 0;
-  treasuryInvestLoss= snap.treasuryInvestLoss?? 0;
-  treasuryTradeFees = snap.treasuryTradeFees ?? 0;
-  cycles            = snap.cycles            ?? 0;
-  taxRate           = snap.taxRate           ?? 5;
+  treasury            = snap.treasury            ?? 50000;
+  treasuryUpgradeFees = snap.treasuryUpgradeFees ?? 0;
+  treasuryInterest    = snap.treasuryInterest    ?? 0;
+  treasuryYearlyFees  = snap.treasuryYearlyFees  ?? 0;
+  treasuryInvestGain  = snap.treasuryInvestGain  ?? 0;
+  treasuryInvestLoss  = snap.treasuryInvestLoss  ?? 0;
+  treasuryTradeFees   = snap.treasuryTradeFees   ?? 0;
+  treasuryCardCharges = snap.treasuryCardCharges ?? 0;
+  cycles              = snap.cycles              ?? 0;
+  taxRate             = snap.taxRate             ?? 5;
   logEntries        = Array.isArray(snap.logEntries) ? snap.logEntries : [];
 
   // Re-sync slider UI
@@ -1400,22 +1429,25 @@ function notify(title, msg, cls='gold') {
    TREASURY
 ═══════════════════════════════════════════════ */
 function updateTreasury() {
-  // Also pull treasuryTradeFees from dib_state in case dubai_trade updated it
+  // Also pull tradeFees / cardCharges from dib_state in case dubai_trade/usa_market updated it
   try {
     const ext = JSON.parse(localStorage.getItem('dib_state') || '{}');
     if (ext.treasuryTradeFees !== undefined && ext.treasuryTradeFees !== treasuryTradeFees) {
       treasuryTradeFees = ext.treasuryTradeFees;
-      // Sync treasury total too if dubai_trade changed it
       if (ext.treasury !== undefined) treasury = ext.treasury;
     }
+    if (ext.treasuryCardCharges !== undefined) treasuryCardCharges = ext.treasuryCardCharges;
   } catch {}
   document.getElementById('treasury-display').textContent =
     Number(treasury).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  document.getElementById('treasury-tax-total').textContent = fmt(treasuryTaxTotal);
-  document.getElementById('treasury-invest-gain').textContent = fmt(treasuryInvestGain);
-  document.getElementById('treasury-invest-loss').textContent = fmt(treasuryInvestLoss);
-  document.getElementById('treasury-trade-fees').textContent = fmt(treasuryTradeFees);
-  document.getElementById('treasury-cycles').textContent = cycles;
+  document.getElementById('treasury-upgrade-fees').textContent  = fmt(treasuryUpgradeFees);
+  document.getElementById('treasury-interest').textContent      = fmt(treasuryInterest);
+  document.getElementById('treasury-yearly-fees').textContent   = fmt(treasuryYearlyFees);
+  document.getElementById('treasury-invest-gain').textContent   = fmt(treasuryInvestGain);
+  document.getElementById('treasury-invest-loss').textContent   = fmt(treasuryInvestLoss);
+  document.getElementById('treasury-trade-fees').textContent    = fmt(treasuryTradeFees);
+  document.getElementById('treasury-card-charges').textContent  = fmt(treasuryCardCharges);
+  document.getElementById('treasury-cycles').textContent        = cycles;
 }
 
 /* ═══════════════════════════════════════════════
@@ -1623,7 +1655,8 @@ function advanceCycle() {
   });
 
   treasury      += totalInterest;
-  treasuryTaxTotal += totalInterest;
+  treasuryInterest += totalInterest;
+  treasuryTaxTotal += totalInterest; // legacy
   cycles++;
   updateTreasury();
   NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
@@ -1663,7 +1696,8 @@ function yearlyFeeTax() {
   });
 
   treasury      += totalFees;
-  treasuryTaxTotal += totalFees;
+  treasuryYearlyFees  += totalFees;
+  treasuryTaxTotal    += totalFees; // legacy
   updateTreasury();
   NATIONS.forEach(n => { updateCard(n.id); updateCreditCardDisplay(n.id); });
 
@@ -1682,8 +1716,9 @@ function yearlyFeeTax() {
 ═══════════════════════════════════════════════ */
 function exportBankJSON() {
   const data = {
-    accounts, treasury, treasuryTaxTotal,
-    treasuryInvestGain, treasuryInvestLoss, treasuryTradeFees,
+    accounts, treasury,
+    treasuryUpgradeFees, treasuryInterest, treasuryYearlyFees,
+    treasuryInvestGain, treasuryInvestLoss, treasuryTradeFees, treasuryCardCharges,
     cycles, logEntries,
     _exported: new Date().toISOString()
   };
@@ -1709,13 +1744,17 @@ function importBankJSON() {
         NATIONS.forEach(n => {
           if (d.accounts && d.accounts[n.id]) Object.assign(accounts[n.id], d.accounts[n.id]);
         });
-        treasury           = d.treasury           ?? 50000;
-        treasuryTaxTotal   = d.treasuryTaxTotal   ?? 0;
-        treasuryInvestGain = d.treasuryInvestGain ?? 0;
-        treasuryInvestLoss = d.treasuryInvestLoss ?? 0;
-        treasuryTradeFees  = d.treasuryTradeFees  ?? 0;
-        cycles             = d.cycles             ?? 0;
-        logEntries         = Array.isArray(d.logEntries) ? d.logEntries : [];
+        treasury            = d.treasury            ?? 50000;
+        treasuryUpgradeFees = d.treasuryUpgradeFees ?? 0;
+        treasuryInterest    = d.treasuryInterest    ?? 0;
+        treasuryYearlyFees  = d.treasuryYearlyFees  ?? 0;
+        treasuryInvestGain  = d.treasuryInvestGain  ?? 0;
+        treasuryInvestLoss  = d.treasuryInvestLoss  ?? 0;
+        treasuryTradeFees   = d.treasuryTradeFees   ?? 0;
+        treasuryCardCharges = d.treasuryCardCharges ?? 0;
+        cycles              = d.cycles              ?? 0;
+        treasuryTaxTotal    = treasuryUpgradeFees + treasuryInterest + treasuryYearlyFees;
+        logEntries          = Array.isArray(d.logEntries) ? d.logEntries : [];
         renderNations(); renderCards(); renderLog(); updateTreasury(); updateUndoBtn();
         saveState();
         notify('Import Successful', 'Bank state loaded from file.', 'green');
@@ -1831,13 +1870,18 @@ function saveState() {
     localStorage.setItem('dib_state', JSON.stringify({
       accounts,
       treasury,
-      treasuryTaxTotal,
+      treasuryUpgradeFees,
+      treasuryInterest,
+      treasuryYearlyFees,
       treasuryInvestGain,
       treasuryInvestLoss,
       treasuryTradeFees,
+      treasuryCardCharges,
       cycles,
       taxRate,
-      logEntries
+      logEntries,
+      // legacy
+      treasuryTaxTotal: treasuryUpgradeFees + treasuryInterest + treasuryYearlyFees,
     }));
   } catch(e) {}
 }
@@ -1861,12 +1905,16 @@ function loadState() {
       }
     });
     treasury            = saved.treasury            ?? 50000;
-    treasuryTaxTotal    = saved.treasuryTaxTotal    ?? 0;
+    treasuryUpgradeFees = saved.treasuryUpgradeFees ?? 0;
+    treasuryInterest    = saved.treasuryInterest    ?? 0;
+    treasuryYearlyFees  = saved.treasuryYearlyFees  ?? 0;
     treasuryInvestGain  = saved.treasuryInvestGain  ?? 0;
     treasuryInvestLoss  = saved.treasuryInvestLoss  ?? 0;
     treasuryTradeFees   = saved.treasuryTradeFees   ?? 0;
+    treasuryCardCharges = saved.treasuryCardCharges ?? 0;
     cycles              = saved.cycles              ?? 0;
     taxRate             = saved.taxRate             ?? 5;
+    treasuryTaxTotal    = treasuryUpgradeFees + treasuryInterest + treasuryYearlyFees; // legacy
     logEntries          = Array.isArray(saved.logEntries) ? saved.logEntries : [];
   } catch(e) {}
 }
@@ -1908,11 +1956,14 @@ function updateOddsHint(id, rawVal) {
 let activeTab = 'accounts';
 function switchTab(tab) {
   activeTab = tab;
-  document.getElementById('tab-accounts').style.display = tab === 'accounts' ? '' : 'none';
-  document.getElementById('tab-cards').style.display    = tab === 'cards'    ? '' : 'none';
-  document.getElementById('tab-btn-accounts').classList.toggle('active', tab === 'accounts');
-  document.getElementById('tab-btn-cards').classList.toggle('active', tab === 'cards');
-  if (tab === 'cards') { renderExposurePanel(); renderCards(); }
+  document.getElementById('tab-accounts').style.display  = tab === 'accounts'  ? '' : 'none';
+  document.getElementById('tab-cards').style.display     = tab === 'cards'     ? '' : 'none';
+  document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? '' : 'none';
+  document.getElementById('tab-btn-accounts').classList.toggle('active',  tab === 'accounts');
+  document.getElementById('tab-btn-cards').classList.toggle('active',     tab === 'cards');
+  document.getElementById('tab-btn-dashboard').classList.toggle('active', tab === 'dashboard');
+  if (tab === 'cards')     { renderExposurePanel(); renderCards(); }
+  if (tab === 'dashboard') renderDashboard();
 }
 
 /* ═══════════════════════════════════════════════
@@ -2112,8 +2163,9 @@ function upgradeCard(id) {
   acc.balance  -= cost;
   acc.cardTier  = nextKey;
   if (nextIdx > highestIdx) acc.highestCardTier = nextKey;
-  treasury     += cost;
-  treasuryTaxTotal += cost;
+  treasury             += cost;
+  treasuryUpgradeFees  += cost;
+  treasuryTaxTotal     += cost; // legacy
   updateCard(id);
   updateTreasury();
   updateCreditCardDisplay(id);
@@ -2178,22 +2230,230 @@ function applyEditReserve() {
 }
 
 /* ═══════════════════════════════════════════════
-   INIT
+   CREDIT CARD PURCHASE NOTIFICATIONS
+   Polls dib_state for new credit charges from markets
 ═══════════════════════════════════════════════ */
+let _lastCardChargeCheck = 0;
+function pollCardChargeNotifications() {
+  try {
+    const state = JSON.parse(localStorage.getItem('dib_state') || '{}');
+    const ext = state.treasuryCardCharges || 0;
+    if (ext > treasuryCardCharges) {
+      const diff = ext - treasuryCardCharges;
+      treasuryCardCharges = ext;
+      treasury = state.treasury ?? treasury;
+      // Find recent log entries tagged as card charges
+      if (Array.isArray(state.logEntries)) {
+        const recent = state.logEntries.slice(0, 5).filter(e =>
+          e.desc && (e.desc.includes('Dubai Credit') || e.desc.includes('Swe Credit')) &&
+          e.time && e.time !== _lastCardChargeCheck
+        );
+        if (recent.length) {
+          _lastCardChargeCheck = recent[0].time;
+          recent.forEach(e => {
+            notify('💳 Card Charged', `${e.nation}: ${e.desc.substring(0, 80)}`, 'gold');
+          });
+        } else {
+          notify('💳 Card Charge', `A credit card was charged — +${fmt(diff)} collected`, 'gold');
+        }
+      }
+      updateTreasury();
+      saveState();
+    }
+  } catch {}
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════ */
+function renderDashboard() {
+  const el = document.getElementById('dashboard-content');
+  if (!el) return;
+
+  // ── Revenue breakdown data ──
+  const totalCardRev = treasuryUpgradeFees + treasuryInterest + treasuryYearlyFees;
+  const totalInvNet  = treasuryInvestGain - treasuryInvestLoss;
+  const grandTotal   = totalCardRev + treasuryTradeFees + treasuryCardCharges +
+                       Math.max(0, totalInvNet);
+
+  // ── Per-nation spending stats ──
+  const nationStats = NATIONS.map(n => {
+    const acc = accounts[n.id];
+    const cardTier = CARD_TIERS[acc.cardTier];
+    const totalSpend = acc.totalWithdrawn + (acc.creditDebt || 0);
+    return {
+      id: n.id, name: n.name,
+      balance: acc.balance,
+      deposited: acc.totalDeposited,
+      withdrawn: acc.totalWithdrawn,
+      creditDebt: acc.creditDebt || 0,
+      cardTier: acc.cardTier,
+      cardName: cardTier.name,
+      enabled: acc.enabled,
+      totalSpend,
+    };
+  }).filter(n => n.enabled);
+
+  const bySpend    = [...nationStats].sort((a,b) => b.totalSpend - a.totalSpend);
+  const byDebt     = [...nationStats].sort((a,b) => b.creditDebt - a.creditDebt);
+  const byBalance  = [...nationStats].sort((a,b) => b.balance - a.balance);
+  const maxSpend   = bySpend[0]?.totalSpend || 1;
+  const maxDebt    = byDebt[0]?.creditDebt  || 1;
+  const maxBalance = Math.max(...nationStats.map(n => Math.abs(n.balance))) || 1;
+
+  // ── Tier distribution ──
+  const tierCounts = {};
+  TIER_ORDER.forEach(t => tierCounts[t] = 0);
+  nationStats.forEach(n => { if (tierCounts[n.cardTier] !== undefined) tierCounts[n.cardTier]++; });
+
+  const tierColors = {
+    basic:'#6b7280',standard:'#4a7fc1',vip:'#7c3aed',gold:'#c9a84c',
+    platinum:'#a0aec0',signature:'#dc2626',infinity:'#fde68a'
+  };
+
+  const barPct = (val, max) => Math.max(2, Math.round((val / max) * 100));
+  const fmtS = n => {
+    if (Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+    if (Math.abs(n) >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+    return fmt(n);
+  };
+
+  const statCard = (label, val, color='var(--green)', sub='') => `
+    <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:18px 22px;">
+      <div style="font-size:8px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px">${label}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:${color};font-weight:300">${val}</div>
+      ${sub ? `<div style="font-size:10px;color:var(--text-dim);margin-top:3px">${sub}</div>` : ''}
+    </div>`;
+
+  const revRow = (label, val, color, total) => {
+    const pct = total > 0 ? Math.round((val/total)*100) : 0;
+    return `
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <div style="width:130px;font-size:10px;color:var(--text-muted);letter-spacing:.5px;flex-shrink:0">${label}</div>
+      <div style="flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width .4s"></div>
+      </div>
+      <div style="width:80px;font-family:'Cormorant Garamond',serif;font-size:14px;color:${color};text-align:right">${fmtS(val)}</div>
+      <div style="width:32px;font-size:9px;color:var(--text-dim);text-align:right">${pct}%</div>
+    </div>`;
+  };
+
+  const nationBar = (n, val, max, color, subtitle) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03)">
+      <div style="width:140px;flex-shrink:0">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text)">${n.name}</div>
+        <div style="font-size:8px;color:var(--text-dim);letter-spacing:1px">${subtitle}</div>
+      </div>
+      <div style="flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${barPct(val, max)}%;background:${color};border-radius:3px"></div>
+      </div>
+      <div style="width:80px;font-family:'Cormorant Garamond',serif;font-size:13px;color:${color};text-align:right">${fmtS(val)}</div>
+    </div>`;
+
+  const sectionHead = label => `
+    <div style="font-size:9px;letter-spacing:4px;color:var(--gold-dark);text-transform:uppercase;
+      margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      ${label}
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent)"></div>
+    </div>`;
+
+  el.innerHTML = `
+  <div style="display:flex;flex-direction:column;gap:28px;padding-bottom:32px">
+
+    <!-- KPI row -->
+    <div>
+      ${sectionHead('Overview')}
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px">
+        ${statCard('Total Reserve', fmtS(treasury), 'var(--gold-light)')}
+        ${statCard('Card Upgrade Fees', fmtS(treasuryUpgradeFees), 'var(--green)', 'from tier upgrades')}
+        ${statCard('Credit Interest', fmtS(treasuryInterest), 'var(--green)', 'from cycles')}
+        ${statCard('Yearly Card Fees', fmtS(treasuryYearlyFees), 'var(--green)', 'from maintenance')}
+        ${statCard('Market Card Charges', fmtS(treasuryCardCharges), '#7a9fff', 'via market credit')}
+        ${statCard('Trade Brokerage', fmtS(treasuryTradeFees), 'var(--green)', 'Dubai Trade desk')}
+        ${statCard('Invest Gains', fmtS(treasuryInvestGain), 'var(--green)', '')}
+        ${statCard('Invest Payouts', fmtS(treasuryInvestLoss), 'var(--red)', 'paid out')}
+      </div>
+    </div>
+
+    <!-- Revenue breakdown bar chart -->
+    <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:22px 26px">
+      ${sectionHead('Revenue Sources')}
+      ${revRow('Card Upgrades',     treasuryUpgradeFees, 'var(--gold)',     grandTotal)}
+      ${revRow('Credit Interest',   treasuryInterest,    '#7a9fff',         grandTotal)}
+      ${revRow('Yearly Fees',       treasuryYearlyFees,  'var(--green)',    grandTotal)}
+      ${revRow('Market Charges',    treasuryCardCharges, '#e07040',         grandTotal)}
+      ${revRow('Trade Brokerage',   treasuryTradeFees,   '#4a8adf',         grandTotal)}
+      ${revRow('Invest Net',        Math.max(0,totalInvNet),'var(--green)', grandTotal)}
+    </div>
+
+    <!-- Top spenders -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+      <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:22px 26px">
+        ${sectionHead('Top Spenders (Withdrawn + Debt)')}
+        ${bySpend.slice(0,8).map(n => nationBar(n, n.totalSpend, maxSpend, 'var(--gold)', n.cardName)).join('')}
+        ${bySpend.length === 0 ? '<div style="color:var(--text-dim);font-size:10px;letter-spacing:2px">No data yet</div>' : ''}
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:22px 26px">
+        ${sectionHead('Highest Credit Debt')}
+        ${byDebt.filter(n=>n.creditDebt>0).slice(0,8).map(n => nationBar(n, n.creditDebt, maxDebt, 'var(--red)', n.cardName + ' tier')).join('')}
+        ${byDebt.filter(n=>n.creditDebt>0).length === 0 ? '<div style="color:var(--text-dim);font-size:10px;letter-spacing:2px">No active debt</div>' : ''}
+      </div>
+
+    </div>
+
+    <!-- Balance leaderboard + Tier distribution -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+      <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:22px 26px">
+        ${sectionHead('Richest Accounts')}
+        ${byBalance.slice(0,8).map(n => nationBar(n, n.balance, maxBalance,
+          n.balance >= 0 ? 'var(--green)' : 'var(--red)',
+          fmtS(n.deposited) + ' deposited'
+        )).join('')}
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius-lg);padding:22px 26px">
+        ${sectionHead('Card Tier Distribution')}
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${TIER_ORDER.map(t => {
+            const count = tierCounts[t] || 0;
+            const pct   = nationStats.length > 0 ? Math.round((count / nationStats.length) * 100) : 0;
+            return `
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:80px;font-size:10px;font-weight:600;color:${tierColors[t]};letter-spacing:1px">${CARD_TIERS[t].name}</div>
+              <div style="flex:1;height:12px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${pct}%;background:${tierColors[t]};border-radius:3px;opacity:.75"></div>
+              </div>
+              <div style="width:22px;font-size:10px;color:var(--text-muted);text-align:right">${count}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.04);display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="font-size:9px;letter-spacing:1px;color:var(--text-dim)">Active accounts: <span style="color:var(--text)">${nationStats.length}</span></div>
+          <div style="font-size:9px;letter-spacing:1px;color:var(--text-dim)">Paid tiers: <span style="color:var(--text)">${nationStats.filter(n=>n.cardTier!=='basic').length}</span></div>
+          <div style="font-size:9px;letter-spacing:1px;color:var(--text-dim)">Total debt: <span style="color:var(--red)">${fmtS(byDebt.reduce((s,n)=>s+n.creditDebt,0))}</span></div>
+          <div style="font-size:9px;letter-spacing:1px;color:var(--text-dim)">Cycles: <span style="color:var(--gold)">${cycles}</span></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>`;
+}
 renderNations();
 renderBlocked();
 loadState();
-// Header stays visible when embedded in the hub (the hub is now a side
-// drawer, so the app's own header no longer collides with a hub top bar).
-renderNations();  // re-render with restored enabled states
+renderNations();
 renderCards();
 renderLog();
 updateTreasury();
 updateUndoBtn();
 updateClock();
 setInterval(updateClock, 1000);
-// Periodically sync treasury from dib_state (catches updates from dubai_trade)
 setInterval(updateTreasury, 6000);
+setInterval(pollCardChargeNotifications, 5000);
 </script>
 </body>
 </html>
