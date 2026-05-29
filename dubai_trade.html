@@ -346,6 +346,43 @@ input[type=range]::-webkit-slider-thumb {
 @keyframes notifIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
 @keyframes notifOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(20px)} }
 
+/* ── PAYMENT METHOD ── */
+.payment-section { margin-bottom:12px; }
+.payment-label {
+  font-size:9px; letter-spacing:2.5px; color:var(--text-muted);
+  text-transform:uppercase; margin-bottom:8px; display:block;
+}
+.payment-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px;
+}
+.pay-btn {
+  font-family:'Montserrat',sans-serif; font-size:8px; letter-spacing:1.5px; font-weight:600;
+  text-transform:uppercase; padding:8px 6px; border-radius:var(--radius);
+  cursor:pointer; transition:all .2s; border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03); color:var(--text-muted); text-align:center; line-height:1.4;
+}
+.pay-btn:hover { border-color:rgba(201,168,76,.3); color:var(--text); }
+.pay-btn.active {
+  background:rgba(201,168,76,.14); border-color:var(--gold-dark); color:var(--gold);
+}
+.pay-btn.active-swe  { background:rgba(224,90,0,.12); border-color:rgba(224,90,0,.45); color:#f07030; }
+.pay-btn.active-dib  { background:rgba(74,127,193,.12); border-color:rgba(74,127,193,.4); color:#93c5fd; }
+.pay-btn.pay-disabled { opacity:.3; cursor:not-allowed; pointer-events:none; }
+
+/* Cash display box */
+.cash-display {
+  display:none; margin-top:8px; padding:10px 14px;
+  background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.25);
+  border-radius:var(--radius); text-align:center;
+}
+.cash-display.visible { display:block; }
+.cash-display-label { font-size:8px; letter-spacing:2px; color:var(--gold-dark); text-transform:uppercase; margin-bottom:4px; }
+.cash-display-amount { font-family:'Cormorant Garamond',serif; font-size:28px; color:var(--gold-light); font-weight:300; }
+
+/* Discount badge in breakdown */
+.pb-row.discount-row { color:var(--green); }
+.pb-row.discount-row .pb-val { color:var(--green); }
+
 @media(max-width:1000px){
   .trade-layout { grid-template-columns:1fr; }
   .order-panel { position:static; }
@@ -470,6 +507,22 @@ input[type=range]::-webkit-slider-thumb {
           </select>
         </div>
 
+        <!-- Payment Method -->
+        <div class="payment-section">
+          <span class="payment-label">Payment Method</span>
+          <div class="payment-grid">
+            <button class="pay-btn active" id="pay-cash"      onclick="setPayment('cash')">💵 Cash</button>
+            <button class="pay-btn"        id="pay-swe-debit" onclick="setPayment('swe-debit')">🏧 Swe Debit</button>
+            <button class="pay-btn"        id="pay-swe-credit"onclick="setPayment('swe-credit')">💳 Swe Credit</button>
+            <button class="pay-btn"        id="pay-dib-debit" onclick="setPayment('dib-debit')">🏧 Dubai Debit</button>
+            <button class="pay-btn"        id="pay-dib-credit"onclick="setPayment('dib-credit')">💳 Dubai Credit<br><span style="font-size:7px;opacity:.8">discount</span></button>
+          </div>
+          <div class="cash-display" id="cash-display">
+            <div class="cash-display-label">Player pays in cash</div>
+            <div class="cash-display-amount" id="cash-display-amount">—</div>
+          </div>
+        </div>
+
         <!-- Log privacy -->
         <div class="form-label" style="margin-bottom:8px">Log Entry Type</div>
         <div class="privacy-row">
@@ -583,6 +636,7 @@ let logView        = 'public';
 let trades = [];
 let tradeRevenue = 0;
 let tradeVolume  = 0;
+let paymentMethod = 'cash'; // cash | swe-debit | swe-credit | dib-debit | dib-credit
 
 /* ── BANK STATE (shared via localStorage) ── */
 function loadBankState() {
@@ -601,6 +655,77 @@ function loadTrades() {
 }
 function saveTrades() {
   try { localStorage.setItem('dib_trades', JSON.stringify({trades, tradeRevenue, tradeVolume})); } catch{}
+}
+
+/* ── SWEDEN BANK STATE ── */
+function loadSweBank() {
+  try { return JSON.parse(localStorage.getItem('swe_bank_v1')) || {accounts:{}}; }
+  catch { return {accounts:{}}; }
+}
+function saveSweBank(state) {
+  try { localStorage.setItem('swe_bank_v1', JSON.stringify(state)); } catch {}
+}
+
+/* Dubai card tier → discount on Dubai market */
+const DIB_TIER_DISCOUNT = {
+  basic:0, standard:0.04, vip:0.08, gold:0.13, platinum:0.18, signature:0.22, infinity:0.25
+};
+
+/* ── PAYMENT METHOD ── */
+function setPayment(method) {
+  paymentMethod = method;
+  // Update button classes
+  ['cash','swe-debit','swe-credit','dib-debit','dib-credit'].forEach(m => {
+    const btn = document.getElementById('pay-' + m);
+    if (!btn) return;
+    btn.className = 'pay-btn';
+    if (m === method) {
+      if (m === 'cash')           btn.className += ' active';
+      else if (m.startsWith('swe')) btn.className += ' active-swe';
+      else                          btn.className += ' active-dib';
+    }
+  });
+  updateBreakdown();
+}
+
+/* Return {discount, tierName} for current buyer + payment method (Dubai market) */
+function getDubaiDiscount(buyerId, method) {
+  if (method !== 'dib-credit' || !buyerId) return {discount:0, tierName:''};
+  const state = loadBankState();
+  const acc = state.accounts && state.accounts[buyerId];
+  if (!acc || !acc.enabled || acc.cardDisabled) return {discount:0, tierName:'(disabled)'};
+  const tier = acc.cardTier || 'basic';
+  return {discount: DIB_TIER_DISCOUNT[tier] || 0, tierName: tier.charAt(0).toUpperCase()+tier.slice(1)};
+}
+
+/* Check if buyer has enough funds for a given method */
+function checkPaymentFunds(buyerId, method, amount) {
+  if (method === 'cash') return {ok: true, bal: null};
+  const dubai = loadBankState();
+  const swe   = loadSweBank();
+  const dAcc  = dubai.accounts && dubai.accounts[buyerId];
+  const sAcc  = swe.accounts   && swe.accounts[buyerId];
+  if (method === 'dib-debit') {
+    const bal = dAcc ? dAcc.balance : 0;
+    return {ok: bal >= amount, bal};
+  }
+  if (method === 'dib-credit') {
+    if (!dAcc || dAcc.cardDisabled) return {ok:false, bal:null, msg:'Dubai card is disabled'};
+    const tier = (window.DIB_CARD_TIERS || {})[dAcc.cardTier] || {creditLimit:1000};
+    const avail = Math.max(0, tier.creditLimit - (dAcc.creditDebt||0));
+    return {ok: avail >= amount, bal: avail, isCredit:true};
+  }
+  if (method === 'swe-debit') {
+    const bal = sAcc ? sAcc.balance : 0;
+    return {ok: sAcc && sAcc.enabled && bal >= amount, bal};
+  }
+  if (method === 'swe-credit') {
+    if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) return {ok:false, bal:null, msg:'Swedbank card disabled'};
+    const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+    const avail = Math.max(0, (SWE_LIMITS[sAcc.cardTier||'entry']||800) - (sAcc.creditDebt||0));
+    return {ok: avail >= amount, bal: avail, isCredit:true};
+  }
+  return {ok:false, bal:0};
 }
 
 /* ── UTILITIES ── */
@@ -724,50 +849,81 @@ function updateBreakdown() {
   const bpEl = document.getElementById('price-breakdown');
   const balEl= document.getElementById('balance-check');
   const execBtn = document.getElementById('execute-btn');
+  const cashBox = document.getElementById('cash-display');
+  const cashAmt = document.getElementById('cash-display-amount');
 
   if (!selectedItem) {
     bpEl.innerHTML = '<div class="pb-row"><span style="color:var(--text-dim);font-size:11px;letter-spacing:1px">Select an item to see pricing</span></div>';
     balEl.textContent = '';
     execBtn.disabled = true;
+    cashBox.classList.remove('visible');
     return;
   }
 
-  const qty   = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
-  const mp    = getItemBasePrice(selectedItem);
-  const dp    = getDubaiPrice(mp);
-  const mktTotal   = mp * qty;
-  const buyerTotal = dp * qty;
-  const dubaiEarns = buyerTotal - mktTotal;
+  const qty       = Math.max(1, parseInt(document.getElementById('qty-input').value)||1);
+  const mp        = getItemBasePrice(selectedItem);
+  const dp        = getDubaiPrice(mp);
+  const mktTotal  = mp * qty;
+  const fullTotal = dp * qty; // before any discount
 
-  const buyerId = document.getElementById('buyer-select').value;
-  const sellerId= document.getElementById('seller-select').value;
-  const state   = loadBankState();
-  const buyerAcc= buyerId ? state.accounts[buyerId] : null;
+  const buyerId  = document.getElementById('buyer-select').value;
+  const sellerId = document.getElementById('seller-select').value;
+  const state    = loadBankState();
+  const buyerAcc = buyerId ? state.accounts[buyerId] : null;
   const sellerAcc= (sellerId && sellerId !== 'external') ? state.accounts[sellerId] : null;
-  const buyerBal = buyerAcc ? buyerAcc.balance : 0;
-  const canAfford= buyerAcc && buyerBal >= buyerTotal;
+
+  // Discount: only dib-credit gives discount on Dubai market
+  const {discount, tierName} = getDubaiDiscount(buyerId, paymentMethod);
+  const discAmount  = discount > 0 ? fullTotal * discount : 0;
+  const buyerPaid   = fullTotal - discAmount;
+  const dubaiEarns  = buyerPaid - mktTotal;
+
+  // Cash box
+  if (paymentMethod === 'cash') {
+    cashBox.classList.add('visible');
+    cashAmt.textContent = fmt(buyerPaid);
+  } else {
+    cashBox.classList.remove('visible');
+  }
 
   bpEl.innerHTML = `
     <div class="pb-row"><span>Market price / unit</span><span class="pb-val">${fmt(mp)}</span></div>
     <div class="pb-row"><span>Dubai price / unit (+${markupPct}%)</span><span class="pb-val" style="color:var(--gold)">${fmt(dp)}</span></div>
     <div class="pb-row"><span>Quantity</span><span class="pb-val">× ${qty.toLocaleString()}</span></div>
-    <div class="pb-row total"><span>Buyer pays (total)</span><span class="pb-val">${fmt(buyerTotal)}</span></div>
+    ${discount > 0 ? `<div class="pb-row discount-row"><span>Dubai card discount — ${tierName} (−${Math.round(discount*100)}%)</span><span class="pb-val">−${fmt(discAmount)}</span></div>` : ''}
+    <div class="pb-row total"><span>Buyer pays (total)</span><span class="pb-val">${fmt(buyerPaid)}</span></div>
     ${sellerAcc ? `<div class="pb-row"><span>Seller receives</span><span class="pb-val" style="color:var(--green)">${fmt(mktTotal)}</span></div>` : ''}
-    <div class="pb-row earn"><span>Dubai earns (${markupPct}% fee)</span><span class="pb-val">${fmt(dubaiEarns)}</span></div>
+    <div class="pb-row earn"><span>Dubai earns (${markupPct}% fee${discount > 0 ? ' after discount' : ''})</span><span class="pb-val">${fmt(dubaiEarns)}</span></div>
+    <div class="pb-row" style="margin-top:4px;padding-top:6px;border-top:1px solid rgba(255,255,255,.04)">
+      <span style="font-size:9px;color:var(--text-dim)">Payment</span>
+      <span style="font-size:10px;color:var(--text-muted)">${{cash:'💵 Cash (manual)',
+        'swe-debit':'🏧 Swedbank Debit','swe-credit':'💳 Swedbank Credit',
+        'dib-debit':'🏧 Dubai Bank Debit','dib-credit':'💳 Dubai Bank Credit'}[paymentMethod]}</span>
+    </div>
   `;
 
+  if (paymentMethod === 'cash') {
+    if (!buyerId) { balEl.className='balance-check'; balEl.textContent='Select a buyer.'; execBtn.disabled=true; }
+    else { balEl.className='balance-check ok'; balEl.textContent=`✓ Show player the cash amount above to collect manually.`; execBtn.disabled=false; }
+    return;
+  }
+
+  const funds = checkPaymentFunds(buyerId, paymentMethod, buyerPaid);
   if (!buyerId) {
-    balEl.className = 'balance-check';
-    balEl.textContent = 'Select a buyer nation to verify balance.';
-    execBtn.disabled = true;
-  } else if (!canAfford) {
-    balEl.className = 'balance-check warn';
-    balEl.textContent = `⚠ ${NATION_LIST.find(n=>n.id===buyerId)?.name||buyerId} balance: ${fmt(buyerBal)} — insufficient funds.`;
-    execBtn.disabled = true;
+    balEl.className='balance-check'; balEl.textContent='Select a buyer nation to verify balance.'; execBtn.disabled=true;
+  } else if (funds.msg) {
+    balEl.className='balance-check warn'; balEl.textContent=`⚠ ${funds.msg}`; execBtn.disabled=true;
+  } else if (!funds.ok) {
+    const label = funds.isCredit ? 'Available credit' : 'Balance';
+    balEl.className='balance-check warn';
+    balEl.textContent=`⚠ ${NATION_LIST.find(n=>n.id===buyerId)?.name||buyerId} ${label}: ${funds.bal != null ? fmt(funds.bal) : 'none'} — insufficient.`;
+    execBtn.disabled=true;
   } else {
-    balEl.className = 'balance-check ok';
-    balEl.textContent = `✓ Balance after trade: ${fmt(buyerBal - buyerTotal)}`;
-    execBtn.disabled = false;
+    const label = funds.isCredit ? 'credit remaining' : 'balance after trade';
+    const after  = funds.isCredit ? funds.bal - buyerPaid : (buyerAcc ? buyerAcc.balance - buyerPaid : 0);
+    balEl.className='balance-check ok';
+    balEl.textContent=`✓ ${label.charAt(0).toUpperCase()+label.slice(1)}: ${fmt(after)}`;
+    execBtn.disabled=false;
   }
 }
 
@@ -799,19 +955,29 @@ function renderLog() {
     return;
   }
 
+  const payIcons = {cash:'💵',
+    'swe-debit':'🏧','swe-credit':'💳',
+    'dib-debit':'🏧','dib-credit':'💳'};
+
   el.innerHTML = [...visible].reverse().map(t => {
+    const discBadge = t.discount > 0
+      ? `<span style="display:inline-block;font-size:7px;letter-spacing:1.5px;padding:1px 6px;border-radius:2px;margin-left:6px;vertical-align:middle;background:rgba(61,186,116,.12);color:var(--green);border:1px solid rgba(61,186,116,.2)">−${Math.round(t.discount*100)}%</span>`
+      : '';
+    const payBadge = t.paymentMethod && t.paymentMethod !== 'cash'
+      ? `<span style="display:inline-block;font-size:7px;letter-spacing:1.5px;padding:1px 6px;border-radius:2px;margin-left:4px;vertical-align:middle;background:rgba(201,168,76,.1);color:var(--text-muted);border:1px solid rgba(201,168,76,.15)">${(payIcons[t.paymentMethod]||'')} ${t.paymentMethod}</span>`
+      : (t.paymentMethod==='cash'?`<span style="display:inline-block;font-size:7px;letter-spacing:1.5px;padding:1px 6px;border-radius:2px;margin-left:4px;vertical-align:middle;background:rgba(201,168,76,.08);color:var(--gold-dark);border:1px solid rgba(201,168,76,.12)">💵 CASH</span>`:'');
     const sellerInfo = isPrivate
-      ? `<div class="log-private-row">🔒 Seller: <strong>${t.sellerName}</strong> · Market paid: ${fmt(t.mktTotal)} · Dubai earned: ${fmt(t.dubaiEarned)}${t.isPrivate?'<span class="log-priv-badge">PRIVATE</span>':''}</div>`
+      ? `<div class="log-private-row">🔒 Seller: <strong>${t.sellerName}</strong> · Market paid: ${fmt(t.mktTotal)} · Dubai earned: ${fmt(t.dubaiEarned)}${t.discAmount>0?' · Disc: −'+fmt(t.discAmount):''}${t.isPrivate?'<span class="log-priv-badge">PRIVATE</span>':''}</div>`
       : '';
     return `
     <div class="log-entry">
       <div class="log-row1">
         <span class="log-time">${t.time}</span>
         <span class="log-buyer">${t.buyerName}</span>
-        <span class="log-item">${t.qty > 1 ? t.qty+'× ' : ''}${t.itemName}${t.explosionLabel?' ('+t.explosionLabel+')':''}</span>
+        <span class="log-item">${t.qty > 1 ? t.qty+'× ' : ''}${t.itemName}${t.explosionLabel?' ('+t.explosionLabel+')':''}${discBadge}${payBadge}</span>
         <span class="log-total">${fmt(t.buyerPaid)}</span>
       </div>
-      <div class="log-row2">via Dubai Trade Desk · ${t.unit||'un'} · Mkt ref: ${fmt(t.marketUnitPrice)}/unit${t.isPrivate&&!isPrivate?'':''}</div>
+      <div class="log-row2">via Dubai Trade Desk · ${t.unit||'un'} · Mkt ref: ${fmt(t.marketUnitPrice)}/unit</div>
       ${sellerInfo}
     </div>`;
   }).join('');
@@ -830,83 +996,97 @@ function executeTrade() {
   const mp        = getItemBasePrice(selectedItem);
   const dp        = getDubaiPrice(mp);
   const mktTotal  = mp * qty;
-  const buyerPaid = dp * qty;
-  const dubaiEarns= buyerPaid - mktTotal;
+  const fullTotal = dp * qty;
+  const {discount, tierName} = getDubaiDiscount(buyerId, paymentMethod);
+  const discAmount  = discount > 0 ? fullTotal * discount : 0;
+  const buyerPaid   = fullTotal - discAmount;
+  const dubaiEarns  = buyerPaid - mktTotal;
 
-  // Load & mutate bank state
-  const state = loadBankState();
-  const buyerAcc = state.accounts[buyerId];
-  if (!buyerAcc || buyerAcc.balance < buyerPaid) {
-    notify('Insufficient Funds','Buyer cannot afford this transaction.','red'); return;
+  const state     = loadBankState();
+  const sweState  = loadSweBank();
+  const buyerAcc  = state.accounts[buyerId];
+  const buyerName = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
+  const sellerName= sellerId === 'external' ? 'External Source' : (NATION_LIST.find(n=>n.id===sellerId)?.name || sellerId);
+
+  // ── Deduct from correct source ──
+  if (paymentMethod === 'cash') {
+    // Manual — nothing to deduct from any account
+  } else if (paymentMethod === 'dib-debit') {
+    if (!buyerAcc || buyerAcc.balance < buyerPaid) { notify('Insufficient Funds','Dubai balance too low.','red'); return; }
+    buyerAcc.balance -= buyerPaid;
+  } else if (paymentMethod === 'dib-credit') {
+    if (!buyerAcc || buyerAcc.cardDisabled) { notify('Card Disabled','Dubai card is disabled.','red'); return; }
+    const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+    const limit = DIB_LIMITS[buyerAcc.cardTier||'basic'] || 1000;
+    const avail = Math.max(0, limit - (buyerAcc.creditDebt||0));
+    if (avail < buyerPaid) { notify('Credit Limit','Available Dubai credit: '+fmt(avail),'red'); return; }
+    buyerAcc.creditDebt = (buyerAcc.creditDebt||0) + buyerPaid;
+    // Check suspension
+    if (buyerAcc.balance < -5000 && !buyerAcc.cardDisabled) {
+      buyerAcc.cardDisabled = true; buyerAcc.cardTier = 'basic';
+    }
+  } else if (paymentMethod === 'swe-debit') {
+    const sAcc = sweState.accounts && sweState.accounts[buyerId];
+    if (!sAcc || !sAcc.enabled || sAcc.balance < buyerPaid) { notify('Insufficient Funds','Swedbank balance too low.','red'); return; }
+    sAcc.balance -= buyerPaid; sAcc.totalWithdrawn = (sAcc.totalWithdrawn||0) + buyerPaid;
+    saveSweBank(sweState);
+  } else if (paymentMethod === 'swe-credit') {
+    const sAcc = sweState.accounts && sweState.accounts[buyerId];
+    const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+    if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) { notify('Card Disabled','Swedbank card disabled.','red'); return; }
+    const avail = Math.max(0, (SWE_LIMITS[sAcc.cardTier||'entry']||800) - (sAcc.creditDebt||0));
+    if (avail < buyerPaid) { notify('Credit Limit','Available Swedbank credit: '+fmt(avail),'red'); return; }
+    sAcc.creditDebt = (sAcc.creditDebt||0) + buyerPaid;
+    saveSweBank(sweState);
   }
 
-  const buyerName  = NATION_LIST.find(n=>n.id===buyerId)?.name || buyerId;
-  const sellerName = sellerId === 'external' ? 'External Source' : (NATION_LIST.find(n=>n.id===sellerId)?.name || sellerId);
-
-  // Apply changes to bank state
-  buyerAcc.balance -= buyerPaid;
+  // Pay seller (market price) from Dubai bank
   if (sellerId !== 'external' && state.accounts[sellerId]) {
     state.accounts[sellerId].balance += mktTotal;
   }
+
+  // Dubai treasury earns
   state.treasury = (state.treasury || 50000) + dubaiEarns;
   state.treasuryTradeFees = (state.treasuryTradeFees || 0) + dubaiEarns;
 
-  // Append to bank log
+  // Bank log
   if (!state.logEntries) state.logEntries = [];
-  const bankLogEntry = {
-    type: 'treasury',
-    nation: 'Dubai Trade',
-    desc: `Trade: ${buyerName} bought ${qty>1?qty+'× ':''}${selectedItem.name}${expLevel?' ('+expLevel+')':''} — Dubai earned ${fmt(dubaiEarns)}`,
-    amount: dubaiEarns,
-    time: nowStr()
-  };
-  state.logEntries.unshift(bankLogEntry);
+  const payLabel = {cash:'Cash',
+    'swe-debit':'Swe Debit','swe-credit':'Swe Credit ('+tierName+')',
+    'dib-debit':'Dubai Debit','dib-credit':'Dubai Credit ('+tierName+', −'+Math.round(discount*100)+'%)'}[paymentMethod] || paymentMethod;
+  const discNote = discount > 0 ? ` [${Math.round(discount*100)}% discount]` : '';
+  state.logEntries.unshift({
+    type:'treasury', nation:'Dubai Trade',
+    desc:`Trade: ${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name}${expLevel?' ('+expLevel+')':''} via ${payLabel} — Dubai earned ${fmt(dubaiEarns)}`,
+    amount:dubaiEarns, time:nowStr()
+  });
   if (!tradePrivate) {
-    // Also add buyer loss entry
-    state.logEntries.unshift({
-      type: 'loss', nation: buyerName,
-      desc: `Dubai Trade purchase: ${qty>1?qty+'× ':''}${selectedItem.name}`,
-      amount: -buyerPaid, time: nowStr()
-    });
-    if (sellerId !== 'external' && state.accounts[sellerId]) {
-      state.logEntries.unshift({
-        type: 'gain', nation: sellerName,
-        desc: `Dubai Trade sale: ${qty>1?qty+'× ':''}${selectedItem.name}`,
-        amount: mktTotal, time: nowStr()
-      });
-    }
+    state.logEntries.unshift({type:'loss', nation:buyerName, desc:`Dubai Trade: ${qty>1?qty+'× ':''}${selectedItem.name} [${payLabel}]${discNote}`, amount:-buyerPaid, time:nowStr()});
+    if (sellerId!=='external'&&state.accounts[sellerId])
+      state.logEntries.unshift({type:'gain', nation:sellerName, desc:`Dubai Trade sale: ${qty>1?qty+'× ':''}${selectedItem.name}`, amount:mktTotal, time:nowStr()});
   }
   saveBankState(state);
 
   // Record trade
   const expLabels = {small:'Small',medium:'Medium',big:'Big',huge:'Huge',gigantic:'Gigantic'};
   trades.unshift({
-    id: Date.now(),
-    time: nowStr(),
-    buyerId, buyerName,
-    sellerId, sellerName,
-    itemId: selectedItem.id, itemName: selectedItem.name,
-    qty, unit: selectedItem.unit,
-    explosionLabel: expLevel ? expLabels[expLevel] : null,
-    marketUnitPrice: mp,
-    dubaiUnitPrice: dp,
-    mktTotal, buyerPaid, dubaiEarned: dubaiEarns,
-    markupPct,
-    isPrivate: tradePrivate,
+    id:Date.now(), time:nowStr(), buyerId, buyerName, sellerId, sellerName,
+    itemId:selectedItem.id, itemName:selectedItem.name, qty, unit:selectedItem.unit,
+    explosionLabel:expLevel?expLabels[expLevel]:null,
+    marketUnitPrice:mp, dubaiUnitPrice:dp,
+    mktTotal, buyerPaid, dubaiEarned:dubaiEarns,
+    discAmount, discount, tierName,
+    paymentMethod, markupPct, isPrivate:tradePrivate,
   });
   tradeRevenue += dubaiEarns;
   tradeVolume  += buyerPaid;
   saveTrades();
 
-  updateStats();
-  populateSelectors();
-  updateBreakdown();
-  renderLog();
-
+  updateStats(); populateSelectors(); updateBreakdown(); renderLog();
   const privNote = tradePrivate ? ' [Private]' : '';
-  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${privNote}`, 'gold');
+  const cashNote = paymentMethod === 'cash' ? ` 💵 Collect ${fmt(buyerPaid)} in cash` : '';
+  notify('Trade Executed', `${buyerName} ← ${qty>1?qty+'× ':''}${selectedItem.name} · Dubai earned ${fmt(dubaiEarns)}${discNote}${privNote}${cashNote}`, 'gold');
 }
-
 /* ── MARKUP SLIDER ── */
 const markupSlider = document.getElementById('markup-slider');
 const markupValEl  = document.getElementById('markup-val');
