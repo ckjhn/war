@@ -526,6 +526,37 @@
 
     <!-- ── TAB: FACTORIES ── -->
     <div class="tab-panel active" id="tab-factories">
+
+      <!-- Manpower Configuration -->
+      <div class="form-card" style="border-left-color:var(--de-red);">
+        <div class="form-card-title">⚙️ Germany Manpower &amp; Exclusive Workers Configuration</div>
+        <div class="form-grid-2" style="max-width:760px;margin-bottom:14px;">
+          <div class="de-field">
+            <label class="de-label">Germany Total Manpower (MP) <span class="req">*</span></label>
+            <input class="de-input" type="number" id="germanyMP" value="0" min="0" step="1" oninput="saveMP()">
+            <span class="de-hint">Total soldiers Germany has available to assign to factories. This is the hard cap — items in production lock this MP until finished.</span>
+          </div>
+          <div class="de-field">
+            <label class="de-label">Exclusive Workers (total pool) <span class="req">*</span></label>
+            <input class="de-input" type="number" id="exclusiveWorkers" value="0" min="0" step="1" oninput="saveMP()">
+            <span class="de-hint">Workers hired exclusively for a country's factories. $25/worker/turn. They cannot work for anyone else. A country can reduce/remove these at any time.</span>
+          </div>
+        </div>
+        <div id="mpStatusBar" style="margin-top:4px;"></div>
+      </div>
+
+      <!-- Pass Turn -->
+      <div class="form-card" style="border-left-color:var(--de-gold);padding:14px 22px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="form-card-title" style="border:none;padding:0;margin:0 0 2px;">⏱ Advance Turn</div>
+            <div style="font-size:12px;color:var(--text-sec);">Clicking this reduces the remaining turns on every active production process across all factories. Each process counts down by 1. When a process hits 0, it is marked ready. This also calculates the total turn cost charge.</div>
+          </div>
+          <button class="btn btn-gold" onclick="passTurn()" style="white-space:nowrap;flex-shrink:0;">▶ Pass Turn</button>
+        </div>
+        <div id="turnLog" style="margin-top:10px;font-size:12px;color:var(--text-sec);"></div>
+      </div>
+
       <div class="form-card">
         <div class="form-card-title">Add New Factory</div>
         <div class="form-grid-2" style="max-width:600px;">
@@ -572,7 +603,7 @@
             <label class="de-label">Contract Type</label>
             <select class="de-select" id="orderContractType">
               <option value="shared">Shared ($50/turn · $200/cycle)</option>
-              <option value="exclusive">Exclusive ($250/turn · $1,000/cycle)</option>
+              <option value="exclusive">Exclusive ($100/turn · $400/cycle)</option>
             </select>
           </div>
         </div>
@@ -593,9 +624,9 @@
             <input class="de-input" type="number" id="orderItemQty" value="1" min="1" step="1">
           </div>
           <div class="de-field">
-            <label class="de-label">Workers</label>
-            <input class="de-input" type="number" id="orderItemWorkers" value="25" min="1" step="1">
-            <span class="de-hint">1 worker = 1 MP/turn</span>
+            <label class="de-label">Workers <span class="de-hint" style="font-weight:400;">(max 60)</span></label>
+            <input class="de-input" type="number" id="orderItemWorkers" value="10" min="1" max="60" step="1">
+            <span class="de-hint">Workers assigned to this item. Max 60. Each 10 workers = +$15/turn on final cost.</span>
           </div>
           <div>
             <button class="btn btn-outline" onclick="addItemToOrder()" style="margin-top:18px;">+ Add Item</button>
@@ -604,22 +635,35 @@
 
         <div id="missilesSizeRow" style="display:none;margin-bottom:14px;">
           <div class="alert alert-warn" style="margin-bottom:10px;">
-            <strong>Missile selected.</strong> Choose the explosion size — this scales <strong>Gunpowder</strong> and <strong>Silicon</strong> requirements.
+            <strong>Missile selected.</strong> Choose the missile type and explosion size — the size scales <strong>Gunpowder</strong> and <strong>Silicon</strong> requirements.
           </div>
-          <div class="de-field" style="max-width:320px;">
-            <label class="de-label">Explosion Size</label>
-            <select class="de-select" id="orderMissileSize">
-              <option value="small">Small &nbsp;(Gunpowder ×0.5 · Silicon ×0.6)</option>
-              <option value="medium" selected>Medium &nbsp;(Gunpowder ×1.0 · Silicon ×1.0) — default</option>
-              <option value="big">Big &nbsp;(Gunpowder ×1.8 · Silicon ×1.3)</option>
-              <option value="huge">Huge &nbsp;(Gunpowder ×3.0 · Silicon ×1.7)</option>
-              <option value="gigantic">Gigantic &nbsp;(Gunpowder ×4.5 · Silicon ×2.0)</option>
-            </select>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:640px;">
+            <div class="de-field">
+              <label class="de-label">Missile Type</label>
+              <select class="de-select" id="orderMissileType">
+                <option value="torpedo">Torpedo</option>
+                <option value="cruise">Cruise Missile</option>
+                <option value="guided">Guided Missile</option>
+                <option value="hypersonic">Hypersonic Missile</option>
+                <option value="ballistic">Ballistic Missile (ICBM)</option>
+                <option value="nuclear">Nuclear Missile</option>
+              </select>
+            </div>
+            <div class="de-field">
+              <label class="de-label">Explosion Size</label>
+              <select class="de-select" id="orderMissileSize">
+                <option value="small">Small &nbsp;(Gunpowder ×0.5 · Silicon ×0.6)</option>
+                <option value="medium" selected>Medium &nbsp;(Gunpowder ×1.0 · Silicon ×1.0) — default</option>
+                <option value="big">Big &nbsp;(Gunpowder ×1.8 · Silicon ×1.3)</option>
+                <option value="huge">Huge &nbsp;(Gunpowder ×3.0 · Silicon ×1.7)</option>
+                <option value="gigantic">Gigantic &nbsp;(Gunpowder ×4.5 · Silicon ×2.0)</option>
+              </select>
+            </div>
           </div>
         </div>
 
         <div id="orderItemsPreview" style="margin-bottom:14px;"></div>
-
+        <div id="mpSummaryInOrder" style="margin-bottom:10px;"></div>
         <div id="orderResourceSummary"></div>
       </div>
 
@@ -761,12 +805,12 @@ const PRODUCTION = {
     {id:'ammomortar',  name:'Mortar Ammo (4 rounds)',       icon:'💣',inputs:{refined_iron:15,gunpowder:20},manpower:6},
   ],
   'Missiles & Torpedoes':[
-    {id:'torpedo',     name:'Submarine Torpedo',            icon:'💦',inputs:{refined_iron:300,fuel:80,gunpowder:180,silicon:40},manpower:15},
-    {id:'cruise',      name:'Cruise Missile',               icon:'🏹',inputs:{refined_iron:400,fuel:150,gunpowder:200,silicon:50},manpower:35},
-    {id:'guided',      name:'Guided Missile',               icon:'🎯',inputs:{refined_iron:500,electronics:40,chips:15,fuel:150,gunpowder:250,silicon:60},manpower:25},
-    {id:'hypersonic',  name:'Hypersonic Missile',           icon:'⚡',inputs:{refined_iron:600,electronics:50,chips:20,fuel:200,gunpowder:300,silicon:70},manpower:60},
-    {id:'icbm',        name:'Ballistic Missile (ICBM)',     icon:'☄️',inputs:{refined_iron:800,electronics:60,chips:25,fuel:300,gunpowder:400,silicon:90},manpower:120},
-    {id:'nuclear',     name:'Nuclear Missile',              icon:'☢️',inputs:{refined_iron:1000,fuel:400,gunpowder:500,silicon:100},manpower:150},
+    {id:'torpedo',     name:'Submarine Torpedo',            icon:'💦',inputs:{refined_iron:300,fuel:80,gunpowder:180,silicon:40},manpower:15, isMissile:true, missileType:'torpedo'},
+    {id:'cruise',      name:'Cruise Missile',               icon:'🏹',inputs:{refined_iron:400,fuel:150,gunpowder:200,silicon:50},manpower:35, isMissile:true, missileType:'cruise'},
+    {id:'guided',      name:'Guided Missile',               icon:'🎯',inputs:{refined_iron:500,electronics:40,chips:15,fuel:150,gunpowder:250,silicon:60},manpower:25, isMissile:true, missileType:'guided'},
+    {id:'hypersonic',  name:'Hypersonic Missile',           icon:'⚡',inputs:{refined_iron:600,electronics:50,chips:20,fuel:200,gunpowder:300,silicon:70},manpower:60, isMissile:true, missileType:'hypersonic'},
+    {id:'icbm',        name:'Ballistic Missile (ICBM)',     icon:'☄️',inputs:{refined_iron:800,electronics:60,chips:25,fuel:300,gunpowder:400,silicon:90},manpower:120, isMissile:true, missileType:'ballistic'},
+    {id:'nuclear',     name:'Nuclear Missile',              icon:'☢️',inputs:{refined_iron:1000,fuel:400,gunpowder:500,silicon:100},manpower:150, isMissile:true, missileType:'nuclear'},
   ],
   'Others':[
     {id:'grenade',     name:'Grenade',                      icon:'💣',inputs:{refined_iron:1,gunpowder:2},manpower:1},
@@ -818,7 +862,7 @@ const STORE_KEY    = 'de_industry_v1';
 const TC_COUNTRIES = 'tc_countries';
 
 function defaultState() {
-  return { factories: [], orders: [], archive: [], blocked: [] };
+  return { factories: [], orders: [], archive: [], blocked: [], germanyMP: 0, exclusiveWorkers: 0 };
 }
 function loadState() {
   try { const r = localStorage.getItem(STORE_KEY); if(r) return JSON.parse(r); } catch(e) {}
@@ -840,12 +884,142 @@ let pendingExclusiveFactoryId = null;
 let pendingReleaseFactoryId   = null;
 
 /* ═══════════════════════════════════════════
+   MANPOWER FUNCTIONS
+═══════════════════════════════════════════ */
+function saveMP() {
+  state.germanyMP        = parseInt(document.getElementById('germanyMP').value) || 0;
+  state.exclusiveWorkers = parseInt(document.getElementById('exclusiveWorkers').value) || 0;
+  saveState();
+  renderMPStatus();
+}
+
+function loadMPInputs() {
+  document.getElementById('germanyMP').value        = state.germanyMP || 0;
+  document.getElementById('exclusiveWorkers').value = state.exclusiveWorkers || 0;
+  renderMPStatus();
+}
+
+function getTotalLockedMP() {
+  // Sum all MP currently locked in active processes (only the FIRST/active process in each factory)
+  let locked = 0;
+  for (const f of state.factories) {
+    if (!f.queue || f.queue.length === 0) continue;
+    const activeQueueEntry = f.queue[0];
+    // Find the order that is currently active
+    const order = state.orders.find(o => o.id === activeQueueEntry.orderId);
+    if (!order) continue;
+    // The active process is the first unconfirmed item in this order
+    const activeItem = order.items.find(it => !it.confirmed);
+    if (activeItem) locked += (activeItem.mp || 0);
+  }
+  return locked;
+}
+
+function getTotalActiveProcesses() {
+  // All processes currently in production across all factories (only first item per factory)
+  const processes = [];
+  for (const f of state.factories) {
+    if (!f.queue || f.queue.length === 0) continue;
+    const entry = f.queue[0];
+    const order = state.orders.find(o => o.id === entry.orderId);
+    if (!order) continue;
+    const activeItem = order.items.find(it => !it.confirmed);
+    if (activeItem) processes.push({ factory: f, order, item: activeItem });
+  }
+  return processes;
+}
+
+function renderMPStatus() {
+  const el = document.getElementById('mpStatusBar');
+  if (!el) return;
+  const total = state.germanyMP || 0;
+  const excl  = state.exclusiveWorkers || 0;
+  const locked = getTotalLockedMP();
+  const free = Math.max(0, total - locked);
+  const pct = total > 0 ? Math.min(100, Math.round((locked/total)*100)) : 0;
+  el.innerHTML = `
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;padding:10px 0 0;">
+      <div style="font-size:12px;color:var(--text-sec);">
+        <strong style="color:var(--de-black);">${locked}</strong> MP locked in production &nbsp;·&nbsp;
+        <strong style="color:var(--success);">${free}</strong> MP free &nbsp;·&nbsp;
+        <strong>${total}</strong> total
+        ${excl > 0 ? `&nbsp;·&nbsp; <strong style="color:#7a5f00;">${excl}</strong> exclusive workers ($${fmt(excl*25)}/turn)` : ''}
+      </div>
+      <div style="flex:1;min-width:160px;background:var(--border);height:6px;border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${pct>80?'var(--de-red)':'var(--de-black)'};transition:width 0.3s;"></div>
+      </div>
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PASS TURN
+═══════════════════════════════════════════ */
+function passTurn() {
+  const log = [];
+  let totalCharge = 0;
+
+  for (const f of state.factories) {
+    if (!f.queue || f.queue.length === 0) continue;
+    // Only the FIRST process in the queue is active
+    const entry = f.queue[0];
+    const order = state.orders.find(o => o.id === entry.orderId);
+    if (!order) continue;
+
+    // Find the first unconfirmed item
+    const itemIdx = order.items.findIndex(it => !it.confirmed);
+    if (itemIdx < 0) continue;
+    const item = order.items[itemIdx];
+
+    // Decrement turns remaining
+    if (item.turnsRemaining === undefined) item.turnsRemaining = item.turns;
+    item.turnsRemaining = Math.max(0, item.turnsRemaining - 1);
+
+    // Calculate cost for this turn
+    const baseTurnRate = order.contract === 'exclusive' ? 100 : 50;
+    const workerBonus  = Math.floor((item.workers || 0) / 10) * 15;
+    const turnCost     = baseTurnRate + workerBonus;
+    totalCharge       += turnCost;
+
+    log.push(`<span style="color:var(--de-black);font-weight:700;">${escH(f.name)}</span> — ${escH(item.label)}: ${item.turnsRemaining} turn(s) left · $${fmt(turnCost)} charged`);
+
+    if (item.turnsRemaining === 0) {
+      log.push(`&nbsp;&nbsp;↳ <span style="color:var(--success);font-weight:700;">✓ Production complete! Item is ready to confirm.</span>`);
+    }
+  }
+
+  // Exclusive workers cost
+  const excl = state.exclusiveWorkers || 0;
+  if (excl > 0) {
+    const exclCost = excl * 25;
+    totalCharge += exclCost;
+    log.push(`<span style="color:#7a5f00;font-weight:700;">Exclusive workers:</span> ${excl} workers · $${fmt(exclCost)} charged`);
+  }
+
+  saveState();
+  renderFactoryGrid();
+  renderOrdersList();
+  renderMPStatus();
+  renderStats();
+
+  const logEl = document.getElementById('turnLog');
+  if (logEl) {
+    logEl.innerHTML = log.length
+      ? `<div style="border-left:3px solid var(--de-gold);padding-left:10px;margin-top:6px;">
+           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Turn Results</div>
+           ${log.map(l=>`<div style="margin-bottom:4px;">${l}</div>`).join('')}
+           <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border);font-weight:700;color:var(--de-red);">Turn charge total: $${fmt(totalCharge)}</div>
+         </div>`
+      : '<span style="color:var(--text-muted);">No active processes to advance.</span>';
+  }
+}
+
+/* ═══════════════════════════════════════════
    PAGE META
 ═══════════════════════════════════════════ */
 const PAGE_META = {
-  factories:  { h1:'Factory Management', lead:'Manage Germany\'s industrial facilities. Each factory costs $200 per cycle. Exclusive contracts cost $1,000 per cycle.', bc:'Factory Management' },
+  factories:  { h1:'Factory Management', lead:'Manage Germany\'s industrial facilities. Configure manpower, exclusive workers, and use Pass Turn to advance production. Shared: $50/turn. Exclusive: $100/turn.', bc:'Factory Management' },
   orders:     { h1:'Active Production Orders', lead:'Track production packages by country. Confirm items as they are completed, then send the full package.', bc:'Orders' },
-  'new-order':{ h1:'New Production Order', lead:'Create a production order for a country. Build the item list, assign a factory, and submit.', bc:'New Order' },
+  'new-order':{ h1:'New Production Order', lead:'Create a production order for a country. Each turn costs $65 base + $15 per 10 workers. Max 60 workers per process.', bc:'New Order' },
   archive:    { h1:'Archive — Sent Packages', lead:'Historical record of all completed and dispatched production packages.', bc:'Archive' },
   blocked:    { h1:'Blocked Countries', lead:'Countries on this list cannot place new production orders with German factories.', bc:'Blocked Countries' },
 };
@@ -862,7 +1036,7 @@ function switchTab(tab, btn) {
     document.getElementById('breadcrumbCurrent').textContent = m.bc;
   }
   if(tab==='new-order'){ populateOrderSelects(); renderOrderItemsPreview(); }
-  if(tab==='factories'){ renderFactoryGrid(); }
+  if(tab==='factories'){ renderFactoryGrid(); loadMPInputs(); }
   if(tab==='orders')   { renderOrdersList(); }
   if(tab==='archive')  { renderArchive(); }
   if(tab==='blocked')  { renderBlockedList(); }
@@ -1053,6 +1227,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const row = document.getElementById('missilesSizeRow');
     if(item && item.isMissile) {
       row.style.display = 'block';
+      // Sync missile type select to the selected item's type
+      const typeEl = document.getElementById('orderMissileType');
+      if(item.missileType && typeEl) typeEl.value = item.missileType;
     } else {
       row.style.display = 'none';
       document.getElementById('orderMissileSize').value = 'medium';
@@ -1063,22 +1240,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
 function addItemToOrder() {
   const itemId  = document.getElementById('orderItemSelect').value;
   const qty     = parseInt(document.getElementById('orderItemQty').value) || 1;
-  const workers = parseInt(document.getElementById('orderItemWorkers').value) || 25;
+  let   workers = parseInt(document.getElementById('orderItemWorkers').value) || 10;
   if(!itemId){ alert('Please select an item.'); return; }
+
+  // Enforce 60-worker cap
+  if(workers > 60){ workers = 60; document.getElementById('orderItemWorkers').value = 60; }
+  if(workers < 1)  { workers = 1; document.getElementById('orderItemWorkers').value = 1; }
 
   const item = ALL_ITEMS[itemId]; if(!item) return;
 
   // Apply explosion multiplier if missile
   let scaledInputs = {...item.inputs};
   let sizeLabel = '';
+  let typeLabel = '';
   if(item.isMissile) {
     const sizeKey = document.getElementById('orderMissileSize').value || 'medium';
+    const typeKey = document.getElementById('orderMissileType').value || item.missileType || '';
     const mult = EXPLOSION_MULTIPLIERS[sizeKey];
     if(mult) {
       if(scaledInputs.gunpowder != null) scaledInputs.gunpowder = scaledInputs.gunpowder * mult.gunpowder;
       if(scaledInputs.silicon   != null) scaledInputs.silicon   = scaledInputs.silicon   * mult.silicon;
     }
     sizeLabel = ` [${sizeKey.charAt(0).toUpperCase() + sizeKey.slice(1)}]`;
+    typeLabel = typeKey ? ` — ${typeKey.charAt(0).toUpperCase() + typeKey.slice(1)}` : '';
   }
 
   const totalMp   = item.manpower * qty;
@@ -1086,8 +1270,13 @@ function addItemToOrder() {
   const futureFuel = turns * 25;
   const resources = resolveToRaw(scaledInputs, qty);
 
-  orderItems.push({ itemId, item, qty, workers, turns, futureFuel, resources,
-                    label: `${qty}× ${item.icon} ${item.name}${sizeLabel}` });
+  // Cost: $65/turn base + $15 per each 10 workers
+  const workerBonus = Math.floor(workers / 10) * 15;
+  const costPerTurn = 65 + workerBonus;
+  const totalCost   = turns * costPerTurn;
+
+  orderItems.push({ itemId, item, qty, workers, turns, futureFuel, resources, totalMp, costPerTurn, totalCost,
+                    label: `${qty}× ${item.icon} ${item.name}${typeLabel}${sizeLabel}` });
   renderOrderItemsPreview();
 }
 
@@ -1098,9 +1287,12 @@ function removeOrderItem(idx) {
 
 function renderOrderItemsPreview() {
   const el = document.getElementById('orderItemsPreview');
+  const mpSummaryEl = document.getElementById('mpSummaryInOrder');
+
   if(orderItems.length === 0){
     el.innerHTML = `<div style="color:var(--text-muted);font-size:13px;padding:12px 0;">No items added yet. Select an item above and click Add Item.</div>`;
     document.getElementById('orderResourceSummary').innerHTML = '';
+    if(mpSummaryEl) mpSummaryEl.innerHTML = '';
     return;
   }
 
@@ -1111,36 +1303,54 @@ function renderOrderItemsPreview() {
           <th style="text-align:left;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Item</th>
           <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Qty</th>
           <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Workers</th>
+          <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">MP Required</th>
           <th style="text-align:center;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Turns</th>
-          <th style="text-align:right;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Cost</th>
+          <th style="text-align:right;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Cost/Turn</th>
+          <th style="text-align:right;padding:6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Total Cost</th>
           <th style="padding:4px;"></th>
         </tr>
       </thead>
       <tbody>
         ${orderItems.map((it,idx) => {
-          const turnCost = it.turns * 50;
-          const cycleCost = Math.ceil(it.turns/4) * 200;
           return `<tr style="border-bottom:1px solid var(--border);">
             <td style="padding:8px;font-weight:600;">${it.label}</td>
             <td style="padding:8px;text-align:center;">${it.qty}</td>
             <td style="padding:8px;text-align:center;">${it.workers}</td>
+            <td style="padding:8px;text-align:center;color:var(--de-red);font-weight:700;">${it.totalMp} MP</td>
             <td style="padding:8px;text-align:center;">${it.turns} turn(s)</td>
-            <td style="padding:8px;text-align:right;color:#7a5f00;font-weight:700;">$${fmt(turnCost)}</td>
+            <td style="padding:8px;text-align:right;color:var(--text-sec);">$${fmt(it.costPerTurn)}/turn</td>
+            <td style="padding:8px;text-align:right;color:#7a5f00;font-weight:700;">$${fmt(it.totalCost)}</td>
             <td style="padding:4px;text-align:center;"><button onclick="removeOrderItem(${idx})" style="background:none;border:none;color:var(--de-red);cursor:pointer;font-size:16px;">×</button></td>
           </tr>`;
         }).join('')}
       </tbody>
     </table>`;
 
+  // MP Summary
+  const totalMpRequired = orderItems.reduce((s,it)=>s+it.totalMp,0);
+  const germanyMP = state.germanyMP || 0;
+  const lockedMP  = getTotalLockedMP();
+  const freeMP    = Math.max(0, germanyMP - lockedMP);
+  if(mpSummaryEl){
+    const enoughMP = freeMP >= totalMpRequired || germanyMP === 0;
+    mpSummaryEl.innerHTML = `
+      <div style="background:${enoughMP?'var(--success-bg)':'var(--danger-bg)'};border:1px solid ${enoughMP?'rgba(22,101,52,0.3)':'rgba(153,27,27,0.3)'};padding:10px 14px;font-size:13px;">
+        <strong>Package MP Required: ${totalMpRequired} MP</strong>
+        ${germanyMP>0
+          ? ` &nbsp;·&nbsp; Germany Free MP: ${freeMP} / ${germanyMP} &nbsp;·&nbsp; <span style="color:${enoughMP?'var(--success)':'var(--de-red)'};">${enoughMP?'✓ Sufficient manpower':'⚠ Insufficient manpower'}</span>`
+          : ' &nbsp;·&nbsp; <span style="color:var(--text-muted);">(Set Germany manpower in Factories tab to track usage)</span>'}
+      </div>`;
+  }
+
   // Resource summary — aggregate all items
   const totalRes = {};
-  let totalTurns = 0, totalFuel = 0;
+  let totalTurns = 0, totalFuel = 0, totalCostAll = 0;
   for(const it of orderItems){
     for(const[m,a] of Object.entries(it.resources)) totalRes[m]=(totalRes[m]||0)+a;
-    totalTurns += it.turns;
-    totalFuel  += it.futureFuel;
+    totalTurns   += it.turns;
+    totalFuel    += it.futureFuel;
+    totalCostAll += it.totalCost;
   }
-  const totalCost  = totalTurns * 50;
 
   let resHtml = Object.entries(totalRes).filter(([,a])=>a>0).map(([m,a])=>`
     <div class="oc-resource-chip"><span>${mLabel(m)}</span> <strong>${fmt(a,a%1?2:0)}${mUnit(m)?'&nbsp;'+mUnit(m):''}</strong></div>`).join('');
@@ -1150,10 +1360,11 @@ function renderOrderItemsPreview() {
       <div class="oc-resources-title">📦 Resources the country must send to Germany</div>
       <div class="oc-resource-chips" style="margin-bottom:12px;">${resHtml||'<span style="color:var(--text-muted)">No resources required.</span>'}</div>
       <div style="font-size:12px;color:var(--text-sec);border-top:1px solid var(--border);padding-top:10px;">
+        <strong>Total MP required:</strong> <span style="color:var(--de-red);font-weight:700;">${totalMpRequired} MP</span> &nbsp;·&nbsp;
         <strong>Total turns:</strong> ${totalTurns} &nbsp;·&nbsp;
         <strong>Factory fuel (Germany provides):</strong> ${fmt(totalFuel)} L &nbsp;·&nbsp;
-        <strong>Total cost:</strong> <span style="color:#7a5f00;font-weight:700;">$${fmt(totalCost)}</span>
-        <span style="color:var(--text-muted)">&nbsp;($50/turn)</span>
+        <strong>Package total cost:</strong> <span style="color:#7a5f00;font-weight:700;">$${fmt(totalCostAll)}</span>
+        <span style="color:var(--text-muted)">&nbsp;($65/turn base + $15 per 10 workers)</span>
       </div>
     </div>`;
 }
@@ -1181,11 +1392,12 @@ function submitOrder() {
   }
 
   const totalRes = {};
-  let totalTurns = 0, totalFuel = 0;
+  let totalTurns = 0, totalFuel = 0, totalCostAll = 0;
   for(const it of orderItems){
     for(const[m,a] of Object.entries(it.resources)) totalRes[m]=(totalRes[m]||0)+a;
-    totalTurns += it.turns;
-    totalFuel  += it.futureFuel;
+    totalTurns   += it.turns;
+    totalFuel    += it.futureFuel;
+    totalCostAll += it.totalCost;
   }
 
   const queuePos = (factory.queue||[]).length + 1;
@@ -1196,11 +1408,11 @@ function submitOrder() {
     factoryId,
     factoryName: factory.name,
     contract,
-    items: orderItems.map(it=>({ itemId: it.itemId, label: it.label, qty: it.qty, workers: it.workers, turns: it.turns, futureFuel: it.futureFuel, resources: {...it.resources}, confirmed: false })),
+    items: orderItems.map(it=>({ itemId: it.itemId, label: it.label, qty: it.qty, workers: it.workers, turns: it.turns, turnsRemaining: it.turns, futureFuel: it.futureFuel, resources: {...it.resources}, mp: it.totalMp, costPerTurn: it.costPerTurn, totalCost: it.totalCost, confirmed: false })),
     totalResources: totalRes,
     totalTurns,
     totalFuel,
-    totalCost: totalTurns * 50,
+    totalCost: totalCostAll,
     queuePosition: queuePos,
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -1225,8 +1437,9 @@ function clearOrderForm() {
   document.getElementById('orderContractType').value = 'shared';
   document.getElementById('orderItemSelect').value = '';
   document.getElementById('orderItemQty').value = '1';
-  document.getElementById('orderItemWorkers').value = '25';
+  document.getElementById('orderItemWorkers').value = '10';
   document.getElementById('orderMissileSize').value = 'medium';
+  document.getElementById('orderMissileType').value = 'torpedo';
   document.getElementById('missilesSizeRow').style.display = 'none';
   document.getElementById('orderFactoryStatus').innerHTML = '';
   renderOrderItemsPreview();
@@ -1287,8 +1500,8 @@ function renderOrdersList() {
       <div class="oc-item-row">
         <div class="oc-item-name">${escH(it.label)}</div>
         <div class="oc-item-workers">${it.workers} workers</div>
-        <div class="oc-item-turns">${it.turns} turn(s)</div>
-        <div class="oc-item-cost">$${fmt(it.turns*50)}</div>
+        <div class="oc-item-turns">${it.turnsRemaining !== undefined ? it.turnsRemaining : it.turns} turn(s) left (${it.turns} total)</div>
+        <div class="oc-item-cost">${it.mp ? `${it.mp} MP · ` : ''}$${fmt(it.costPerTurn||65)}/turn · $${fmt(it.totalCost || it.turns*65)}</div>
         ${!it.confirmed
           ? `<button class="confirm-btn" onclick="confirmItem('${order.id}',${idx})">Mark Produced</button>`
           : `<button class="confirm-btn done" disabled>Ready</button>`}
@@ -1297,7 +1510,7 @@ function renderOrdersList() {
     let resHtml = Object.entries(order.totalResources).filter(([,a])=>a>0).map(([m,a])=>`
       <div class="oc-resource-chip"><span>${mLabel(m)}</span> <strong>${fmt(a,a%1?2:0)}${mUnit(m)?'&nbsp;'+mUnit(m):''}</strong></div>`).join('');
 
-    const contractLabel = order.contract === 'exclusive' ? 'Exclusive' : 'Shared';
+    const contractLabel = order.contract === 'exclusive' ? 'Exclusive ($100/turn)' : 'Shared ($50/turn)';
     const fmt_date = iso => new Date(iso).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 
     return `<div class="order-card ${order.status}">
@@ -1413,15 +1626,17 @@ function renderStats() {
   const activeOrders   = state.orders.length;
   const readyOrders    = state.orders.filter(o=>o.status==='complete').length;
   const totalRevenue   = state.archive.reduce((s,o)=>s+o.totalCost,0);
-  const activeRevenue  = state.orders.reduce((s,o)=>s+o.totalCost,0);
-  const cycleCost      = (factoryCount - exclusiveCount)*200 + exclusiveCount*1000;
+  const totalMP        = state.germanyMP || 0;
+  const lockedMP       = getTotalLockedMP();
+  const freeMP         = Math.max(0, totalMP - lockedMP);
+  const exclWorkers    = state.exclusiveWorkers || 0;
 
   document.getElementById('statsRow').innerHTML = `
     <div class="stat-card"><div class="stat-lbl">Factories</div><div class="stat-val">${factoryCount}</div></div>
     <div class="stat-card gold"><div class="stat-lbl">Exclusive</div><div class="stat-val gold">${exclusiveCount}</div></div>
     <div class="stat-card"><div class="stat-lbl">Active Orders</div><div class="stat-val">${activeOrders}</div></div>
     <div class="stat-card green"><div class="stat-lbl">Ready to Send</div><div class="stat-val green">${readyOrders}</div></div>
-    <div class="stat-card red"><div class="stat-lbl">Cost/Cycle</div><div class="stat-val red" style="font-size:20px;">$${fmt(cycleCost)}</div></div>
+    <div class="stat-card red"><div class="stat-lbl">MP Locked</div><div class="stat-val red" style="font-size:20px;">${lockedMP}/${totalMP}</div></div>
     <div class="stat-card gold"><div class="stat-lbl">Total Revenue</div><div class="stat-val gold" style="font-size:20px;">$${fmt(totalRevenue)}</div></div>
   `;
   document.getElementById('headerFactoryCount').textContent = factoryCount;
@@ -1445,6 +1660,7 @@ function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 ═══════════════════════════════════════════ */
 populateBlockSelect();
 renderFactoryGrid();
+loadMPInputs();
 renderOrdersList();
 renderArchive();
 renderBlockedList();

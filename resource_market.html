@@ -408,9 +408,9 @@ body{
           <label class="form-label">Payment Destination</label>
           <div style="margin-top:4px;">
             <div class="bank-dest-grid" id="dest-grid">
-              <button class="bank-dest-btn active-cash" onclick="setDest('cash')" id="dest-cash">💵 Cash</button>
-              <button class="bank-dest-btn" onclick="setDest('swe')" id="dest-swe">🏧 Swedbank</button>
-              <button class="bank-dest-btn" onclick="setDest('dib')" id="dest-dib">🏦 Dubai Bank</button>
+              <button type="button" class="bank-dest-btn active-cash" onclick="setDest('cash')" id="dest-cash">💵 Cash</button>
+              <button type="button" class="bank-dest-btn" onclick="setDest('swe')" id="dest-swe">🏧 Swedbank</button>
+              <button type="button" class="bank-dest-btn" onclick="setDest('dib')" id="dest-dib">🏦 Dubai Bank</button>
             </div>
           </div>
         </div>
@@ -647,6 +647,7 @@ function setDest(d) {
       else btn.className += ' active-dib';
     }
   });
+  // Do NOT reset country or re-init selectors here
 }
 
 /* Add a resource entry row */
@@ -727,9 +728,8 @@ function publishListing() {
   if (!valid) { notify('Error', 'All resources must have a valid quantity and price.', 'red'); return; }
 
   const listings = loadListings();
-  // Remove existing listing from same country
-  const existing = listings.findIndex(l => l.countryId === countryId);
-  if (existing >= 0) listings.splice(existing, 1);
+  // Do NOT remove existing listings from the same country — each publish adds a new listing entry.
+  // This allows a country to have multiple active offers with different resources/prices/destinations.
 
   const listing = {
     id: Date.now(),
