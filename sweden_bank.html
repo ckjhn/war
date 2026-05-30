@@ -1740,7 +1740,7 @@ function pollExternalChanges() {
     if (changed) {
       renderNations();
       updateTreasury();
-      if (activeTab === 'cards') renderCards();
+      renderCards();
     }
   } catch(e) {}
 }

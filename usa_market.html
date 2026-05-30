@@ -354,8 +354,8 @@ input[type=range]::-webkit-slider-thumb {
   <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stat-item">
-      <div class="stat-label">USA Treasury (Swedbank)</div>
-      <div class="stat-val" id="stat-treasury">$30,000.00</div>
+      <div class="stat-label">USA Balance (Swedbank)</div>
+      <div class="stat-val" id="stat-treasury">$0.00</div>
     </div>
     <div class="stat-item">
       <div class="stat-label">Fees Earned (Session)</div>
@@ -714,7 +714,12 @@ function notify(title, msg, cls='blue') {
 ══════════════════════════════════════════ */
 function updateStats() {
   const swe = loadSweBank();
-  document.getElementById('stat-treasury').textContent    = fmt(swe.treasury ?? 30000);
+  // USA's "treasury" is their Swedbank account balance — find USA by id or name
+  const usaEntry = NATION_LIST.find(n => n.name.toLowerCase() === 'usa' || n.id === 'usa');
+  const usaId = usaEntry ? usaEntry.id : null;
+  const usaAcc = usaId && swe.accounts && swe.accounts[usaId];
+  const usaBal = usaAcc ? (usaAcc.balance || 0) : 0;
+  document.getElementById('stat-treasury').textContent    = fmt(usaBal);
   document.getElementById('stat-trade-rev').textContent   = fmt(tradeRevenue);
   document.getElementById('stat-trade-count').textContent = trades.length;
   document.getElementById('stat-volume').textContent      = fmtShort(tradeVolume);
@@ -985,9 +990,21 @@ function executeTrade() {
     // Cash: seller receives cash manually
   }
 
-  // ─── STEP 3: USA Market fee goes to SWEDBANK treasury ───
-  sweState.treasury = (sweState.treasury || 30000) + usaEarns;
-  sweState.treasuryTradeFees = (sweState.treasuryTradeFees||0) + usaEarns;
+  // ─── STEP 3: USA Market fee goes to USA's Swedbank account balance ───
+  // USA has no bank of its own — their Swedbank account IS their treasury.
+  // Find USA's country entry from the nation list (name-agnostic: look for 'usa' id).
+  const usaEntry = NATION_LIST.find(n => n.name.toLowerCase() === 'usa' || n.id === 'usa');
+  const usaId = usaEntry ? usaEntry.id : null;
+  if (usaId) {
+    if (!sweState.accounts) sweState.accounts = {};
+    if (!sweState.accounts[usaId]) {
+      sweState.accounts[usaId] = { balance: 0, totalDeposited: 0, totalWithdrawn: 0, enabled: true, cardTier: 'entry', creditDebt: 0, cardDisabled: false };
+    }
+    sweState.accounts[usaId].balance = (sweState.accounts[usaId].balance || 0) + usaEarns;
+    sweState.accounts[usaId].totalDeposited = (sweState.accounts[usaId].totalDeposited || 0) + usaEarns;
+  }
+  // Also track for session stats (does not affect any bank treasury pool)
+  sweState.treasuryTradeFees = (sweState.treasuryTradeFees || 0) + usaEarns;
 
   // ─── STEP 4: Write log entries to the relevant bank(s) ───
   const payLabel = {
@@ -1000,11 +1017,14 @@ function executeTrade() {
   const discNote = discount > 0 ? ' [Swe -'+Math.round(discount*100)+'%]' : '';
 
   if (!sweState.logEntries) sweState.logEntries = [];
-  sweState.logEntries.unshift({
-    type:'treasury', nation:'USA Market',
-    desc:'Trade: '+buyerName+' <- '+(qty>1?qty+'x ':'')+selectedItem.name+(expLevel?' ('+expLevel+')':'')+' from '+sellerName+' via '+payLabel+' - USA earned '+fmt(usaEarns),
-    amount:usaEarns, time:nowStr()
-  });
+  // USA's market fee credited to their Swedbank account — log as a gain for USA
+  if (usaId && usaEarns > 0) {
+    sweState.logEntries.unshift({
+      type:'gain', nation: usaEntry ? usaEntry.name : 'USA',
+      desc:'USA Market fee: '+(qty>1?qty+'x ':'')+selectedItem.name+(expLevel?' ('+expLevel+')':'')+' from '+sellerName+' via '+payLabel,
+      amount:usaEarns, time:nowStr()
+    });
+  }
 
   const buyerLossEntry = {
     type:'loss', nation:buyerName,
