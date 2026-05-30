@@ -906,7 +906,16 @@ document.getElementById('purchase-modal').addEventListener('click', function(e) 
 
 function setPurchasePayment(m) {
   purchasePayMethod = m;
-  renderModal();
+  // Only update the payment buttons — do NOT call renderModal() which would rebuild
+  // the entire modal and reset the buyer select back to blank.
+  const payBtns = document.querySelectorAll('#purchase-modal .pay-btn');
+  const payMap = { 'cash': 'pay-cash', 'swe-debit': 'pay-swe', 'swe-credit': 'pay-swe', 'dib-debit': 'pay-dib', 'dib-credit': 'pay-dib' };
+  const methodOrder = ['cash','swe-debit','swe-credit','dib-debit','dib-credit'];
+  payBtns.forEach((btn, i) => {
+    btn.className = 'pay-btn';
+    if (methodOrder[i] === m) btn.className += ' ' + (payMap[m] || '');
+  });
+  renderModalBreakdown();
 }
 
 function renderModal() {
@@ -921,11 +930,11 @@ function renderModal() {
     <div style="margin-bottom:16px;">
       <div class="form-label">Payment Source</div>
       <div class="pay-grid">
-        <button class="pay-btn${purchasePayMethod==='cash'?' pay-cash':''}" onclick="setPurchasePayment('cash')">💵 Cash</button>
-        <button class="pay-btn${purchasePayMethod==='swe-debit'?' pay-swe':''}" onclick="setPurchasePayment('swe-debit')">🏧 Swe Debit</button>
-        <button class="pay-btn${purchasePayMethod==='swe-credit'?' pay-swe':''}" onclick="setPurchasePayment('swe-credit')">💳 Swe Credit</button>
-        <button class="pay-btn${purchasePayMethod==='dib-debit'?' pay-dib':''}" onclick="setPurchasePayment('dib-debit')">🏧 Dubai Debit</button>
-        <button class="pay-btn${purchasePayMethod==='dib-credit'?' pay-dib':''}" onclick="setPurchasePayment('dib-credit')">💳 Dubai Credit</button>
+        <button type="button" class="pay-btn${purchasePayMethod==='cash'?' pay-cash':''}" onclick="setPurchasePayment('cash')">💵 Cash</button>
+        <button type="button" class="pay-btn${purchasePayMethod==='swe-debit'?' pay-swe':''}" onclick="setPurchasePayment('swe-debit')">🏧 Swe Debit</button>
+        <button type="button" class="pay-btn${purchasePayMethod==='swe-credit'?' pay-swe':''}" onclick="setPurchasePayment('swe-credit')">💳 Swe Credit</button>
+        <button type="button" class="pay-btn${purchasePayMethod==='dib-debit'?' pay-dib':''}" onclick="setPurchasePayment('dib-debit')">🏧 Dubai Debit</button>
+        <button type="button" class="pay-btn${purchasePayMethod==='dib-credit'?' pay-dib':''}" onclick="setPurchasePayment('dib-credit')">💳 Dubai Credit</button>
       </div>
     </div>`;
 
