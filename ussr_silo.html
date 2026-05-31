@@ -910,12 +910,12 @@ header::before{
 
 <!-- BILLING MODAL -->
 <div class="modal-overlay" id="billing-modal">
-  <div class="modal" style="max-width:700px;width:95%;">
-    <div class="modal-title">★ BILLING — ALL NATIONS</div>
-    <div style="overflow-x:auto;">
+  <div class="modal" style="max-width:700px;width:95%;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-title" style="flex-shrink:0;">★ BILLING — ALL NATIONS</div>
+    <div style="overflow:auto;flex:1;min-height:0;">
       <table class="billing-table" id="billing-table-content"></table>
     </div>
-    <div class="modal-actions">
+    <div class="modal-actions" style="flex-shrink:0;">
       <button class="btn btn-red" onclick="closeModal('billing-modal')">✕ CLOSE</button>
     </div>
   </div>
