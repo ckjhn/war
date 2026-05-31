@@ -877,6 +877,18 @@ function renderSection(c, s, isOrg=false){
       Total: ${militaryTotal} unit${militaryTotal!==1?'s':''}
     </span>`;
   }
+  if(s.key === 'brute'){
+    const bruteTotal = Object.values(vals).reduce((sum, v) => sum + (Number(v)||0), 0);
+    headerExtra = `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-right:10px;">
+      Total: ${bruteTotal.toLocaleString()} units
+    </span>`;
+  }
+  if(s.key === 'refined'){
+    const refinedTotal = Object.values(vals).reduce((sum, v) => sum + (Number(v)||0), 0);
+    headerExtra = `<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--purple);margin-right:10px;">
+      Total: ${refinedTotal.toLocaleString()} units
+    </span>`;
+  }
 
   return `<div class="section" id="sec-${s.key}">
     <div class="section-header" onclick="toggleSection('${s.key}')">
