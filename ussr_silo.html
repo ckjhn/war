@@ -892,6 +892,7 @@ header::before{
         <span class="t-label">BLOCKED SILOS</span>
         <span class="t-value" id="sf-blocked" style="color:var(--red);">0</span>
       </div>
+      <button class="btn btn-green btn-full btn-sm" onclick="exportJSON()" style="margin-top:10px;">⬇ EXPORT JSON</button>
     </div>
   </div>
 
@@ -1525,6 +1526,18 @@ function syncAndRefresh(){
       document.getElementById('silo-editor').style.display='none';
     }
   }
+}
+
+// ══════════════════════════════════════════════
+// EXPORT JSON
+// ══════════════════════════════════════════════
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(silos, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ussr_silos.json';
+  a.click();
+  toast('success','★ ussr_silos.json exported.');
 }
 
 // ══════════════════════════════════════════════
