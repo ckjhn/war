@@ -387,6 +387,7 @@ body{
   <div class="main-tabs">
     <button class="tab-btn active" onclick="switchTab('sell')">📦 Sell Resources</button>
     <button class="tab-btn" onclick="switchTab('browse')">🔍 Browse &amp; Buy</button>
+    <button class="tab-btn" onclick="switchTab('cart')">🛒 Cart <span id="cart-badge" style="display:none;background:var(--accent);color:#000;font-size:8px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px;vertical-align:middle;">0</span></button>
     <button class="tab-btn" onclick="switchTab('history')">📋 Transaction History</button>
   </div>
 </div>
@@ -452,6 +453,40 @@ body{
     </div>
     <div id="browse-listings-wrap">
       <div class="empty-state"><div class="empty-icon">🔍</div><div>No listings available. Countries must publish resources first.</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: CART ═══════════════ -->
+  <div class="tab-content" id="tab-cart">
+    <div class="card" style="padding:16px 22px;">
+      <div class="sec-label">Shopping Cart</div>
+      <div id="cart-buyer-row" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;">
+        <div class="form-group" style="min-width:200px;">
+          <label class="form-label">Buying Country</label>
+          <select class="form-select" id="cart-buyer" onchange="renderCartBreakdown()">
+            <option value="">— Select buyer —</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:260px;">
+          <div class="form-label">Payment Source</div>
+          <div class="pay-grid" id="cart-pay-grid">
+            <button type="button" class="pay-btn pay-cash" onclick="setCartPayment('cash')">💵 Cash</button>
+            <button type="button" class="pay-btn" onclick="setCartPayment('swe-debit')">🏧 Swe Debit</button>
+            <button type="button" class="pay-btn" onclick="setCartPayment('swe-credit')">💳 Swe Credit</button>
+            <button type="button" class="pay-btn" onclick="setCartPayment('dib-debit')">🏧 Dubai Debit</button>
+            <button type="button" class="pay-btn" onclick="setCartPayment('dib-credit')">💳 Dubai Credit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="cart-items-wrap">
+      <div class="empty-state"><div class="empty-icon">🛒</div><div>Your cart is empty. Browse resources and add items.</div></div>
+    </div>
+    <div id="cart-summary-wrap" style="display:none;">
+      <div class="card">
+        <div id="cart-breakdown"></div>
+        <button class="btn btn-primary" id="cart-exec-btn" onclick="executeCartPurchase()" style="width:100%;margin-top:10px;" disabled>✅ Confirm All Purchases</button>
+      </div>
     </div>
   </div>
 
@@ -534,6 +569,316 @@ let browseCat    = 'all';
 let browseSearch = '';
 
 /* ═══════════════════════════════════════════
+   CART STATE
+═══════════════════════════════════════════ */
+let cart = [];           // Array of { cartId, item, qty }
+let cartPayMethod = 'cash';
+
+function updateCartBadge() {
+  const badge = document.getElementById('cart-badge');
+  if (!badge) return;
+  const total = cart.reduce((s, e) => s + e.qty, 0);
+  if (total > 0) { badge.textContent = total; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
+}
+
+function addToCart(item) {
+  // Check if same listing+resource is already in cart
+  const existing = cart.find(e => e.item.listingId === item.listingId && e.item.resId === item.resId);
+  if (existing) {
+    // Increment by 1, capped at available qty
+    existing.qty = Math.min(existing.qty + 1, item.qty);
+    notify('Cart Updated', `${item.resName} quantity increased in cart.`, '');
+  } else {
+    cart.push({ cartId: Date.now() + Math.random(), item: {...item}, qty: 1 });
+    notify('Added to Cart', `${item.resName} from ${item.countryName} added to cart.`, '');
+  }
+  updateCartBadge();
+  // Populate buyer selector if cart tab buyer sel is empty
+  populateCartBuyer();
+}
+
+function removeFromCart(cartId) {
+  cart = cart.filter(e => e.cartId !== cartId);
+  updateCartBadge();
+  renderCart();
+}
+
+function populateCartBuyer() {
+  const sel = document.getElementById('cart-buyer');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Select buyer —</option>' +
+    NATION_LIST.map(n => `<option value="${n.id}">${n.name}</option>`).join('');
+  if (prev) sel.value = prev;
+}
+
+function setCartPayment(m) {
+  cartPayMethod = m;
+  const payMap = { 'cash': 'pay-cash', 'swe-debit': 'pay-swe', 'swe-credit': 'pay-swe', 'dib-debit': 'pay-dib', 'dib-credit': 'pay-dib' };
+  const methodOrder = ['cash','swe-debit','swe-credit','dib-debit','dib-credit'];
+  document.querySelectorAll('#cart-pay-grid .pay-btn').forEach((btn, i) => {
+    btn.className = 'pay-btn';
+    if (methodOrder[i] === m) btn.className += ' ' + (payMap[m] || '');
+  });
+  renderCartBreakdown();
+}
+
+function renderCart() {
+  populateCartBuyer();
+
+  const itemsWrap = document.getElementById('cart-items-wrap');
+  const summaryWrap = document.getElementById('cart-summary-wrap');
+
+  if (!cart.length) {
+    itemsWrap.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><div>Your cart is empty. Browse resources and add items.</div></div>';
+    summaryWrap.style.display = 'none';
+    return;
+  }
+
+  summaryWrap.style.display = 'block';
+
+  // Group by seller (countryName + listingId)
+  const grouped = {};
+  cart.forEach(e => {
+    const key = e.item.listingId + '::' + e.item.countryId;
+    if (!grouped[key]) grouped[key] = { countryName: e.item.countryName, dest: e.item.dest, entries: [] };
+    grouped[key].entries.push(e);
+  });
+
+  const destLabel = d => ({cash:'💵 Cash',swe:'🏧 Swedbank',dib:'🏦 Dubai Bank'}[d] || d);
+
+  itemsWrap.innerHTML = Object.values(grouped).map(group => {
+    const rows = group.entries.map(e => {
+      const maxQty = e.item.qty;
+      const lineTotal = e.item.price * e.qty;
+      return `<div style="display:grid;grid-template-columns:1fr 90px 130px 130px 80px 32px;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${e.item.resName}</div>
+          <div style="margin-top:3px;">${priceSignal(e.item.price, e.item.mktPrice)}</div>
+        </div>
+        <div><span class="res-badge ${e.item.cat}">${e.item.cat==='brute'?'Raw':'Refined'}</span></div>
+        <div>
+          <div class="form-label" style="margin-bottom:4px;">Qty (max ${Number(maxQty).toLocaleString()})</div>
+          <input class="form-input" type="number" value="${e.qty}" min="1" max="${maxQty}" step="1"
+            style="padding:5px 8px;font-size:11px;font-family:'Space Mono',monospace;"
+            onchange="updateCartQty(${JSON.stringify(e.cartId)}, this.value, ${maxQty})">
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);">${fmt(e.item.price)}/${e.item.unit}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:14px;color:var(--accent);font-weight:700;">${fmt(lineTotal)}</div>
+        </div>
+        <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;">${e.item.unit}</div>
+        <button class="del-btn" onclick="removeFromCart(${JSON.stringify(e.cartId)})">✕</button>
+      </div>`;
+    }).join('');
+
+    return `<div class="card" style="padding:0;overflow:hidden;margin-bottom:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${group.countryName}</div>
+          <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-top:2px;">Seller receives: ${destLabel(group.dest)}</div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;">
+          ${group.entries.length} item${group.entries.length!==1?'s':''}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 90px 130px 130px 80px 32px;gap:10px;padding:6px 14px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;border-bottom:1px solid var(--border);">
+        <div>Resource</div><div>Type</div><div>Quantity</div><div>Subtotal</div><div>Unit</div><div></div>
+      </div>
+      ${rows}
+    </div>`;
+  }).join('');
+
+  renderCartBreakdown();
+}
+
+function updateCartQty(cartId, val, maxQty) {
+  const entry = cart.find(e => e.cartId === cartId);
+  if (!entry) return;
+  const n = Math.max(1, Math.min(parseInt(val) || 1, maxQty));
+  entry.qty = n;
+  updateCartBadge();
+  renderCartBreakdown();
+}
+
+function renderCartBreakdown() {
+  const bk = document.getElementById('cart-breakdown');
+  const execBtn = document.getElementById('cart-exec-btn');
+  if (!bk || !execBtn) return;
+  if (!cart.length) { bk.innerHTML = ''; execBtn.disabled = true; return; }
+
+  const buyerId = document.getElementById('cart-buyer')?.value || '';
+  const buyerName = NATION_LIST.find(n => n.id === buyerId)?.name || '';
+  const grandTotal = cart.reduce((s, e) => s + e.item.price * e.qty, 0);
+
+  const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+  const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+
+  let canExecute = !!buyerId;
+  let balNote = '';
+
+  if (cartPayMethod !== 'cash' && buyerId) {
+    const dib = loadDubaiBank();
+    const swe = loadSweBank();
+    const dAcc = dib.accounts && dib.accounts[buyerId];
+    const sAcc = swe.accounts && swe.accounts[buyerId];
+    if (cartPayMethod === 'dib-debit') {
+      const bal = dAcc ? dAcc.balance||0 : 0;
+      canExecute = dAcc && dAcc.enabled !== false && bal >= grandTotal;
+      balNote = `<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Dubai balance: ${fmt(bal)}</div>`;
+    } else if (cartPayMethod === 'dib-credit') {
+      if (!dAcc || dAcc.cardDisabled) { balNote='<div style="font-size:10px;color:var(--red);margin-bottom:10px;">⚠ Dubai credit card disabled</div>'; canExecute=false; }
+      else { const avail=Math.max(0,(DIB_LIMITS[dAcc.cardTier||'basic']||1000)-(dAcc.creditDebt||0)); canExecute=avail>=grandTotal; balNote=`<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Dubai credit available: ${fmt(avail)}</div>`; }
+    } else if (cartPayMethod === 'swe-debit') {
+      const bal = sAcc ? sAcc.balance||0 : 0;
+      canExecute = sAcc && sAcc.enabled && bal >= grandTotal;
+      balNote = `<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Swedbank balance: ${fmt(bal)}</div>`;
+    } else if (cartPayMethod === 'swe-credit') {
+      if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) { balNote='<div style="font-size:10px;color:var(--red);margin-bottom:10px;">⚠ Swedbank card disabled</div>'; canExecute=false; }
+      else { const avail=Math.max(0,(SWE_LIMITS[sAcc.cardTier||'entry']||800)-(sAcc.creditDebt||0)); canExecute=avail>=grandTotal; balNote=`<div style="font-size:10px;margin-bottom:10px;color:${canExecute?'var(--green)':'var(--red)'};">${canExecute?'✓':'⚠'} Swedbank credit available: ${fmt(avail)}</div>`; }
+    }
+  }
+
+  const lines = cart.map(e => `
+    <div class="pb-row">
+      <span style="color:var(--text-mid);">${e.item.resName} <span style="color:var(--text-dim);font-size:10px;">(${e.item.countryName})</span></span>
+      <span class="pb-val" style="font-size:13px;">${e.qty.toLocaleString()} × ${fmt(e.item.price)} = ${fmt(e.item.price*e.qty)}</span>
+    </div>`).join('');
+
+  let cashNote = '';
+  if (cartPayMethod === 'cash') {
+    cashNote = `<div class="cash-note">💵 Player must pay ${fmt(grandTotal)} in cash manually. No balance will be deducted.</div>`;
+  }
+
+  bk.innerHTML = `
+    <div class="sec-label">Order Summary</div>
+    <div style="background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;">
+      ${lines}
+      <div class="pb-row pb-total"><span>Grand Total</span><span class="pb-val">${fmt(grandTotal)}</span></div>
+    </div>
+    ${cashNote}${balNote}
+  `;
+
+  execBtn.disabled = !canExecute || !buyerId;
+}
+
+function executeCartPurchase() {
+  if (!cart.length) return;
+  const buyerId = document.getElementById('cart-buyer')?.value || '';
+  if (!buyerId) { notify('Error', 'Select a buyer.', 'red'); return; }
+  const buyerName = NATION_LIST.find(n => n.id === buyerId)?.name || buyerId;
+
+  const DIB_LIMITS = {basic:1000,standard:5000,vip:12000,gold:30000,platinum:75000,signature:150000,infinity:500000};
+  const SWE_LIMITS = {entry:800,privat:3500,foretag:9000,guld:22000,premium:55000,elit:120000,riksbank:400000};
+
+  const grandTotal = cart.reduce((s, e) => s + e.item.price * e.qty, 0);
+  const dib = loadDubaiBank();
+  const swe = loadSweBank();
+  const dAcc = dib.accounts && dib.accounts[buyerId];
+  const sAcc = swe.accounts && swe.accounts[buyerId];
+
+  // ─── Single pre-flight balance check on the total ───
+  if (cartPayMethod === 'dib-debit') {
+    if (!dAcc || dAcc.balance < grandTotal) { notify('Insufficient Funds', 'Dubai debit balance too low for the full cart.', 'red'); return; }
+    dAcc.balance -= grandTotal;
+  } else if (cartPayMethod === 'dib-credit') {
+    if (!dAcc || dAcc.cardDisabled) { notify('Card Disabled', 'Dubai card disabled.', 'red'); return; }
+    const avail = Math.max(0, (DIB_LIMITS[dAcc.cardTier||'basic']||1000) - (dAcc.creditDebt||0));
+    if (avail < grandTotal) { notify('Credit Limit', 'Dubai credit limit reached for the full cart.', 'red'); return; }
+    dAcc.creditDebt = (dAcc.creditDebt||0) + grandTotal;
+  } else if (cartPayMethod === 'swe-debit') {
+    if (!sAcc || !sAcc.enabled || sAcc.balance < grandTotal) { notify('Insufficient Funds', 'Swedbank balance too low for the full cart.', 'red'); return; }
+    sAcc.balance -= grandTotal;
+    sAcc.totalWithdrawn = (sAcc.totalWithdrawn||0) + grandTotal;
+  } else if (cartPayMethod === 'swe-credit') {
+    if (!sAcc || !sAcc.enabled || sAcc.cardDisabled) { notify('Card Disabled', 'Swedbank card disabled.', 'red'); return; }
+    const avail = Math.max(0, (SWE_LIMITS[sAcc.cardTier||'entry']||800) - (sAcc.creditDebt||0));
+    if (avail < grandTotal) { notify('Credit Limit', 'Swedbank credit limit reached for the full cart.', 'red'); return; }
+    sAcc.creditDebt = (sAcc.creditDebt||0) + grandTotal;
+  }
+  // cash: no deduction
+
+  const payLabel = {cash:'Cash','swe-debit':'Swe Debit','swe-credit':'Swe Credit','dib-debit':'Dubai Debit','dib-credit':'Dubai Credit'}[cartPayMethod] || cartPayMethod;
+  const listings  = loadListings();
+  const history   = loadHistory();
+
+  let purchasedCount = 0;
+
+  cart.forEach(e => {
+    const item = e.item;
+    const qty  = e.qty;
+    const total = item.price * qty;
+    const sellerCountry = NATION_LIST.find(n => n.id === item.countryId);
+    const sellerName = sellerCountry?.name || item.countryName;
+
+    // ─── Credit seller ───
+    if (item.dest === 'dib' && cartPayMethod !== 'cash') {
+      if (!dib.accounts) dib.accounts = {};
+      if (!dib.accounts[item.countryId]) dib.accounts[item.countryId] = {balance:0,enabled:true};
+      dib.accounts[item.countryId].balance = (dib.accounts[item.countryId].balance||0) + total;
+      if (!dib.logEntries) dib.logEntries = [];
+      dib.logEntries.unshift({type:'gain',nation:sellerName,desc:`GRX Sale (Cart): ${qty}× ${item.resName} to ${buyerName}`,amount:total,time:nowStr()});
+    } else if (item.dest === 'swe' && cartPayMethod !== 'cash') {
+      if (!swe.accounts) swe.accounts = {};
+      if (!swe.accounts[item.countryId]) swe.accounts[item.countryId] = {balance:0,enabled:true};
+      swe.accounts[item.countryId].balance = (swe.accounts[item.countryId].balance||0) + total;
+      swe.accounts[item.countryId].totalDeposited = (swe.accounts[item.countryId].totalDeposited||0) + total;
+      if (!swe.logEntries) swe.logEntries = [];
+      swe.logEntries.unshift({type:'gain',nation:sellerName,desc:`GRX Sale (Cart): ${qty}× ${item.resName} to ${buyerName}`,amount:total,time:nowStr()});
+    }
+
+    // ─── Buyer bank log ───
+    if (cartPayMethod === 'swe-debit' || cartPayMethod === 'swe-credit') {
+      if (!swe.logEntries) swe.logEntries = [];
+      swe.logEntries.unshift({type:'loss',nation:buyerName,desc:`GRX Cart Purchase: ${qty}× ${item.resName} from ${sellerName} [${payLabel}]`,amount:-total,time:nowStr()});
+    } else if (cartPayMethod !== 'cash') {
+      if (!dib.logEntries) dib.logEntries = [];
+      dib.logEntries.unshift({type:'loss',nation:buyerName,desc:`GRX Cart Purchase: ${qty}× ${item.resName} from ${sellerName} [${payLabel}]`,amount:-total,time:nowStr()});
+    }
+
+    // ─── Reduce quantity in listing ───
+    const lstIdx = listings.findIndex(l => String(l.id) === String(item.listingId));
+    if (lstIdx >= 0) {
+      const res = listings[lstIdx].resources.find(r => r.resId === item.resId);
+      if (res) {
+        res.qty -= qty;
+        if (res.qty <= 0) {
+          listings[lstIdx].resources = listings[lstIdx].resources.filter(r => r.resId !== item.resId);
+          if (!listings[lstIdx].resources.length) listings.splice(lstIdx, 1);
+        }
+      }
+    }
+
+    // ─── History entry ───
+    history.unshift({
+      id: Date.now() + purchasedCount, time: nowStr(), date: nowFull(),
+      buyerId, buyerName, sellerId: item.countryId, sellerName,
+      resId: item.resId, resName: item.resName, cat: item.cat,
+      qty, unit: item.unit, unitPrice: item.price, mktPrice: item.mktPrice,
+      total, paymentMethod: cartPayMethod, sellerDest: item.dest,
+      priceSigText: priceSignalText(item.price, item.mktPrice),
+    });
+
+    purchasedCount++;
+  });
+
+  saveDubaiBank(dib);
+  saveSweBank(swe);
+  saveListings(listings);
+  saveHistory(history);
+
+  const cashNote = cartPayMethod === 'cash' ? ` 💵 Collect ${fmt(grandTotal)} in cash from ${buyerName}.` : '';
+  notify('Cart Purchased!', `${buyerName} completed ${purchasedCount} purchase${purchasedCount!==1?'s':''} totaling ${fmt(grandTotal)}.${cashNote}`, 'green');
+
+  cart = [];
+  updateCartBadge();
+  renderCart();
+  renderBrowse();
+  renderMyListings();
+}
+
+/* ═══════════════════════════════════════════
    PERSISTENCE
 ═══════════════════════════════════════════ */
 function loadListings() {
@@ -613,11 +958,12 @@ function switchTab(id) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
-  const tabs = ['sell','browse','history'];
+  const tabs = ['sell','browse','cart','history'];
   document.querySelectorAll('.tab-btn')[tabs.indexOf(id)].classList.add('active');
   if (id === 'browse')  renderBrowse();
   if (id === 'history') renderHistory();
   if (id === 'sell')    renderMyListings();
+  if (id === 'cart')    renderCart();
 }
 
 /* ═══════════════════════════════════════════
@@ -872,6 +1218,7 @@ function renderBrowse() {
           <div style="margin-top:4px;">${priceSignal(item.price, mktPrice)}</div>
         </div>
         <div class="listing-actions">
+          <button class="btn btn-add btn-sm" onclick='addToCart(${JSON.stringify(item)})'>🛒 Cart</button>
           <button class="btn btn-primary btn-sm" onclick='openPurchase(${JSON.stringify(item)})'>Buy →</button>
         </div>
       </div>`;
@@ -1233,6 +1580,8 @@ initBrowseCats();
 renderMyListings();
 updateClock();
 setInterval(updateClock, 1000);
+populateCartBuyer();
+updateCartBadge();
 </script>
 </body>
 </html>
