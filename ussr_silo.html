@@ -838,6 +838,168 @@ header::before{
   letter-spacing:4px;
   font-family:'Courier Prime',monospace;
 }
+
+/* ══════════ OBJECTIVES TRACKER ══════════ */
+.obj-list{display:flex;flex-direction:column;gap:10px;}
+.obj-card{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  overflow:hidden;
+}
+.obj-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 14px;
+  background:var(--bg4);
+  border-bottom:1px solid var(--border-red);
+  gap:8px;
+}
+.obj-card-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:14px;
+  letter-spacing:4px;
+  color:var(--cream);
+  flex:1;
+}
+.obj-card-actions{display:flex;gap:6px;align-items:center;}
+.obj-card-complete{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--green-bright);
+  padding:2px 8px;
+  border:1px solid var(--green-bright);
+  background:rgba(57,212,57,0.07);
+}
+.obj-items{padding:8px 14px 12px;}
+.obj-item{
+  display:grid;
+  grid-template-columns:130px 1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px solid rgba(58,21,21,0.5);
+}
+.obj-item:last-child{border-bottom:none;}
+.oi-name{
+  font-family:'Oswald',sans-serif;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.oi-progress{flex:1;}
+.oi-bar-wrap{
+  height:5px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  margin-bottom:4px;
+  overflow:hidden;
+}
+.oi-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--red-dark),var(--red));
+  transition:width .4s ease;
+}
+.oi-bar-fill.done{background:linear-gradient(90deg,#1a5c1a,var(--green-bright));}
+.oi-numbers{
+  font-family:'Courier Prime',monospace;
+  font-size:10px;
+  color:var(--text-dim);
+  letter-spacing:1px;
+}
+.oi-numbers .oi-have{color:var(--gold-light);font-weight:700;}
+.oi-numbers .oi-need{color:var(--cream);}
+.oi-numbers .oi-missing{color:#ff8080;}
+.oi-numbers .oi-done-label{color:var(--green-bright);}
+.oi-input-wrap{
+  display:flex;
+  gap:5px;
+  align-items:center;
+}
+.oi-input{
+  width:70px;
+  background:var(--bg2);
+  border:1px solid var(--border-red);
+  color:var(--gold-light);
+  font-family:'Courier Prime',monospace;
+  font-size:11px;
+  padding:4px 6px;
+  outline:none;
+  text-align:center;
+  height:26px;
+}
+.oi-input:focus{border-color:var(--gold);}
+.oi-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.oi-del-btn{
+  background:transparent;
+  border:1px solid var(--border-red);
+  color:var(--text-dim);
+  font-family:'Courier Prime',monospace;
+  font-size:10px;
+  width:22px;height:22px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+  flex-shrink:0;
+}
+.oi-del-btn:hover{border-color:var(--red);color:var(--red);}
+
+.obj-add-item-row{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  padding:8px 14px;
+  border-top:1px solid var(--border-red);
+  background:rgba(0,0,0,0.2);
+  flex-wrap:wrap;
+}
+.obj-add-item-row input{
+  background:var(--bg2);
+  border:1px solid var(--border-red);
+  color:var(--cream);
+  font-family:'Courier Prime',monospace;
+  font-size:11px;
+  padding:5px 8px;
+  outline:none;
+  height:28px;
+}
+.obj-add-item-row input:focus{border-color:var(--gold);}
+.obj-add-item-row input::placeholder{color:var(--text-dim);}
+.obj-add-form-name{flex:2;min-width:90px;}
+.obj-add-form-target{width:80px;}
+
+.obj-new-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:12px 0 4px;
+}
+.obj-new-row input{
+  background:var(--bg);
+  border:1px solid var(--border-red);
+  color:var(--cream);
+  font-family:'Courier Prime',monospace;
+  font-size:12px;
+  padding:7px 10px;
+  outline:none;
+  flex:1;
+}
+.obj-new-row input:focus{border-color:var(--gold);}
+.obj-new-row input::placeholder{color:var(--text-dim);}
+.obj-empty{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--text-dim);
+  text-align:center;
+  padding:20px;
+  border:1px dashed var(--border-red);
+}
 </style>
 </head>
 <body>
@@ -955,6 +1117,46 @@ header::before{
     <div class="modal-actions">
       <button class="btn btn-red" onclick="confirmRelease()">⚠ CONFIRM RELEASE</button>
       <button class="btn btn-gold" onclick="closeModal('release-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- OBJECTIVES MODAL — ADD OBJECTIVE -->
+<div class="modal-overlay" id="obj-modal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-title">★ NEW OBJECTIVE</div>
+    <div class="modal-label">OBJECTIVE NAME</div>
+    <input class="modal-input" id="obj-modal-name" type="text" placeholder="e.g. Build Tank, Mine Upgrade…">
+    <div class="modal-label" style="margin-bottom:6px;">RESOURCE REQUIREMENTS</div>
+    <div id="obj-modal-items" style="margin-bottom:10px;max-height:220px;overflow-y:auto;"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:14px;">
+      <input id="obj-modal-res-name" class="modal-input" type="text" placeholder="Resource name (e.g. Iron)" style="margin-bottom:0;flex:2;">
+      <input id="obj-modal-res-target" class="modal-input" type="number" min="1" placeholder="Target" style="margin-bottom:0;width:100px;">
+      <button class="btn btn-gold btn-sm" onclick="objModalAddItem()">+ ADD</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="objModalConfirm()">★ CREATE OBJECTIVE</button>
+      <button class="btn btn-red" onclick="closeModal('obj-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- OBJECTIVES MODAL — EDIT OBJECTIVE -->
+<div class="modal-overlay" id="obj-edit-modal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-title">✎ EDIT OBJECTIVE</div>
+    <div class="modal-label">OBJECTIVE NAME</div>
+    <input class="modal-input" id="obj-edit-name" type="text" placeholder="Objective name…">
+    <div class="modal-label" style="margin-bottom:6px;">RESOURCE REQUIREMENTS</div>
+    <div id="obj-edit-items" style="margin-bottom:10px;max-height:220px;overflow-y:auto;"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:14px;">
+      <input id="obj-edit-res-name" class="modal-input" type="text" placeholder="Resource name" style="margin-bottom:0;flex:2;">
+      <input id="obj-edit-res-target" class="modal-input" type="number" min="1" placeholder="Target" style="margin-bottom:0;width:100px;">
+      <button class="btn btn-gold btn-sm" onclick="objEditAddItem()">+ ADD</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="objEditConfirm()">★ SAVE CHANGES</button>
+      <button class="btn btn-red" onclick="closeModal('obj-edit-modal')">✕ CANCEL</button>
     </div>
   </div>
 </div>
@@ -1223,6 +1425,17 @@ function renderEditor(){
       ${s.blocked ? `<div style="font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:3px;color:var(--red);padding:16px;text-align:center;border:1px solid var(--red);background:rgba(204,26,26,0.06);">⛔ THIS SILO IS BLOCKED — MANAGEMENT SUSPENDED</div>` : renderResourceCategories(c.id)}
     </div>
   </div>
+
+  <!-- OBJECTIVES SECTION -->
+  <div class="section" id="sec-objectives">
+    <div class="section-head" onclick="toggleSection('sec-objectives')">
+      <div class="section-title">🎯 PRODUCTION OBJECTIVES</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-body">
+      ${renderObjectivesSection(c.id)}
+    </div>
+  </div>
   `;
 
   el.innerHTML = html;
@@ -1304,6 +1517,271 @@ function applyResource(cid, rk){
   saveSilos();
   renderEditor();
   renderList();
+}
+
+// ══════════════════════════════════════════════
+// OBJECTIVES TRACKER
+// ══════════════════════════════════════════════
+const OBJ_KEY = 'ussr_objectives';
+let objectives = {}; // { [countryId]: [ { id, name, items:[{name,target,have}] } ] }
+
+function loadObjectives(){
+  try{ objectives = JSON.parse(localStorage.getItem(OBJ_KEY)||'{}'); }
+  catch(e){ objectives={}; }
+}
+function saveObjectives(){
+  localStorage.setItem(OBJ_KEY, JSON.stringify(objectives));
+}
+function getObjList(cid){
+  if(!objectives[cid]) objectives[cid]=[];
+  return objectives[cid];
+}
+
+/* ── Render the whole objectives section ── */
+function renderObjectivesSection(cid){
+  const list = getObjList(cid);
+  let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button class="btn btn-gold btn-sm" onclick="openObjModal('${cid}')">+ NEW OBJECTIVE</button>
+  </div>`;
+  if(list.length===0){
+    html += `<div class="obj-empty">// NO OBJECTIVES DEFINED — CREATE YOUR FIRST ONE //</div>`;
+    return html;
+  }
+  html += `<div class="obj-list">`;
+  list.forEach((obj,oi)=>{
+    const allDone = obj.items.length>0 && obj.items.every(it=>it.have>=it.target);
+    html += `
+    <div class="obj-card">
+      <div class="obj-card-head">
+        <div class="obj-card-name">${esc(obj.name)}</div>
+        <div class="obj-card-actions">
+          ${allDone ? `<span class="obj-card-complete">✔ COMPLETE</span>` : ''}
+          <button class="btn btn-sm btn-gold" onclick="openObjEditModal('${cid}',${oi})">✎ EDIT</button>
+          <button class="btn btn-sm btn-red" onclick="deleteObjective('${cid}',${oi})">✕ DEL</button>
+        </div>
+      </div>
+      <div class="obj-items">
+        ${obj.items.length===0
+          ? `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);padding:8px 0;">No resources set.</div>`
+          : obj.items.map((it,ii)=>renderObjItem(cid,oi,ii,it)).join('')}
+      </div>
+      <div class="obj-add-item-row">
+        <input class="obj-add-form-name" id="oi-addname-${cid}-${oi}" type="text" placeholder="Resource (e.g. Iron)">
+        <input class="obj-add-form-target" id="oi-addtarget-${cid}-${oi}" type="number" min="1" placeholder="Target">
+        <button class="btn btn-gold btn-sm" onclick="addObjItem('${cid}',${oi})">+ ITEM</button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderObjItem(cid, oi, ii, it){
+  const have   = it.have||0;
+  const target = it.target||1;
+  const missing= Math.max(0, target - have);
+  const pct    = Math.min(100, (have/target)*100);
+  const done   = have >= target;
+  return `
+  <div class="obj-item">
+    <div class="oi-name" title="${esc(it.name)}">${esc(it.name)}</div>
+    <div class="oi-progress">
+      <div class="oi-bar-wrap"><div class="oi-bar-fill ${done?'done':''}" style="width:${pct}%"></div></div>
+      <div class="oi-numbers">
+        <span class="oi-have">${have}</span>
+        <span> / </span>
+        <span class="oi-need">${target}</span>
+        &nbsp;—&nbsp;
+        ${done
+          ? `<span class="oi-done-label">✔ COMPLETE</span>`
+          : `<span class="oi-missing">⬆ ${missing} missing</span>`}
+      </div>
+    </div>
+    <div class="oi-input-wrap">
+      <input class="oi-input" id="oi-inp-${cid}-${oi}-${ii}" type="number" min="0" placeholder="+amt"
+        onkeydown="if(event.key==='Enter') applyObjItem('${cid}',${oi},${ii})">
+      <button class="btn btn-gold btn-sm" style="padding:4px 8px;font-size:9px;" onclick="applyObjItem('${cid}',${oi},${ii})">SET</button>
+      <button class="oi-del-btn" onclick="deleteObjItem('${cid}',${oi},${ii})" title="Remove resource">✕</button>
+    </div>
+  </div>`;
+}
+
+/* ── Apply progress to an item ── */
+function applyObjItem(cid, oi, ii){
+  const list = getObjList(cid);
+  const obj  = list[oi];
+  if(!obj) return;
+  const inpEl = document.getElementById(`oi-inp-${cid}-${oi}-${ii}`);
+  if(!inpEl) return;
+  const raw = inpEl.value.trim();
+  if(raw===''){toast('error','Enter a value.'); return;}
+  const val = parseInt(raw, 10);
+  if(isNaN(val)||val<0){toast('error','Enter a valid non-negative number.'); return;}
+  obj.items[ii].have = val;
+  saveObjectives();
+  refreshObjSection(cid);
+}
+
+/* ── Add an item to existing card inline ── */
+function addObjItem(cid, oi){
+  const list = getObjList(cid);
+  const obj  = list[oi];
+  if(!obj) return;
+  const nameEl   = document.getElementById(`oi-addname-${cid}-${oi}`);
+  const targetEl = document.getElementById(`oi-addtarget-${cid}-${oi}`);
+  if(!nameEl||!targetEl) return;
+  const name   = nameEl.value.trim();
+  const target = parseInt(targetEl.value,10);
+  if(!name){toast('error','Resource name is required.'); return;}
+  if(isNaN(target)||target<1){toast('error','Target must be ≥ 1.'); return;}
+  obj.items.push({name, target, have:0});
+  saveObjectives();
+  refreshObjSection(cid);
+}
+
+/* ── Delete an item from a card ── */
+function deleteObjItem(cid, oi, ii){
+  const list = getObjList(cid);
+  const obj  = list[oi];
+  if(!obj) return;
+  obj.items.splice(ii,1);
+  saveObjectives();
+  refreshObjSection(cid);
+}
+
+/* ── Delete an entire objective ── */
+function deleteObjective(cid, oi){
+  const list = getObjList(cid);
+  list.splice(oi,1);
+  saveObjectives();
+  refreshObjSection(cid);
+}
+
+/* ── Re-render just the objectives section body (no full editor re-render) ── */
+function refreshObjSection(cid){
+  const body = document.querySelector('#sec-objectives .section-body');
+  if(body) body.innerHTML = renderObjectivesSection(cid);
+}
+
+/* ══ CREATE MODAL ══ */
+let _objModalCid = null;
+let _objModalItems = []; // [{name,target}]
+
+function openObjModal(cid){
+  _objModalCid = cid;
+  _objModalItems = [];
+  document.getElementById('obj-modal-name').value='';
+  document.getElementById('obj-modal-res-name').value='';
+  document.getElementById('obj-modal-res-target').value='';
+  renderObjModalItems();
+  document.getElementById('obj-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('obj-modal-name').focus(),60);
+}
+
+function renderObjModalItems(){
+  const el = document.getElementById('obj-modal-items');
+  if(_objModalItems.length===0){
+    el.innerHTML=`<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);padding:8px 0;">No resources added yet.</div>`;
+    return;
+  }
+  el.innerHTML = _objModalItems.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-family:'Courier Prime',monospace;font-size:11px;">
+      <span style="flex:2;color:var(--cream);">${esc(it.name)}</span>
+      <span style="color:var(--gold-light);min-width:60px;text-align:right;">${it.target}</span>
+      <button class="oi-del-btn" onclick="_objModalItems.splice(${i},1);renderObjModalItems()">✕</button>
+    </div>`).join('');
+}
+
+function objModalAddItem(){
+  const name   = document.getElementById('obj-modal-res-name').value.trim();
+  const target = parseInt(document.getElementById('obj-modal-res-target').value,10);
+  if(!name){toast('error','Resource name required.'); return;}
+  if(isNaN(target)||target<1){toast('error','Target must be ≥ 1.'); return;}
+  _objModalItems.push({name,target});
+  document.getElementById('obj-modal-res-name').value='';
+  document.getElementById('obj-modal-res-target').value='';
+  renderObjModalItems();
+  document.getElementById('obj-modal-res-name').focus();
+}
+
+function objModalConfirm(){
+  const name = document.getElementById('obj-modal-name').value.trim();
+  if(!name){toast('error','Objective name is required.'); return;}
+  const list = getObjList(_objModalCid);
+  list.push({
+    id: Date.now(),
+    name,
+    items: _objModalItems.map(it=>({...it, have:0}))
+  });
+  saveObjectives();
+  closeModal('obj-modal');
+  refreshObjSection(_objModalCid);
+  toast('success',`★ Objective "${name}" created.`);
+}
+
+/* ══ EDIT MODAL ══ */
+let _objEditCid = null;
+let _objEditOi  = null;
+let _objEditItems = [];
+
+function openObjEditModal(cid, oi){
+  _objEditCid = cid;
+  _objEditOi  = oi;
+  const list = getObjList(cid);
+  const obj  = list[oi];
+  if(!obj) return;
+  _objEditItems = obj.items.map(it=>({...it}));
+  document.getElementById('obj-edit-name').value = obj.name;
+  document.getElementById('obj-edit-res-name').value='';
+  document.getElementById('obj-edit-res-target').value='';
+  renderObjEditItems();
+  document.getElementById('obj-edit-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('obj-edit-name').focus(),60);
+}
+
+function renderObjEditItems(){
+  const el = document.getElementById('obj-edit-items');
+  if(_objEditItems.length===0){
+    el.innerHTML=`<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);padding:8px 0;">No resources defined.</div>`;
+    return;
+  }
+  el.innerHTML = _objEditItems.map((it,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 90px 26px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+      <input style="background:var(--bg);border:1px solid var(--border-red);color:var(--cream);font-family:'Courier Prime',monospace;font-size:11px;padding:3px 6px;outline:none;"
+        value="${esc(it.name)}" oninput="_objEditItems[${i}].name=this.value">
+      <input style="background:var(--bg);border:1px solid var(--border-red);color:var(--gold-light);font-family:'Courier Prime',monospace;font-size:11px;padding:3px 6px;outline:none;text-align:center;"
+        type="number" min="1" value="${it.target}" oninput="_objEditItems[${i}].target=parseInt(this.value,10)||1">
+      <button class="oi-del-btn" onclick="_objEditItems.splice(${i},1);renderObjEditItems()">✕</button>
+    </div>`).join('');
+}
+
+function objEditAddItem(){
+  const name   = document.getElementById('obj-edit-res-name').value.trim();
+  const target = parseInt(document.getElementById('obj-edit-res-target').value,10);
+  if(!name){toast('error','Resource name required.'); return;}
+  if(isNaN(target)||target<1){toast('error','Target must be ≥ 1.'); return;}
+  _objEditItems.push({name,target,have:0});
+  document.getElementById('obj-edit-res-name').value='';
+  document.getElementById('obj-edit-res-target').value='';
+  renderObjEditItems();
+}
+
+function objEditConfirm(){
+  const name = document.getElementById('obj-edit-name').value.trim();
+  if(!name){toast('error','Objective name is required.'); return;}
+  const list = getObjList(_objEditCid);
+  const obj  = list[_objEditOi];
+  if(!obj) return;
+  obj.name  = name;
+  obj.items = _objEditItems.map(it=>({
+    name:   it.name,
+    target: it.target,
+    have:   it.have||0
+  }));
+  saveObjectives();
+  closeModal('obj-edit-modal');
+  refreshObjSection(_objEditCid);
+  toast('success',`★ Objective "${name}" updated.`);
 }
 
 // ══════════════════════════════════════════════
@@ -1544,6 +2022,7 @@ function exportJSON(){
 // INIT
 // ══════════════════════════════════════════════
 loadSilos();
+loadObjectives();
 loadCountries();
 renderList();
 updateClock();
@@ -1554,6 +2033,7 @@ setInterval(syncAndRefresh, 5000); // Sync countries every 5s
 window.addEventListener('storage', e=>{
   if(e.key===COUNTRY_KEY){ loadCountries(); renderList(); if(selectedId) renderEditor(); }
   if(e.key===SILO_KEY){ loadSilos(); renderList(); if(selectedId) renderEditor(); }
+  if(e.key===OBJ_KEY){ loadObjectives(); if(selectedId) refreshObjSection(selectedId); }
 });
 
 // Header stays visible when embedded in the hub (the hub is now a side
