@@ -818,6 +818,20 @@ header::before{
   color:var(--text-dim);
 }
 
+.btn-discount{border-color:#7a5abe;color:#a07ee0;}
+.btn-discount:hover:not(:disabled){background:#7a5abe;color:#fff;}
+.cp-discount-badge{
+  font-family:'Oswald',sans-serif;
+  font-size:9px;
+  letter-spacing:2px;
+  color:var(--green-bright);
+  background:rgba(57,212,57,0.08);
+  border:1px solid rgba(57,212,57,0.3);
+  padding:2px 8px;
+  margin-top:4px;
+  display:inline-block;
+}
+
 /* ══════════ PROPAGANDA STRIPE ══════════ */
 .propaganda-stripe{
   background:repeating-linear-gradient(
@@ -1161,6 +1175,27 @@ header::before{
   </div>
 </div>
 
+<!-- DISCOUNT MODAL -->
+<div class="modal-overlay" id="discount-modal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">% SET DISCOUNT</div>
+    <div class="modal-info">
+      Apply a percentage discount to the nation's silo cost.<br>
+      Set to <span>0%</span> to remove any existing discount.<br>
+      Range: <span>0 – 100%</span>. A reason is required when discount &gt; 0.
+    </div>
+    <div class="modal-label">DISCOUNT PERCENTAGE (0 – 100)</div>
+    <input class="modal-input" id="discount-pct-input" type="number" min="0" max="100" step="1" placeholder="e.g. 10, 25, 50…">
+    <div id="discount-preview" style="font-family:'Courier Prime',monospace;font-size:12px;color:var(--gold-light);margin-bottom:14px;min-height:18px;"></div>
+    <div class="modal-label">REASON FOR DISCOUNT</div>
+    <input class="modal-input" id="discount-reason-input" type="text" maxlength="120" placeholder="e.g. Alliance member, Treaty obligation…">
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="confirmDiscount()">★ APPLY DISCOUNT</button>
+      <button class="btn btn-red" onclick="closeModal('discount-modal')">✕ CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1230,11 +1265,14 @@ function loadCountries(){
 
 function getSilo(cid){
   if(!silos[cid]){
-    silos[cid] = {purchased:0, blocked:false, stored:{}};
+    silos[cid] = {purchased:0, blocked:false, discountPct:0, discountReason:'', stored:{}};
     ALL_RESOURCES.forEach(r=>{ silos[cid].stored[r.k]=0; });
   } else {
     // Ensure all resource keys exist
     ALL_RESOURCES.forEach(r=>{ if(silos[cid].stored[r.k]===undefined) silos[cid].stored[r.k]=0; });
+    // Ensure discount fields exist on legacy records
+    if(silos[cid].discountPct===undefined) silos[cid].discountPct=0;
+    if(silos[cid].discountReason===undefined) silos[cid].discountReason='';
   }
   return silos[cid];
 }
@@ -1252,7 +1290,9 @@ function freeSpace(cid){
 }
 function costForCountry(cid){
   const s = getSilo(cid);
-  return (s.purchased / 100) * COST_PER_100;
+  const base = (s.purchased / 100) * COST_PER_100;
+  const pct  = Math.min(100, Math.max(0, s.discountPct||0));
+  return Math.round(base * (1 - pct / 100));
 }
 
 // ══════════════════════════════════════════════
@@ -1348,6 +1388,7 @@ function renderEditor(){
         ${s.blocked ? '★ UNLOCK SILO' : '⛔ BLOCK SILO'}
       </button>
       <button class="btn btn-sm btn-gold" onclick="openBilling()">★ VIEW ALL BILLING</button>
+      <button class="btn btn-sm btn-discount" onclick="openDiscountModal('${c.id}')">% SET DISCOUNT</button>
     </div>
   </div>
 
@@ -1370,6 +1411,7 @@ function renderEditor(){
         <div class="cp-stat">
           <div class="cp-stat-label">Monthly Cost</div>
           <div class="cp-stat-val cost">$${costForCountry(c.id)}</div>
+          ${s.discountPct>0 ? `<div class="cp-discount-badge">−${s.discountPct}% DISCOUNT</div>` : ''}
         </div>
       </div>
     </div>
@@ -1396,6 +1438,8 @@ function renderEditor(){
           <div class="pi-row"><span class="pi-label">Total Capacity</span><span class="pi-val">${cap} units</span></div>
           <div class="pi-row"><span class="pi-label">Rate</span><span class="pi-val">$${COST_PER_100} / 100 units</span></div>
           <div class="pi-row"><span class="pi-label">Min. Purchase</span><span class="pi-val">${MIN_PURCHASE} units</span></div>
+          <div class="pi-row"><span class="pi-label">Discount</span><span class="pi-val ${s.discountPct>0?'green':'red'}">${s.discountPct>0 ? '−'+s.discountPct+'%' : 'NONE'}</span></div>
+          ${s.discountPct>0 && s.discountReason ? `<div class="pi-row"><span class="pi-label">Reason</span><span class="pi-val" style="color:var(--cream-dim);font-size:9px;text-align:right;max-width:120px;word-break:break-word;">${esc(s.discountReason)}</span></div>` : ''}
           <div class="pi-row"><span class="pi-label">Current Cost/Cycle</span><span class="pi-val red">$${costForCountry(c.id)}</span></div>
         </div>
         <div class="purchase-form">
@@ -1800,6 +1844,61 @@ function objEditConfirm(){
 }
 
 // ══════════════════════════════════════════════
+// DISCOUNT
+// ══════════════════════════════════════════════
+let _activeDiscountCid = null;
+
+function openDiscountModal(cid){
+  _activeDiscountCid = cid;
+  const s = getSilo(cid);
+  document.getElementById('discount-pct-input').value  = s.discountPct||0;
+  document.getElementById('discount-reason-input').value = s.discountReason||'';
+  document.getElementById('discount-preview').textContent = '';
+
+  const inp = document.getElementById('discount-pct-input');
+  inp.oninput = () => {
+    const pct = Math.min(100, Math.max(0, parseInt(inp.value,10)||0));
+    const base = (s.purchased/100)*COST_PER_100;
+    const after = Math.round(base * (1 - pct/100));
+    if(pct>0){
+      document.getElementById('discount-preview').textContent =
+        `Base: $${base}  →  After discount: $${after}/cycle`;
+    } else {
+      document.getElementById('discount-preview').textContent = '';
+    }
+  };
+
+  document.getElementById('discount-modal').classList.add('open');
+  setTimeout(()=>inp.focus(),60);
+}
+
+function confirmDiscount(){
+  const pct    = Math.min(100, Math.max(0, parseInt(document.getElementById('discount-pct-input').value,10)||0));
+  const reason = document.getElementById('discount-reason-input').value.trim();
+
+  if(pct>0 && !reason){
+    toast('error','A reason is required when setting a discount.'); return;
+  }
+
+  const s = getSilo(_activeDiscountCid);
+  s.discountPct    = pct;
+  s.discountReason = pct>0 ? reason : '';
+  saveSilos();
+
+  const c = countries.find(x=>x.id===_activeDiscountCid);
+  const cName = c ? c.name : _activeDiscountCid;
+
+  closeModal('discount-modal');
+  if(pct>0){
+    toast('success',`★ ${pct}% discount applied to ${cName}.`);
+  } else {
+    toast('success',`★ Discount removed from ${cName}.`);
+  }
+  renderEditor();
+  renderList();
+}
+
+// ══════════════════════════════════════════════
 // BLOCK / UNBLOCK
 // ══════════════════════════════════════════════
 function toggleBlock(cid){
@@ -1921,11 +2020,15 @@ function openBilling(){
     const cap=totalCapacity(c.id);
     const cost=costForCountry(c.id);
     totalRev+=cost;
+    const discountCell = s.discountPct>0
+      ? `<span style="color:var(--green-bright);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;" title="${esc(s.discountReason)}">−${s.discountPct}%<br><span style="color:var(--text-dim);font-size:8px;">${esc(s.discountReason||'')}</span></span>`
+      : `<span style="color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;">—</span>`;
     return `<tr>
       <td><span style="font-size:16px;margin-right:8px;">${c.flag||'🏴'}</span><span class="bt-name">${esc(c.name)}</span></td>
       <td class="bt-free">${FREE_CAPACITY}</td>
       <td class="bt-cap">${s.purchased}</td>
       <td class="bt-cap">${cap}</td>
+      <td>${discountCell}</td>
       <td class="bt-cost">${cost>0?'$'+cost:'FREE'}</td>
       <td>${s.blocked?'<span class="bt-blocked">⛔ BLOCKED</span>':'<span style="color:var(--green-bright);font-family:Oswald,sans-serif;font-size:9px;letter-spacing:2px;">★ ACTIVE</span>'}</td>
     </tr>`;
@@ -1933,7 +2036,7 @@ function openBilling(){
 
   rows+=`<tr class="bt-total-row">
     <td style="font-family:'Bebas Neue',sans-serif;letter-spacing:3px;font-size:13px;">★ TOTAL (${list.length} nations)</td>
-    <td>—</td><td>—</td><td>—</td>
+    <td>—</td><td>—</td><td>—</td><td>—</td>
     <td style="color:var(--gold-light);font-size:13px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;">$${totalRev}/CYCLE</td>
     <td>—</td>
   </tr>`;
@@ -1945,6 +2048,7 @@ function openBilling(){
         <th>FREE UNITS</th>
         <th>PURCHASED</th>
         <th>TOTAL CAP.</th>
+        <th>DISCOUNT</th>
         <th>COST / CYCLE</th>
         <th>STATUS</th>
       </tr>
