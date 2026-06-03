@@ -1,1 +1,241 @@
-{}
+{
+  "mnulxd3it0mhfoncdtf": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {
+      "mnulxffollz0xwr86a": {
+        "status": "allied",
+        "notes": "NATO allied, but with the recent foundation of USSR, they are a little bit uncertain of the future",
+        "updatedAt": 1780510438172
+      },
+      "moag4nn2r5o6utoasd": {
+        "status": "tense",
+        "notes": "They produce weapon for terrorists",
+        "updatedAt": 1780510490542
+      },
+      "moakuucd7h9zupzw8eu": {
+        "status": "friendly",
+        "notes": "",
+        "updatedAt": 1780510435980
+      },
+      "moakv16u66cps8ch8b4": {
+        "status": "friendly",
+        "notes": "",
+        "updatedAt": 1780510436468
+      },
+      "moeuuhuo8e086wjtvwd": {
+        "status": "allied",
+        "notes": "NATO",
+        "updatedAt": 1780510434676
+      },
+      "mohrrzlylhelxn67uo": {
+        "status": "tense",
+        "notes": "USSR member, don't  know their objectives",
+        "updatedAt": 1780510432461
+      },
+      "moahlygpwufwpxx2i9": {
+        "status": "unset",
+        "notes": "",
+        "updatedAt": 1780510439444
+      },
+      "moakuervmfd7z3gvths": {
+        "status": "unset",
+        "notes": "",
+        "updatedAt": 1780510440276
+      },
+      "mohrurblqfd9j4epawk": {
+        "status": "tense",
+        "notes": "Being dominated by terrorists",
+        "updatedAt": 1780510492397
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510499277
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510497453
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510504558
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "tense",
+        "notes": "Mexico allied",
+        "updatedAt": 1780510511653
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510514293
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510515997
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780510518759
+      },
+      "mpya3n97q6icyj55kj7": {
+        "status": "neutral",
+        "notes": "",
+        "updatedAt": 1780510523366
+      },
+      "mpya4qrfi6yt47sgl2": {
+        "status": "neutral",
+        "notes": "",
+        "updatedAt": 1780510526959
+      },
+      "mpya54adqnp1fbeh6u": {
+        "status": "neutral",
+        "notes": "",
+        "updatedAt": 1780510530382
+      },
+      "mpya63hw5rhwbrpyam7": {
+        "status": "neutral",
+        "notes": "",
+        "updatedAt": 1780510533519
+      }
+    },
+    "deals": []
+  },
+  "mnulxffollz0xwr86a": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moag4nn2r5o6utoasd": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moahlygpwufwpxx2i9": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moakuervmfd7z3gvths": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moakuucd7h9zupzw8eu": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moakv16u66cps8ch8b4": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "moeuuhuo8e086wjtvwd": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrrzlylhelxn67uo": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrtjbp6w3n5v4vxad": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrtqp2ctj8sckm3zr": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrurblqfd9j4epawk": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrv1sbfdycppugmut": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrvboh36b015rnx74": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrvio57kiiiseucd8": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrvm64e7ii5dnf6t": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrvv9nkw6lysx4xtk": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrvyzppmcr4ysgd2": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mohrwa7b0jokjo70oek": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpya3n97q6icyj55kj7": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpya4qrfi6yt47sgl2": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpya54adqnp1fbeh6u": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpya63hw5rhwbrpyam7": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  }
+}
