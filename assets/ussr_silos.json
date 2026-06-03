@@ -20,7 +20,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 100,
+    "discountReason": "Alliance Mamber"
   },
   "mnulxffollz0xwr86a": {
     "purchased": 0,
@@ -43,7 +45,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 100,
+    "discountReason": "USSR Member"
   },
   "moag4nn2r5o6utoasd": {
     "purchased": 0,
@@ -66,7 +70,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "moahlygpwufwpxx2i9": {
     "purchased": 0,
@@ -89,7 +95,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "moakuervmfd7z3gvths": {
     "purchased": 0,
@@ -112,7 +120,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "moakuucd7h9zupzw8eu": {
     "purchased": 0,
@@ -135,7 +145,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "moakv16u66cps8ch8b4": {
     "purchased": 0,
@@ -158,7 +170,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "moeuuhuo8e086wjtvwd": {
     "purchased": 0,
@@ -181,7 +195,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "mohrrzlylhelxn67uo": {
     "purchased": 0,
@@ -204,7 +220,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 100,
+    "discountReason": "USSR member"
   },
   "mohrtjbp6w3n5v4vxad": {
     "purchased": 0,
@@ -227,7 +245,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "mohrtqp2ctj8sckm3zr": {
     "purchased": 0,
@@ -250,7 +270,9 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   },
   "mohrurblqfd9j4epawk": {
     "purchased": 0,
@@ -273,6 +295,8 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    }
+    },
+    "discountPct": 0,
+    "discountReason": ""
   }
 }
