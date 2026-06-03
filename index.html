@@ -781,7 +781,12 @@
     const SYNC_FILES = [
       { name:'database.json',  path:'assets/database.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('tc_countries')||'[]');}catch{return[];} },
-        write:(d)=>localStorage.setItem('tc_countries',JSON.stringify(d)) },
+        write:(d)=>{ if(!Array.isArray(d)) return;
+          // Merge by id: local entries win; GitHub fills in any ids not present locally
+          let local=[]; try{ local=JSON.parse(localStorage.getItem('tc_countries')||'[]'); }catch{}
+          const localById={}; local.forEach(c=>{ if(c.id) localById[c.id]=c; });
+          d.forEach(c=>{ if(c.id && !localById[c.id]) localById[c.id]=c; });
+          localStorage.setItem('tc_countries',JSON.stringify(Object.values(localById))); } },
       { name:'conflicts.json', path:'assets/conflicts.json',
         read:()=>{ try{return JSON.parse(localStorage.getItem('tc_conflicts')||'[]');}catch{return[];} },
         write:(d)=>localStorage.setItem('tc_conflicts',JSON.stringify(d)) },
