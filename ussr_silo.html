@@ -1259,8 +1259,10 @@ function saveSilos(){
   localStorage.setItem(SILO_KEY, JSON.stringify(silos));
 }
 function loadCountries(){
-  try{ countries = JSON.parse(localStorage.getItem(COUNTRY_KEY)||'[]'); }
-  catch(e){ countries=[]; }
+  try{
+    const raw = localStorage.getItem(COUNTRY_KEY);
+    if(raw) countries = JSON.parse(raw);
+  } catch(e){ console.error('[ussr_silo] Failed to parse tc_countries:', e); }
 }
 
 function getSilo(cid){
