@@ -1846,7 +1846,7 @@
     "flag": "🏴",
     "createdAt": 1776894079261,
     "population": {
-      "civilians": 1010,
+      "civilians": 160,
       "workers": 0,
       "military": 10,
       "manpower": 1000
@@ -2522,9 +2522,9 @@
     "flag": "🏴",
     "createdAt": 1777152723936,
     "population": {
-      "civilians": 1010,
+      "civilians": 650,
       "workers": 0,
-      "military": 4,
+      "military": 14,
       "manpower": 1000
     },
     "economy": {
@@ -3209,7 +3209,7 @@
     "type": "country",
     "createdAt": 1777329048422,
     "population": {
-      "civilians": 1000,
+      "civilians": 600,
       "workers": 10,
       "military": 10,
       "members": 0,
@@ -4736,6 +4736,814 @@
           "done": false
         }
       ]
+    }
+  },
+  {
+    "id": "mpya3n97q6icyj55kj7",
+    "name": "Dubai",
+    "flag": "🏴",
+    "type": "country",
+    "createdAt": 1780503984763,
+    "population": {
+      "civilians": 700,
+      "workers": 0,
+      "military": 10,
+      "members": 0
+    },
+    "economy": {
+      "money": 0
+    },
+    "military": {
+      "army": 0,
+      "special_forces": 0,
+      "generals": 0,
+      "commanders": 0,
+      "majors": 0
+    },
+    "brute": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0
+    },
+    "refined": {
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    },
+    "buildings": {
+      "factories": 0,
+      "businesses": 0,
+      "mines": 1,
+      "hospitals": 0
+    },
+    "weapons": {
+      "knives": 0,
+      "pistols": 0,
+      "smgs": 0,
+      "rifles": 10,
+      "snipers": 0,
+      "heavy_weapons": 0,
+      "atm": 0,
+      "light_vests": 0,
+      "heavy_vests": 0,
+      "old_mortar": 0
+    },
+    "otherstuff": {
+      "other_small": 0,
+      "other_medium": 0,
+      "other_big": 0,
+      "other_huge": 0
+    },
+    "ammo": {
+      "ammo_50": 0,
+      "ammo_22mm": 0,
+      "ammo_pistol": 0,
+      "ammo_smg": 0,
+      "ammo_rifle": 500,
+      "ammo_sniper": 0,
+      "ammo_heavy": 0,
+      "ammo_atm": 0,
+      "ammo_mortar": 0
+    },
+    "air": {
+      "light_jet": 0,
+      "med_jet": 0,
+      "heavy_jet": 0,
+      "bomber": 0,
+      "helicopter": 0,
+      "airplane": 0
+    },
+    "land": {
+      "light_tank": 0,
+      "med_tank": 0,
+      "heavy_tank": 0,
+      "motorbike": 0,
+      "car": 0,
+      "truck": 0
+    },
+    "water": {
+      "submarine": 0,
+      "warship": 0,
+      "boat": 0,
+      "ship": 0,
+      "carrier": 0,
+      "supercarrier": 0
+    },
+    "missiles": {
+      "torpedo": 0,
+      "icbm": 0,
+      "cruise": 0,
+      "hypersonic": 0,
+      "guided": 0,
+      "nuclear": 0
+    },
+    "others": {
+      "grenade": 0,
+      "spec_grenade": 0,
+      "land_bomb": 0,
+      "drone": 0,
+      "barricade": 0,
+      "barrier": 0
+    },
+    "observations": {
+      "national_plan": ""
+    },
+    "mines": {
+      "mine_plains": 0,
+      "mine_forest": 0,
+      "mine_taiga": 0,
+      "mine_jungle": 0,
+      "mine_swamp": 0,
+      "mine_desert": 0,
+      "mine_badlands": 0,
+      "mine_mountains": 0,
+      "mine_ocean": 0,
+      "mine_caves": 0,
+      "mine_rare": 0,
+      "mine_frozen": 0
+    },
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [
+      {
+        "id": "mpya7pbf588ltwn63f",
+        "name": "Dubai Police",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 10,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [],
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
+  },
+  {
+    "id": "mpya4qrfi6yt47sgl2",
+    "name": "Sweden",
+    "flag": "🏴",
+    "type": "country",
+    "createdAt": 1780504035963,
+    "population": {
+      "civilians": 400,
+      "workers": 0,
+      "military": 10,
+      "members": 0
+    },
+    "economy": {
+      "money": 0
+    },
+    "military": {
+      "army": 0,
+      "special_forces": 0,
+      "generals": 0,
+      "commanders": 0,
+      "majors": 0
+    },
+    "brute": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0
+    },
+    "refined": {
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    },
+    "buildings": {
+      "factories": 0,
+      "businesses": 0,
+      "mines": 1,
+      "hospitals": 0
+    },
+    "weapons": {
+      "knives": 0,
+      "pistols": 0,
+      "smgs": 0,
+      "rifles": 10,
+      "snipers": 0,
+      "heavy_weapons": 0,
+      "atm": 0,
+      "light_vests": 0,
+      "heavy_vests": 0,
+      "old_mortar": 0
+    },
+    "otherstuff": {
+      "other_small": 0,
+      "other_medium": 0,
+      "other_big": 0,
+      "other_huge": 0
+    },
+    "ammo": {
+      "ammo_50": 0,
+      "ammo_22mm": 0,
+      "ammo_pistol": 0,
+      "ammo_smg": 0,
+      "ammo_rifle": 500,
+      "ammo_sniper": 0,
+      "ammo_heavy": 0,
+      "ammo_atm": 0,
+      "ammo_mortar": 0
+    },
+    "air": {
+      "light_jet": 0,
+      "med_jet": 0,
+      "heavy_jet": 0,
+      "bomber": 0,
+      "helicopter": 0,
+      "airplane": 0
+    },
+    "land": {
+      "light_tank": 0,
+      "med_tank": 0,
+      "heavy_tank": 0,
+      "motorbike": 0,
+      "car": 0,
+      "truck": 0
+    },
+    "water": {
+      "submarine": 0,
+      "warship": 0,
+      "boat": 0,
+      "ship": 0,
+      "carrier": 0,
+      "supercarrier": 0
+    },
+    "missiles": {
+      "torpedo": 0,
+      "icbm": 0,
+      "cruise": 0,
+      "hypersonic": 0,
+      "guided": 0,
+      "nuclear": 0
+    },
+    "others": {
+      "grenade": 0,
+      "spec_grenade": 0,
+      "land_bomb": 0,
+      "drone": 0,
+      "barricade": 0,
+      "barrier": 0
+    },
+    "observations": {
+      "national_plan": ""
+    },
+    "mines": {
+      "mine_plains": 0,
+      "mine_forest": 0,
+      "mine_taiga": 0,
+      "mine_jungle": 0,
+      "mine_swamp": 0,
+      "mine_desert": 0,
+      "mine_badlands": 0,
+      "mine_mountains": 0,
+      "mine_ocean": 0,
+      "mine_caves": 0,
+      "mine_rare": 0,
+      "mine_frozen": 0
+    },
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [
+      {
+        "id": "mpya8t1uuo3bfy1usws",
+        "name": "1st Division",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 10,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [],
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
+  },
+  {
+    "id": "mpya54adqnp1fbeh6u",
+    "name": "Denmark/Switzerland",
+    "flag": "🏴",
+    "type": "country",
+    "createdAt": 1780504053493,
+    "population": {
+      "civilians": 150,
+      "workers": 0,
+      "military": 10,
+      "members": 0
+    },
+    "economy": {
+      "money": 0
+    },
+    "military": {
+      "army": 0,
+      "special_forces": 0,
+      "generals": 0,
+      "commanders": 0,
+      "majors": 0
+    },
+    "brute": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0
+    },
+    "refined": {
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    },
+    "buildings": {
+      "factories": 0,
+      "businesses": 0,
+      "mines": 1,
+      "hospitals": 0
+    },
+    "weapons": {
+      "knives": 0,
+      "pistols": 0,
+      "smgs": 0,
+      "rifles": 10,
+      "snipers": 0,
+      "heavy_weapons": 0,
+      "atm": 0,
+      "light_vests": 0,
+      "heavy_vests": 0,
+      "old_mortar": 0
+    },
+    "otherstuff": {
+      "other_small": 0,
+      "other_medium": 0,
+      "other_big": 0,
+      "other_huge": 0
+    },
+    "ammo": {
+      "ammo_50": 0,
+      "ammo_22mm": 0,
+      "ammo_pistol": 0,
+      "ammo_smg": 0,
+      "ammo_rifle": 500,
+      "ammo_sniper": 0,
+      "ammo_heavy": 0,
+      "ammo_atm": 0,
+      "ammo_mortar": 0
+    },
+    "air": {
+      "light_jet": 0,
+      "med_jet": 0,
+      "heavy_jet": 0,
+      "bomber": 0,
+      "helicopter": 0,
+      "airplane": 0
+    },
+    "land": {
+      "light_tank": 0,
+      "med_tank": 0,
+      "heavy_tank": 0,
+      "motorbike": 0,
+      "car": 0,
+      "truck": 0
+    },
+    "water": {
+      "submarine": 0,
+      "warship": 0,
+      "boat": 0,
+      "ship": 0,
+      "carrier": 0,
+      "supercarrier": 0
+    },
+    "missiles": {
+      "torpedo": 0,
+      "icbm": 0,
+      "cruise": 0,
+      "hypersonic": 0,
+      "guided": 0,
+      "nuclear": 0
+    },
+    "others": {
+      "grenade": 0,
+      "spec_grenade": 0,
+      "land_bomb": 0,
+      "drone": 0,
+      "barricade": 0,
+      "barrier": 0
+    },
+    "observations": {
+      "national_plan": ""
+    },
+    "mines": {
+      "mine_plains": 0,
+      "mine_forest": 0,
+      "mine_taiga": 0,
+      "mine_jungle": 0,
+      "mine_swamp": 0,
+      "mine_desert": 0,
+      "mine_badlands": 0,
+      "mine_mountains": 0,
+      "mine_ocean": 0,
+      "mine_caves": 0,
+      "mine_rare": 0,
+      "mine_frozen": 0
+    },
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [
+      {
+        "id": "mpya74xvxq1ghc3nh3j",
+        "name": "1st Division",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 10,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [],
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
+    }
+  },
+  {
+    "id": "mpya63hw5rhwbrpyam7",
+    "name": "Canada",
+    "flag": "🏴",
+    "type": "country",
+    "createdAt": 1780504099124,
+    "population": {
+      "civilians": 350,
+      "workers": 0,
+      "military": 10,
+      "members": 0
+    },
+    "economy": {
+      "money": 0
+    },
+    "military": {
+      "army": 0,
+      "special_forces": 0,
+      "generals": 0,
+      "commanders": 0,
+      "majors": 0
+    },
+    "brute": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0
+    },
+    "refined": {
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    },
+    "buildings": {
+      "factories": 0,
+      "businesses": 0,
+      "mines": 1,
+      "hospitals": 0
+    },
+    "weapons": {
+      "knives": 0,
+      "pistols": 0,
+      "smgs": 0,
+      "rifles": 10,
+      "snipers": 0,
+      "heavy_weapons": 0,
+      "atm": 0,
+      "light_vests": 0,
+      "heavy_vests": 0,
+      "old_mortar": 0
+    },
+    "otherstuff": {
+      "other_small": 0,
+      "other_medium": 0,
+      "other_big": 0,
+      "other_huge": 0
+    },
+    "ammo": {
+      "ammo_50": 0,
+      "ammo_22mm": 0,
+      "ammo_pistol": 0,
+      "ammo_smg": 0,
+      "ammo_rifle": 500,
+      "ammo_sniper": 0,
+      "ammo_heavy": 0,
+      "ammo_atm": 0,
+      "ammo_mortar": 0
+    },
+    "air": {
+      "light_jet": 0,
+      "med_jet": 0,
+      "heavy_jet": 0,
+      "bomber": 0,
+      "helicopter": 0,
+      "airplane": 0
+    },
+    "land": {
+      "light_tank": 0,
+      "med_tank": 0,
+      "heavy_tank": 0,
+      "motorbike": 0,
+      "car": 0,
+      "truck": 0
+    },
+    "water": {
+      "submarine": 0,
+      "warship": 0,
+      "boat": 0,
+      "ship": 0,
+      "carrier": 0,
+      "supercarrier": 0
+    },
+    "missiles": {
+      "torpedo": 0,
+      "icbm": 0,
+      "cruise": 0,
+      "hypersonic": 0,
+      "guided": 0,
+      "nuclear": 0
+    },
+    "others": {
+      "grenade": 0,
+      "spec_grenade": 0,
+      "land_bomb": 0,
+      "drone": 0,
+      "barricade": 0,
+      "barrier": 0
+    },
+    "observations": {
+      "national_plan": ""
+    },
+    "mines": {
+      "mine_plains": 0,
+      "mine_forest": 0,
+      "mine_taiga": 0,
+      "mine_jungle": 0,
+      "mine_swamp": 0,
+      "mine_desert": 0,
+      "mine_badlands": 0,
+      "mine_mountains": 0,
+      "mine_ocean": 0,
+      "mine_caves": 0,
+      "mine_rare": 0,
+      "mine_frozen": 0
+    },
+    "production": [],
+    "military_generals": [],
+    "military_leader_id": null,
+    "divisions": [
+      {
+        "id": "mpyaa7ga5skwrk5m4xt",
+        "name": "1st Division",
+        "type": "division",
+        "parent_id": null,
+        "men": {
+          "army": 10,
+          "special_forces": 0,
+          "majors": 0,
+          "spies": 0
+        },
+        "commander": null,
+        "higher_commander": null,
+        "deaths": 0,
+        "points": 0,
+        "objectives": [],
+        "support": {
+          "air": {
+            "light_jet": 0,
+            "med_jet": 0,
+            "heavy_jet": 0,
+            "bomber": 0,
+            "helicopter": 0,
+            "airplane": 0
+          },
+          "land": {
+            "light_tank": 0,
+            "med_tank": 0,
+            "heavy_tank": 0,
+            "motorbike": 0,
+            "car": 0,
+            "truck": 0
+          },
+          "water": {
+            "submarine": 0,
+            "warship": 0,
+            "boat": 0,
+            "ship": 0,
+            "carrier": 0,
+            "supercarrier": 0
+          },
+          "missiles": {
+            "torpedo": 0,
+            "icbm": 0,
+            "cruise": 0,
+            "hypersonic": 0,
+            "guided": 0,
+            "nuclear": 0
+          }
+        },
+        "observation": "",
+        "special_training": []
+      }
+    ],
+    "battalions": [],
+    "squads": [],
+    "action_plan": {
+      "main_objective": "",
+      "action_plan_text": "",
+      "sub_objectives": [],
+      "tasks": []
     }
   }
 ]
