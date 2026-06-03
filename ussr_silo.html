@@ -1598,9 +1598,13 @@ function renderObjItem(cid, oi, ii, it){
       </div>
     </div>
     <div class="oi-input-wrap">
-      <input class="oi-input" id="oi-inp-${cid}-${oi}-${ii}" type="number" min="0" placeholder="+amt"
+      <select class="rr-select" id="oi-dir-${cid}-${oi}-${ii}" style="width:46px;height:26px;font-size:13px;padding:2px 4px;">
+        <option value="add">+</option>
+        <option value="sub">−</option>
+      </select>
+      <input class="oi-input" id="oi-inp-${cid}-${oi}-${ii}" type="number" min="1" placeholder="amt"
         onkeydown="if(event.key==='Enter') applyObjItem('${cid}',${oi},${ii})">
-      <button class="btn btn-gold btn-sm" style="padding:4px 8px;font-size:9px;" onclick="applyObjItem('${cid}',${oi},${ii})">SET</button>
+      <button class="btn btn-gold btn-sm" style="padding:4px 8px;font-size:9px;" onclick="applyObjItem('${cid}',${oi},${ii})">ADD</button>
       <button class="oi-del-btn" onclick="deleteObjItem('${cid}',${oi},${ii})" title="Remove resource">✕</button>
     </div>
   </div>`;
@@ -1611,13 +1615,24 @@ function applyObjItem(cid, oi, ii){
   const list = getObjList(cid);
   const obj  = list[oi];
   if(!obj) return;
+  const dirEl = document.getElementById(`oi-dir-${cid}-${oi}-${ii}`);
   const inpEl = document.getElementById(`oi-inp-${cid}-${oi}-${ii}`);
   if(!inpEl) return;
   const raw = inpEl.value.trim();
   if(raw===''){toast('error','Enter a value.'); return;}
-  const val = parseInt(raw, 10);
-  if(isNaN(val)||val<0){toast('error','Enter a valid non-negative number.'); return;}
-  obj.items[ii].have = val;
+  const amt = parseInt(raw, 10);
+  if(isNaN(amt)||amt<=0){toast('error','Enter a valid positive amount.'); return;}
+  const dir = dirEl ? dirEl.value : 'add';
+  const it  = obj.items[ii];
+  const cur = it.have||0;
+  if(dir === 'add'){
+    it.have = Math.min(it.target, cur + amt);
+    toast('success',`\u2605 +${amt} applied to "${it.name}".`);
+  } else {
+    if(amt > cur){ toast('error',`\u26d4 Cannot subtract ${amt} \u2014 current progress is only ${cur}.`); return; }
+    it.have = cur - amt;
+    toast('success',`\u2605 \u2212${amt} removed from "${it.name}".`);
+  }
   saveObjectives();
   refreshObjSection(cid);
 }
