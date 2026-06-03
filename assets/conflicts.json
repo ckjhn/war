@@ -246,7 +246,7 @@
             "isMain": true,
             "troops": 15,
             "injured": 0,
-            "deaths": 0,
+            "deaths": 1,
             "tanks": 0,
             "tanks_lost": 0,
             "vehicles": 0,
@@ -283,7 +283,9 @@
           }
         ],
         "objectives": [],
-        "kills": {}
+        "kills": {
+          "mp7vns9kmz79uj9sw6": 1
+        }
       }
     ]
   },
@@ -357,7 +359,7 @@
       },
       {
         "id": "mpitypuqnynlhocc4zs",
-        "name": "Side Bravo",
+        "name": "Brazil",
         "countries": [
           {
             "id": "mpitz561rontrw1sqhl",
