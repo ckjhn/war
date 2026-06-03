@@ -1259,6 +1259,7 @@ function saveSilos(){
   localStorage.setItem(SILO_KEY, JSON.stringify(silos));
 }
 function loadCountries(){
+  countries = [];
   try{
     const raw = localStorage.getItem(COUNTRY_KEY);
     if(raw) countries = JSON.parse(raw);
@@ -1306,7 +1307,11 @@ function renderList(){
   const list = countries.filter(c=> c.type === 'country' && c.name.toLowerCase().includes(q));
 
   if(list.length === 0){
-    el.innerHTML = `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:30px;">NO NATIONS FOUND</div>`;
+    const noData = countries.filter(c => c.type === 'country').length === 0;
+    const msg = noData
+      ? `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:30px;">NO NATIONS LOADED<br><span style="font-size:9px;opacity:0.6;letter-spacing:1px;margin-top:6px;display:block;">Open database.html to add countries</span></div>`
+      : `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:30px;">NO NATIONS FOUND</div>`;
+    el.innerHTML = msg;
     updateSummary();
     return;
   }
