@@ -1301,7 +1301,7 @@ function costForCountry(cid){
 function renderList(){
   const q    = (document.getElementById('search-box').value||'').toLowerCase();
   const el   = document.getElementById('country-list');
-  const list = countries.filter(c=> c.type !== 'organization' && c.name.toLowerCase().includes(q));
+  const list = countries.filter(c=> c.type === 'country' && c.name.toLowerCase().includes(q));
 
   if(list.length === 0){
     el.innerHTML = `<div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:var(--text-dim);text-align:center;padding:30px;">NO NATIONS FOUND</div>`;
@@ -1330,7 +1330,7 @@ function renderList(){
 }
 
 function updateSummary(){
-  const list = countries.filter(c=>c.type!=='organization');
+  const list = countries.filter(c=>c.type==='country');
   let totalCap=0, totalRev=0, blockedCount=0;
   list.forEach(c=>{
     const s=getSilo(c.id);
@@ -2013,7 +2013,7 @@ function confirmRelease(){
 // BILLING
 // ══════════════════════════════════════════════
 function openBilling(){
-  const list=countries.filter(c=>c.type!=='organization');
+  const list=countries.filter(c=>c.type==='country');
   let totalRev=0;
   let rows=list.map(c=>{
     const s=getSilo(c.id);
@@ -2113,15 +2113,12 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 // SYNC — Poll localStorage for country changes
 // ══════════════════════════════════════════════
 function syncAndRefresh(){
-  const prev=countries.length;
   loadCountries();
-  if(countries.length!==prev){
-    renderList();
-    if(selectedId && !countries.find(c=>c.id===selectedId)){
-      selectedId=null;
-      document.getElementById('no-selection').style.display='flex';
-      document.getElementById('silo-editor').style.display='none';
-    }
+  renderList();
+  if(selectedId && !countries.find(c=>c.id===selectedId)){
+    selectedId=null;
+    document.getElementById('no-selection').style.display='flex';
+    document.getElementById('silo-editor').style.display='none';
   }
 }
 
@@ -2146,7 +2143,7 @@ loadCountries();
 renderList();
 updateClock();
 setInterval(updateClock,1000);
-setInterval(syncAndRefresh, 5000); // Sync countries every 5s
+setInterval(syncAndRefresh, 2000); // Sync countries every 2s
 
 // Also listen for storage events from other tabs
 window.addEventListener('storage', e=>{
