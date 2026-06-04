@@ -3,105 +3,40 @@
     "economic_rules": [],
     "investments": [],
     "relations": {
-      "mnulxffollz0xwr86a": {
-        "status": "allied",
-        "notes": "NATO allied, but with the recent foundation of USSR, they are a little bit uncertain of the future",
-        "updatedAt": 1780510438172
-      },
-      "moag4nn2r5o6utoasd": {
-        "status": "tense",
-        "notes": "They produce weapon for terrorists",
-        "updatedAt": 1780510490542
-      },
-      "moakuucd7h9zupzw8eu": {
-        "status": "friendly",
-        "notes": "",
-        "updatedAt": 1780510435980
-      },
-      "moakv16u66cps8ch8b4": {
-        "status": "friendly",
-        "notes": "",
-        "updatedAt": 1780510436468
-      },
-      "moeuuhuo8e086wjtvwd": {
-        "status": "allied",
-        "notes": "NATO",
-        "updatedAt": 1780510434676
-      },
-      "mohrrzlylhelxn67uo": {
-        "status": "tense",
-        "notes": "USSR member, don't  know their objectives",
-        "updatedAt": 1780510432461
-      },
-      "moahlygpwufwpxx2i9": {
-        "status": "unset",
-        "notes": "",
-        "updatedAt": 1780510439444
-      },
-      "moakuervmfd7z3gvths": {
-        "status": "unset",
-        "notes": "",
-        "updatedAt": 1780510440276
-      },
-      "mohrurblqfd9j4epawk": {
-        "status": "tense",
-        "notes": "Being dominated by terrorists",
-        "updatedAt": 1780510492397
-      },
-      "mohrv1sbfdycppugmut": {
+      "mohrvyzppmcr4ysgd2": {
         "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510499277
-      },
-      "mohrvboh36b015rnx74": {
-        "status": "hostile",
-        "notes": "",
-        "updatedAt": 1780510497453
-      },
-      "mohrvio57kiiiseucd8": {
-        "status": "hostile",
-        "notes": "",
-        "updatedAt": 1780510504558
-      },
-      "mohrvm64e7ii5dnf6t": {
-        "status": "tense",
-        "notes": "Mexico allied",
-        "updatedAt": 1780510511653
+        "updatedAt": 1780023146130
       },
       "mohrvv9nkw6lysx4xtk": {
         "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510514293
-      },
-      "mohrvyzppmcr4ysgd2": {
-        "status": "hostile",
-        "notes": "",
-        "updatedAt": 1780510515997
+        "updatedAt": 1780023147334
       },
       "mohrwa7b0jokjo70oek": {
         "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510518759
+        "updatedAt": 1780023148574
       },
-      "mpya3n97q6icyj55kj7": {
-        "status": "neutral",
+      "mohrvboh36b015rnx74": {
+        "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510523366
+        "updatedAt": 1780023150806
       },
-      "mpya4qrfi6yt47sgl2": {
-        "status": "neutral",
+      "mohrv1sbfdycppugmut": {
+        "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510526959
+        "updatedAt": 1780023153066
       },
-      "mpya54adqnp1fbeh6u": {
-        "status": "neutral",
+      "mohrvio57kiiiseucd8": {
+        "status": "hostile",
         "notes": "",
-        "updatedAt": 1780510530382
+        "updatedAt": 1780023154511
       },
-      "mpya63hw5rhwbrpyam7": {
-        "status": "neutral",
+      "mohrvm64e7ii5dnf6t": {
+        "status": "cold",
         "notes": "",
-        "updatedAt": 1780510533519
+        "updatedAt": 1780023159462
       }
     },
     "deals": []
@@ -109,7 +44,58 @@
   "mnulxffollz0xwr86a": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrrzlylhelxn67uo": {
+        "status": "allied",
+        "notes": "USSR member",
+        "updatedAt": 1780023205357
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023114994
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023116402
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023121261
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "cold",
+        "notes": "",
+        "updatedAt": 1780023170813
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023125029
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023126355
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023127450
+      },
+      "moeuuhuo8e086wjtvwd": {
+        "status": "allied",
+        "notes": "NATO Allie",
+        "updatedAt": 1780023200323
+      },
+      "mnulxd3it0mhfoncdtf": {
+        "status": "allied",
+        "notes": "NATO Allie",
+        "updatedAt": 1780023202223
+      }
+    },
     "deals": []
   },
   "moag4nn2r5o6utoasd": {
@@ -133,13 +119,75 @@
   "moakuucd7h9zupzw8eu": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvio57kiiiseucd8": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023056918
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023043217
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "cooperative",
+        "notes": "",
+        "updatedAt": 1780023060290
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023048151
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023049346
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023050537
+      },
+      "mnulxd3it0mhfoncdtf": {
+        "status": "neutral",
+        "notes": "",
+        "updatedAt": 1780023077383
+      }
+    },
     "deals": []
   },
   "moakv16u66cps8ch8b4": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrv1sbfdycppugmut": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780022951196
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022953648
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022955879
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022959373
+      },
+      "mnulxd3it0mhfoncdtf": {
+        "status": "friendly",
+        "notes": "",
+        "updatedAt": 1780022968847
+      }
+    },
     "deals": []
   },
   "moeuuhuo8e086wjtvwd": {
@@ -151,7 +199,58 @@
   "mohrrzlylhelxn67uo": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mnulxffollz0xwr86a": {
+        "status": "allied",
+        "notes": "USSR member",
+        "updatedAt": 1780023211430
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023132056
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023133190
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023134233
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023135783
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023137289
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "tense",
+        "notes": "",
+        "updatedAt": 1780023138273
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "cold",
+        "notes": "",
+        "updatedAt": 1780023176714
+      },
+      "moeuuhuo8e086wjtvwd": {
+        "status": "friendly",
+        "notes": "Russia Allie",
+        "updatedAt": 1780023227778
+      },
+      "mnulxd3it0mhfoncdtf": {
+        "status": "friendly",
+        "notes": "Russia Allie",
+        "updatedAt": 1780023229917
+      }
+    },
     "deals": []
   },
   "mohrtjbp6w3n5v4vxad": {
@@ -175,43 +274,285 @@
   "mohrv1sbfdycppugmut": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvboh36b015rnx74": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022343352
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022389391
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022347411
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022348746
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022350110
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022379740
+      },
+      "moakv16u66cps8ch8b4": {
+        "status": "hostile",
+        "notes": "",
+        "updatedAt": 1780023003241
+      }
+    },
     "deals": []
   },
   "mohrvboh36b015rnx74": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvio57kiiiseucd8": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022827908
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022829447
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022834680
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022836580
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022838687
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022840379
+      },
+      "moakv16u66cps8ch8b4": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022928533
+      }
+    },
     "deals": []
   },
   "mohrvio57kiiiseucd8": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvboh36b015rnx74": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022848010
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022849202
+      },
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022850486
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022852425
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022857434
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022856059
+      },
+      "moakv16u66cps8ch8b4": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022983078
+      }
+    },
     "deals": []
   },
   "mohrvm64e7ii5dnf6t": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvyzppmcr4ysgd2": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022864856
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022866029
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022867464
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022868950
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022870541
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022873459
+      },
+      "moakuucd7h9zupzw8eu": {
+        "status": "cooperative",
+        "notes": "",
+        "updatedAt": 1780022879993
+      }
+    },
     "deals": []
   },
   "mohrvv9nkw6lysx4xtk": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022893659
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022894611
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022895597
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022896960
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022898157
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022899254
+      }
+    },
     "deals": []
   },
   "mohrvyzppmcr4ysgd2": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022902345
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022903448
+      },
+      "mohrwa7b0jokjo70oek": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022905396
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022906664
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022908408
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "allied",
+        "notes": "",
+        "updatedAt": 1780022909304
+      },
+      "moakv16u66cps8ch8b4": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022986807
+      }
+    },
     "deals": []
   },
   "mohrwa7b0jokjo70oek": {
     "economic_rules": [],
     "investments": [],
-    "relations": {},
+    "relations": {
+      "mohrvm64e7ii5dnf6t": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022913417
+      },
+      "mohrvv9nkw6lysx4xtk": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022914500
+      },
+      "mohrvyzppmcr4ysgd2": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022915701
+      },
+      "mohrv1sbfdycppugmut": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022917268
+      },
+      "mohrvboh36b015rnx74": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022918357
+      },
+      "mohrvio57kiiiseucd8": {
+        "status": "at_war",
+        "notes": "",
+        "updatedAt": 1780022919891
+      }
+    },
     "deals": []
   },
   "mpya3n97q6icyj55kj7": {
@@ -233,6 +574,30 @@
     "deals": []
   },
   "mpya63hw5rhwbrpyam7": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpqal6wzrjvc35sprvq": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpqami5p32owe1dwvas": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpqamo7u1r43atywtnp": {
+    "economic_rules": [],
+    "investments": [],
+    "relations": {},
+    "deals": []
+  },
+  "mpqamslqgg63vwk8sk": {
     "economic_rules": [],
     "investments": [],
     "relations": {},
