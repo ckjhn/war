@@ -1,17 +1,17 @@
 {
   "mnulxd3it0mhfoncdtf": {
-    "purchased": 20000,
+    "purchased": 0,
     "blocked": false,
     "stored": {
-      "iron": 2035,
-      "coal": 907,
-      "gold": 551,
-      "diamond": 68,
-      "gravel": 884,
-      "latex": 700,
-      "silicon": 406,
-      "oil": 700,
-      "gas": 920,
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
       "uranium": 0,
       "refined_iron": 0,
       "electronics": 0,
@@ -20,9 +20,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 100,
-    "discountReason": "Alliance Mamber"
+    }
   },
   "mnulxffollz0xwr86a": {
     "purchased": 0,
@@ -45,9 +43,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 100,
-    "discountReason": "USSR Member"
+    }
   },
   "moag4nn2r5o6utoasd": {
     "purchased": 0,
@@ -70,9 +66,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "moahlygpwufwpxx2i9": {
     "purchased": 0,
@@ -95,9 +89,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "moakuervmfd7z3gvths": {
     "purchased": 0,
@@ -120,9 +112,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "moakuucd7h9zupzw8eu": {
     "purchased": 0,
@@ -145,23 +135,21 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "moakv16u66cps8ch8b4": {
-    "purchased": 0,
+    "purchased": 1400,
     "blocked": false,
     "stored": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
-      "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
+      "iron": 390,
+      "coal": 205,
+      "gold": 72,
+      "diamond": 14,
+      "gravel": 100,
+      "latex": 200,
+      "silicon": 52,
+      "oil": 140,
+      "gas": 220,
       "uranium": 0,
       "refined_iron": 0,
       "electronics": 0,
@@ -170,9 +158,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "moeuuhuo8e086wjtvwd": {
     "purchased": 0,
@@ -195,9 +181,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "mohrrzlylhelxn67uo": {
     "purchased": 0,
@@ -220,9 +204,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 100,
-    "discountReason": "USSR member"
+    }
   },
   "mohrtjbp6w3n5v4vxad": {
     "purchased": 0,
@@ -245,9 +227,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "mohrtqp2ctj8sckm3zr": {
     "purchased": 0,
@@ -270,9 +250,7 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
   },
   "mohrurblqfd9j4epawk": {
     "purchased": 0,
@@ -295,8 +273,98 @@
       "tires": 0,
       "fuel": 0,
       "refined_uranium": 0
-    },
-    "discountPct": 0,
-    "discountReason": ""
+    }
+  },
+  "mpqal6wzrjvc35sprvq": {
+    "purchased": 0,
+    "blocked": false,
+    "stored": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    }
+  },
+  "mpqami5p32owe1dwvas": {
+    "purchased": 0,
+    "blocked": false,
+    "stored": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    }
+  },
+  "mpqamo7u1r43atywtnp": {
+    "purchased": 0,
+    "blocked": false,
+    "stored": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    }
+  },
+  "mpqamslqgg63vwk8sk": {
+    "purchased": 0,
+    "blocked": false,
+    "stored": {
+      "iron": 0,
+      "coal": 0,
+      "gold": 0,
+      "diamond": 0,
+      "gravel": 0,
+      "latex": 0,
+      "silicon": 0,
+      "oil": 0,
+      "gas": 0,
+      "uranium": 0,
+      "refined_iron": 0,
+      "electronics": 0,
+      "chips": 0,
+      "gunpowder": 0,
+      "tires": 0,
+      "fuel": 0,
+      "refined_uranium": 0
+    }
   }
 }
