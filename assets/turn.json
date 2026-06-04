@@ -37,7 +37,7 @@
   "countryRounds": {
     "Russia": true,
     "Israel": false,
-    "United States": false,
+    "United States": true,
     "China/Japan": false,
     "Korea": false,
     "Mexico": true,
