@@ -790,13 +790,13 @@ const ITEMS_DEFAULT = [
   {id:5,cat:'brute',name:'Silicon',price:8,unit:'un',note:'Electronics precursor — moderate rarity'},
   {id:6,cat:'brute',name:'Gold',price:45,unit:'un',note:'Rare — electronics & chips required'},
   {id:7,cat:'brute',name:'Diamond',price:180,unit:'un',note:'Very rare — chips precursor'},
-  {id:8,cat:'brute',name:'Oil',price:3,unit:'L',note:'Fuel production — liquid resource'},
-  {id:9,cat:'brute',name:'Gas',price:2,unit:'L',note:'Less efficient than oil, more abundant'},
+  {id:8,cat:'brute',name:'Oil',price:8,unit:'L',note:'Fuel production — liquid resource'},
+  {id:9,cat:'brute',name:'Gas',price:5,unit:'L',note:'Less efficient than oil, more abundant'},
   {id:10,cat:'brute',name:'Uranium',price:800,unit:'un',note:'Extremely rare — nuclear path only'},
   {id:11,cat:'refined',name:'Refined Iron',price:22,unit:'un',note:'5 Iron + 3 Coal → 5 units'},
-  {id:12,cat:'refined',name:'Gunpowder',price:1.80,unit:'un',note:'10 Coal + 5 Gravel → 10 units'},
+  {id:12,cat:'refined',name:'Gunpowder',price:6,unit:'un',note:'10 Coal + 5 Gravel → 10 units'},
   {id:13,cat:'refined',name:'Tires',price:60,unit:'un',note:'10 Latex → 1 Tire'},
-  {id:14,cat:'refined',name:'Fuel',price:3,unit:'L',note:'50L Oil → 100L Fuel'},
+  {id:14,cat:'refined',name:'Fuel',price:10,unit:'L',note:'50L Oil → 100L Fuel'},
   {id:15,cat:'refined',name:'Electronics',price:250,unit:'un',note:'1 Gold + 2 Silicon + 5 Refined Iron'},
   {id:16,cat:'refined',name:'Chips',price:700,unit:'un',note:'3 Diamond + 10 Silicon → 1 Chip'},
   {id:17,cat:'refined',name:'Refined Uranium',price:55000,unit:'un',note:'10 Uranium + 1000L Fuel + 500 Coal + 120 Diamond + 200 Gold'},
@@ -884,6 +884,38 @@ const EXPLOSION_MULTIPLIERS = {
   gigantic: 3.8
 };
 
+// ── Production cost calculator ──
+// Brute/refined material prices — overlaid with registry values when available
+const RESOURCE_PRICES_DEFAULT = {
+  iron:2, coal:1, gravel:0.5, latex:4, silicon:8, gold:45, diamond:180,
+  oil:8, gas:5, uranium:800, fuel:10,
+  refined_iron:22, gunpowder:6, tires:60, electronics:250, chips:700,
+  refined_uranium:55000,
+};
+const RESOURCE_PRICES = Object.assign({}, RESOURCE_PRICES_DEFAULT);
+if (window.__TC_ITEMS__) {
+  window.__TC_ITEMS__.forEach(item => {
+    if (!item.name) return;
+    const key = item.name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+    const price = item.isMissile ? (item.explosionPrices?.medium || item.basePrice) : item.price;
+    if (price !== undefined) RESOURCE_PRICES[key] = price;
+  });
+}
+function calcProdCost(item) {
+  if (!item.inputs || !Object.keys(item.inputs).length) return null;
+  let cost = 0; let allKnown = true;
+  for (const [mat, qty] of Object.entries(item.inputs)) {
+    const p = RESOURCE_PRICES[mat];
+    if (p === undefined) { allKnown = false; continue; }
+    cost += p * qty;
+  }
+  return { cost, allKnown };
+}
+function fmtCost(n) {
+  if (n < 1) return '$' + n.toFixed(2);
+  return '$' + n.toLocaleString('en-US', {minimumFractionDigits: n%1!==0?2:0, maximumFractionDigits:2});
+}
+
 function getItemPrice(item) {
   if (item.isMissile) {
     const level = explosionLevels[item.id] || 'medium';
@@ -926,6 +958,26 @@ function renderItems() {
     const q = qtys[item.id] || 1;
     const price = getItemPrice(item);
     const isNeg = item.price === 0;
+
+    // Production cost from resource inputs
+    const prodCostData = calcProdCost(item);
+    let prodCostHTML = '';
+    if (prodCostData) {
+      const margin = price > 0 ? price - prodCostData.cost : null;
+      const marginPct = (margin !== null && prodCostData.cost > 0) ? ((margin / prodCostData.cost) * 100).toFixed(0) : null;
+      const marginColor = margin !== null && margin >= 0 ? '#4a9e5c' : '#c0392b';
+      prodCostHTML = `
+        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:3px;padding:7px 9px;font-size:11px;line-height:1.8;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--text-3);font-family:var(--font-cond);letter-spacing:.06em;text-transform:uppercase;font-size:10px;">Prod. cost</span>
+            <span style="color:var(--text-2);font-family:var(--font-cond);font-weight:600;">${fmtCost(prodCostData.cost)}${prodCostData.allKnown?'':'*'}</span>
+          </div>
+          ${margin !== null ? `<div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--text-3);font-family:var(--font-cond);letter-spacing:.06em;text-transform:uppercase;font-size:10px;">Margin</span>
+            <span style="color:${marginColor};font-family:var(--font-cond);font-weight:600;">${margin>=0?'+':''}${fmtCost(margin)}${marginPct?` (${margin>=0?'+':''}${marginPct}%)`:''}</span>
+          </div>` : ''}
+        </div>`;
+    }
     
     let explosionHTML = '';
     if (item.isMissile) {
@@ -949,6 +1001,7 @@ function renderItems() {
       <div class="item-name">${item.name}</div>
       ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
       ${explosionHTML}
+      ${prodCostHTML}
       <div class="item-price${isNeg?' negotiable':''}">${fmt(price)}${!isNeg&&item.unit?`<span class="unit">/ ${item.unit}</span>`:''}</div>
       ${!isNeg ? `<div class="item-actions">
         <div class="qty-ctrl">
