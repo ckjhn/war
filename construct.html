@@ -63,6 +63,7 @@ main{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:30px 20p
 .prod-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;color:var(--accent2);margin-bottom:5px;text-transform:uppercase;}
 .prod-desc{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);line-height:1.6;}
 .prod-mp{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--purple);margin-top:4px;}
+.prod-cost{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--teal);margin-top:2px;}
 
 /* CONTROLS */
 .calc-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
@@ -837,6 +838,40 @@ if (window.__TC_ITEMS__) {
 }
 
 // ============================================================
+// RESOURCE PRICES — for production cost calculation
+// Built from registry brute/refined items; falls back to hardcoded defaults
+// ============================================================
+const RESOURCE_PRICES_DEFAULT = {
+  iron:2, coal:1, gravel:0.5, latex:4, silicon:8, gold:45, diamond:180,
+  oil:8, gas:5, uranium:800, fuel:10,
+  refined_iron:22, gunpowder:6, tires:60, electronics:250, chips:700,
+  refined_uranium:55000,
+};
+const RESOURCE_PRICES = Object.assign({}, RESOURCE_PRICES_DEFAULT);
+if (window.__TC_ITEMS__) {
+  window.__TC_ITEMS__.forEach(item => {
+    if (!item.name) return;
+    const key = item.name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+    const price = item.isMissile ? (item.explosionPrices?.medium || item.basePrice) : item.price;
+    if (price !== undefined) RESOURCE_PRICES[key] = price;
+    // Also index by original name key (some inputs use underscored keys)
+  });
+}
+
+// Compute the market value of all resource inputs for 1 unit
+function calcProdCost(inputs) {
+  if (!inputs || !Object.keys(inputs).length) return null;
+  let cost = 0;
+  let allKnown = true;
+  for (const [mat, qty] of Object.entries(inputs)) {
+    const p = RESOURCE_PRICES[mat];
+    if (p === undefined) { allKnown = false; continue; }
+    cost += p * qty;
+  }
+  return { cost, allKnown };
+}
+
+// ============================================================
 // MINE CATEGORIES
 // ============================================================
 const MINE_CATS = [
@@ -1014,12 +1049,25 @@ function renderProdCategories(){
     <div class="prod-category">
       <div class="prod-category-title">— ${cat} —</div>
       <div class="prod-grid">
-        ${items.map(item=>`
+        ${items.map(item=>{
+          const prodCostData = calcProdCost(item.inputs);
+          const marketPrice  = item.costUsd || null;
+          let priceHtml = '';
+          if (prodCostData) {
+            const prodCostStr = '$'+Number(prodCostData.cost).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+            priceHtml += `<div class="prod-cost">🔩 ${prodCostStr} / unit${prodCostData.allKnown?'':'*'}</div>`;
+          }
+          if (marketPrice) {
+            priceHtml += `<div class="prod-mp" style="color:var(--accent3);">💰 $${Number(marketPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} market</div>`;
+          }
+          return `
           <div class="prod-card" id="pc-${item.id}" onclick="selectProdItem('${item.id}')">
             <div class="prod-name">${item.icon} ${item.name}</div>
             <div class="prod-desc">${Object.entries(item.inputs).map(([m,a])=>`${a}x ${mLabel(m)}`).join(' · ')}</div>
-            <div class="prod-mp">⚒ ${item.manpower} MP/unit${item.costUsd?` · $${item.costUsd}`:''}</div>
-          </div>`).join('')}
+            <div class="prod-mp">⚒ ${item.manpower} MP/unit</div>
+            ${priceHtml}
+          </div>`;
+        }).join('')}
       </div>
     </div>`).join('');
 }
@@ -1102,7 +1150,29 @@ function calcProduction(){
     html+=rl(`Total ${item.icon} ${ammoType}`,`${fmt(ammoQuantity)} ${ammoType}`,'teal');
   }
   
-  if(item.costUsd)html+=rl('USD Cost',`$${fmt(item.costUsd*qty,2)}`,'cyan');
+  if(item.costUsd)html+=rl('Market Price (per unit)',`$${fmt(item.costUsd,2)}`,'cyan');
+  if(item.costUsd&&qty>1)html+=rl('Market Price (total)',`$${fmt(item.costUsd*qty,2)}`,'cyan');
+
+  // Production cost vs market value
+  const prodCostData = calcProdCost(item.inputs);
+  if (prodCostData) {
+    const prodCostPerUnit = prodCostData.cost;
+    const prodCostTotal   = prodCostPerUnit * qty;
+    html+=`<div class="sep"></div><div class="result-title" style="color:var(--teal);">💰 PRODUCTION COST vs MARKET</div>`;
+    html+=rl('Input resource cost (per unit)',`$${fmt(prodCostPerUnit,2)}`+(prodCostData.allKnown?'':'*'),'teal');
+    if(qty>1) html+=rl('Input resource cost (total)',`$${fmt(prodCostTotal,2)}`,'teal');
+    if(item.costUsd){
+      const marketTotal = item.costUsd * qty;
+      const margin      = item.costUsd - prodCostPerUnit;
+      const marginPct   = prodCostPerUnit > 0 ? ((margin / prodCostPerUnit) * 100).toFixed(1) : '—';
+      const marginClass = margin >= 0 ? 'green' : 'danger';
+      html+=rl('Market price (per unit)',`$${fmt(item.costUsd,2)}`,'cyan');
+      html+=rl('Margin per unit',`${margin>=0?'+':''}$${fmt(margin,2)} (${marginPct}%)`,marginClass);
+      html+=rl('Total margin',`${margin>=0?'+':''}$${fmt(margin*qty,2)}`,marginClass);
+    }
+    if(!prodCostData.allKnown) html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:6px;">* Some input prices unknown — cost may be underestimated.</div>`;
+  }
+
   html+=`<div class="sep"></div><div class="result-title" style="color:var(--purple);">⚒ MANPOWER & BUILD TIME</div>`;
   html+=rl('Total Manpower Required',`${fmt(totalMp)} MP`,'purple');
   html+=rl('Workers Assigned',fmt(workers),'cyan');
