@@ -901,10 +901,25 @@ if (window.__TC_ITEMS__) {
     if (price !== undefined) RESOURCE_PRICES[key] = price;
   });
 }
+// Build a map of inputs keyed by item ID from the registry
+// so we can look up recipe costs even when ITEMS_DEFAULT has no inputs field
+const INPUTS_BY_ID = {};
+if (window.__TC_ITEMS__) {
+  window.__TC_ITEMS__.forEach(item => {
+    if (item.inputs && Object.keys(item.inputs).length > 0) {
+      INPUTS_BY_ID[item.id] = item.inputs;
+    }
+  });
+}
+
 function calcProdCost(item) {
-  if (!item.inputs || !Object.keys(item.inputs).length) return null;
+  // Prefer inputs on the item itself, fall back to registry lookup by ID
+  const inputs = (item.inputs && Object.keys(item.inputs).length > 0)
+    ? item.inputs
+    : INPUTS_BY_ID[item.id];
+  if (!inputs || !Object.keys(inputs).length) return null;
   let cost = 0; let allKnown = true;
-  for (const [mat, qty] of Object.entries(item.inputs)) {
+  for (const [mat, qty] of Object.entries(inputs)) {
     const p = RESOURCE_PRICES[mat];
     if (p === undefined) { allKnown = false; continue; }
     cost += p * qty;

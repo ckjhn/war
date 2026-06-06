@@ -871,6 +871,34 @@ function calcProdCost(inputs) {
   return { cost, allKnown };
 }
 
+// Market price lookup by numeric item ID — covers both hardcoded PRODUCTION and registry
+// Built from the full ITEMS list used in market.html (same data, same IDs)
+const MARKET_PRICE_BY_ID = {};
+(function(){
+  // Hardcoded fallback prices keyed by numeric ID (mirrors market ITEMS_DEFAULT)
+  const fallback = {
+    18:80,19:280,20:900,21:1200,22:2000,23:3000,24:7500,25:500,26:1000,
+    27:28000,28:1.5,
+    29:150,30:160,31:360,32:350,33:650,34:320,35:2500,37:140,38:1500,
+    39:100,40:300,41:550,42:850,
+    43:45000,44:55000,45:120000,46:180000,47:175000,48:220000,80:135000,
+    49:3500,50:7000,51:18000,52:50000,53:80000,54:125000,
+    55:2500,56:90000,57:200000,58:230000,59:580000,60:1000000,
+    61:3500,62:6500,63:7000,64:25000,65:27000,66:18000,67:62000,68:130000,69:380000,
+    70:40,71:75,72:300,73:7500,74:350,75:850,81:750,
+  };
+  Object.assign(MARKET_PRICE_BY_ID, fallback);
+  // Registry values override (uses medium price for missiles)
+  if (window.__TC_ITEMS__) {
+    window.__TC_ITEMS__.forEach(item => {
+      const price = item.isMissile
+        ? (item.explosionPrices?.medium || item.basePrice)
+        : item.price;
+      if (price !== undefined) MARKET_PRICE_BY_ID[item.id] = price;
+    });
+  }
+})();
+
 // ============================================================
 // MINE CATEGORIES
 // ============================================================
@@ -1051,11 +1079,11 @@ function renderProdCategories(){
       <div class="prod-grid">
         ${items.map(item=>{
           const prodCostData = calcProdCost(item.inputs);
-          const marketPrice  = item.costUsd || null;
+          const marketPrice  = MARKET_PRICE_BY_ID[item.id] || item.costUsd || null;
           let priceHtml = '';
           if (prodCostData) {
             const prodCostStr = '$'+Number(prodCostData.cost).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-            priceHtml += `<div class="prod-cost">🔩 ${prodCostStr} / unit${prodCostData.allKnown?'':'*'}</div>`;
+            priceHtml += `<div class="prod-cost">🔩 ${prodCostStr}/unit${prodCostData.allKnown?'':'*'}</div>`;
           }
           if (marketPrice) {
             priceHtml += `<div class="prod-mp" style="color:var(--accent3);">💰 $${Number(marketPrice).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} market</div>`;
@@ -1155,22 +1183,28 @@ function calcProduction(){
 
   // Production cost vs market value
   const prodCostData = calcProdCost(item.inputs);
-  if (prodCostData) {
-    const prodCostPerUnit = prodCostData.cost;
-    const prodCostTotal   = prodCostPerUnit * qty;
+  const marketPrice  = MARKET_PRICE_BY_ID[item.id] || item.costUsd || null;
+  if (prodCostData || marketPrice) {
     html+=`<div class="sep"></div><div class="result-title" style="color:var(--teal);">💰 PRODUCTION COST vs MARKET</div>`;
-    html+=rl('Input resource cost (per unit)',`$${fmt(prodCostPerUnit,2)}`+(prodCostData.allKnown?'':'*'),'teal');
-    if(qty>1) html+=rl('Input resource cost (total)',`$${fmt(prodCostTotal,2)}`,'teal');
-    if(item.costUsd){
-      const marketTotal = item.costUsd * qty;
-      const margin      = item.costUsd - prodCostPerUnit;
-      const marginPct   = prodCostPerUnit > 0 ? ((margin / prodCostPerUnit) * 100).toFixed(1) : '—';
-      const marginClass = margin >= 0 ? 'green' : 'danger';
-      html+=rl('Market price (per unit)',`$${fmt(item.costUsd,2)}`,'cyan');
-      html+=rl('Margin per unit',`${margin>=0?'+':''}$${fmt(margin,2)} (${marginPct}%)`,marginClass);
-      html+=rl('Total margin',`${margin>=0?'+':''}$${fmt(margin*qty,2)}`,marginClass);
+    if (prodCostData) {
+      const prodCostPerUnit = prodCostData.cost;
+      const prodCostTotal   = prodCostPerUnit * qty;
+      html+=rl('Input resource cost (per unit)',`$${fmt(prodCostPerUnit,2)}`+(prodCostData.allKnown?'':'*'),'teal');
+      if(qty>1) html+=rl('Input resource cost (total)',`$${fmt(prodCostTotal,2)}`,'teal');
+      if(marketPrice){
+        const margin    = marketPrice - prodCostPerUnit;
+        const marginPct = prodCostPerUnit > 0 ? ((margin / prodCostPerUnit) * 100).toFixed(1) : '—';
+        const marginCls = margin >= 0 ? 'green' : 'danger';
+        html+=rl('Market price (per unit)',`$${fmt(marketPrice,2)}`,'cyan');
+        if(qty>1) html+=rl('Market price (total)',`$${fmt(marketPrice*qty,2)}`,'cyan');
+        html+=rl('Margin per unit',`${margin>=0?'+':''}$${fmt(margin,2)} (${marginPct}%)`,marginCls);
+        if(qty>1) html+=rl('Total margin',`${margin>=0?'+':''}$${fmt(margin*qty,2)}`,marginCls);
+      }
+      if(!prodCostData.allKnown) html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:6px;">* Some input prices unknown — cost may be underestimated.</div>`;
+    } else if (marketPrice) {
+      html+=rl('Market price (per unit)',`$${fmt(marketPrice,2)}`,'cyan');
+      if(qty>1) html+=rl('Market price (total)',`$${fmt(marketPrice*qty,2)}`,'cyan');
     }
-    if(!prodCostData.allKnown) html+=`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-dim);margin-top:6px;">* Some input prices unknown — cost may be underestimated.</div>`;
   }
 
   html+=`<div class="sep"></div><div class="result-title" style="color:var(--purple);">⚒ MANPOWER & BUILD TIME</div>`;
