@@ -635,6 +635,14 @@ input:checked+.toggle-slider:before{transform:translateX(24px);}
 </main>
 
 <script>
+// ── ITEM REGISTRY: load from items_settings.html shared store ──
+(function(){
+  try {
+    const reg = JSON.parse(localStorage.getItem('tc_items_v1') || '[]');
+    if (Array.isArray(reg) && reg.length > 0) window.__TC_ITEMS__ = reg;
+  } catch(e) {}
+})();
+
 // ============================================================
 // DATA — BRUTE MATERIALS
 // ============================================================
@@ -748,6 +756,34 @@ const PRODUCTION = {
   ],
 };
 
+// If registry is available, rebuild PRODUCTION from it (items with inputs and manpower > 0)
+if (window.__TC_ITEMS__) {
+  const regItems = window.__TC_ITEMS__.filter(i =>
+    i.inputs && Object.keys(i.inputs).length > 0 && i.manpower > 0
+  );
+  if (regItems.length > 0) {
+    // Group by prodCat, falling back to cat-based label
+    const catLabels = {weapons:'Man-Handed Weapons',ammo:'Ammunition',air:'Air Vehicles',land:'Land Vehicles',water:'Water Vehicles',missiles:'Missiles & Torpedoes',other:'Others',refined:'Refined Resources'};
+    const grouped = {};
+    regItems.forEach(item => {
+      const group = item.prodCat || catLabels[item.cat] || item.cat || 'Other';
+      if (!grouped[group]) grouped[group] = [];
+      grouped[group].push({
+        id: String(item.id),
+        name: item.name,
+        icon: item.icon || '',
+        inputs: item.inputs,
+        manpower: item.manpower,
+        costUsd: item.price || item.basePrice || undefined,
+        isMissile: item.isMissile || false,
+      });
+    });
+    // Clear and rebuild PRODUCTION from registry
+    Object.keys(PRODUCTION).forEach(k => delete PRODUCTION[k]);
+    Object.assign(PRODUCTION, grouped);
+  }
+}
+
 // ============================================================
 // FUEL USE PER TURN (L)
 // ============================================================
@@ -778,6 +814,27 @@ const FUEL_VEHICLES = {
     {id:'fv-supercarrier',name:'Supercarrier',                 icon:'🛳️', fuelPerTurn:220},
   ],
 };
+
+// If registry is available, rebuild FUEL_VEHICLES from items with fuelPerTurn set
+if (window.__TC_ITEMS__) {
+  const fuelItems = window.__TC_ITEMS__.filter(i => i.fuelPerTurn && i.fuelPerTurn > 0);
+  if (fuelItems.length > 0) {
+    const catLabels = {air:'Air Vehicles', land:'Land Vehicles', water:'Water Vehicles'};
+    const fuelGrouped = {};
+    fuelItems.forEach(item => {
+      const group = catLabels[item.cat] || (item.cat.charAt(0).toUpperCase()+item.cat.slice(1)+' Vehicles');
+      if (!fuelGrouped[group]) fuelGrouped[group] = [];
+      fuelGrouped[group].push({
+        id: 'fv-'+item.id,
+        name: item.name,
+        icon: item.icon || '',
+        fuelPerTurn: item.fuelPerTurn,
+      });
+    });
+    Object.keys(FUEL_VEHICLES).forEach(k => delete FUEL_VEHICLES[k]);
+    Object.assign(FUEL_VEHICLES, fuelGrouped);
+  }
+}
 
 // ============================================================
 // MINE CATEGORIES

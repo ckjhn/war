@@ -758,6 +758,14 @@
 </div>
 
 <script>
+// ── ITEM REGISTRY: load from items_settings.html shared store ──
+(function(){
+  try {
+    const reg = JSON.parse(localStorage.getItem('tc_items_v1') || '[]');
+    if (Array.isArray(reg) && reg.length > 0) window.__TC_ITEMS__ = reg;
+  } catch(e) {}
+})();
+
 const CATEGORIES = [
   {id:'all',label:'All Items'},
   {id:'brute',label:'Resources'},
@@ -774,7 +782,7 @@ const CATEGORIES = [
 
 const CAT_LABEL = {brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other',loans:'Finance'};
 
-const ITEMS = [
+const ITEMS_DEFAULT = [
   {id:1,cat:'brute',name:'Iron',price:2,unit:'un',note:'Backbone of all production'},
   {id:2,cat:'brute',name:'Coal',price:1,unit:'un',note:'Most abundant fuel/refining resource'},
   {id:3,cat:'brute',name:'Gravel',price:0.50,unit:'un',note:'Cheap filler / gunpowder component'},
@@ -856,6 +864,8 @@ const ITEMS = [
   {id:78,cat:'loans',name:'Long Loan (15+ cycles)',price:0,unit:'',note:'+40% interest — high return, high default risk'},
   {id:79,cat:'loans',name:'Workers Loan',price:500,unit:'worker/cycle',note:'Temporary workforce transfer'}
 ];
+// Use registry if available, otherwise fall back to built-in defaults
+const ITEMS = window.__TC_ITEMS__ || ITEMS_DEFAULT;
 
 let cart = {};
 let qtys = {};

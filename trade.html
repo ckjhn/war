@@ -471,6 +471,14 @@ header{display:flex;align-items:center;justify-content:space-between;padding:14p
 </div>
 
 <script>
+// ── ITEM REGISTRY: load from items_settings.html shared store ──
+(function(){
+  try {
+    const reg = JSON.parse(localStorage.getItem('tc_items_v1') || '[]');
+    if (Array.isArray(reg) && reg.length > 0) window.__TC_ITEMS__ = reg;
+  } catch(e) {}
+})();
+
 // =====================================================
 // TRADEABLE ITEMS
 // =====================================================
@@ -532,9 +540,9 @@ function getPriceRange(basePrice, quality) {
 }
 
 // =====================================================
-// MARKET VALUES - From Total Conquest Market
+// MARKET VALUES - derived from registry when available
 // =====================================================
-const MARKET_VALUES = {
+const MARKET_VALUES_DEFAULT = {
   'Iron': 2,
   'Coal': 1,
   'Gold': 45,
@@ -637,6 +645,18 @@ const MARKET_VALUES = {
   'Money Loan ($)': 0,
   'Workers Loan': 500,
 };
+// Overlay registry prices on top of defaults (registry wins for any matching name)
+const MARKET_VALUES = Object.assign({}, MARKET_VALUES_DEFAULT);
+if (window.__TC_ITEMS__) {
+  window.__TC_ITEMS__.forEach(item => {
+    if (!item.name) return;
+    const price = item.isMissile ? (item.explosionPrices?.medium || item.basePrice) : item.price;
+    if (price !== undefined) {
+      // Direct name match
+      MARKET_VALUES[item.name] = price;
+    }
+  });
+}
 
 // =====================================================
 // STATE

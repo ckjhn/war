@@ -516,6 +516,14 @@ const SWE_TIER_DISCOUNT = {
   riksbank: 0.20,
 };
 
+// ── ITEM REGISTRY: load from items_settings.html shared store ──
+(function(){
+  try {
+    const reg = JSON.parse(localStorage.getItem('tc_items_v1') || '[]');
+    if (Array.isArray(reg) && reg.length > 0) window.__TC_ITEMS__ = reg;
+  } catch(e) {}
+})();
+
 const CATEGORIES = [
   {id:'all',label:'All'},{id:'brute',label:'Resources'},{id:'refined',label:'Refined'},
   {id:'weapons',label:'Weapons'},{id:'ammo',label:'Ammo'},{id:'air',label:'Air'},
@@ -524,7 +532,7 @@ const CATEGORIES = [
 ];
 const CAT_LABEL = {brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other'};
 
-const ITEMS = [
+const ITEMS_DEFAULT = [
   {id:1,cat:'brute',name:'Iron',price:2,unit:'un'},{id:2,cat:'brute',name:'Coal',price:1,unit:'un'},
   {id:3,cat:'brute',name:'Gravel',price:0.50,unit:'un'},{id:4,cat:'brute',name:'Latex',price:4,unit:'un'},
   {id:5,cat:'brute',name:'Silicon',price:8,unit:'un'},{id:6,cat:'brute',name:'Gold',price:45,unit:'un'},
@@ -571,6 +579,8 @@ const ITEMS = [
   {id:39,cat:'other',name:'Other Stuff (Small)',price:100,unit:'un'},{id:40,cat:'other',name:'Other Stuff (Medium)',price:300,unit:'un'},
   {id:41,cat:'other',name:'Other Stuff (Big)',price:550,unit:'un'},{id:42,cat:'other',name:'Other Stuff (Huge)',price:850,unit:'un'},
 ];
+// Use registry if available, otherwise fall back to built-in defaults
+const ITEMS = window.__TC_ITEMS__ ? window.__TC_ITEMS__.filter(i=>i.cat!=='loans') : ITEMS_DEFAULT;
 
 /* ══════════════════════════════════════════
    STATE

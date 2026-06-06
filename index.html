@@ -453,6 +453,9 @@
         <button class="nav-btn" data-app="resource_market">
           🌿 Resource Market
         </button>
+        <button class="nav-btn" data-app="items_settings">
+          ⚙️ Item Registry
+        </button>
         <button class="nav-btn" data-app="sync">
           ☁️ Sync
         </button>
@@ -561,6 +564,11 @@
         name: 'Resource Market',
         icon: '🌿',
         file: 'resource_market.html'
+      },
+      'items_settings': {
+        name: 'Item Registry',
+        icon: '⚙️',
+        file: 'items_settings.html'
       },
       'sync': {
         name: 'Sync',
@@ -850,7 +858,10 @@
         write:(d)=>{
           if(d && d.listings !== undefined) localStorage.setItem('grx_listings_v1', JSON.stringify(d.listings||[]));
           if(d && d.history  !== undefined) localStorage.setItem('grx_history_v1',  JSON.stringify(d.history ||[]));
-        } }
+        } },
+      { name:'items.json', path:'assets/items.json',
+        read:()=>{ try{return JSON.parse(localStorage.getItem('tc_items_v1')||'[]');}catch{return[];} },
+        write:(d)=>{ if(Array.isArray(d)&&d.length>0) localStorage.setItem('tc_items_v1',JSON.stringify(d)); } },
     ];
 
     function loadGhConfig(){

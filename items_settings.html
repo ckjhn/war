@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Item Registry — Total Conquest</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f7f7f8;
+  --surface:  #ffffff;
+  --surface2: #f2f2f4;
+  --border:   #e4e4e8;
+  --border-h: #c8c8d0;
+  --ink:      #1a1a1f;
+  --ink-2:    #5c5c6e;
+  --ink-3:    #9898a8;
+  --ink-4:    #c4c4d0;
+  --blue:     #2563eb;
+  --blue-bg:  #eff4ff;
+  --blue-b:   #bdd0fd;
+  --green:    #16a34a;
+  --green-bg: #f0fdf4;
+  --green-b:  #bbf7d0;
+  --red:      #dc2626;
+  --red-bg:   #fef2f2;
+  --red-b:    #fecaca;
+  --amber:    #d97706;
+  --amber-bg: #fffbeb;
+  --amber-b:  #fde68a;
+  --violet:   #7c3aed;
+  --violet-bg:#f5f3ff;
+  --violet-b: #ddd6fe;
+  --slate:    #475569;
+  --slate-bg: #f8fafc;
+  --radius:   6px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:    0 4px 12px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.04);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 15px; color: var(--ink); letter-spacing: -.2px;
+}
+.topbar-logo .logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--blue); flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--blue-bg);
+}
+.topbar-sep { width: 1px; height: 20px; background: var(--border); }
+.topbar-label {
+  font-size: 12px; color: var(--ink-3); font-weight: 500;
+  letter-spacing: .02em;
+}
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+
+/* ── LAYOUT ── */
+.layout {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-title { font-size: 22px; font-weight: 600; letter-spacing: -.3px; color: var(--ink); }
+.page-sub { font-size: 13px; color: var(--ink-3); margin-top: 4px; line-height: 1.5; }
+.page-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── STATS ── */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-n { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -.5px; font-family: 'DM Mono', monospace; }
+.stat-l { font-size: 11px; color: var(--ink-3); font-weight: 500; margin-top: 3px; letter-spacing: .04em; text-transform: uppercase; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+}
+.search-wrap {
+  flex: 1; min-width: 200px;
+  position: relative;
+}
+.search-wrap svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-4); pointer-events: none; width: 15px; height: 15px;
+}
+.search-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  padding: 7px 12px 7px 32px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-input::placeholder { color: var(--ink-4); }
+.search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-bg); }
+
+/* ── CATEGORY FILTER ── */
+.cat-filter { display: flex; gap: 4px; flex-wrap: wrap; }
+.cat-pill {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all .14s;
+  white-space: nowrap;
+  line-height: 1.8;
+}
+.cat-pill:hover { border-color: var(--blue); color: var(--blue); }
+.cat-pill.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* ── TABLE ── */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.table-card-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.table-card-title { font-size: 13px; font-weight: 600; color: var(--ink); }
+.table-card-count { font-size: 12px; color: var(--ink-3); font-family: 'DM Mono', monospace; }
+.table-scroll { overflow-x: auto; max-height: calc(100vh - 360px); overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 2;
+  white-space: nowrap;
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg); }
+td.id-col { color: var(--ink-4); font-family: 'DM Mono', monospace; font-size: 12px; }
+td.name-col { font-weight: 500; color: var(--ink); }
+td.price-col { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); }
+td.mp-col { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--violet); }
+td.inputs-col { font-size: 11px; color: var(--ink-3); max-width: 260px; line-height: 1.7; }
+td.fuel-col { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--amber); }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.badge-brute   { background: var(--slate-bg);   color: var(--slate); border: 1px solid #e2e8f0; }
+.badge-refined { background: var(--blue-bg);    color: var(--blue);   border: 1px solid var(--blue-b); }
+.badge-weapons { background: var(--red-bg);     color: var(--red);    border: 1px solid var(--red-b); }
+.badge-ammo    { background: var(--amber-bg);   color: var(--amber);  border: 1px solid var(--amber-b); }
+.badge-air     { background: var(--violet-bg);  color: var(--violet); border: 1px solid var(--violet-b); }
+.badge-land    { background: var(--green-bg);   color: var(--green);  border: 1px solid var(--green-b); }
+.badge-water   { background: #f0f9ff;           color: #0284c7;       border: 1px solid #bae6fd; }
+.badge-missiles{ background: #fff1f2;           color: #e11d48;       border: 1px solid #fecdd3; }
+.badge-other   { background: var(--surface2);   color: var(--ink-2);  border: 1px solid var(--border); }
+.badge-loans   { background: var(--amber-bg);   color: var(--amber);  border: 1px solid var(--amber-b); }
+.badge-missile-tag { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; }
+.badge-yes     { background: var(--green-bg);   color: var(--green);  border: 1px solid var(--green-b); }
+
+/* ── ICON CELL ── */
+.icon-cell { font-size: 18px; line-height: 1; }
+
+/* ── ROW ACTIONS ── */
+.row-actions { display: flex; gap: 6px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .14s;
+  white-space: nowrap;
+  line-height: 1;
+}
+.btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: var(--surface); color: var(--ink-2); border-color: var(--border); box-shadow: var(--shadow-sm); }
+.btn-secondary:hover { border-color: var(--border-h); color: var(--ink); }
+.btn-ghost { background: transparent; color: var(--ink-3); border-color: transparent; }
+.btn-ghost:hover { background: var(--bg); color: var(--ink); }
+.btn-danger-ghost { background: transparent; color: var(--ink-3); border-color: transparent; }
+.btn-danger-ghost:hover { background: var(--red-bg); color: var(--red); }
+.btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
+.btn-danger:hover { background: #b91c1c; }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+.btn-xs { padding: 3px 8px; font-size: 11px; }
+.btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  z-index: 500;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 760px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn .2s cubic-bezier(.16,1,.3,1);
+  flex-shrink: 0;
+}
+@keyframes modalIn { from { opacity:0; transform:translateY(-12px) scale(.98); } to { opacity:1; transform:none; } }
+.modal-header {
+  padding: 18px 22px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -.2px; }
+.modal-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.modal-close {
+  background: transparent; border: none;
+  color: var(--ink-3); cursor: pointer;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; font-size: 18px;
+  transition: all .14s;
+}
+.modal-close:hover { background: var(--bg); color: var(--ink); }
+.modal-body { padding: 22px; }
+.modal-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── FORM ── */
+.form-section { margin-bottom: 22px; }
+.form-section-title {
+  font-size: 11px; font-weight: 600;
+  color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.form-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.full { grid-column: 1 / -1; }
+@media(max-width:580px) { .form-grid, .form-grid-3, .form-grid-5 { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 5px; }
+label { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+.field-hint { font-size: 11px; color: var(--ink-4); line-height: 1.5; }
+input[type="text"], input[type="number"], select, textarea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--ink);
+  padding: 8px 11px;
+  outline: none;
+  width: 100%;
+  transition: border-color .14s, box-shadow .14s;
+  -moz-appearance: textfield;
+}
+input::-webkit-inner-spin-button { -webkit-appearance: none; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-bg);
+}
+select option { background: var(--surface); }
+textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+
+/* ── RECIPE BUILDER ── */
+.recipe-builder { display: flex; flex-direction: column; gap: 7px; margin-top: 2px; }
+.recipe-row { display: flex; gap: 8px; align-items: center; }
+.recipe-row input { flex: 1; }
+.recipe-row input.qty { flex: 0 0 88px; }
+.recipe-row .remove-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--ink-4);
+  border-radius: 5px; width: 28px; height: 28px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; transition: all .14s; font-size: 15px; flex-shrink: 0;
+}
+.recipe-row .remove-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-bg); }
+
+/* ── CONFIRM DIALOG ── */
+.confirm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  backdrop-filter: blur(4px);
+  z-index: 600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.confirm-overlay.open { display: flex; }
+.confirm-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 380px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.confirm-icon { font-size: 28px; margin-bottom: 10px; }
+.confirm-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.confirm-name { font-size: 13px; color: var(--blue); font-weight: 500; font-family: 'DM Mono', monospace; margin-bottom: 10px; }
+.confirm-desc { font-size: 12px; color: var(--ink-3); line-height: 1.6; margin-bottom: 20px; }
+.confirm-actions { display: flex; gap: 8px; justify-content: center; }
+
+/* ── NOTICE ── */
+.notice {
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-b);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #1e40af;
+  line-height: 1.7;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.notice-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+code {
+  background: rgba(37,99,235,.1);
+  border: 1px solid rgba(37,99,235,.2);
+  padding: 1px 5px; border-radius: 3px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+}
+
+/* ── TOAST ── */
+.toast-wrap { position: fixed; bottom: 20px; right: 20px; z-index: 800; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast-item {
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  animation: toastIn .2s ease;
+  max-width: 300px;
+  line-height: 1.5;
+}
+.toast-item.ok  { background: #15803d; }
+.toast-item.err { background: #b91c1c; }
+.toast-item.info { background: var(--blue); }
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ── EMPTY ── */
+.empty { padding: 48px; text-align: center; color: var(--ink-4); font-size: 13px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-h); }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">
+      <div class="logo-dot"></div>
+      Total Conquest
+    </div>
+    <div class="topbar-sep"></div>
+    <span class="topbar-label">Item Registry</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-secondary btn-sm" onclick="exportJSON()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v10m0 0l-3-3m3 3l3-3M4 17h12"/></svg>
+      Export JSON
+    </button>
+    <button class="btn btn-secondary btn-sm" onclick="importJSON()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 17V7m0 0l-3 3m3-3l3 3M4 3h12"/></svg>
+      Import JSON
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="confirmResetToDefaults()" title="Reset to built-in defaults">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l2.5 2.5M16 16l-2.5-2.5M4 16l2.5-2.5M16 4l-2.5 2.5"/><circle cx="10" cy="10" r="3"/></svg>
+      Reset
+    </button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Item Registry</div>
+      <div class="page-sub">Single source of truth for all weapons, vehicles and resources.<br>Changes here propagate to market, trade, construct and all other systems.</div>
+    </div>
+    <div class="page-actions">
+      <button class="btn btn-primary" onclick="openCreateModal()">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4v12M4 10h12"/></svg>
+        New Item
+      </button>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="notice">
+    <div class="notice-icon">ℹ</div>
+    <div>Stored in <code>tc_items_v1</code> (localStorage). Add <code>items.json → assets/items.json</code> to the Hub's <code>SYNC_FILES</code> to persist across sessions. All market &amp; construct systems fall back to built-in defaults only when this registry is empty.</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row"></div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="9" r="5"/><path d="m15 15-3-3"/></svg>
+      <input class="search-input" id="search-input" placeholder="Search items by name…" oninput="applyFilters()">
+    </div>
+    <div class="cat-filter" id="cat-pills"></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">Catalog</span>
+      <span class="table-card-count" id="item-count"></span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cat</th>
+            <th></th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>MP</th>
+            <th>Fuel/t</th>
+            <th>Resource Inputs</th>
+            <th>Missile</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="item-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /layout -->
+
+<!-- ── EDIT / CREATE MODAL ── -->
+<div class="modal-overlay" id="item-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">New Item</div>
+        <div class="modal-sub" id="modal-sub">Fill in the fields below to create a new item in the registry.</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Identity -->
+      <div class="form-section">
+        <div class="form-section-title">Identity</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>ID <span style="color:var(--ink-4);font-weight:400">(numeric, unique)</span></label>
+            <input type="number" id="f-id" placeholder="e.g. 101" min="1">
+            <span class="field-hint">Stable key across all systems. Auto-suggested on create.</span>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select id="f-cat" onchange="onCatChange()">
+              <option value="brute">Brute Resource</option>
+              <option value="refined">Refined Resource</option>
+              <option value="weapons">Weapons</option>
+              <option value="ammo">Ammunition</option>
+              <option value="air">Air Vehicles</option>
+              <option value="land">Land Vehicles</option>
+              <option value="water">Water Vehicles</option>
+              <option value="missiles">Missiles & Torpedoes</option>
+              <option value="other">Other</option>
+              <option value="loans">Finance / Loans</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="f-name" placeholder="e.g. Plasma Rifle">
+          </div>
+          <div class="field">
+            <label>Icon <span style="color:var(--ink-4);font-weight:400">(emoji)</span></label>
+            <input type="text" id="f-icon" placeholder="🔫" maxlength="8">
+          </div>
+          <div class="field">
+            <label>Unit label</label>
+            <input type="text" id="f-unit" placeholder="un / L / 100 bullets …">
+          </div>
+          <div class="field">
+            <label>Note</label>
+            <input type="text" id="f-note" placeholder="Short description shown in markets">
+          </div>
+        </div>
+      </div>
+
+      <!-- Standard Price -->
+      <div class="form-section" id="price-standard">
+        <div class="form-section-title">Market Price</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Price <span style="color:var(--ink-4);font-weight:400">($ per unit)</span></label>
+            <input type="number" id="f-price" placeholder="e.g. 1200" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <!-- Missile Prices -->
+      <div class="form-section" id="price-missile" style="display:none;">
+        <div class="form-section-title">Missile Prices — by explosion size</div>
+        <div class="form-grid-5">
+          <div class="field"><label>Small</label><input type="number" id="f-exp-small" placeholder="0" min="0"></div>
+          <div class="field"><label>Medium</label><input type="number" id="f-exp-medium" placeholder="0" min="0"></div>
+          <div class="field"><label>Big</label><input type="number" id="f-exp-big" placeholder="0" min="0"></div>
+          <div class="field"><label>Huge</label><input type="number" id="f-exp-huge" placeholder="0" min="0"></div>
+          <div class="field"><label>Gigantic</label><input type="number" id="f-exp-gigantic" placeholder="0" min="0"></div>
+        </div>
+        <p class="field-hint" style="margin-top:8px;">Medium = base price. Ratios: Small ~60%, Big ~150%, Huge ~230%, Gigantic ~380%.</p>
+      </div>
+
+      <!-- Production -->
+      <div class="form-section">
+        <div class="form-section-title">Production (construct.html)</div>
+        <div class="form-grid-3">
+          <div class="field">
+            <label>Manpower <span style="color:var(--ink-4);font-weight:400">(MP per unit)</span></label>
+            <input type="number" id="f-mp" placeholder="e.g. 25" min="0">
+          </div>
+          <div class="field" id="fuel-turn-field">
+            <label>Fuel per Turn <span style="color:var(--ink-4);font-weight:400">(L)</span></label>
+            <input type="number" id="f-fuel-turn" placeholder="e.g. 35" min="0">
+          </div>
+          <div class="field">
+            <label>Production category</label>
+            <input type="text" id="f-prod-cat" placeholder="e.g. Air Vehicles">
+            <span class="field-hint">Category tab name in construct.html.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ammo Pack -->
+      <div class="form-section" id="ammo-pack-section" style="display:none;">
+        <div class="form-section-title">Ammo Pack Settings</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Units per pack</label>
+            <input type="number" id="f-per-pack" placeholder="e.g. 100" min="1">
+          </div>
+          <div class="field">
+            <label>Pack label <span style="color:var(--ink-4);font-weight:400">(singular)</span></label>
+            <input type="text" id="f-pack-label" placeholder="bullet / round / missile">
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe -->
+      <div class="form-section">
+        <div class="form-section-title">Resource Inputs — craft recipe</div>
+        <p class="field-hint" style="margin-bottom:10px;">
+          Raw/refined materials to produce 1 unit. Use exact keys:<br>
+          <code>iron</code> <code>coal</code> <code>refined_iron</code> <code>electronics</code> <code>chips</code> <code>gunpowder</code> <code>tires</code> <code>fuel</code> <code>silicon</code> <code>latex</code> <code>gold</code> <code>diamond</code>
+        </p>
+        <div class="recipe-builder" id="inputs-builder"></div>
+        <button class="btn btn-secondary btn-sm" onclick="addInputRow()" style="margin-top:10px;">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4v12M4 10h12"/></svg>
+          Add resource
+        </button>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveItem()">Save item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM DELETE ── -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <div class="confirm-title">Delete item?</div>
+    <div class="confirm-name" id="confirm-item-name"></div>
+    <div class="confirm-desc">This will remove the item from the registry. All systems that read from the registry will stop showing it. This action cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" onclick="executeDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STORAGE KEY
+// ═══════════════════════════════════════════════════
+const STORAGE_KEY = 'tc_items_v1';
+
+// ═══════════════════════════════════════════════════
+// CATEGORIES
+// ═══════════════════════════════════════════════════
+const CATEGORIES = [
+  {id:'all',label:'All'},
+  {id:'brute',label:'Resources'},
+  {id:'refined',label:'Refined'},
+  {id:'weapons',label:'Weapons'},
+  {id:'ammo',label:'Ammo'},
+  {id:'air',label:'Air'},
+  {id:'land',label:'Land'},
+  {id:'water',label:'Water'},
+  {id:'missiles',label:'Missiles'},
+  {id:'other',label:'Other'},
+  {id:'loans',label:'Finance'},
+];
+const CAT_LABEL = {
+  brute:'Resource',refined:'Refined',weapons:'Weapon',ammo:'Ammo',
+  air:'Air',land:'Land',water:'Water',missiles:'Missile',other:'Other',loans:'Finance'
+};
+
+// ═══════════════════════════════════════════════════
+// DEFAULT ITEMS
+// ═══════════════════════════════════════════════════
+const DEFAULT_ITEMS = [
+  {id:1,cat:'brute',name:'Iron',icon:'⛏️',price:2,unit:'un',note:'Backbone of all production',inputs:{},manpower:0},
+  {id:2,cat:'brute',name:'Coal',icon:'🪨',price:1,unit:'un',note:'Most abundant fuel/refining resource',inputs:{},manpower:0},
+  {id:3,cat:'brute',name:'Gravel',icon:'🪨',price:0.5,unit:'un',note:'Cheap filler / gunpowder component',inputs:{},manpower:0},
+  {id:4,cat:'brute',name:'Latex',icon:'🌿',price:4,unit:'un',note:'Rare in many biomes — tires & vests',inputs:{},manpower:0},
+  {id:5,cat:'brute',name:'Silicon',icon:'💎',price:8,unit:'un',note:'Electronics precursor — moderate rarity',inputs:{},manpower:0},
+  {id:6,cat:'brute',name:'Gold',icon:'✨',price:45,unit:'un',note:'Rare — electronics & chips required',inputs:{},manpower:0},
+  {id:7,cat:'brute',name:'Diamond',icon:'💎',price:180,unit:'un',note:'Very rare — chips precursor',inputs:{},manpower:0},
+  {id:8,cat:'brute',name:'Oil',icon:'🛢️',price:3,unit:'L',note:'Fuel production — liquid resource',inputs:{},manpower:0},
+  {id:9,cat:'brute',name:'Gas',icon:'💨',price:2,unit:'L',note:'Less efficient than oil, more abundant',inputs:{},manpower:0},
+  {id:10,cat:'brute',name:'Uranium',icon:'☢️',price:800,unit:'un',note:'Extremely rare — nuclear path only',inputs:{},manpower:0},
+  {id:11,cat:'refined',name:'Refined Iron',icon:'⚙️',price:22,unit:'un',note:'5 Iron + 3 Coal → 5 units',inputs:{iron:5,coal:3},manpower:0,prodCat:'Refined Resources'},
+  {id:12,cat:'refined',name:'Gunpowder',icon:'💥',price:1.8,unit:'un',note:'10 Coal + 5 Gravel → 10 units',inputs:{coal:10,gravel:5},manpower:0,prodCat:'Refined Resources'},
+  {id:13,cat:'refined',name:'Tires',icon:'🔘',price:60,unit:'un',note:'10 Latex → 1 Tire',inputs:{latex:10},manpower:0,prodCat:'Refined Resources'},
+  {id:14,cat:'refined',name:'Fuel',icon:'⛽',price:3,unit:'L',note:'50L Oil → 100L Fuel',inputs:{oil:50},manpower:0,prodCat:'Refined Resources'},
+  {id:15,cat:'refined',name:'Electronics',icon:'🔌',price:250,unit:'un',note:'1 Gold + 2 Silicon + 5 Refined Iron',inputs:{gold:1,silicon:2,refined_iron:5},manpower:0,prodCat:'Refined Resources'},
+  {id:16,cat:'refined',name:'Chips',icon:'🖥️',price:700,unit:'un',note:'3 Diamond + 10 Silicon → 1 Chip',inputs:{diamond:3,silicon:10},manpower:0,prodCat:'Refined Resources'},
+  {id:17,cat:'refined',name:'Refined Uranium',icon:'☢️',price:55000,unit:'un',note:'10 Uranium + 1000L Fuel + 500 Coal + 120 Diamond + 200 Gold',inputs:{uranium:10,fuel:1000,coal:500,diamond:120,gold:200},manpower:0,prodCat:'Refined Resources'},
+  {id:18,cat:'weapons',name:'Knife',icon:'🔪',price:80,unit:'un',note:'Basic melee',inputs:{refined_iron:1},manpower:1,prodCat:'Man-Handed Weapons'},
+  {id:19,cat:'weapons',name:'Pistol',icon:'🔫',price:280,unit:'un',note:'Standard sidearm',inputs:{refined_iron:3},manpower:3,prodCat:'Man-Handed Weapons'},
+  {id:20,cat:'weapons',name:'SMG',icon:'🔫',price:900,unit:'un',note:'Close-quarter automatic',inputs:{refined_iron:8,electronics:1},manpower:8,prodCat:'Man-Handed Weapons'},
+  {id:21,cat:'weapons',name:'Rifle',icon:'🔫',price:1200,unit:'un',note:'Standard infantry weapon',inputs:{refined_iron:12,electronics:1},manpower:10,prodCat:'Man-Handed Weapons'},
+  {id:22,cat:'weapons',name:'Sniper Rifle',icon:'🎯',price:2000,unit:'un',note:'Long-range precision',inputs:{refined_iron:20,electronics:2,chips:1},manpower:15,prodCat:'Man-Handed Weapons'},
+  {id:23,cat:'weapons',name:'Heavy Weapon',icon:'💣',price:3000,unit:'un',note:'Crew-served / support',inputs:{refined_iron:30,electronics:3,chips:1},manpower:20,prodCat:'Man-Handed Weapons'},
+  {id:24,cat:'weapons',name:'Hand Anti-Tank Missile',icon:'🚀',price:7500,unit:'un',note:'Launcher unit',inputs:{refined_iron:60,electronics:6,chips:2},manpower:30,prodCat:'Man-Handed Weapons'},
+  {id:25,cat:'weapons',name:'Light Military Vest',icon:'🦺',price:500,unit:'un',note:'Basic ballistic protection',inputs:{refined_iron:5,latex:8},manpower:5,prodCat:'Man-Handed Weapons'},
+  {id:26,cat:'weapons',name:'Heavy Military Vest',icon:'🦺',price:1000,unit:'un',note:'Full ballistic protection',inputs:{refined_iron:10,latex:16},manpower:8,prodCat:'Man-Handed Weapons'},
+  {id:27,cat:'weapons',name:'Old Mortar (Ground-Mounted)',icon:'💥',price:28000,unit:'un',note:'Ground-based artillery piece',inputs:{refined_iron:200,electronics:10},manpower:45,prodCat:'Man-Handed Weapons'},
+  {id:28,cat:'weapons',name:'Resources / Supplies',icon:'📦',price:1.5,unit:'pack',note:'Food, medicine, general supplies',inputs:{},manpower:0},
+  {id:29,cat:'ammo',name:'SMG Ammo',icon:'🔵',price:150,unit:'100 bullets',note:'',inputs:{refined_iron:4,gunpowder:6},manpower:2,perPack:100,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:30,cat:'ammo',name:'Rifle Ammo',icon:'🟡',price:160,unit:'50 bullets',note:'',inputs:{refined_iron:4,gunpowder:6},manpower:2,perPack:50,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:31,cat:'ammo',name:'Heavy Ammo',icon:'🟠',price:360,unit:'50 bullets',note:'',inputs:{refined_iron:10,gunpowder:12},manpower:4,perPack:50,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:32,cat:'ammo',name:'.50 Caliber Ammo',icon:'🔴',price:350,unit:'100 bullets',note:'',inputs:{refined_iron:10,gunpowder:10},manpower:3,perPack:100,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:33,cat:'ammo',name:'22mm Autocannon Ammo',icon:'🔴',price:650,unit:'25 bullets',note:'',inputs:{refined_iron:20,gunpowder:15},manpower:5,perPack:25,packLabel:'shell',prodCat:'Ammunition'},
+  {id:34,cat:'ammo',name:'Sniper Ammo',icon:'🎯',price:320,unit:'50 bullets',note:'',inputs:{refined_iron:8,gunpowder:10},manpower:3,perPack:50,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:35,cat:'ammo',name:'Anti-Tank Missile Ammo',icon:'🚀',price:2500,unit:'1 missile',note:'',inputs:{refined_iron:25,electronics:2,chips:1,gunpowder:12},manpower:8,perPack:1,packLabel:'missile',prodCat:'Ammunition'},
+  {id:37,cat:'ammo',name:'Pistol Ammo',icon:'🔵',price:140,unit:'100 bullets',note:'',inputs:{refined_iron:4,gunpowder:3},manpower:1,perPack:100,packLabel:'bullet',prodCat:'Ammunition'},
+  {id:38,cat:'ammo',name:'Mortar Ammo',icon:'💣',price:1500,unit:'4 rounds',note:'Ground-based explosive rounds',inputs:{refined_iron:15,gunpowder:20},manpower:6,perPack:4,packLabel:'round',prodCat:'Ammunition'},
+  {id:43,cat:'air',name:'Helicopter',icon:'🚁',price:45000,unit:'un',note:'Light / transport — 25 L/turn fuel consumption',inputs:{refined_iron:400,electronics:20,chips:8,tires:4},manpower:80,fuelPerTurn:25,prodCat:'Air Vehicles'},
+  {id:44,cat:'air',name:'Light Fighter Jet',icon:'✈️',price:55000,unit:'un',note:'35 L/turn fuel consumption',inputs:{refined_iron:600,electronics:30,chips:12},manpower:100,fuelPerTurn:35,prodCat:'Air Vehicles'},
+  {id:45,cat:'air',name:'Medium Fighter Jet',icon:'✈️',price:120000,unit:'un',note:'50 L/turn fuel consumption',inputs:{refined_iron:900,electronics:50,chips:20},manpower:160,fuelPerTurn:50,prodCat:'Air Vehicles'},
+  {id:46,cat:'air',name:'Airplane (transport/military)',icon:'🛫',price:180000,unit:'un',note:'60 L/turn fuel consumption',inputs:{refined_iron:1100,electronics:60,chips:25},manpower:200,fuelPerTurn:60,prodCat:'Air Vehicles'},
+  {id:47,cat:'air',name:'Heavy Fighter Jet',icon:'✈️',price:175000,unit:'un',note:'70 L/turn fuel consumption',inputs:{refined_iron:1200,electronics:70,chips:30},manpower:220,fuelPerTurn:70,prodCat:'Air Vehicles'},
+  {id:48,cat:'air',name:'Bomber Jet',icon:'💥',price:220000,unit:'un',note:'90 L/turn fuel consumption',inputs:{refined_iron:1500,electronics:80,chips:40},manpower:280,fuelPerTurn:90,prodCat:'Air Vehicles'},
+  {id:80,cat:'air',name:'Warfare Helicopter',icon:'🚁',price:135000,unit:'un',note:'Heavy attack — 40 L/turn fuel consumption',inputs:{refined_iron:600,electronics:35,chips:14,tires:6},manpower:120,fuelPerTurn:40,prodCat:'Air Vehicles'},
+  {id:49,cat:'land',name:'Motorbike',icon:'🏍️',price:3500,unit:'un',note:'2 L/turn fuel consumption',inputs:{refined_iron:35,electronics:2,chips:1,tires:2},manpower:10,fuelPerTurn:2,prodCat:'Land Vehicles'},
+  {id:50,cat:'land',name:'Car',icon:'🚗',price:7000,unit:'un',note:'4 L/turn fuel consumption',inputs:{refined_iron:80,electronics:4,chips:2,tires:4},manpower:16,fuelPerTurn:4,prodCat:'Land Vehicles'},
+  {id:51,cat:'land',name:'Truck (military/transport)',icon:'🚛',price:18000,unit:'un',note:'10 L/turn fuel consumption',inputs:{refined_iron:220,electronics:10,chips:4,tires:6},manpower:40,fuelPerTurn:10,prodCat:'Land Vehicles'},
+  {id:52,cat:'land',name:'Light Tank',icon:'🪖',price:50000,unit:'un',note:'20 L/turn fuel consumption',inputs:{refined_iron:680,electronics:40,chips:16},manpower:120,fuelPerTurn:20,prodCat:'Land Vehicles'},
+  {id:53,cat:'land',name:'Medium Tank',icon:'🪖',price:80000,unit:'un',note:'30 L/turn fuel consumption',inputs:{refined_iron:900,electronics:55,chips:24},manpower:180,fuelPerTurn:30,prodCat:'Land Vehicles'},
+  {id:54,cat:'land',name:'Heavy Tank',icon:'🪖',price:125000,unit:'un',note:'45 L/turn fuel consumption',inputs:{refined_iron:1450,electronics:75,chips:30,tires:12},manpower:260,fuelPerTurn:45,prodCat:'Land Vehicles'},
+  {id:55,cat:'water',name:'Boat',icon:'⛵',price:2500,unit:'un',note:'5 L/turn fuel consumption',inputs:{refined_iron:70},manpower:12,fuelPerTurn:5,prodCat:'Water Vehicles'},
+  {id:56,cat:'water',name:'Ship (commercial/military)',icon:'🚢',price:90000,unit:'un',note:'25 L/turn fuel consumption',inputs:{refined_iron:1200,electronics:60,chips:20},manpower:180,fuelPerTurn:25,prodCat:'Water Vehicles'},
+  {id:57,cat:'water',name:'Submarine',icon:'🤿',price:200000,unit:'un',note:'60 L/turn fuel consumption',inputs:{refined_iron:2600,electronics:100,chips:55},manpower:420,fuelPerTurn:60,prodCat:'Water Vehicles'},
+  {id:58,cat:'water',name:'Warship',icon:'⚓',price:230000,unit:'un',note:'80 L/turn fuel consumption',inputs:{refined_iron:3200,electronics:110,chips:60},manpower:500,fuelPerTurn:80,prodCat:'Water Vehicles'},
+  {id:59,cat:'water',name:'Carrier',icon:'🛳️',price:580000,unit:'un',note:'150 L/turn fuel consumption',inputs:{refined_iron:7000,electronics:280,chips:180},manpower:1000,fuelPerTurn:150,prodCat:'Water Vehicles'},
+  {id:60,cat:'water',name:'Supercarrier',icon:'🛳️',price:1000000,unit:'un',note:'220 L/turn fuel consumption',inputs:{refined_iron:12000,electronics:500,chips:320},manpower:1800,fuelPerTurn:220,prodCat:'Water Vehicles'},
+  {id:61,cat:'missiles',name:'Unguided Missile (Drop)',icon:'💣',isMissile:true,basePrice:3500,explosionPrices:{small:2100,medium:3500,big:5250,huge:8050,gigantic:13300},unit:'un',note:'Ballistic payload',inputs:{refined_iron:150,gunpowder:100,silicon:20},manpower:6,prodCat:'Missiles & Torpedoes'},
+  {id:62,cat:'missiles',name:'Unguided Missile (Rocket)',icon:'🚀',isMissile:true,basePrice:6500,explosionPrices:{small:3900,medium:6500,big:9750,huge:14950,gigantic:24700},unit:'un',note:'Self-propelled',inputs:{refined_iron:200,fuel:50,gunpowder:150,silicon:30},manpower:12,prodCat:'Missiles & Torpedoes'},
+  {id:63,cat:'missiles',name:'Submarine Torpedo',icon:'💦',isMissile:true,basePrice:7000,explosionPrices:{small:4200,medium:7000,big:10500,huge:16100,gigantic:26600},unit:'un',note:'Underwater',inputs:{refined_iron:300,fuel:80,gunpowder:180,silicon:40},manpower:15,prodCat:'Missiles & Torpedoes'},
+  {id:64,cat:'missiles',name:'Cruise Missile',icon:'🏹',isMissile:true,basePrice:25000,explosionPrices:{small:15000,medium:25000,big:37500,huge:57500,gigantic:95000},unit:'un',note:'Long-range',inputs:{refined_iron:400,fuel:150,gunpowder:200,silicon:50},manpower:35,prodCat:'Missiles & Torpedoes'},
+  {id:65,cat:'missiles',name:'Guided Missile',icon:'🎯',isMissile:true,basePrice:27000,explosionPrices:{small:16200,medium:27000,big:40500,huge:62100,gigantic:102600},unit:'un',note:'Precision',inputs:{refined_iron:500,electronics:40,chips:15,fuel:150,gunpowder:250,silicon:60},manpower:25,prodCat:'Missiles & Torpedoes'},
+  {id:66,cat:'missiles',name:'Anti-Missile Rocket',icon:'⚡',isMissile:true,basePrice:18000,explosionPrices:{small:10800,medium:18000,big:27000,huge:41400,gigantic:68400},unit:'un',note:'Air defense',inputs:{refined_iron:350,electronics:20,chips:8,fuel:100,gunpowder:220,silicon:45},manpower:30,prodCat:'Missiles & Torpedoes'},
+  {id:67,cat:'missiles',name:'Hypersonic Missile',icon:'⚡',isMissile:true,basePrice:62000,explosionPrices:{small:37200,medium:62000,big:93000,huge:142600,gigantic:235600},unit:'un',note:'Ultra-fast',inputs:{refined_iron:600,electronics:50,chips:20,fuel:200,gunpowder:300,silicon:70},manpower:60,prodCat:'Missiles & Torpedoes'},
+  {id:68,cat:'missiles',name:'Ballistic Missile (ICBM)',icon:'☄️',isMissile:true,basePrice:130000,explosionPrices:{small:78000,medium:130000,big:195000,huge:299000,gigantic:494000},unit:'un',note:'Intercontinental',inputs:{refined_iron:800,electronics:60,chips:25,fuel:300,gunpowder:400,silicon:90},manpower:120,prodCat:'Missiles & Torpedoes'},
+  {id:69,cat:'missiles',name:'Nuclear Missile',icon:'☢️',isMissile:true,basePrice:380000,explosionPrices:{small:228000,medium:380000,big:570000,huge:874000,gigantic:1444000},unit:'un',note:'WMD',inputs:{refined_iron:1000,fuel:400,gunpowder:500,silicon:100},manpower:150,prodCat:'Missiles & Torpedoes'},
+  {id:39,cat:'other',name:'Other Stuff (Small)',icon:'📦',price:100,unit:'un',note:'Miscellaneous supplies & equipment',inputs:{refined_iron:2},manpower:1,prodCat:'Other Stuff'},
+  {id:40,cat:'other',name:'Other Stuff (Medium)',icon:'📦',price:300,unit:'un',note:'Miscellaneous supplies & equipment',inputs:{refined_iron:5,electronics:1},manpower:2,prodCat:'Other Stuff'},
+  {id:41,cat:'other',name:'Other Stuff (Big)',icon:'📦',price:550,unit:'un',note:'Miscellaneous supplies & equipment',inputs:{refined_iron:10,electronics:2},manpower:3,prodCat:'Other Stuff'},
+  {id:42,cat:'other',name:'Other Stuff (Huge)',icon:'📦',price:850,unit:'un',note:'Miscellaneous supplies & equipment',inputs:{refined_iron:15,electronics:3,chips:1},manpower:4,prodCat:'Other Stuff'},
+  {id:70,cat:'other',name:'Grenade',icon:'💣',price:40,unit:'un',note:'Standard fragmentation',inputs:{refined_iron:1,gunpowder:2},manpower:1,prodCat:'Others'},
+  {id:71,cat:'other',name:'Specialized Grenade',icon:'💣',price:75,unit:'un',note:'Smoke / incendiary / EMP types',inputs:{refined_iron:2,gunpowder:2},manpower:1,prodCat:'Others'},
+  {id:72,cat:'other',name:'Land Bomb (Anti-Tank)',icon:'💥',price:300,unit:'un',note:'Buried / pressure-triggered',inputs:{refined_iron:8,gunpowder:8},manpower:3,prodCat:'Others'},
+  {id:73,cat:'other',name:'Drone',icon:'🛸',price:7500,unit:'un',note:'Recon / light attack',inputs:{refined_iron:20,electronics:5,chips:4,fuel:15},manpower:12,prodCat:'Others'},
+  {id:74,cat:'other',name:'Barricade',icon:'🚧',price:350,unit:'un',note:'Basic defensive position',inputs:{refined_iron:10},manpower:5,prodCat:'Others'},
+  {id:75,cat:'other',name:'Barrier',icon:'🚧',price:850,unit:'un',note:'Heavy fortified barrier',inputs:{refined_iron:25},manpower:10,prodCat:'Others'},
+  {id:81,cat:'other',name:'C4 Explosive',icon:'💥',price:750,unit:'un',note:'Plastic explosive with electronic detonator',inputs:{refined_iron:5,gunpowder:12,electronics:1},manpower:4,prodCat:'Others'},
+  {id:76,cat:'loans',name:'Short Loan (< 5 cycles)',icon:'💵',price:0,unit:'',note:'+15% interest — quick liquidity, low risk',inputs:{},manpower:0},
+  {id:77,cat:'loans',name:'Medium Loan (5–15 cycles)',icon:'💵',price:0,unit:'',note:'+25% interest — standard mid-game financing',inputs:{},manpower:0},
+  {id:78,cat:'loans',name:'Long Loan (15+ cycles)',icon:'💵',price:0,unit:'',note:'+40% interest — high return, high default risk',inputs:{},manpower:0},
+  {id:79,cat:'loans',name:'Workers Loan',icon:'👷',price:500,unit:'worker/cycle',note:'Temporary workforce transfer',inputs:{},manpower:0},
+];
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let items = [];
+let activeCat = 'all';
+let searchQuery = '';
+let editingId = null;
+let pendingDeleteId = null;
+
+// ═══════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════
+function loadItems(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ const p=JSON.parse(raw); if(Array.isArray(p)&&p.length>0){items=p;return;} }
+  }catch(e){}
+  items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  saveItems();
+}
+function saveItems(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function renderCatPills(){
+  document.getElementById('cat-pills').innerHTML = CATEGORIES.map(c=>
+    `<button class="cat-pill${activeCat===c.id?' active':''}" onclick="setCategory('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+function setCategory(id){ activeCat=id; renderCatPills(); applyFilters(); }
+
+function applyFilters(){
+  searchQuery = document.getElementById('search-input').value.toLowerCase();
+  renderTable();
+}
+
+function renderStats(){
+  const total = items.length;
+  const byCat = {};
+  items.forEach(i=>{ byCat[i.cat]=(byCat[i.cat]||0)+1; });
+  const weapons   = (byCat.weapons||0)+(byCat.ammo||0);
+  const vehicles  = (byCat.air||0)+(byCat.land||0)+(byCat.water||0);
+  const missiles  = byCat.missiles||0;
+  const nextId    = items.length>0 ? Math.max(...items.map(i=>i.id))+1 : 1;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-n">${total}</div><div class="stat-l">Total items</div></div>
+    <div class="stat-card"><div class="stat-n">${byCat.brute||0}</div><div class="stat-l">Resources</div></div>
+    <div class="stat-card"><div class="stat-n">${weapons}</div><div class="stat-l">Weapons & ammo</div></div>
+    <div class="stat-card"><div class="stat-n">${vehicles}</div><div class="stat-l">Vehicles</div></div>
+    <div class="stat-card"><div class="stat-n">${missiles}</div><div class="stat-l">Missiles</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:var(--blue)">${nextId}</div><div class="stat-l">Next free ID</div></div>
+  `;
+}
+
+function renderTable(){
+  const visible = items.filter(i=>{
+    if(activeCat!=='all' && i.cat!==activeCat) return false;
+    if(searchQuery && !i.name.toLowerCase().includes(searchQuery)) return false;
+    return true;
+  });
+  document.getElementById('item-count').textContent = `${visible.length} of ${items.length}`;
+  if(!visible.length){
+    document.getElementById('item-tbody').innerHTML =
+      `<tr><td colspan="10"><div class="empty">No items match this filter.</div></td></tr>`;
+    return;
+  }
+  document.getElementById('item-tbody').innerHTML = visible.map(item=>{
+    const inputStr = Object.entries(item.inputs||{}).map(([k,v])=>`${v}× ${k.replace(/_/g,' ')}`).join(', ') || '—';
+    const priceStr = item.isMissile
+      ? `<span class="badge badge-missile-tag">tiers</span>`
+      : `$${fmtN(item.price||item.basePrice||0)}`;
+    const mpStr    = item.manpower ? item.manpower+' MP' : '—';
+    const fuelStr  = item.fuelPerTurn ? item.fuelPerTurn+' L' : '—';
+    const missTag  = item.isMissile ? `<span class="badge badge-yes">Yes</span>` : `<span style="color:var(--ink-4)">—</span>`;
+    return `
+    <tr>
+      <td class="id-col">${item.id}</td>
+      <td><span class="badge badge-${item.cat}">${CAT_LABEL[item.cat]||item.cat}</span></td>
+      <td class="icon-cell">${item.icon||''}</td>
+      <td class="name-col">${item.name}</td>
+      <td class="price-col">${priceStr}</td>
+      <td class="mp-col">${mpStr}</td>
+      <td class="fuel-col">${fuelStr}</td>
+      <td class="inputs-col">${inputStr}</td>
+      <td>${missTag}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-secondary btn-xs" onclick="openEditModal(${item.id})">Edit</button>
+          <button class="btn btn-danger-ghost btn-xs" onclick="openDeleteConfirm(${item.id})">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function fmtN(n){
+  if(n===0) return '0';
+  if(n<1) return n.toFixed(2);
+  return Number(n).toLocaleString('en-US',{minimumFractionDigits:n%1!==0?2:0,maximumFractionDigits:2});
+}
+
+// ═══════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════
+function openCreateModal(){
+  editingId = null;
+  clearForm();
+  const nextId = items.length>0 ? Math.max(...items.map(i=>i.id))+1 : 100;
+  document.getElementById('f-id').value = nextId;
+  document.getElementById('modal-title').textContent = 'New Item';
+  document.getElementById('modal-sub').textContent = 'Fill in the fields below to create a new item in the registry.';
+  onCatChange();
+  document.getElementById('item-modal').classList.add('open');
+}
+function openEditModal(id){
+  const item = items.find(i=>i.id===id);
+  if(!item) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit Item';
+  document.getElementById('modal-sub').textContent = `Editing: ${item.icon||''} ${item.name} (ID: ${item.id})`;
+  document.getElementById('f-id').value = item.id;
+  document.getElementById('f-cat').value = item.cat;
+  document.getElementById('f-name').value = item.name;
+  document.getElementById('f-icon').value = item.icon||'';
+  document.getElementById('f-unit').value = item.unit||'';
+  document.getElementById('f-note').value = item.note||'';
+  document.getElementById('f-mp').value = item.manpower||'';
+  document.getElementById('f-fuel-turn').value = item.fuelPerTurn||'';
+  document.getElementById('f-prod-cat').value = item.prodCat||'';
+  document.getElementById('f-per-pack').value = item.perPack||'';
+  document.getElementById('f-pack-label').value = item.packLabel||'';
+  if(item.isMissile){
+    document.getElementById('f-exp-small').value    = item.explosionPrices?.small||'';
+    document.getElementById('f-exp-medium').value   = item.explosionPrices?.medium||'';
+    document.getElementById('f-exp-big').value      = item.explosionPrices?.big||'';
+    document.getElementById('f-exp-huge').value     = item.explosionPrices?.huge||'';
+    document.getElementById('f-exp-gigantic').value = item.explosionPrices?.gigantic||'';
+  } else {
+    document.getElementById('f-price').value = item.price!==undefined?item.price:item.basePrice||'';
+  }
+  clearInputRows();
+  Object.entries(item.inputs||{}).forEach(([mat,qty])=>addInputRow(mat,qty));
+  onCatChange();
+  document.getElementById('item-modal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('item-modal').classList.remove('open');
+  editingId = null;
+}
+function clearForm(){
+  ['f-id','f-name','f-icon','f-unit','f-note','f-mp','f-fuel-turn','f-prod-cat',
+   'f-price','f-exp-small','f-exp-medium','f-exp-big','f-exp-huge','f-exp-gigantic',
+   'f-per-pack','f-pack-label'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('f-cat').value='weapons';
+  clearInputRows();
+}
+function clearInputRows(){ document.getElementById('inputs-builder').innerHTML=''; }
+function onCatChange(){
+  const cat = document.getElementById('f-cat').value;
+  const isMissile = cat==='missiles';
+  document.getElementById('price-standard').style.display  = isMissile?'none':'';
+  document.getElementById('price-missile').style.display   = isMissile?'':'none';
+  document.getElementById('ammo-pack-section').style.display = cat==='ammo'?'':'none';
+  document.getElementById('fuel-turn-field').style.display   = ['air','land','water'].includes(cat)?'':'none';
+}
+
+// ═══════════════════════════════════════════════════
+// INPUT ROWS
+// ═══════════════════════════════════════════════════
+function addInputRow(mat='',qty=''){
+  const builder = document.getElementById('inputs-builder');
+  const row = document.createElement('div');
+  row.className = 'recipe-row';
+  row.innerHTML = `
+    <input type="text" placeholder="resource key  (e.g. refined_iron)" value="${mat}" style="font-size:12px;font-family:'DM Mono',monospace;">
+    <input type="number" class="qty" placeholder="qty" value="${qty}" min="0" step="0.01" style="font-family:'DM Mono',monospace;font-size:12px;">
+    <button class="remove-btn" onclick="this.parentElement.remove()">×</button>
+  `;
+  builder.appendChild(row);
+}
+function getInputsFromForm(){
+  const inputs={};
+  document.getElementById('inputs-builder').querySelectorAll('.recipe-row').forEach(row=>{
+    const [matI,qtyI]=row.querySelectorAll('input');
+    const mat=matI.value.trim(); const qty=parseFloat(qtyI.value)||0;
+    if(mat&&qty>0) inputs[mat]=qty;
+  });
+  return inputs;
+}
+
+// ═══════════════════════════════════════════════════
+// SAVE ITEM
+// ═══════════════════════════════════════════════════
+function saveItem(){
+  const id    = parseInt(document.getElementById('f-id').value);
+  const cat   = document.getElementById('f-cat').value;
+  const name  = document.getElementById('f-name').value.trim();
+  const icon  = document.getElementById('f-icon').value.trim();
+  const unit  = document.getElementById('f-unit').value.trim();
+  const note  = document.getElementById('f-note').value.trim();
+  const mp    = parseFloat(document.getElementById('f-mp').value)||0;
+  const fuelT = parseFloat(document.getElementById('f-fuel-turn').value)||0;
+  const pcat  = document.getElementById('f-prod-cat').value.trim();
+  const perPk = parseInt(document.getElementById('f-per-pack').value)||undefined;
+  const pkLbl = document.getElementById('f-pack-label').value.trim()||undefined;
+  const inputs= getInputsFromForm();
+  if(!id||isNaN(id)){toast('ID is required and must be a number.','err');return;}
+  if(!name){toast('Name is required.','err');return;}
+  if(editingId===null && items.some(i=>i.id===id)){toast(`ID ${id} already exists.`,'err');return;}
+  const isMissile = cat==='missiles';
+  let itemData;
+  if(isMissile){
+    const small=parseFloat(document.getElementById('f-exp-small').value)||0;
+    const medium=parseFloat(document.getElementById('f-exp-medium').value)||0;
+    const big=parseFloat(document.getElementById('f-exp-big').value)||0;
+    const huge=parseFloat(document.getElementById('f-exp-huge').value)||0;
+    const gigantic=parseFloat(document.getElementById('f-exp-gigantic').value)||0;
+    itemData={id,cat,name,icon,unit,note,isMissile:true,basePrice:medium,
+      explosionPrices:{small,medium,big,huge,gigantic},inputs,manpower:mp,
+      ...(pcat?{prodCat:pcat}:{})};
+  } else {
+    const price=parseFloat(document.getElementById('f-price').value)||0;
+    itemData={id,cat,name,icon,price,unit,note,inputs,manpower:mp,
+      ...(fuelT?{fuelPerTurn:fuelT}:{}),
+      ...(pcat?{prodCat:pcat}:{}),
+      ...(perPk?{perPack:perPk}:{}),
+      ...(pkLbl?{packLabel:pkLbl}:{})};
+  }
+  if(editingId!==null){
+    const idx=items.findIndex(i=>i.id===editingId);
+    if(idx>=0) items[idx]=itemData;
+    toast(`"${name}" updated.`,'ok');
+  } else {
+    items.push(itemData);
+    toast(`"${name}" created.`,'ok');
+  }
+  saveItems(); closeModal(); renderTable(); renderStats();
+}
+
+// ═══════════════════════════════════════════════════
+// DELETE
+// ═══════════════════════════════════════════════════
+function openDeleteConfirm(id){
+  const item=items.find(i=>i.id===id); if(!item) return;
+  pendingDeleteId=id;
+  document.getElementById('confirm-item-name').textContent=`${item.icon||''} ${item.name}`;
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm(){
+  document.getElementById('confirm-overlay').classList.remove('open');
+  pendingDeleteId=null;
+}
+function executeDelete(){
+  if(pendingDeleteId===null) return;
+  const item=items.find(i=>i.id===pendingDeleteId);
+  items=items.filter(i=>i.id!==pendingDeleteId);
+  saveItems(); closeConfirm(); renderTable(); renderStats();
+  toast(`"${item?.name}" deleted.`,'err');
+}
+
+// ═══════════════════════════════════════════════════
+// RESET
+// ═══════════════════════════════════════════════════
+function confirmResetToDefaults(){
+  if(!confirm('Reset ALL items to built-in defaults?\n\nThis overwrites any custom items you have added.')) return;
+  items=JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+  saveItems(); renderTable(); renderStats();
+  toast('Items reset to defaults.','info');
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='items.json'; a.click();
+  toast('items.json exported.','info');
+}
+function importJSON(){
+  const input=document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+  input.onchange=e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const p=JSON.parse(ev.target.result);
+        if(!Array.isArray(p)){toast('Invalid JSON: expected an array.','err');return;}
+        items=p; saveItems(); renderTable(); renderStats();
+        toast(`Imported ${items.length} items.`,'ok');
+      }catch(e){toast('Parse error: '+e.message,'err');}
+    };
+    r.readAsText(file);
+  };
+  input.click();
+}
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+function toast(msg,type='info'){
+  const wrap=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className=`toast-item ${type}`; el.textContent=msg;
+  wrap.appendChild(el); setTimeout(()=>el.remove(),3000);
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+function init(){
+  loadItems(); renderCatPills(); renderStats(); renderTable();
+  window.addEventListener('storage',e=>{
+    if(e.key===STORAGE_KEY){ loadItems(); renderStats(); renderTable(); }
+  });
+}
+init();
+</script>
+</body>
+</html>
