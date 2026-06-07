@@ -929,7 +929,7 @@
     ],
     "action_plan": {
       "main_objective": "Protect USA integrity",
-      "action_plan_text": "",
+      "action_plan_text": "Take on gulf strait and secure from terrorists (probably give it to other country)\nKeep expanding the army to be the strongest army on the world\n",
       "sub_objectives": [
         {
           "id": "mpe4leubv9kkayls87n",
@@ -944,12 +944,12 @@
         {
           "id": "mpe4mbpw7dr46nizbr",
           "text": "Send troops to East",
-          "done": false
+          "done": true
         },
         {
           "id": "mpe4min0cjzj3uan80d",
           "text": "Build East output",
-          "done": false
+          "done": true
         },
         {
           "id": "mpe4muic2mypkma0l7j",
@@ -1435,7 +1435,7 @@
     ],
     "action_plan": {
       "main_objective": "Defend Russia Supremacy",
-      "action_plan_text": "",
+      "action_plan_text": "Prepare the Soviet March, the launching day is to be done in 21 march\nIncrease the army for 100 and buy a tank",
       "sub_objectives": [
         {
           "id": "mpe527m6nap97604vx",
@@ -1681,7 +1681,7 @@
     "squads": [],
     "action_plan": {
       "main_objective": "Be the strongest country in the world",
-      "action_plan_text": "",
+      "action_plan_text": "Secure Brazil north to have a path with ocean access (declare war and found allies)\nInvite Iraq for direct attack, providing teamwork\nCreate good relations with criminal organizations and help them to look for a single objective, so they could help creating distraction and chaos",
       "sub_objectives": [
         {
           "id": "mpe56orikuv9xwykl28",
