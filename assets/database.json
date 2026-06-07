@@ -5437,7 +5437,7 @@
     "buildings": {
       "factories": 0,
       "businesses": 0,
-      "mines": 0,
+      "mines": 1,
       "hospitals": 0
     },
     "weapons": {
@@ -5520,7 +5520,7 @@
       "mine_swamp": 0,
       "mine_desert": 0,
       "mine_badlands": 0,
-      "mine_mountains": 0,
+      "mine_mountains": 1,
       "mine_ocean": 0,
       "mine_caves": 0,
       "mine_rare": 0,
@@ -5735,7 +5735,7 @@
       "mine_swamp": 0,
       "mine_desert": 0,
       "mine_badlands": 0,
-      "mine_mountains": 0,
+      "mine_mountains": 1,
       "mine_ocean": 0,
       "mine_caves": 0,
       "mine_rare": 0,
@@ -5940,7 +5940,7 @@
       "mine_taiga": 0,
       "mine_jungle": 0,
       "mine_swamp": 0,
-      "mine_desert": 0,
+      "mine_desert": 1,
       "mine_badlands": 0,
       "mine_mountains": 0,
       "mine_ocean": 0,
@@ -6089,7 +6089,7 @@
     },
     "mines": {
       "mine_plains": 0,
-      "mine_forest": 0,
+      "mine_forest": 1,
       "mine_taiga": 0,
       "mine_jungle": 0,
       "mine_swamp": 0,
