@@ -1301,5 +1301,37 @@
     "note": "Temporary workforce transfer",
     "inputs": {},
     "manpower": 0
+  },
+  {
+    "id": 82,
+    "cat": "weapons",
+    "name": "Guided Hand Anti-Tank Missile",
+    "icon": "🚀",
+    "price": 25000,
+    "unit": "un",
+    "note": "Guided Launcher unit",
+    "inputs": {
+      "refined_iron": 70,
+      "electronics": 20,
+      "chips": 10
+    },
+    "manpower": 85,
+    "prodCat": "Man-Handed Weapons"
+  },
+  {
+    "id": 83,
+    "cat": "other",
+    "name": "Radio",
+    "icon": "📻",
+    "price": 2500,
+    "unit": "un",
+    "note": "Radio for communication",
+    "inputs": {
+      "refined_iron": 8,
+      "electronics": 3,
+      "chips": 1
+    },
+    "manpower": 8,
+    "prodCat": "Other Stuff"
   }
 ]
