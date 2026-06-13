@@ -5,24 +5,24 @@
     "flag": "🏴",
     "createdAt": 1775928417678,
     "population": {
-      "civilians": 1000,
+      "civilians": 1010,
       "workers": 20,
       "military": 40,
       "manpower": 1000
     },
     "economy": {
-      "money": 4000
+      "money": 13700
     },
     "brute": {
-      "iron": 2035,
-      "coal": 907,
-      "gold": 551,
-      "diamond": 68,
-      "gravel": 884,
-      "latex": 700,
-      "silicon": 406,
-      "oil": 700,
-      "gas": 920,
+      "iron": 2415,
+      "coal": 1097,
+      "gold": 611,
+      "diamond": 76,
+      "gravel": 1024,
+      "latex": 800,
+      "silicon": 454,
+      "oil": 800,
+      "gas": 1080,
       "uranium": 0,
       "glass": 0
     },
@@ -970,25 +970,25 @@
     "flag": "🏴",
     "createdAt": 1775928420708,
     "population": {
-      "civilians": 1000,
+      "civilians": 1010,
       "workers": 60,
       "military": 23,
       "manpower": 1030
     },
     "economy": {
-      "money": 16170
+      "money": 25070
     },
     "brute": {
-      "iron": 400,
-      "coal": 350,
-      "gold": 576,
-      "diamond": 128,
-      "gravel": 960,
-      "latex": 1120,
-      "silicon": 416,
-      "oil": 896,
-      "gas": 1535,
-      "uranium": 0,
+      "iron": 1800,
+      "coal": 1110,
+      "gold": 788,
+      "diamond": 184,
+      "gravel": 1280,
+      "latex": 1260,
+      "silicon": 556,
+      "oil": 1080,
+      "gas": 1815,
+      "uranium": 5,
       "glass": 0
     },
     "refined": {
@@ -1076,7 +1076,7 @@
       "mine_swamp": 0,
       "mine_desert": 0,
       "mine_badlands": 0,
-      "mine_mountains": 2,
+      "mine_mountains": 1,
       "mine_ocean": 0,
       "mine_caves": 0,
       "mine_rare": 0,
@@ -1480,25 +1480,25 @@
     "flag": "🏴",
     "createdAt": 1776886139054,
     "population": {
-      "civilians": 930,
+      "civilians": 940,
       "workers": 60,
       "military": 30,
       "manpower": 1000
     },
     "economy": {
-      "money": 0
+      "money": 8200
     },
     "brute": {
-      "iron": 320,
-      "coal": 142,
-      "gold": 120,
-      "diamond": 40,
-      "gravel": 200,
+      "iron": 1220,
+      "coal": 632,
+      "gold": 260,
+      "diamond": 80,
+      "gravel": 400,
       "latex": 0,
-      "silicon": 48,
-      "oil": 72,
-      "gas": 0,
-      "uranium": 5
+      "silicon": 136,
+      "oil": 144,
+      "gas": 100,
+      "uranium": 10
     },
     "refined": {
       "refined_iron": 508,
@@ -1721,24 +1721,24 @@
     "flag": "🏴",
     "createdAt": 1776888625850,
     "population": {
-      "civilians": 1010,
+      "civilians": 1020,
       "workers": 0,
       "military": 10,
       "manpower": 1000
     },
     "economy": {
-      "money": 3100
+      "money": 13300
     },
     "brute": {
-      "iron": 500,
-      "coal": 270,
-      "gold": 72,
-      "diamond": 16,
-      "gravel": 120,
-      "latex": 140,
-      "silicon": 52,
-      "oil": 112,
-      "gas": 175,
+      "iron": 1000,
+      "coal": 540,
+      "gold": 144,
+      "diamond": 32,
+      "gravel": 240,
+      "latex": 280,
+      "silicon": 104,
+      "oil": 224,
+      "gas": 355,
       "uranium": 0
     },
     "refined": {
@@ -1952,24 +1952,24 @@
     "flag": "🏴",
     "createdAt": 1776894059083,
     "population": {
-      "civilians": 990,
+      "civilians": 1000,
       "workers": 10,
       "military": 20,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 19900
     },
     "brute": {
-      "iron": 346,
-      "coal": 165,
-      "gold": 60,
-      "diamond": 8,
-      "gravel": 138,
-      "latex": 100,
-      "silicon": 48,
-      "oil": 100,
-      "gas": 85,
+      "iron": 726,
+      "coal": 355,
+      "gold": 120,
+      "diamond": 16,
+      "gravel": 278,
+      "latex": 200,
+      "silicon": 96,
+      "oil": 200,
+      "gas": 245,
       "uranium": 0
     },
     "refined": {
@@ -2202,25 +2202,25 @@
     "flag": "🏴",
     "createdAt": 1776894079261,
     "population": {
-      "civilians": 160,
+      "civilians": 170,
       "workers": 0,
       "military": 10,
       "manpower": 1000
     },
     "economy": {
-      "money": 8640
+      "money": 10340
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 28,
-      "gravel": 200,
+      "iron": 900,
+      "coal": 490,
+      "gold": 140,
+      "diamond": 68,
+      "gravel": 400,
       "latex": 0,
-      "silicon": 0,
-      "oil": 72,
-      "gas": 100,
-      "uranium": 5
+      "silicon": 88,
+      "oil": 144,
+      "gas": 200,
+      "uranium": 10
     },
     "refined": {
       "refined_iron": 0,
@@ -2416,22 +2416,22 @@
     "population": {
       "civilians": 1000,
       "workers": 0,
-      "military": 20,
+      "military": 30,
       "manpower": 1000
     },
     "economy": {
-      "money": 6680
+      "money": 16780
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
-      "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
+      "iron": 390,
+      "coal": 205,
+      "gold": 72,
+      "diamond": 14,
+      "gravel": 100,
+      "latex": 200,
+      "silicon": 52,
+      "oil": 140,
+      "gas": 220,
       "uranium": 0
     },
     "refined": {
@@ -2603,7 +2603,7 @@
         "type": "division",
         "parent_id": null,
         "men": {
-          "army": 13,
+          "army": 23,
           "special_forces": 0,
           "majors": 0,
           "spies": 0
@@ -2878,25 +2878,25 @@
     "flag": "🏴",
     "createdAt": 1777152723936,
     "population": {
-      "civilians": 700,
+      "civilians": 710,
       "workers": 0,
       "military": 14,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 17200
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
+      "iron": 900,
+      "coal": 490,
+      "gold": 140,
+      "diamond": 40,
+      "gravel": 200,
       "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
-      "uranium": 0
+      "silicon": 88,
+      "oil": 72,
+      "gas": 100,
+      "uranium": 5
     },
     "refined": {
       "refined_iron": 0,
@@ -3087,26 +3087,26 @@
     "type": "country",
     "createdAt": 1777328966662,
     "population": {
-      "civilians": 1000,
+      "civilians": 1010,
       "workers": 10,
       "military": 10,
       "members": 0,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 20000
     },
     "brute": {
-      "iron": 900,
-      "coal": 490,
-      "gold": 140,
-      "diamond": 40,
-      "gravel": 200,
+      "iron": 1800,
+      "coal": 980,
+      "gold": 280,
+      "diamond": 80,
+      "gravel": 400,
       "latex": 0,
-      "silicon": 88,
-      "oil": 72,
-      "gas": 100,
-      "uranium": 5
+      "silicon": 176,
+      "oil": 144,
+      "gas": 200,
+      "uranium": 10
     },
     "refined": {
       "refined_iron": 0,
@@ -3322,25 +3322,25 @@
     "type": "country",
     "createdAt": 1777329038869,
     "population": {
-      "civilians": 1000,
+      "civilians": 1010,
       "workers": 10,
       "military": 10,
       "members": 0,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 20000
     },
     "brute": {
-      "iron": 380,
-      "coal": 190,
-      "gold": 60,
-      "diamond": 8,
-      "gravel": 140,
-      "latex": 100,
-      "silicon": 48,
-      "oil": 100,
-      "gas": 160,
+      "iron": 760,
+      "coal": 380,
+      "gold": 120,
+      "diamond": 16,
+      "gravel": 280,
+      "latex": 200,
+      "silicon": 96,
+      "oil": 200,
+      "gas": 320,
       "uranium": 0
     },
     "refined": {
@@ -3566,25 +3566,25 @@
     "type": "country",
     "createdAt": 1777329048422,
     "population": {
-      "civilians": 600,
+      "civilians": 610,
       "workers": 10,
       "military": 10,
       "members": 0,
       "manpower": 1000
     },
     "economy": {
-      "money": 10100
+      "money": 16000
     },
     "brute": {
-      "iron": 500,
-      "coal": 270,
-      "gold": 72,
-      "diamond": 16,
-      "gravel": 120,
-      "latex": 140,
-      "silicon": 52,
-      "oil": 112,
-      "gas": 180,
+      "iron": 1000,
+      "coal": 540,
+      "gold": 144,
+      "diamond": 32,
+      "gravel": 240,
+      "latex": 280,
+      "silicon": 104,
+      "oil": 224,
+      "gas": 360,
       "uranium": 0
     },
     "refined": {
@@ -3791,26 +3791,26 @@
     "type": "country",
     "createdAt": 1777329095889,
     "population": {
-      "civilians": 1000,
+      "civilians": 1010,
       "workers": 10,
       "military": 10,
       "members": 0,
       "manpower": 1010
     },
     "economy": {
-      "money": 200
+      "money": 10100
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
+      "iron": 900,
+      "coal": 490,
+      "gold": 140,
+      "diamond": 40,
+      "gravel": 200,
       "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
-      "uranium": 0
+      "silicon": 88,
+      "oil": 72,
+      "gas": 100,
+      "uranium": 5
     },
     "refined": {
       "refined_iron": 0,
@@ -4014,10 +4014,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 9
+      "members": 19
     },
     "economy": {
-      "money": 500
+      "money": 1450
     },
     "brute": {
       "iron": 0,
@@ -4163,10 +4163,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 8
+      "members": 18
     },
     "economy": {
-      "money": 2060
+      "money": 2960
     },
     "brute": {
       "iron": 0,
@@ -4323,10 +4323,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 9
+      "members": 19
     },
     "economy": {
-      "money": 500
+      "money": 1450
     },
     "brute": {
       "iron": 0,
@@ -4483,10 +4483,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 10
+      "members": 20
     },
     "economy": {
-      "money": 500
+      "money": 1500
     },
     "brute": {
       "iron": 0,
@@ -4643,10 +4643,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 13
+      "members": 23
     },
     "economy": {
-      "money": 700
+      "money": 1850
     },
     "brute": {
       "iron": 0,
@@ -4799,10 +4799,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 14
+      "members": 24
     },
     "economy": {
-      "money": 4560
+      "money": 5760
     },
     "brute": {
       "iron": 0,
@@ -4950,10 +4950,10 @@
       "civilians": 1000,
       "workers": 0,
       "military": 25,
-      "members": 14
+      "members": 24
     },
     "economy": {
-      "money": 700
+      "money": 1900
     },
     "brute": {
       "iron": 0,
@@ -5102,13 +5102,13 @@
     "type": "country",
     "createdAt": 1780596315261,
     "population": {
-      "civilians": 1010,
+      "civilians": 1020,
       "workers": 0,
       "military": 0,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 10200
     },
     "military": {
       "army": 0,
@@ -5250,13 +5250,13 @@
     "type": "country",
     "createdAt": 1780596657921,
     "population": {
-      "civilians": 1010,
+      "civilians": 1020,
       "workers": 0,
       "military": 0,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 10200
     },
     "military": {
       "army": 0,
@@ -5398,13 +5398,13 @@
     "type": "country",
     "createdAt": 1780021073987,
     "population": {
-      "civilians": 700,
+      "civilians": 710,
       "workers": 0,
       "military": 10,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 7100
     },
     "military": {
       "army": 0,
@@ -5414,16 +5414,16 @@
       "majors": 0
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
+      "iron": 900,
+      "coal": 490,
+      "gold": 140,
+      "diamond": 40,
+      "gravel": 200,
       "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
-      "uranium": 0
+      "silicon": 88,
+      "oil": 72,
+      "gas": 100,
+      "uranium": 5
     },
     "refined": {
       "refined_iron": 0,
@@ -5613,13 +5613,13 @@
     "type": "country",
     "createdAt": 1780021135213,
     "population": {
-      "civilians": 150,
+      "civilians": 160,
       "workers": 0,
       "military": 10,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 1600
     },
     "military": {
       "army": 0,
@@ -5629,16 +5629,16 @@
       "majors": 0
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
+      "iron": 900,
+      "coal": 490,
+      "gold": 140,
+      "diamond": 40,
+      "gravel": 200,
       "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
-      "uranium": 0
+      "silicon": 88,
+      "oil": 72,
+      "gas": 100,
+      "uranium": 5
     },
     "refined": {
       "refined_iron": 0,
@@ -5820,13 +5820,13 @@
     "type": "country",
     "createdAt": 1780021143066,
     "population": {
-      "civilians": 300,
+      "civilians": 310,
       "workers": 0,
       "military": 10,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 3100
     },
     "military": {
       "army": 0,
@@ -5836,16 +5836,16 @@
       "majors": 0
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
+      "iron": 575,
+      "coal": 265,
+      "gold": 104,
+      "diamond": 16,
+      "gravel": 160,
       "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
-      "uranium": 0
+      "silicon": 140,
+      "oil": 180,
+      "gas": 260,
+      "uranium": 4
     },
     "refined": {
       "refined_iron": 0,
@@ -5973,13 +5973,13 @@
     "type": "country",
     "createdAt": 1780021148750,
     "population": {
-      "civilians": 400,
+      "civilians": 410,
       "workers": 0,
       "military": 10,
       "members": 0
     },
     "economy": {
-      "money": 0
+      "money": 4100
     },
     "military": {
       "army": 0,
@@ -5989,15 +5989,15 @@
       "majors": 0
     },
     "brute": {
-      "iron": 0,
-      "coal": 0,
-      "gold": 0,
-      "diamond": 0,
-      "gravel": 0,
-      "latex": 0,
-      "silicon": 0,
-      "oil": 0,
-      "gas": 0,
+      "iron": 500,
+      "coal": 270,
+      "gold": 72,
+      "diamond": 16,
+      "gravel": 120,
+      "latex": 140,
+      "silicon": 52,
+      "oil": 112,
+      "gas": 180,
       "uranium": 0
     },
     "refined": {
