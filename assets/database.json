@@ -1497,12 +1497,12 @@
       "latex": 0,
       "silicon": 48,
       "oil": 72,
-      "gas": 25,
+      "gas": 0,
       "uranium": 5
     },
     "refined": {
-      "refined_iron": 580,
-      "electronics": 20,
+      "refined_iron": 508,
+      "electronics": 14,
       "chips": 0,
       "gunpowder": 0,
       "tires": 0,
@@ -1601,16 +1601,16 @@
     },
     "production": [
       {
-        "id": "mp8rfx0yzmx3fh",
+        "id": "mqcvt62tj8x2kl",
         "items": [
           {
-            "id": "mp8rfx0ypgwm4t",
-            "name": "580 refined iron + 20 electronics",
-            "turnsTotal": 3,
+            "id": "mqcvt62t35tv7y",
+            "name": "6x Rifles",
+            "turnsTotal": 1,
             "turnsLeft": 1,
-            "fuel": 75,
+            "fuel": 25,
             "workers": 60,
-            "mp": 120
+            "mp": 60
           }
         ]
       }
@@ -2097,7 +2097,7 @@
             "id": "mp7mzqn8oruxhw",
             "name": "3 silencers for pistols",
             "turnsTotal": 1,
-            "turnsLeft": 1,
+            "turnsLeft": 0,
             "fuel": 25,
             "workers": 10,
             "mp": 3
