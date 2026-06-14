@@ -197,6 +197,19 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 18px;z-index:200;transform:translateY(60px);opacity:0;transition:all .3s;}
 .toast.show{transform:translateY(0);opacity:1;}
+
+/* ── EVENTS ── */
+.event-card{border:1px solid var(--border);background:var(--surface2);padding:14px 16px;margin-bottom:8px;transition:all .2s;position:relative;}
+.event-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none;}
+.event-card:hover{border-color:var(--event-color,var(--accent));}
+.event-card.active-event{border-color:var(--event-color,var(--accent));box-shadow:0 0 18px rgba(var(--event-glow,0,212,255),.25);background:rgba(var(--event-glow,0,212,255),.06);}
+.event-card-name{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.event-buff{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 7px;border:1px solid;border-radius:1px;display:inline-block;margin:2px;}
+.event-active-banner{display:flex;align-items:center;gap:10px;padding:8px 18px;background:rgba(255,215,0,.07);border-bottom:1px solid rgba(255,215,0,.3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gold);flex-shrink:0;}
+.event-active-banner.hidden{display:none;}
+.event-toggle-btn{font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px 9px;background:transparent;border:1px solid;cursor:pointer;transition:all .2s;letter-spacing:1px;white-space:nowrap;}
+.event-toggle-btn.activate{border-color:var(--event-color,var(--accent));color:var(--event-color,var(--accent));}
+.event-toggle-btn.deactivate{border-color:var(--red);color:var(--red);}
 </style>
 </head>
 <body>
@@ -208,6 +221,14 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
   <!-- Action buttons moved to sidebar footer so they survive the hub's header:hide injection -->
 </header>
+
+<div class="event-active-banner hidden" id="event-banner">
+  <span>🎉</span>
+  <span id="event-banner-name">EVENT ACTIVE</span>
+  <span style="color:var(--text-dim);">·</span>
+  <span id="event-banner-buffs" style="color:var(--text-dim);font-size:9px;"></span>
+  <button class="event-toggle-btn deactivate" style="margin-left:auto;" onclick="deactivateEvent()">✕ END EVENT</button>
+</div>
 
 <div class="app">
   <div class="sidebar">
@@ -223,6 +244,7 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
     <div class="sidebar-footer">
       <button class="btn btn-green btn-full" style="font-size:9px;letter-spacing:2px;padding:10px 16px;" onclick="openCycleModal()">⏳ PASS CYCLE</button>
       <button class="btn btn-full" style="font-size:9px;letter-spacing:2px;padding:10px 16px;border-color:var(--accent3);color:var(--accent3);" onclick="passTurn()">⚙ PASS TURN</button>
+      <button class="btn btn-full" style="font-size:8px;letter-spacing:1.5px;padding:8px 12px;border-color:var(--gold);color:var(--gold);" onclick="openEventModal()">🎉 EVENTS</button>
       <button class="btn btn-full" style="font-size:8px;letter-spacing:1.5px;padding:8px 12px;" onclick="exportJSON()">⬇ Export JSON</button>
       <label class="btn btn-orange btn-full" style="font-size:8px;letter-spacing:1.5px;padding:8px 12px;cursor:pointer;text-align:center;">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none;"></label>
       <button class="btn btn-green btn-full" onclick="openAddModal()">+ ADD COUNTRY</button>
@@ -265,10 +287,11 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
 <div class="modal-overlay" id="cycle-modal">
   <div class="modal">
     <div class="modal-title">⏳ Confirm New Cycle</div>
+    <div id="cycle-event-notice" style="display:none;margin-bottom:14px;padding:10px 14px;border:1px solid;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;"></div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);margin-bottom:20px;line-height:1.6;">
       <p style="margin-bottom:10px;">This will apply the following changes to all countries and organizations:</p>
       <p style="color:var(--accent3);margin-bottom:8px;">📍 <strong>Countries:</strong></p>
-      <ul style="margin-left:20px;margin-bottom:12px;font-size:11px;">
+      <ul style="margin-left:20px;margin-bottom:12px;font-size:11px;" id="cycle-country-list">
         <li>+10 Civilians</li>
         <li>+3 Civilians per Hospital</li>
         <li>+$10 per Civilian (Money)</li>
@@ -478,6 +501,20 @@ header{flex-shrink:0;display:flex;align-items:center;justify-content:space-betwe
   </div>
 </div>
 
+<!-- Events Modal -->
+<div class="modal-overlay" id="event-modal">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-title">🎉 Global Events</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:16px;line-height:1.7;padding:8px;background:var(--bg);border:1px solid var(--border);">
+      Only one event can be active at a time. Buffs apply multiplicatively to the base cycle gains of ALL countries. Activate an event to see its effects during the next cycles.
+    </div>
+    <div id="event-cards-container"></div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-orange" onclick="closeModal('event-modal')">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <!-- Special Training Modal -->
 <div class="modal-overlay" id="spec-train-modal">
   <div class="modal" style="max-width:440px;">
@@ -511,8 +548,159 @@ const MINE_RESOURCES = {
 };
 
 // =====================================================
-// SCHEMA
+// EVENTS SYSTEM
 // =====================================================
+const EVENTS = [
+  {
+    id: 'anniversary',
+    name: '🎂 Anniversary Event',
+    color: '#ff6b35',
+    glow: '255,107,53',
+    description: 'Grand anniversary celebrations boost civilian growth and the economy.',
+    buffs: {
+      civilians: 5,   // multiplier on civilian gain per cycle
+      money: 1.5,     // multiplier on money gain per cycle
+      resources: 1.5, // multiplier on brute resources per cycle
+    },
+    buffLabels: ['5× Civilians', '1.5× Money', '1.5× Resources'],
+  },
+  {
+    id: 'new_year',
+    name: '🎆 New Year Event',
+    color: '#00d4ff',
+    glow: '0,212,255',
+    description: 'The new year brings economic optimism and resource prosperity.',
+    buffs: {
+      civilians: 1.5,
+      money: 3,
+      resources: 1.5,
+    },
+    buffLabels: ['3× Money', '1.5× Resources', '1.5× Civilians'],
+  },
+  {
+    id: 'easter',
+    name: '🐣 Easter Event',
+    color: '#c084fc',
+    glow: '192,132,252',
+    description: 'Spring festivities bring moderate economic and population growth.',
+    buffs: {
+      civilians: 1.5,
+      money: 2,
+      resources: 1.5,
+    },
+    buffLabels: ['2× Money', '1.5× Resources', '1.5× Civilians'],
+  },
+  {
+    id: 'christmas',
+    name: '🎄 Christmas Event',
+    color: '#39ff14',
+    glow: '57,255,20',
+    description: 'Christmas cheer drives massive resource production and population growth.',
+    buffs: {
+      civilians: 2,
+      money: 1.5,
+      resources: 3,
+    },
+    buffLabels: ['3× Resources', '2× Civilians', '1.5× Money'],
+  },
+];
+
+// Persisted in localStorage under 'tc_active_event'
+let activeEventId = null;
+
+function loadActiveEvent(){
+  activeEventId = localStorage.getItem('tc_active_event') || null;
+  updateEventBanner();
+}
+
+function saveActiveEvent(){
+  if(activeEventId) localStorage.setItem('tc_active_event', activeEventId);
+  else localStorage.removeItem('tc_active_event');
+}
+
+function getActiveEvent(){
+  return activeEventId ? EVENTS.find(e => e.id === activeEventId) || null : null;
+}
+
+function activateEvent(eventId){
+  activeEventId = eventId;
+  saveActiveEvent();
+  updateEventBanner();
+  renderEventCards();
+  const ev = getActiveEvent();
+  toast(`🎉 ${ev.name} activated! Buffs will apply on next cycle.`, 3000);
+}
+
+function deactivateEvent(){
+  const ev = getActiveEvent();
+  activeEventId = null;
+  saveActiveEvent();
+  updateEventBanner();
+  renderEventCards();
+  toast(ev ? `✕ ${ev.name} ended.` : 'Event deactivated.', 2000);
+}
+
+function updateEventBanner(){
+  const banner = document.getElementById('event-banner');
+  const nameEl = document.getElementById('event-banner-name');
+  const buffsEl = document.getElementById('event-banner-buffs');
+  const ev = getActiveEvent();
+  if(ev){
+    banner.classList.remove('hidden');
+    banner.style.setProperty('--event-color', ev.color);
+    nameEl.textContent = ev.name + ' ACTIVE';
+    nameEl.style.color = ev.color;
+    buffsEl.textContent = ev.buffLabels.join(' · ');
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+function openEventModal(){
+  renderEventCards();
+  document.getElementById('event-modal').classList.add('open');
+}
+
+function renderEventCards(){
+  const container = document.getElementById('event-cards-container');
+  if(!container) return;
+  const ev = getActiveEvent();
+  container.innerHTML = EVENTS.map(event => {
+    const isActive = ev && ev.id === event.id;
+    const buffBadges = event.buffLabels.map(l =>
+      `<span class="event-buff" style="border-color:${event.color};color:${event.color};">${l}</span>`
+    ).join('');
+    const actionBtn = isActive
+      ? `<button class="event-toggle-btn deactivate" data-action="deactivate">✕ End Event</button>`
+      : `<button class="event-toggle-btn activate" data-action="activate" data-event-id="${event.id}" style="--event-color:${event.color};">▶ Activate</button>`;
+    return `<div class="event-card ${isActive ? 'active-event' : ''}"
+        style="--event-color:${event.color};--event-glow:${event.glow};">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <span class="event-card-name" style="color:${event.color};">${event.name}</span>
+        ${actionBtn}
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-bottom:8px;">${event.description}</div>
+      <div>${buffBadges}</div>
+      ${isActive ? `<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:${event.color};margin-top:8px;letter-spacing:1px;">● EVENT ACTIVE — Buffs apply on next cycle</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Attach listeners via JS — more reliable than inline onclick in injected HTML
+  container.querySelectorAll('[data-action="activate"]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      activateEvent(this.dataset.eventId);
+    });
+  });
+  container.querySelectorAll('[data-action="deactivate"]').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      deactivateEvent();
+    });
+  });
+}
+
+
 const SCHEMA = [
   {key:'population', label:'👥 Population', steps:[-100,-10,-1,1,10,100], fields:[
     {k:'civilians',   l:'Civilians',          d:1010},
@@ -1380,6 +1568,39 @@ function flashSaved(){
 // NEW CYCLE
 // =====================================================
 function openCycleModal(){
+  // Update event notice in the cycle modal
+  const notice = document.getElementById('cycle-event-notice');
+  const civList = document.getElementById('cycle-country-list');
+  const ev = getActiveEvent();
+  if(ev && notice){
+    notice.style.display = 'block';
+    notice.style.borderColor = ev.color;
+    notice.style.color = ev.color;
+    notice.style.background = `rgba(${ev.glow},.06)`;
+    notice.innerHTML = `🎉 <strong>${ev.name}</strong> is ACTIVE — The following buffs apply this cycle:<br>` +
+      ev.buffLabels.map(l => `&nbsp;&nbsp;• ${l}`).join('<br>');
+    if(civList){
+      const civMult = ev.buffs.civilians;
+      const monMult = ev.buffs.money;
+      const resMult = ev.buffs.resources;
+      civList.innerHTML = `
+        <li style="color:${civMult>1?ev.color:'inherit'};">+${civMult===1?'10':(civMult+'×')} Civilians${civMult>1?' <em>(event buff)</em>':''}</li>
+        <li style="color:${civMult>1?ev.color:'inherit'};">+3${civMult>1?' (×'+civMult+')':''} Civilians per Hospital${civMult>1?' <em>(event buff)</em>':''}</li>
+        <li style="color:${monMult>1?ev.color:'inherit'};">+$10${monMult>1?' ×'+monMult:''} per Civilian (Money)${monMult>1?' <em>(event buff)</em>':''}</li>
+        <li style="color:${monMult>1?ev.color:'inherit'};">+$5,000${monMult>1?' ×'+monMult:''} per Business (Money)${monMult>1?' <em>(event buff)</em>':''}</li>
+        <li style="color:${resMult>1?ev.color:'inherit'};">+Brute Resources${resMult>1?' ×'+resMult:''} based on Mines${resMult>1?' <em>(event buff)</em>':''}</li>
+        <li style="color:var(--red);">−$20 per Worker (Salary cost)</li>`;
+    }
+  } else {
+    if(notice) notice.style.display = 'none';
+    if(civList) civList.innerHTML = `
+      <li>+10 Civilians</li>
+      <li>+3 Civilians per Hospital</li>
+      <li>+$10 per Civilian (Money)</li>
+      <li>+$5,000 per Business (Money)</li>
+      <li>+Brute Resources based on Mines</li>
+      <li style="color:var(--red);">−$20 per Worker (Salary cost)</li>`;
+  }
   document.getElementById('cycle-modal').classList.add('open');
 }
 
@@ -1408,6 +1629,12 @@ function executeCycle(){
       c.economy.money = currentMoney + (currentMembers + 10) * 50;
     } else {
       // Countries: +10 civilians, +$10 per civilian, +$5,000 per business, +brute resources from mines
+      // Apply active event multipliers if any
+      const _ev = getActiveEvent();
+      const _civMult      = _ev ? _ev.buffs.civilians  : 1;
+      const _moneyMult    = _ev ? _ev.buffs.money       : 1;
+      const _resourceMult = _ev ? _ev.buffs.resources   : 1;
+
       if(!c.population) c.population = {};
       const currentCivs = Number(c.population.civilians) || 0;
       
@@ -1418,15 +1645,19 @@ function executeCycle(){
       const currentBusinesses = Number(c.buildings.businesses) || 0;
       const currentHospitals  = Number(c.buildings.hospitals)  || 0;
 
-      c.population.civilians = currentCivs + 10 + (currentHospitals * 3);
+      // Base civilian gain (10 + 3 per hospital), then multiplied by event buff
+      const baseCivGain = Math.round((10 + (currentHospitals * 3)) * _civMult);
+      c.population.civilians = currentCivs + baseCivGain;
 
-      // Worker salary: -$20 per worker per cycle
+      // Worker salary: -$20 per worker per cycle (not affected by events)
       const currentWorkers = Number(c.population.workers) || 0;
       const workerSalaryTotal = currentWorkers * 20;
 
-      c.economy.money = currentMoney + ((currentCivs + 10 + (currentHospitals * 3)) * 10) + (currentBusinesses * 5000) - workerSalaryTotal;
+      // Base money gain from civilians and businesses, then multiplied by event buff
+      const baseMoneyGain = Math.round(((currentCivs + baseCivGain) * 10 + (currentBusinesses * 5000)) * _moneyMult);
+      c.economy.money = currentMoney + baseMoneyGain - workerSalaryTotal;
       
-      // Add brute resources based on mines
+      // Add brute resources based on mines, multiplied by event resource buff
       if(!c.brute) c.brute = {};
       if(c.mines){
         for(const [mineType, count] of Object.entries(c.mines)){
@@ -1435,7 +1666,7 @@ function executeCycle(){
           if(resources && numCount > 0){
             for(const [resource, amount] of Object.entries(resources)){
               // Enforce strictly numeric math to avoid string concatenation bugs
-              c.brute[resource] = Number(c.brute[resource] || 0) + (Number(amount) * numCount);
+              c.brute[resource] = Number(c.brute[resource] || 0) + Math.round(Number(amount) * numCount * _resourceMult);
             }
           }
         }
@@ -1624,6 +1855,10 @@ document.getElementById('prod-item-modal').addEventListener('click',function(e){
 ['mil-gen-modal','mil-create-modal','mil-assign-modal','mil-edit-modal','mil-obj-modal','mil-cmd-modal','spec-train-modal'].forEach(id=>{
   const el=document.getElementById(id);
   if(el) el.addEventListener('click',function(e){ if(e.target===this) closeModal(id); });
+});
+// Event modal: use mousedown on overlay only (not click, to avoid swallowing button clicks)
+document.getElementById('event-modal').addEventListener('mousedown',function(e){
+  if(e.target===this) closeModal('event-modal');
 });
 
 // =====================================================
@@ -2598,6 +2833,7 @@ function cancelSpecialTraining(cid,sbdId,trainerType){
 }
 // =====================================================
 load();
+loadActiveEvent();
 renderList();
 </script>
 </body>
